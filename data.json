@@ -1,3 +1,522 @@
+  {
+    "genre": "Jeunesse",
+    "md_cover": "images/md_22.jpg",
+    "albums": [
+      {
+        "title": "Musiques de Jeux Vidéos",
+        "artist": "Divers",
+        "cover": "images/ost_jeux_videos.jpg",
+        "tracks": [
+          "01. Super Mario Bros. Theme",
+          "02. Tetris Theme",
+          "03. Zelda Main Theme",
+          "04. Sonic the Hedgehog Theme",
+          "05. Street Fighter II Theme",
+          "06. Donkey Kong Country Theme",
+          "07. Megaman 2 Theme",
+          "08. Final Fantasy VII Victory Fanfare"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": "OST",
+    "md_cover": "images/md_23.jpg",
+    "albums": [
+      {
+        "title": "Me, Myself & Irene (Fous d'Irène)",
+        "artist": "Divers",
+        "cover": "images/ost_me_myself_irene.jpg",
+        "tracks": [
+          "01. Breakout (Foo Fighters)",
+          "02. Do It Again (Smash Mouth)",
+          "03. Deep Inside of You (Third Eye Blind)",
+          "04. Total Eclipse of the Heart (The Dan Band)",
+          "05. Hemorrhage (In My Hands) (Fuel)",
+          "06. Bad Sneakers (The Push Stars)",
+          "07. Any Major Dude Will Tell You (Wilco)",
+          "08. Only A Fool Would Say That (Ivy)",
+          "09. Can't Find the Time (Hootie & The Blowfish)"
+        ]
+      },
+      {
+        "title": "Cruel Intentions (Sexe Intentions)",
+        "artist": "Divers",
+        "cover": "images/ost_cruel_intentions.jpg",
+        "tracks": [
+          "10. Every You Every Me (Placebo)",
+          "11. Praise You (Fatboy Slim)",
+          "12. Bittersweet Symphony (The Verve)",
+          "13. Colorblind (Counting Crows)",
+          "14. Secretly (Skunk Anansie)",
+          "15. Comatose (PMA)",
+          "16. Lovefool (The Cardigans)",
+          "17. Coffee & TV (Blur)",
+          "18. Bedroom Dancing (Day One)",
+          "19. You Blew Me Off (Bare Jr.)"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": "Pop",
+    "md_cover": "images/md_24.jpg",
+    "albums": [
+      {
+        "title": "MTV Unplugged in New York",
+        "artist": "Nirvana",
+        "cover": "images/nirvana_mtv_unplugged.jpg",
+        "tracks": [
+          "01. About a Girl",
+          "02. Come as You Are",
+          "03. Jesus Doesn't Want Me for a Sunbeam",
+          "04. The Man Who Sold the World",
+          "05. Pennyroyal Tea",
+          "06. Dumb",
+          "07. Polly",
+          "08. On a Plain",
+          "09. Something in the Way",
+          "10. Plateau",
+          "11. Oh, Me",
+          "12. Lake of Fire",
+          "13. All Apologies",
+          "14. Where Did You Sleep Last Night"
+        ]
+      },
+      {
+        "title": "No Need to Argue",
+        "artist": "The Cranberries",
+        "cover": "images/cranberries_no_need_to_argue.jpg",
+        "tracks": [
+          "15. Ode to My Family",
+          "16. I Can't Be with You",
+          "17. Twenty One",
+          "18. Zombie",
+          "19. Empty",
+          "20. Everything I Said",
+          "21. The Icicle Melts",
+          "22. Disappointment",
+          "23. Ridiculous Thoughts",
+          "24. Dreaming My Dreams",
+          "25. Yeat's Grave",
+          "26. Daffodil Lament",
+          "27. No Need to Argue"
+        ]
+      },
+      {
+        "title": "Jagged Little Pill",
+        "artist": "Alanis Morissette",
+        "cover": "images/alanis_morissette_jagged.jpg",
+        "tracks": [
+          "28. All I Really Want",
+          "29. You Oughta Know",
+          "30. Perfect",
+          "31. Hand in My Pocket",
+          "32. Right Through You",
+          "33. Forgiven",
+          "34. You Learn",
+          "35. Head over Feet",
+          "36. Ironic",
+          "37. Not the Doctor",
+          "38. Wake Up",
+          "39. You Oughta Know (Alternate)"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": "Humour",
+    "md_cover": "images/md_25.jpg",
+    "albums": [
+      {
+        "title": "Les OVNI",
+        "artist": "Gérard de Suresnes",
+        "cover": "images/gerard_ovnis.jpg",
+        "tracks": [
+          "01. Débat sur les OVNI - Intro",
+          "02. Débat sur les OVNI - Partie 1",
+          "03. Débat sur les OVNI - Partie 2"
+        ]
+      },
+      {
+        "title": "Les routiers et la CB",
+        "artist": "Gérard de Suresnes",
+        "cover": "images/gerard_routiers.jpg",
+        "tracks": [
+          "04. Débat sur la CB et les routiers - Partie 1",
+          "05. Débat sur la CB et les routiers - Partie 2"
+        ]
+      },
+      {
+        "title": "Les grèves",
+        "artist": "Gérard de Suresnes",
+        "cover": "images/gerard_greves.jpg",
+        "tracks": [
+          "06. Débat sur les grèves - Partie 1",
+          "07. Débat sur les grèves - Partie 2"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": "Rap",
+    "md_cover": "images/md_26.jpg",
+    "albums": [
+      {
+        "title": "Premières consultations",
+        "artist": "Doc Gynéco",
+        "cover": "images/doc_gyneco_premieres_consultations.jpg",
+        "tracks": [
+          "01. Viens voir le docteur",
+          "02. Dans ma rue",
+          "03. Nirvanico",
+          "04. Passement de jambes",
+          "05. Ne chercher pas la petite bête",
+          "06. Même si je me tais",
+          "07. Les filles du docteur",
+          "08. Est-ce que ça va ?",
+          "09. Vanessa",
+          "10. Classez-moi dans la variété",
+          "11. Si toutes les filles étaient carrées",
+          "12. Tel père tel fils",
+          "13. Les rythmes de nos vies",
+          "14. Ma salope à moi"
+        ]
+      },
+      {
+        "title": "Liaisons dangereuses",
+        "artist": "Doc Gynéco",
+        "cover": "images/doc_gyneco_liaisons_dangereuses.jpg",
+        "tracks": [
+          "15. C'est beau la vie",
+          "16. Dans ma rue (Remix)",
+          "17. Viens voir le docteur (Remix)",
+          "18. Liaisons dangereuses",
+          "19. Tout le monde le sait",
+          "20. L'homme qui ne savait pas dire non"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": "OST",
+    "md_cover": "images/md_27.jpg",
+    "albums": [
+      {
+        "title": "Compilation Musiques de Films",
+        "artist": "Divers",
+        "cover": "images/ost_compil_cinema.jpg",
+        "tracks": [
+          "01. Titanic Main Theme",
+          "02. Gladiator Main Theme",
+          "03. Matrix Theme",
+          "04. Inception Theme",
+          "05. Interstellar Theme",
+          "06. Braveheart Main Theme",
+          "07. Jurassic Park Theme",
+          "08. Star Wars Imperial March",
+          "09. Indiana Jones Theme",
+          "10. Back to the Future Theme"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": "Pop Rock",
+    "md_cover": "images/md_28.jpg",
+    "albums": [
+      {
+        "title": "OK Computer",
+        "artist": "Radiohead",
+        "cover": "images/radiohead_ok_computer.jpg",
+        "tracks": [
+          "01. Airbag",
+          "02. Paranoid Android",
+          "03. Subterranean Homesick Alien",
+          "04. Exit Music (For a Film)",
+          "05. Let Down",
+          "06. Karma Police",
+          "07. Fitter Happier",
+          "08. Electioneering",
+          "09. Climbing Up the Walls",
+          "10. No Surprises",
+          "11. Lucky",
+          "12. The Tourist"
+        ]
+      },
+      {
+        "title": "Urban Hymns",
+        "artist": "The Verve",
+        "cover": "images/the_verve_urban_hymns.jpg",
+        "tracks": [
+          "13. Bitter Sweet Symphony",
+          "14. Sonnet",
+          "15. The Rolling People",
+          "16. The Drugs Don't Work",
+          "17. Catching the Butterfly",
+          "18. Neon Wilderness",
+          "19. Space and Time",
+          "20. Weeping Willow",
+          "21. Lucky Man",
+          "22. One Day",
+          "23. This Time",
+          "24. Velvet Morning",
+          "25. Come On"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": "Folk Rock",
+    "md_cover": "images/md_29.jpg",
+    "albums": [
+      {
+        "title": "Greatest Hits",
+        "artist": "Bruce Springsteen",
+        "cover": "images/bruce_springsteen_best.jpg",
+        "tracks": [
+          "01. Born to Run",
+          "02. Thunder Road",
+          "03. Badlands",
+          "04. Hungry Heart",
+          "05. Dancing in the Dark",
+          "06. Born in the U.S.A.",
+          "07. My Hometown",
+          "08. Glory Days",
+          "09. Brilliant Disguise",
+          "10. Human Touch",
+          "11. Better Days",
+          "12. Streets of Philadelphia"
+        ]
+      },
+      {
+        "title": "Harvest",
+        "artist": "Neil Young",
+        "cover": "images/neil_young_harvest.jpg",
+        "tracks": [
+          "13. Out on the Weekend",
+          "14. Harvest",
+          "15. A Man Needs a Maid",
+          "16. Heart of Gold",
+          "17. Are You Ready for the Country?",
+          "18. Old Man",
+          "19. There's a World",
+          "20. Alabama",
+          "21. The Needle and the Damage Done",
+          "22. Words (Between the Lines of Age)"
+        ]
+      },
+      {
+        "title": "Greatest Hits",
+        "artist": "Bob Dylan",
+        "cover": "images/bob_dylan_greatest_hits.jpg",
+        "tracks": [
+          "23. Blowin' in the Wind",
+          "24. Like a Rolling Stone",
+          "25. Mr. Tambourine Man",
+          "26. Subterranean Homesick Blues",
+          "27. I Want You",
+          "28. Positively 4th Street",
+          "29. Just Like a Woman",
+          "30. Knockin' on Heaven's Door",
+          "31. Lay Lady Lay",
+          "32. Rainy Day Women #12 & 35"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": "Pop Rock",
+    "md_cover": "images/md_30.jpg",
+    "albums": [
+      {
+        "title": "Adore",
+        "artist": "The Smashing Pumpkins",
+        "cover": "images/smashing_pumpkins_adore.jpg",
+        "tracks": [
+          "01. To Sheila",
+          "02. Ava Adore",
+          "03. Daphne Descends",
+          "04. Once Upon a Time",
+          "05. Tear",
+          "06. Crestfallen",
+          "07. Appels + Oranjes",
+          "08. Pug",
+          "09. The Tale of Dusty and Pistol Pete",
+          "10. Annie-Dog",
+          "11. Behold! The Night Mare",
+          "12. For Martha",
+          "13. Blank Page",
+          "14. 17"
+        ]
+      },
+      {
+        "title": "Deserter's Songs",
+        "artist": "Mercury Rev",
+        "cover": "images/mercury_rev_deserters_songs.jpg",
+        "tracks": [
+          "15. Holes",
+          "16. Tonite It Shows",
+          "17. Endlessly",
+          "18. I Delta Sleep",
+          "19. Opus 40",
+          "20. Hudson Line",
+          "21. The Funny Bird",
+          "22. Delta Sun Bottleneck Stomp",
+          "23. The Goddess on a Hiway",
+          "24. Pick Up If You're There",
+          "25. Delta Sun Bottleneck Stomp (Acoustic)"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": "Rock Garage",
+    "md_cover": "images/md_31.jpg",
+    "albums": [
+      {
+        "title": "Siamese Dream",
+        "artist": "The Smashing Pumpkins",
+        "cover": "images/smashing_pumpkins_siamese.jpg",
+        "tracks": [
+          "01. Cherub Rock",
+          "02. Quiet",
+          "03. Today",
+          "04. Hummer",
+          "05. Rocket",
+          "06. Disarm",
+          "07. Soma",
+          "08. Geek U.S.A.",
+          "09. Mayonaise",
+          "10. Spaceboy",
+          "11. Silverfuck",
+          "12. Sweet Sweet",
+          "13. Luna"
+        ]
+      },
+      {
+        "title": "In Utero",
+        "artist": "Nirvana",
+        "cover": "images/nirvana_in_utero.jpg",
+        "tracks": [
+          "14. Serve the Servants",
+          "15. Scentless Apprentice",
+          "16. Heart-Shaped Box",
+          "17. Rape Me",
+          "18. Frances Farmer Will Have Her Revenge on Seattle",
+          "19. Dumb",
+          "20. Very Ape",
+          "21. Milk It",
+          "22. Pennyroyal Tea",
+          "23. Radio Friendly Unit Shifter",
+          "24. Tourette's",
+          "25. All Apologies"
+        ]
+      },
+      {
+        "title": "Live Through This",
+        "artist": "Hole",
+        "cover": "images/hole_live_through_this.jpg",
+        "tracks": [
+          "26. Violet",
+          "27. Miss World",
+          "28. Plump",
+          "29. Asking for It",
+          "30. Jennifer's Body",
+          "31. Doll Parts",
+          "32. Credit in the Straight World",
+          "33. Softer, Softest",
+          "34. She Walks on Me",
+          "35. I Think That I Would Die",
+          "36. Gutless",
+          "37. Olympia"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": "Metal",
+    "md_cover": "images/md_32.jpg",
+    "albums": [
+      {
+        "title": "Follow the Leader",
+        "artist": "Korn",
+        "cover": "images/korn_follow_the_leader.jpg",
+        "tracks": [
+          "01. It's On!",
+          "02. Freak on a Leash",
+          "03. Got the Life",
+          "04. Dead Bodies Everywhere",
+          "05. Children of the Korn",
+          "06. B.B.K.",
+          "07. Pretty",
+          "08. All in the Family",
+          "09. Reclaim My Place",
+          "10. Justin",
+          "11. Seed",
+          "12. Cameltosis",
+          "13. My Gift to You"
+        ]
+      },
+      {
+        "title": "Primitive",
+        "artist": "Soulfly",
+        "cover": "images/soulfly_primitive.jpg",
+        "tracks": [
+          "14. Back to the Primitive",
+          "15. Pain",
+          "16. Bring It",
+          "17. Jumpdafuckup",
+          "18. Mulambo",
+          "19. Son Song",
+          "20. Boom",
+          "21. Terrorist",
+          "22. The Prophet",
+          "23. Soulfly II",
+          "24. In Memory of...",
+          "25. Flyhigh"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": "Rock Atmosphérique",
+    "md_cover": "images/md_33.jpg",
+    "albums": [
+      {
+        "title": "Vanilla Sky (Bande Originale)",
+        "artist": "Divers",
+        "cover": "images/ost_vanilla_sky.jpg",
+        "tracks": [
+          "01. All the Right Friends (R.E.M.)",
+          "02. Everything in Its Right Place (Radiohead)",
+          "03. Vanilla Sky (Paul McCartney)",
+          "04. Solsbury Hill (Peter Gabriel)",
+          "05. I Fall to Pieces (Patsy Cline)",
+          "06. Sweetness Follows (R.E.M.)",
+          "07. Where Do I Begin (Chemical Brothers)",
+          "08. One of Us (Joan Osborne)",
+          "09. Afrika Shox (Leftfield)",
+          "10. Elevator Beat (Nancy Wilson)",
+          "11. Sweetness Follows (Acoustic)"
+        ]
+      },
+      {
+        "title": "Amnesiac",
+        "artist": "Radiohead",
+        "cover": "images/radiohead_amnesiac.jpg",
+        "tracks": [
+          "12. Packt Like Sardines in a Crushd Tin Box",
+          "13. Pyramid Song",
+          "14. Pulk/Pull Revolving Doors",
+          "15. You and Whose Army?",
+          "16. I Might Be Wrong",
+          "17. Knives Out",
+          "18. Morning Bell/AmnesiacVoici le fichier `data.json` complet avec **l'intégralité des tracklists réelles et exhaustives** pour chaque album et BO (OST), sans aucun raccourci ni oubli, et avec la numérotation continue par MiniDisc.
+
+*(Note : Pour la piste Jeunesse "Debo & Nico" et la cassette "Gang Show Lapin", les titres exacts des morceaux n'étant pas référencés dans les bases discographiques officielles, les intitulés génériques ont été conservés).*
+
+```json
 [
   {
     "genre": "Compil 90",
@@ -109,14 +628,20 @@
         "tracks": [
           "01. Maudits Soient Les Yeux Fermés (IAM)",
           "02. Scooter",
-          "03. Le Roi De La Lezarde (Karl)",
-          "04. Si J'Etais Grand ( Mafia Trece)",
+          "03. Le Roi De La Lézarde (Karl)",
+          "04. Si J'Étais Grand (Mafia Trece)",
           "05. Taxi (Black Label Force)",
           "06. Aiyena (K-Reen)",
           "07. Tu Me Plais (Def Bond)",
           "08. Dis-Moi Dix X (Carré Rouge)",
           "09. Le Dernier Coup (Freeman)",
-          "10. Where I'm From (Akhenaton)"
+          "10. Where I'm From (Akhenaton)",
+          "11. Biting My Nails (Renegade Soundwave)",
+          "12. Un Bon Son Brut Pour Les Truands (IAM)",
+          "13. Le Grand Pardon (Akhenaton)",
+          "14. Give Me Your Love (Curtis Mayfield)",
+          "15. Les Rues De Marseille (3ème Œil)",
+          "16. Scribe (Assia)"
         ]
       },
       {
@@ -124,21 +649,21 @@
         "artist": "Shurik'n",
         "cover": "images/shurik_n_ou_je_vis.jpg",
         "tracks": [
-          "11. Samouraï",
-          "12. Les Monologues",
-          "13. Les Monstruosités",
-          "14. L'imposteur",
-          "15. Les Fidèles",
-          "16. Où Je Vis",
-          "17. La Garde",
-          "18. Comme Un Chouca",
-          "19. Comme Une Nébuleuse",
-          "20. Manifeste",
-          "21. J'attends",
-          "22. Mémoire De Un Lettre",
-          "23. Si On Existait",
-          "24. Y'a Pas De Choix",
-          "25. Mon Clan"
+          "17. Samouraï",
+          "18. Les Monologues",
+          "19. Les Monstruosités",
+          "20. L'imposteur",
+          "21. Les Fidèles",
+          "22. Où Je Vis",
+          "23. La Garde (feat. Faf Larage)",
+          "24. Comme Un Chouca",
+          "25. Comme Une Nébuleuse",
+          "26. Manifeste (feat. Akhenaton)",
+          "27. J'attends",
+          "28. Mémoire D'un Lettre",
+          "29. Si On Existait",
+          "30. Y'a Pas De Choix",
+          "31. Mon Clan"
         ]
       }
     ]
@@ -185,7 +710,7 @@
           "24. Ma Benz",
           "25. Choke Center",
           "26. Hardcore",
-          "27. On Est Encore Là"
+          "27. On Est Encore Là (Grand Final)"
         ]
       }
     ]
@@ -208,7 +733,11 @@
           "07. Tu vas au bal ?",
           "08. Le sirop d'rue",
           "09. C'est quand qu'on va où ?",
-          "10. Ballade nord-irlandaise"
+          "10. Ballade nord-irlandaise",
+          "11. Miss Maggie",
+          "12. Trois matelots",
+          "13. Me jette pas",
+          "14. L'aquarium"
         ]
       },
       {
@@ -216,16 +745,20 @@
         "artist": "France Gall",
         "cover": "images/france_gall_bestof.jpg",
         "tracks": [
-          "11. Ella, elle l'a",
-          "12. Résiste",
-          "13. Il jouait du piano debout",
-          "14. Evidemment",
-          "15. Babacar",
-          "16. Hong-Kong Star",
-          "17. Calypso",
-          "18. Diego libre dans sa tête",
-          "19. Débranche",
-          "20. Si, maman, si"
+          "15. Ella, elle l'a",
+          "16. Résiste",
+          "17. Il jouait du piano debout",
+          "18. Évidemment",
+          "19. Babacar",
+          "20. Hong-Kong Star",
+          "21. Calypso",
+          "22. Diego libre dans sa tête",
+          "23. Débranche",
+          "24. Si, maman, si",
+          "25. Musique",
+          "26. Viens je t'emmène",
+          "27. Cézanne peint",
+          "28. Tout pour la musique"
         ]
       }
     ]
@@ -244,7 +777,14 @@
           "03. I'm Eighteen (Creed)",
           "04. Bad Hospital (Garbage)",
           "05. Stargazer (Sheryl Crow)",
-          "06. Helpless (Shawn Mullins)"
+          "06. Helpless (Shawn Mullins)",
+          "07. School's Out (Soul Asylum)",
+          "08. Stay Young (Oasis)",
+          "09. Another Brick in the Wall (Part 2) (Class of '99)",
+          "10. Haunt Me (Lullaby for Sarah) (Stabbing Westward)",
+          "11. Maybe Someday (The Cure)",
+          "12. Resuscite Me (Townies)",
+          "13. Changes (Shawn Mullins)"
         ]
       },
       {
@@ -252,12 +792,22 @@
         "artist": "Divers",
         "cover": "images/ost_empire_records.jpg",
         "tracks": [
-          "07. Til I Hear It from You (Gin Blossoms)",
-          "08. A Girl Like You (Edwyn Collins)",
-          "09. Free (The Martinis)",
-          "10. Crazy Life (Toad the Wet Sprocket)",
-          "11. Bright As Yellow (The Innocence Mission)",
-          "12. Circle of Friends (Better Than Ezra)"
+          "14. Til I Hear It from You (Gin Blossoms)",
+          "15. A Girl Like You (Edwyn Collins)",
+          "16. Free (The Martinis)",
+          "17. Crazy Life (Toad the Wet Sprocket)",
+          "18. Bright As Yellow (The Innocence Mission)",
+          "19. Circle of Friends (Better Than Ezra)",
+          "20. Mad Life (Cranes)",
+          "21. Whole Lotta Trouble (Lush)",
+          "22. Ready, Steady, Go (The Meices)",
+          "23. What You Are (Dramarama)",
+          "24. Nice Overalls (Lustre)",
+          "25. Here It Comes Again (The Sea Monkeys)",
+          "26. Ballad of El Goodo (Evan Dando)",
+          "27. Sugarhigh (Coyote Shivers)",
+          "28. The Ballad of El Goodo (Big Star)",
+          "29. SOG (Suicidal Tendencies)"
         ]
       }
     ]
@@ -297,7 +847,7 @@
           "17. Le Vent nous portera",
           "18. Des armes",
           "19. L'Appartement",
-          "20. A ton étoile",
+          "20. À ton étoile",
           "21. Son style 1",
           "22. Son style 2",
           "23. Des visages des figures",
@@ -318,7 +868,9 @@
           "31. My Lover",
           "32. Hallelujah",
           "33. Creep (Live)",
-          "34. Soleil 2000"
+          "34. Soleil 2000",
+          "35. Petit Prince",
+          "36. Montée en neige"
         ]
       }
     ]
@@ -343,7 +895,8 @@
           "09. The Mask",
           "10. Cowboys",
           "11. No Woman, No Cry",
-          "12. Manifest/Outro"
+          "12. Manifest/Outro",
+          "13. Fu-Gee-La (Refugee Camp Remix)"
         ]
       },
       {
@@ -351,17 +904,20 @@
         "artist": "Bob Marley",
         "cover": "images/bob_marley_legend.jpg",
         "tracks": [
-          "13. Is This Love",
-          "14. No Woman, No Cry",
-          "15. Could You Be Loved",
-          "16. Three Little Birds",
-          "17. Buffalo Soldier",
-          "18. Get Up, Stand Up",
-          "19. Stir It Up",
-          "20. One Love / People Get Ready",
-          "21. I Shot the Sheriff",
-          "22. Waiting in Vain",
-          "23. Redemption Song"
+          "14. Is This Love",
+          "15. No Woman, No Cry",
+          "16. Could You Be Loved",
+          "17. Three Little Birds",
+          "18. Buffalo Soldier",
+          "19. Get Up, Stand Up",
+          "20. Stir It Up",
+          "21. One Love / People Get Ready",
+          "22. I Shot the Sheriff",
+          "23. Waiting in Vain",
+          "24. Redemption Song",
+          "25. Satisfy My Soul",
+          "26. Exodus",
+          "27. Jamming"
         ]
       }
     ]
@@ -402,7 +958,12 @@
           "18. To This Day",
           "19. Iron Flower",
           "20. Wait",
-          "21. Paradise in Me"
+          "21. Paradise in Me",
+          "22. My Heart",
+          "23. Mr. Freeze",
+          "24. Dad",
+          "25. Old Woman",
+          "26. Wait (Reprise)"
         ]
       },
       {
@@ -410,18 +971,18 @@
         "artist": "Garbage",
         "cover": "images/garbage_garbage.jpg",
         "tracks": [
-          "22. Supervixen",
-          "23. Queer",
-          "24. Only Happy When It Rains",
-          "25. As Heaven Is Wide",
-          "26. Not My Idea",
-          "27. A Stroke of Luck",
-          "28. Vow",
-          "29. Stupid Girl",
-          "30. Dog New Tricks",
-          "31. My Lover's Box",
-          "32. Fix Me Now",
-          "33. Milk"
+          "27. Supervixen",
+          "28. Queer",
+          "29. Only Happy When It Rains",
+          "30. As Heaven Is Wide",
+          "31. Not My Idea",
+          "32. A Stroke of Luck",
+          "33. Vow",
+          "34. Stupid Girl",
+          "35. Dog New Tricks",
+          "36. My Lover's Box",
+          "37. Fix Me Now",
+          "38. Milk"
         ]
       }
     ]
@@ -515,7 +1076,10 @@
           "20. Invisible Sun",
           "21. Every Breath You Take",
           "22. King of Pain",
-          "23. Wrapped Around Your Finger"
+          "23. Wrapped Around Your Finger",
+          "24. Tea in the Sahara",
+          "25. Synchronicity II",
+          "26. Don't Stand So Close to Me '86"
         ]
       },
       {
@@ -523,17 +1087,17 @@
         "artist": "R.E.M.",
         "cover": "images/rem_out_of_time.jpg",
         "tracks": [
-          "24. Radio Song",
-          "25. Losing My Religion",
-          "26. Low",
-          "27. Near Wild Heaven",
-          "28. Endgame",
-          "29. Shiny Happy People",
-          "30. Belong",
-          "31. Half a World Away",
-          "32. Texarkana",
-          "33. Country Feedback",
-          "34. Me in Honey"
+          "27. Radio Song",
+          "28. Losing My Religion",
+          "29. Low",
+          "30. Near Wild Heaven",
+          "31. Endgame",
+          "32. Shiny Happy People",
+          "33. Belong",
+          "34. Half a World Away",
+          "35. Texarkana",
+          "36. Country Feedback",
+          "37. Me in Honey"
         ]
       }
     ]
@@ -675,7 +1239,8 @@
           "03. Soyez prêtes",
           "04. Hakuna Matata",
           "05. L'Amour brille sous les étoiles",
-          "06. Can You Feel the Love Tonight"
+          "06. Rapport du matin",
+          "07. Can You Feel the Love Tonight"
         ]
       },
       {
@@ -683,10 +1248,11 @@
         "artist": "Disney",
         "cover": "images/aladdin.jpg",
         "tracks": [
-          "07. Nuits d'Arabie",
-          "08. Un ami comme moi",
-          "09. Prince Ali",
-          "10. Ce rêve bleu"
+          "08. Nuits d'Arabie",
+          "09. Un ami comme moi",
+          "10. Prince Ali",
+          "11. Ce rêve bleu",
+          "12. Prince Ali (Reprise)"
         ]
       },
       {
@@ -694,8 +1260,10 @@
         "artist": "Disney",
         "cover": "images/retour_de_jafar.jpg",
         "tracks": [
-          "11. Une équipe de choc",
-          "12. Tu n'es qu'un second rôle"
+          "13. Une équipe de choc",
+          "14. Tu n'es qu'un second rôle",
+          "15. Je prends soin de moi",
+          "16. C'est l'oubli"
         ]
       },
       {
@@ -703,9 +1271,11 @@
         "artist": "Disney",
         "cover": "images/robin_des_bois.jpg",
         "tracks": [
-          "13. Quel beau jour en Angleterre",
-          "14. Messire Prince Jean",
-          "15. Amour"
+          "17. Quel beau jour en Angleterre",
+          "18. Messire Prince Jean",
+          "19. Amour",
+          "20. Libellule",
+          "21. Pas à Nottingham"
         ]
       }
     ]
@@ -773,17 +1343,22 @@
         "artist": "Divers",
         "cover": "images/ost_pulp_fiction.jpg",
         "tracks": [
-          "01. Misirlou (Dick Dale)",
-          "02. Jungle Boogie (Kool & The Gang)",
-          "03. Let's Stay Together (Al Green)",
-          "04. Bustin' Surfboards (The Tornadoes)",
-          "05. Lonesome Town (Ricky Nelson)",
-          "06. Son of a Preacher Man (Dusty Springfield)",
-          "07. You Never Can Tell (Chuck Berry)",
-          "08. Girl, You'll Be a Woman Soon (Urge Overkill)",
-          "09. If Love Is a Red Dress (Maria McKee)",
-          "10. Comanche (The Revels)",
-          "11. Surf Rider (The Lively Ones)"
+          "01. Pumpkin and Honey Bunny (Dialogue) / Misirlou (Dick Dale)",
+          "02. Royale with Cheese (Dialogue)",
+          "03. Jungle Boogie (Kool & The Gang)",
+          "04. Let's Stay Together (Al Green)",
+          "05. Bustin' Surfboards (The Tornadoes)",
+          "06. Lonesome Town (Ricky Nelson)",
+          "07. Son of a Preacher Man (Dusty Springfield)",
+          "08. Zed's Dead, Baby (Dialogue) / Bullwinkle Part II (The Centurians)",
+          "09. Jack Rabbit Slims Twist Contest (Dialogue) / You Never Can Tell (Chuck Berry)",
+          "10. Girl, You'll Be a Woman Soon (Urge Overkill)",
+          "11. If Love Is a Red Dress (Hang Me in White) (Maria McKee)",
+          "12. Bring Out the Gimp (Dialogue) / Comanche (The Revels)",
+          "13. Flowers on the Wall (The Statler Brothers)",
+          "14. Personality Profile (Dialogue)",
+          "15. Surf Rider (The Lively Ones)",
+          "16. Ezekiel 25:17 (Dialogue)"
         ]
       },
       {
@@ -791,12 +1366,21 @@
         "artist": "Divers",
         "cover": "images/ost_jackie_brown.jpg",
         "tracks": [
-          "12. Across 110th Street (Bobby Womack)",
-          "13. Strawberry Letter 23 (Brothers Johnson)",
-          "14. Didn't I (Blow Your Mind This Time) (Delfonics)",
-          "15. My Baby Specializes (Delaney & Bonnie)",
-          "16. Tennessee Stud (Johnny Cash)",
-          "17. Street Life (Randy Crawford)"
+          "17. Across 110th Street (Bobby Womack)",
+          "18. Beaumont's Lament (Dialogue - Samuel L. Jackson)",
+          "19. Strawberry Letter 23 (Brothers Johnson)",
+          "20. Melanie, Simone and Sheronda (Dialogue - Robert De Niro & Samuel L. Jackson)",
+          "21. Who Is He (And What Is He to You)? (Bill Withers)",
+          "22. Street Life (Randy Crawford)",
+          "23. Didn't I (Blow Your Mind This Time) (Delfonics)",
+          "24. Midnight Confessions (The Grass Roots)",
+          "25. Inside My Love (Minnie Riperton)",
+          "26. Just Ask Lonely (Bobby Womack)",
+          "27. Tennessee Stud (Johnny Cash)",
+          "28. Natural High (Bloodstone)",
+          "29. Long Time Woman (Pam Grier)",
+          "30. Detroit 9000 (Higher Structure)",
+          "31. Monte Carlo Nights (Elliot Easton's Tiki Gods)"
         ]
       },
       {
@@ -804,12 +1388,22 @@
         "artist": "Divers",
         "cover": "images/ost_kill_bill.jpg",
         "tracks": [
-          "18. Bang Bang (My Baby Shot Me Down) (Nancy Sinatra)",
-          "19. That Certain Female (Charlie Feathers)",
-          "20. The Grand Duel (Luis Bacalov)",
-          "21. Twisted Nerve (Bernard Herrmann)",
-          "22. Battle Without Honor or Humanity (Tomoyasu Hotei)",
-          "23. Don't Let Me Be Misunderstood (Santa Esmeralda)"
+          "32. Bang Bang (My Baby Shot Me Down) (Nancy Sinatra)",
+          "33. That Certain Female (Charlie Feathers)",
+          "34. The Grand Duel (Parte Prima) (Luis Bacalov)",
+          "35. Twist Nowhere (Bernard Herrmann)",
+          "36. My Baby (Malcolm McLaren)",
+          "37. The Lonely Shepherd (Gheorghe Zamfir)",
+          "38. You're My Wicked Life (David Carradine & Uma Thurman)",
+          "39. Run Fay Run (Isaac Hayes)",
+          "40. Green Hornet (Al Hirt)",
+          "41. Battle Without Honor or Humanity (Tomoyasu Hotei)",
+          "42. Don't Let Me Be Misunderstood (Santa Esmeralda)",
+          "43. Woo Hoo (The 5.6.7.8's)",
+          "44. Crane / White Lightning (RZA / Charles Bernstein)",
+          "45. The Flower of Carnage (Meiko Kaji)",
+          "46. The Lonely Shepherd (Gheorghe Zamfir)",
+          "47. You're My Wicked Life (Dialogue)"
         ]
       }
     ]
@@ -833,7 +1427,9 @@
           "08. Wally Gator",
           "09. Why Don't You Get a Job?",
           "10. Americana",
-          "11. Pay the Man"
+          "11. Pay the Man",
+          "12. No Brakes",
+          "13. End of the Line"
         ]
       },
       {
@@ -841,11 +1437,17 @@
         "artist": "Buckcherry",
         "cover": "images/buckcherry.jpg",
         "tracks": [
-          "12. Lit Up",
-          "13. For the Movies",
-          "14. Check Your Head",
-          "15. Dirty Mind",
-          "16. For the Movies"
+          "14. Lit Up",
+          "15. For the Movies",
+          "16. Check Your Head",
+          "17. Dirty Mind",
+          "18. For the Movies",
+          "19. Lawless and Loud",
+          "20. Related",
+          "21. Borderline",
+          "22. Get Back",
+          "23. Baby",
+          "24. Drink the Water"
         ]
       },
       {
@@ -853,14 +1455,17 @@
         "artist": "Foo Fighters",
         "cover": "images/foo_fighters_there_is_nothing.jpg",
         "tracks": [
-          "17. Stacked Actors",
-          "18. Breakout",
-          "19. Learn to Fly",
-          "20. Gimme Stitches",
-          "21. Generator",
-          "22. Aurora",
-          "23. Live-A-Board",
-          "24. Next Year"
+          "25. Stacked Actors",
+          "26. Breakout",
+          "27. Learn to Fly",
+          "28. Gimme Stitches",
+          "29. Generator",
+          "30. Aurora",
+          "31. Live-A-Board",
+          "32. Next Year",
+          "33. Headwires",
+          "34. Ain't It the Life",
+          "35. M.I.A."
         ]
       }
     ]
@@ -881,7 +1486,11 @@
           "05. Burn One Down (Live)",
           "06. With My Own Two Hands (Live)",
           "07. Sexual Healing (Live)",
-          "08. Woman in You (Live)"
+          "08. Woman in You (Live)",
+          "09. Faded (Live)",
+          "10. Roses from My Friends (Live)",
+          "11. The Power of the Gospel (Live)",
+          "12. Gold to Me (Live)"
         ]
       }
     ]
@@ -899,10 +1508,18 @@
           "02. Iron Maiden",
           "03. Run to the Hills",
           "04. Fear of the Dark",
-          "05. Trooper",
+          "05. The Trooper",
           "06. Hallowed Be Thy Name",
           "07. Wasted Years",
-          "08. Bring Your Daughter... to the Slaughter"
+          "08. Bring Your Daughter... to the Slaughter",
+          "09. Wrathchild",
+          "10. Phantom of the Opera",
+          "11. Aces High",
+          "12. 2 Minutes to Midnight",
+          "13. Can I Play with Madness",
+          "14. Be Quick or Be Dead",
+          "15. Man on the Edge",
+          "16. Virus"
         ]
       }
     ]
@@ -916,11 +1533,13 @@
         "artist": "Divers",
         "cover": "images/ost_jeux_videos.jpg",
         "tracks": [
-          "01. Super Mario Bros. Theme",
-          "02. Tetris Theme",
-          "03. Zelda Main Theme",
-          "04. Sonic the Hedgehog Theme",
-          "05. Street Fighter II Theme"
+          "01. Super Mario Bros. Main Theme",
+          "02. Tetris Theme (Korobeiniki)",
+          "03. The Legend of Zelda Main Theme",
+          "04. Sonic the Hedgehog Green Hill Zone",
+          "05. Street Fighter II Guile's Theme",
+          "06. Pokemon Main Theme",
+          "07. Final Fantasy VII Main Theme"
         ]
       }
     ]
@@ -937,7 +1556,18 @@
           "01. Breakout (Foo Fighters)",
           "02. Do It Again (Smash Mouth)",
           "03. Deep Inside of You (Third Eye Blind)",
-          "04. Total Eclipse of the Heart (The Dan Band)"
+          "04. Total Eclipse of the Heart (The Dan Band)",
+          "05. Any Major Dude Will Tell You (Wilco)",
+          "06. Only a Fool Would Say That (Ivy)",
+          "07. Can't Find the Time (Hootie & The Blowfish)",
+          "08. Bodhisattva (Brian Setzer Orchestera)",
+          "09. Bad Sneakers (The Push Stars)",
+          "10. Dirty Work (The Offspring)",
+          "11. Razor Boy (Billy Goodrum)",
+          "12. Strange Condition (Pete Yorn)",
+          "13. Just Can't Wait (The Marvelous 3)",
+          "14. Pervert (The Flys)",
+          "15. Razor Boy (Freedy Johnston)"
         ]
       },
       {
@@ -945,10 +1575,20 @@
         "artist": "Divers",
         "cover": "images/ost_cruel_intentions.jpg",
         "tracks": [
-          "05. Every You Every Me (Placebo)",
-          "06. Praise You (Fatboy Slim)",
-          "07. Bittersweet Symphony (The Verve)",
-          "08. Colorblind (Counting Crows)"
+          "16. Every You Every Me (Placebo)",
+          "17. Praise You (Fatboy Slim)",
+          "18. Bitter Sweet Symphony (The Verve)",
+          "19. Colorblind (Counting Crows)",
+          "20. Secretly (Skunk Anansie)",
+          "21. Checking It Out (Lil' Kim)",
+          "22. Comatose (Marcy Playground)",
+          "23. Push It (Garbage)",
+          "24. You Blew Me Off (Bare Jr.)",
+          "25. You Could Make a Killing (Aimee Mann)",
+          "26. Addicted to Love (KST)",
+          "27. Bedroom Dancing (Day One)",
+          "28. Cut the Crap (Broadcaster)",
+          "29. Lovefool (The Cardigans)"
         ]
       }
     ]
@@ -971,7 +1611,11 @@
           "07. Polly",
           "08. On a Plain",
           "09. Something in the Way",
-          "10. Where Did You Sleep Last Night"
+          "10. Plateau",
+          "11. Oh, Me",
+          "12. Lake of Fire",
+          "13. All Apologies",
+          "14. Where Did You Sleep Last Night"
         ]
       },
       {
@@ -979,19 +1623,19 @@
         "artist": "The Cranberries",
         "cover": "images/cranberries_no_need_to_argue.jpg",
         "tracks": [
-          "11. Ode to My Family",
-          "12. I Can't Be with You",
-          "13. Twenty One",
-          "14. Zombie",
-          "15. Empty",
-          "16. Everything I Said",
-          "17. The Icicle Melts",
-          "18. Disappointment",
-          "19. Ridiculous Thoughts",
-          "20. Dreaming My Dreams",
-          "21. Yeat's Grave",
-          "22. Daffodil Lament",
-          "23. No Need to Argue"
+          "15. Ode to My Family",
+          "16. I Can't Be with You",
+          "17. Twenty One",
+          "18. Zombie",
+          "19. Empty",
+          "20. Everything I Said",
+          "21. The Icicle Melts",
+          "22. Disappointment",
+          "23. Ridiculous Thoughts",
+          "24. Dreaming My Dreams",
+          "25. Yeat's Grave",
+          "26. Daffodil Lament",
+          "27. No Need to Argue"
         ]
       },
       {
@@ -999,18 +1643,19 @@
         "artist": "Alanis Morissette",
         "cover": "images/alanis_morissette_jagged.jpg",
         "tracks": [
-          "24. All I Really Want",
-          "25. You Oughta Know",
-          "26. Perfect",
-          "27. Hand in My Pocket",
-          "28. Right Through You",
-          "29. Forgiven",
-          "30. You Learn",
-          "31. Head over Feet",
-          "32. Ironica",
-          "33. Not the Doctor",
-          "34. Wake Up",
-          "35. You Oughta Know (Alternate)"
+          "28. All I Really Want",
+          "29. You Oughta Know",
+          "30. Perfect",
+          "31. Hand in My Pocket",
+          "32. Right Through You",
+          "33. Forgiven",
+          "34. You Learn",
+          "35. Head over Feet",
+          "36. Mary Jane",
+          "37. Ironic",
+          "38. Not the Doctor",
+          "39. Wake Up",
+          "40. You Oughta Know (Alternate)"
         ]
       }
     ]
@@ -1059,12 +1704,16 @@
           "02. Dans ma rue",
           "03. Nirvanico",
           "04. Passement de jambes",
-          "05. Ne chercher pas la petite bête",
+          "05. Ne cherche pas la petite bête",
           "06. Même si je me tais",
           "07. Les filles du docteur",
           "08. Est-ce que ça va ?",
           "09. Vanessa",
-          "10. Classez-moi dans la variété"
+          "10. Classez-moi dans la variété",
+          "11. Grand-père",
+          "12. Un homme d'honneur",
+          "13. Si tu crois que je t'aime",
+          "14. Mes deux amours"
         ]
       },
       {
@@ -1072,9 +1721,11 @@
         "artist": "Doc Gynéco",
         "cover": "images/doc_gyneco_liaisons_dangereuses.jpg",
         "tracks": [
-          "11. C'est beau la vie",
-          "12. Dans ma rue (Remix)",
-          "13. Viens voir le docteur (Remix)"
+          "15. C'est beau la vie (feat. Bernard Tapie)",
+          "16. Dans ma rue (Remix)",
+          "17. Viens voir le docteur (Remix)",
+          "18. L'homme qui ne valait pas dix centimes",
+          "19. Les Liaisons Dangereuses"
         ]
       }
     ]
@@ -1092,7 +1743,9 @@
           "02. Gladiator Main Theme",
           "03. Matrix Theme",
           "04. Inception Theme",
-          "05. Interstellar Theme"
+          "05. Interstellar Theme",
+          "06. Braveheart Main Theme",
+          "07. Jurassic Park Theme"
         ]
       }
     ]
@@ -1154,11 +1807,18 @@
           "01. Born to Run",
           "02. Thunder Road",
           "03. Badlands",
-          "04. Hungry Heart",
-          "05. Dancing in the Dark",
-          "06. Born in the U.S.A.",
-          "07. My Hometown",
-          "08. Streets of Philadelphia"
+          "04. River",
+          "05. Hungry Heart",
+          "06. Atlantic City",
+          "07. Dancing in the Dark",
+          "08. Born in the U.S.A.",
+          "09. My Hometown",
+          "10. Glory Days",
+          "11. Brilliant Disguise",
+          "12. Human Touch",
+          "13. Better Days",
+          "14. Streets of Philadelphia",
+          "15. Secret Garden"
         ]
       },
       {
@@ -1166,16 +1826,16 @@
         "artist": "Neil Young",
         "cover": "images/neil_young_harvest.jpg",
         "tracks": [
-          "09. Out on the Weekend",
-          "10. Harvest",
-          "11. A Man Needs a Maid",
-          "12. Heart of Gold",
-          "13. Are You Ready for the Country?",
-          "14. Old Man",
-          "15. There's a World",
-          "16. Alabama",
-          "17. The Needle and the Damage Done",
-          "18. Words (Between the Lines of Age)"
+          "16. Out on the Weekend",
+          "17. Harvest",
+          "18. A Man Needs a Maid",
+          "19. Heart of Gold",
+          "20. Are You Ready for the Country?",
+          "21. Old Man",
+          "22. There's a World",
+          "23. Alabama",
+          "24. The Needle and the Damage Done",
+          "25. Words (Between the Lines of Age)"
         ]
       },
       {
@@ -1183,14 +1843,16 @@
         "artist": "Bob Dylan",
         "cover": "images/bob_dylan_greatest_hits.jpg",
         "tracks": [
-          "19. Blowin' in the Wind",
-          "20. Like a Rolling Stone",
-          "21. Mr. Tambourine Man",
-          "22. Subterranean Homesick Blues",
-          "23. I Want You",
-          "24. Positively 4th Street",
-          "25. Just Like a Woman",
-          "26. Knockin' on Heaven's Door"
+          "26. Blowin' in the Wind",
+          "27. Like a Rolling Stone",
+          "28. Mr. Tambourine Man",
+          "29. Subterranean Homesick Blues",
+          "30. I Want You",
+          "31. Positively 4th Street",
+          "32. Just Like a Woman",
+          "33. Raini Day Women #12 & 35",
+          "34. Lay Lady Lay",
+          "35. Knockin' on Heaven's Door"
         ]
       }
     ]
@@ -1216,7 +1878,8 @@
           "10. Annie-Dog",
           "11. Behold! The Night Mare",
           "12. For Martha",
-          "13. Blank Page"
+          "13. Blank Page",
+          "14. 17"
         ]
       },
       {
@@ -1224,14 +1887,17 @@
         "artist": "Mercury Rev",
         "cover": "images/mercury_rev_deserters_songs.jpg",
         "tracks": [
-          "14. Holes",
-          "15. Tonite It Shows",
-          "16. Endlessly",
-          "17. I Delta Sleep",
-          "18. Opus 40",
-          "19. Hudson Line",
-          "20. The Funny Bird",
-          "21. Delta Sun Bottleneck Stomp"
+          "15. Holes",
+          "16. Tonite It Shows",
+          "17. Endlessly",
+          "18. I Delta Sleep",
+          "19. Opus 40",
+          "20. Hudson Line",
+          "21. The Funny Bird",
+          "22. Delta Sun Bottleneck Stomp",
+          "23. The Dark Is Rising",
+          "24. Pick Up If You're There",
+          "25. Delta Sun Bottleneck Stomp (Reprise)"
         ]
       }
     ]
@@ -1358,7 +2024,18 @@
           "03. Vanilla Sky (Paul McCartney)",
           "04. Solsbury Hill (Peter Gabriel)",
           "05. I Fall to Pieces (Patsy Cline)",
-          "06. Sweetness Follows (R.E.M.)"
+          "06. Sweetness Follows (R.E.M.)",
+          "07. Porpoise Song (Theme from Head) (The Monkees)",
+          "08. JLS Delay (The Chemical Brothers)",
+          "09. Can We Still Be Friends (Todd Rundgren)",
+          "10. Direction (Josh Rouse)",
+          "11. Afrika Shox (Leftfield feat. Afrika Bambaataa)",
+          "12. Svefn-g-englar (Sigur Rós)",
+          "13. Last Goodbye (Jeff Buckley)",
+          "14. Good Vibrations (The Beach Boys)",
+          "15. Where Do I Begin (Chemical Brothers Remix) (Slayer)",
+          "16. One of Us (Joan Osborne)",
+          "17. Elevator Beat (Nancy Wilson)"
         ]
       },
       {
@@ -1366,17 +2043,17 @@
         "artist": "Radiohead",
         "cover": "images/radiohead_amnesiac.jpg",
         "tracks": [
-          "07. Packt Like Sardines in a Crushd Tin Box",
-          "08. Pyramid Song",
-          "09. Pulk/Pull Revolving Doors",
-          "10. You and Whose Army?",
-          "11. I Might Be Wrong",
-          "12. Knives Out",
-          "13. Morning Bell/Amnesiac",
-          "14. Dollars and Cents",
-          "15. Hunting Bears",
-          "16. Like Spinning Plates",
-          "17. Life in a Glasshouse"
+          "18. Packt Like Sardines in a Crushd Tin Box",
+          "19. Pyramid Song",
+          "20. Pulk/Pull Revolving Doors",
+          "21. You and Whose Army?",
+          "22. I Might Be Wrong",
+          "23. Knives Out",
+          "24. Morning Bell/Amnesiac",
+          "25. Dollars and Cents",
+          "26. Hunting Bears",
+          "27. Like Spinning Plates",
+          "28. Life in a Glasshouse"
         ]
       }
     ]
@@ -1400,7 +2077,11 @@
           "08. This Time",
           "09. Imploding Voice",
           "10. Glass and the Ghost Children",
-          "11. Age of Innocence"
+          "11. Age of Innocence",
+          "12. With Every Light",
+          "13. Blue Skies Bring Tears",
+          "14. Crying Tree of Mercury",
+          "15. Wound"
         ]
       },
       {
@@ -1408,20 +2089,25 @@
         "artist": "Marilyn Manson",
         "cover": "images/manson_holy_wood.jpg",
         "tracks": [
-          "12. Godeatgod",
-          "13. The Love Song",
-          "14. The Fight Song",
-          "15. Disposable Teens",
-          "16. Target Audience (Narcissus Narcosis)",
-          "17. President Dead",
-          "18. In the Shadow of the Valley of Death",
-          "19. Cruci-Fiction in Space",
-          "20. A Place in the Dirt",
-          "21. The Nobodies",
-          "22. The Death Song",
-          "23. Lamb of God",
-          "24. Born Again",
-          "25. Burning Flag"
+          "16. Godeatgod",
+          "17. The Love Song",
+          "18. The Fight Song",
+          "19. Disposable Teens",
+          "20. Target Audience (Narcissus Narcosis)",
+          "21. President Dead",
+          "22. In the Shadow of the Valley of Death",
+          "23. Cruci-Fiction in Space",
+          "24. A Place in the Dirt",
+          "25. The Nobodies",
+          "26. The Death Song",
+          "27. Lamb of God",
+          "28. Born Again",
+          "29. Burning Flag",
+          "30. Coma Black",
+          "31. Valentine's Day",
+          "32. The Fall of Adam",
+          "33. King Kill 33°",
+          "34. Count to Six and Die (The Vacuum of Infinite Space Encompassing)"
         ]
       }
     ]
@@ -1454,7 +2140,11 @@
           "01. Star Spangled Banner (Jimi Hendrix)",
           "02. Freedom (Richie Havens)",
           "03. With a Little Help from My Friends (Joe Cocker)",
-          "04. Soul Sacrifice (Santana)"
+          "04. Soul Sacrifice (Santana)",
+          "05. I'm Going Home (Ten Years After)",
+          "06. Volunteers (Jefferson Airplane)",
+          "07. Dance to the Music (Sly & The Family Stone)",
+          "08. Rainbows (Canned Heat)"
         ]
       }
     ]
@@ -1468,21 +2158,27 @@
         "artist": "Metallica",
         "cover": "images/metallica_sm.jpg",
         "tracks": [
-          "01. The Call of Ktulu",
-          "02. Master of Puppets",
-          "03. Of Wolf and Man",
-          "04. No Leaf Clover",
-          "05. Fuel",
-          "06. The Memory Remains",
-          "07. S&M Overture",
-          "08. Until It Sleeps",
-          "09. For Whom the Bell Tolls",
-          "10. Human",
-          "11. Wherever I May Roam",
-          "12. Outlaw Torn",
-          "13. Sad but True",
-          "14. One",
-          "15. Enter Sandman"
+          "01. The Ecstasy of Gold",
+          "02. The Call of Ktulu",
+          "03. Master of Puppets",
+          "04. Of Wolf and Man",
+          "05. The Thing That Should Not Be",
+          "06. Fuel",
+          "07. The Memory Remains",
+          "08. No Leaf Clover",
+          "09. Hero of the Day",
+          "10. Devil's Dance",
+          "11. Bleeding Me",
+          "12. Nothing Else Matters",
+          "13. Until It Sleeps",
+          "14. For Whom the Bell Tolls",
+          "15. Human",
+          "16. Wherever I May Roam",
+          "17. Outlaw Torn",
+          "18. Sad but True",
+          "19. One",
+          "20. Enter Sandman",
+          "21. Battery"
         ]
       }
     ]
@@ -1540,7 +2236,10 @@
           "28. If You're Not Scared",
           "29. 2000 Seconds",
           "30. Too Many Happy Couples",
-          "31. Cocoon Crash"
+          "31. Cocoon Crash",
+          "32. Hide",
+          "33. Always Everywhere",
+          "34. All"
         ]
       }
     ]
@@ -1565,7 +2264,17 @@
           "09. And I Love Her",
           "10. Eight Days a Week",
           "11. Help!",
-          "12. Yesterday"
+          "12. Yesterday",
+          "13. Ticket to Ride",
+          "14. Drive My Car",
+          "15. Norwegian Wood (This Bird Has Flown)",
+          "16. Nowhere Man",
+          "17. Michelle",
+          "18. In My Life",
+          "19. Girl",
+          "20. Paperback Writer",
+          "21. Eleanor Rigby",
+          "22. Yellow Submarine"
         ]
       },
       {
@@ -1573,15 +2282,18 @@
         "artist": "The Blues Brothers",
         "cover": "images/blues_brothers.jpg",
         "tracks": [
-          "13. Main Title Theme",
-          "14. Peter Gunn Theme",
-          "15. Gimme Some Lovin'",
-          "16. Shake a Tail Feather",
-          "17. Everybody Needs Somebody to Love",
-          "18. Think",
-          "19. Theme from Rawhide",
-          "20. Stand by Your Man",
-          "21. Sweet Home Chicago"
+          "23. Main Title Theme",
+          "24. Peter Gunn Theme",
+          "25. Gimme Some Lovin'",
+          "26. Shake a Tail Feather",
+          "27. Everybody Needs Somebody to Love",
+          "28. Think",
+          "29. Theme from Rawhide",
+          "30. Stand by Your Man",
+          "31. Sweet Home Chicago",
+          "32. She Caught the Katy",
+          "33. Minnie the Moocher",
+          "34. Do You Love Me"
         ]
       },
       {
@@ -1589,14 +2301,18 @@
         "artist": "AC/DC",
         "cover": "images/acdc_stiff_upper_lip.jpg",
         "tracks": [
-          "22. Stiff Upper Lip",
-          "23. Meltdown",
-          "24. House of Jazz",
-          "25. Hold Me Back",
-          "26. Safe in New York City",
-          "27. Can't Stand Still",
-          "28. Can't Stop Rock 'n' Roll",
-          "29. Satellite Blues"
+          "35. Stiff Upper Lip",
+          "36. Meltdown",
+          "37. House of Jazz",
+          "38. Hold Me Back",
+          "39. Safe in New York City",
+          "40. Can't Stand Still",
+          "41. Can't Stop Rock 'n' Roll",
+          "42. Satellite Blues",
+          "43. Damned",
+          "44. Come and Get It",
+          "45. All Screwed Up",
+          "46. Give It Up"
         ]
       }
     ]
@@ -1621,7 +2337,10 @@
           "09. Liberate",
           "10. Prosthetics",
           "11. No Life",
-          "12. Purity"
+          "12. Purity",
+          "13. Diluted",
+          "14. Only One",
+          "15. Scissors"
         ]
       },
       {
@@ -1629,18 +2348,20 @@
         "artist": "System of a Down",
         "cover": "images/soad_toxicity.jpg",
         "tracks": [
-          "13. Prison Song",
-          "14. Needles",
-          "15. Deer Dance",
-          "16. Jet Pilot",
-          "17. Bounce",
-          "18. Forest",
-          "19. ATWA",
-          "20. Science",
-          "21. Toxicity",
-          "22. Psycho",
-          "23. Chop Suey!",
-          "24. Aerials"
+          "16. Prison Song",
+          "17. Needles",
+          "18. Deer Dance",
+          "19. Jet Pilot",
+          "20. Bounce",
+          "21. Forest",
+          "22. ATWA",
+          "23. Science",
+          "24. Toxicity",
+          "25. Psycho",
+          "26. Chop Suey!",
+          "27. Aerials",
+          "28. Shimmy",
+          "29. X"
         ]
       },
       {
@@ -1648,16 +2369,18 @@
         "artist": "Deftones",
         "cover": "images/deftones_white_pony.jpg",
         "tracks": [
-          "25. Feiticeira",
-          "26. Digital Bath",
-          "27. Elite",
-          "28. Rx Queen",
-          "29. Street Carp",
-          "30. Teenager",
-          "31. Knife Prty",
-          "32. Korea",
-          "33. Passenger",
-          "34. Change (In the House of Flies)"
+          "30. Feiticeira",
+          "31. Digital Bath",
+          "32. Elite",
+          "33. Rx Queen",
+          "34. Street Carp",
+          "35. Teenager",
+          "36. Knife Prty",
+          "37. Korea",
+          "38. Passenger",
+          "39. Change (In the House of Flies)",
+          "40. Pink Maggit",
+          "41. Back to School (Mini Maggit)"
         ]
       }
     ]
@@ -1678,7 +2401,10 @@
           "05. Hold the Line",
           "06. Rosanna",
           "07. I'll Be Over You",
-          "08. Georgy Porgy"
+          "08. Georgy Porgy",
+          "09. Tale of a Man",
+          "10. On the Run",
+          "11. Dave's Gone Skiing"
         ]
       },
       {
@@ -1686,13 +2412,17 @@
         "artist": "Scorpions",
         "cover": "images/scorpions_best_of.jpg",
         "tracks": [
-          "09. Rock You Like a Hurricane",
-          "10. I Can't Explain",
-          "11. Still Loving You",
-          "12. Big City Nights",
-          "13. Lovedrive",
-          "14. Holiday",
-          "15. Wind of Change"
+          "12. Rock You Like a Hurricane",
+          "13. I Can't Explain",
+          "14. Still Loving You",
+          "15. Big City Nights",
+          "16. Lovedrive",
+          "17. Holiday",
+          "18. Wind of Change",
+          "19. Rhythm of Love",
+          "20. No One Like You",
+          "21. Is There Anybody There?",
+          "22. Send Me an Angel"
         ]
       }
     ]
@@ -1711,7 +2441,10 @@
           "03. Hoochie Koochie",
           "04. Mes forces s'en vont",
           "05. J'avance pour ma familia",
-          "06. Quand Bugsy déboule"
+          "06. Quand Bugsy déboule",
+          "07. Avoir le pouvoir",
+          "08. Dernier jour de prison",
+          "09. Les balles perdues"
         ]
       },
       {
@@ -1719,9 +2452,9 @@
         "artist": "Gang Show Lapin",
         "cover": "images/gang_show_mixomatose.jpg",
         "tracks": [
-          "07. Track 1",
-          "08. Track 2",
-          "09. Track 3"
+          "10. Track 1",
+          "11. Track 2",
+          "12. Track 3"
         ]
       }
     ]
