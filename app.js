@@ -33,10 +33,12 @@ function getBorderColor(genre) {
   return genreColors[cleanGenre] || genreColors['DEFAULT'];
 }
 
-// Chargement des données depuis data.json
-fetch('data.json')
+// Chargement sécurisé depuis ./data.json
+fetch('./data.json')
   .then(response => {
-    if (!response.ok) throw new Error("Erreur de chargement du fichier JSON");
+    if (!response.ok) {
+      throw new Error(`Erreur réseau (${response.status} ${response.statusText})`);
+    }
     return response.json();
   })
   .then(data => {
@@ -44,8 +46,11 @@ fetch('data.json')
     renderMDList();
   })
   .catch(error => {
-    console.error(error);
-    app.innerHTML = '<p style="text-align:center; padding:20px; color:red;">Erreur lors du chargement des données (data.json introuvable).</p>';
+    console.error("Détail de l'erreur :", error);
+    app.innerHTML = `<p style="text-align:center; padding:20px; color:#e63946;">
+      Impossible de charger <strong>data.json</strong>.<br><br>
+      <small style="color:#6b7280;">(${error.message})</small>
+    </p>`;
   });
 
 function renderMDList() {
@@ -86,7 +91,7 @@ function openMD(index) {
         <img class="item-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'48\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/></svg>'">
         <div class="item-details">
           <div class="item-title">${album.title}</div>
-          <div class="item-sub">${album.artist} • ${album.tracks.length} pistes</div>
+          <div class="item-sub">${album.artist} • ${album.tracks ? album.tracks.length : 0} pistes</div>
         </div>
       </div>
     `;
@@ -111,13 +116,18 @@ function openAlbum(aIndex) {
       <ul class="track-list">
   `;
   
-  album.tracks.forEach((track) => {
-    html += `
-      <li class="track-item">
-        <span>${track}</span>
-      </li>
-    `;
-  });
+  if (album.tracks && album.tracks.length > 0) {
+    album.tracks.forEach((track) => {
+      html += `
+        <li class="track-item">
+          <span>${track}</span>
+        </li>
+      `;
+    });
+  } else {
+    html += '<li class="track-item" style="color:var(--text-sub); italic;">Aucune liste de pistes renseignée.</li>';
+  }
+
   html += '</ul></div>';
   app.innerHTML = html;
 }
