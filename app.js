@@ -1,39 +1,11 @@
-// Remplace catalogData par l'ensemble de tes données (26 MiniDiscs)
-const catalogData = [
-  {
-    "genre": "Compil 90",
-    "albums": [
-      { "title": "Compil 90", "artist": "Divers", "cover": "images/compil90.jpg", "tracks": [] }
-    ]
-  },
-  {
-    "genre": "Humour",
-    "albums": [
-      {
-        "title": "Boulversifiant",
-        "artist": "Les Inconnus",
-        "cover": "images/les_inconnus.jpg",
-        "tracks": [
-          "01. Auteuil Neuilly Passy", "02. C'est toi que je t'aime", "03. Rap-Tout (Vampires)",
-          "04. Is Good", "05. Vice Et Versa", "06. C'est ton destin", "07. Biouman", "08. Les insectes sont nos amis"
-        ]
-      }
-    ]
-  },
-  {
-    "genre": "Rock",
-    "albums": [
-      {
-        "title": "Bury the Hatchet",
-        "artist": "The Cranberries",
-        "cover": "images/cranberries_bury.jpg",
-        "tracks": ["01. Animal Instinct", "02. Loud and Clear", "03. Promises"]
-      }
-    ]
-  }
-];
+let catalogData = [];
+let currentMD = null;
 
-// Palette de couleurs personnalisées par genre
+const app = document.getElementById('app');
+const backBtn = document.getElementById('back-btn');
+const headerTitle = document.getElementById('header-title');
+
+// Palette de couleurs personnalisées par genre musical
 const genreColors = {
   'ROCK': '#e63946',
   'ROCK FRANÇAIS': '#d90429',
@@ -61,10 +33,20 @@ function getBorderColor(genre) {
   return genreColors[cleanGenre] || genreColors['DEFAULT'];
 }
 
-let currentMD = null;
-const app = document.getElementById('app');
-const backBtn = document.getElementById('back-btn');
-const headerTitle = document.getElementById('header-title');
+// Chargement des données depuis data.json
+fetch('data.json')
+  .then(response => {
+    if (!response.ok) throw new Error("Erreur de chargement du fichier JSON");
+    return response.json();
+  })
+  .then(data => {
+    catalogData = data;
+    renderMDList();
+  })
+  .catch(error => {
+    console.error(error);
+    app.innerHTML = '<p style="text-align:center; padding:20px; color:red;">Erreur lors du chargement des données (data.json introuvable).</p>';
+  });
 
 function renderMDList() {
   currentMD = null;
@@ -101,7 +83,7 @@ function openMD(index) {
   currentMD.albums.forEach((album, aIndex) => {
     html += `
       <div class="list-item" style="border-left-color: ${borderColor};" onclick="openAlbum(${aIndex})">
-        <img class="item-thumb" src="${album.cover}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'48\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/></svg>'">
+        <img class="item-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'48\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/></svg>'">
         <div class="item-details">
           <div class="item-title">${album.title}</div>
           <div class="item-sub">${album.artist} • ${album.tracks.length} pistes</div>
@@ -120,7 +102,7 @@ function openAlbum(aIndex) {
   let html = `
     <div class="track-container">
       <div class="album-header">
-        <img class="album-cover-large" src="${album.cover}" onerror="this.style.display='none'">
+        <img class="album-cover-large" src="${album.cover || ''}" onerror="this.style.display='none'">
         <div>
           <div style="font-weight:700; font-size:1rem;">${album.title}</div>
           <div style="color:var(--text-sub); font-size:0.85rem; margin-top:2px;">${album.artist}</div>
@@ -147,5 +129,3 @@ backBtn.addEventListener('click', () => {
     renderMDList();
   }
 });
-
-renderMDList();
