@@ -1,3 +1,4 @@
+[
   {
     "genre": "Jeunesse",
     "md_cover": "images/md_22.jpg",
@@ -512,12 +513,11 @@
           "15. You and Whose Army?",
           "16. I Might Be Wrong",
           "17. Knives Out",
-          "18. Morning Bell/AmnesiacVoici le fichier `data.json` complet avec **l'intégralité des tracklists réelles et exhaustives** pour chaque album et BO (OST), sans aucun raccourci ni oubli, et avec la numérotation continue par MiniDisc.
-
-*(Note : Pour la piste Jeunesse "Debo & Nico" et la cassette "Gang Show Lapin", les titres exacts des morceaux n'étant pas référencés dans les bases discographiques officielles, les intitulés génériques ont été conservés).*
-
-```json
-[
+          "18. Morning Bell/Amnesiac"
+        ]
+      }
+    ]
+  },
   {
     "genre": "Compil 90",
     "md_cover": "images/md_01.jpg",
