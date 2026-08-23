@@ -5,7 +5,6 @@ const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
 const headerTitle = document.getElementById('header-title');
 
-// Palette de couleurs personnalisées par genre musical
 const genreColors = {
   'ROCK': '#e63946',
   'ROCK FRANÇAIS': '#d90429',
@@ -33,12 +32,9 @@ function getBorderColor(genre) {
   return genreColors[cleanGenre] || genreColors['DEFAULT'];
 }
 
-// Chargement sécurisé depuis ./data.json
 fetch('./data.json')
   .then(response => {
-    if (!response.ok) {
-      throw new Error(`Erreur réseau (${response.status} ${response.statusText})`);
-    }
+    if (!response.ok) throw new Error(`Erreur réseau (${response.status})`);
     return response.json();
   })
   .then(data => {
@@ -65,7 +61,7 @@ function renderMDList() {
 
     html += `
       <div class="list-item" style="border-left-color: ${borderColor};" onclick="openMD(${index})">
-        <div class="item-icon">💽</div>
+        <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
         <div class="item-details">
           <div class="item-tag" style="color: ${borderColor};">${md.genre || 'MINIDISC'}</div>
           <div class="item-title">${albumTitles}</div>
@@ -88,7 +84,7 @@ function openMD(index) {
   currentMD.albums.forEach((album, aIndex) => {
     html += `
       <div class="list-item" style="border-left-color: ${borderColor};" onclick="openAlbum(${aIndex})">
-        <img class="item-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'48\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/></svg>'">
+        <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'52\\' height=\\'52\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/></svg>'">
         <div class="item-details">
           <div class="item-title">${album.title}</div>
           <div class="item-sub">${album.artist} • ${album.tracks ? album.tracks.length : 0} pistes</div>
@@ -125,7 +121,7 @@ function openAlbum(aIndex) {
       `;
     });
   } else {
-    html += '<li class="track-item" style="color:var(--text-sub); italic;">Aucune liste de pistes renseignée.</li>';
+    html += '<li class="track-item" style="color:var(--text-sub); font-style:italic;">Aucune liste de pistes renseignée.</li>';
   }
 
   html += '</ul></div>';
