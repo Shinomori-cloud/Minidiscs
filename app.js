@@ -33,6 +33,18 @@ function getBorderColor(genre) {
   return genreColors[cleanGenre] || genreColors['DEFAULT'];
 }
 
+// Transforme "Album 1 / Album 2" en lignes séparées sans "/"
+function formatAlbumTitles(titleString) {
+  if (!titleString) return '';
+  if (titleString.includes('/')) {
+    return titleString
+      .split('/')
+      .map(t => `<div class="title-line">${t.trim()}</div>`)
+      .join('');
+  }
+  return `<div class="title-line">${titleString}</div>`;
+}
+
 fetch('./data.json')
   .then(response => {
     if (!response.ok) throw new Error(`Erreur réseau (${response.status})`);
@@ -64,7 +76,7 @@ function renderMDList(pushState = true) {
   catalogData.forEach((md, index) => {
     const borderColor = getBorderColor(md.genre);
     
-    const displayTitle = (md.albums && md.albums.length > 0) 
+    const rawTitle = (md.albums && md.albums.length > 0) 
       ? md.albums.map(a => a.title).join(' / ') 
       : (md.title || 'MiniDisc sans titre');
 
@@ -73,7 +85,7 @@ function renderMDList(pushState = true) {
         <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
         <div class="item-details">
           <div class="item-tag" style="color: ${borderColor};">${md.genre || 'MINIDISC'}</div>
-          <div class="item-title">${displayTitle}</div>
+          <div class="item-title">${formatAlbumTitles(rawTitle)}</div>
         </div>
       </div>
     `;
