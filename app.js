@@ -1,7 +1,6 @@
-// Variable globale pour stocker la collection chargée depuis data.json
 let catalogData = [];
 
-// Fonction automatique pour alterner la couleur des titres séparés par "/"
+// Alternance automatique des couleurs pour les titres séparés par "/"
 function formatAlbumTitles(titleString) {
   if (!titleString) return '';
   if (titleString.includes('/')) {
@@ -19,10 +18,10 @@ const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
 const headerTitle = document.getElementById('header-title');
 
-// Chargement automatique des données depuis data.json
+// Chargement de data.json
 fetch('./data.json')
   .then(response => {
-    if (!response.ok) throw new Error(`Erreur de chargement (${response.status})`);
+    if (!response.ok) throw new Error(`Erreur réseau (${response.status})`);
     return response.json();
   })
   .then(data => {
@@ -30,8 +29,8 @@ fetch('./data.json')
     renderList();
   })
   .catch(error => {
-    console.error("Erreur lors du chargement des données :", error);
-    app.innerHTML = `<p style="text-align:center; padding: 20px;">Erreur de chargement du fichier data.json</p>`;
+    console.error("Erreur :", error);
+    app.innerHTML = `<p style="text-align:center; padding: 20px;">Erreur de chargement de data.json</p>`;
   });
 
 // Affichage de la liste principale
@@ -42,16 +41,34 @@ function renderList() {
   let html = '<div class="list-container">';
   
   catalogData.forEach((item, index) => {
-    const imgClass = item.type === 'md' ? 'md-thumb' : 'album-thumb';
+    // Extraction intelligente des propriétés selon la structure de l'objet
+    const type = item.type || (item.albums ? 'md' : 'album');
+    const imgClass = type === 'md' ? 'md-thumb' : 'album-thumb';
+    const tag = item.tag || item.genre || 'MINIDISC';
     const tagColor = item.tagColor || '#7b2cbf';
+    const cover = item.cover || item.image || item.coverUrl || '';
     
+    // Titre : soit direct, soit construit à partir des albums du MD
+    let title = item.title || item.name || '';
+    if (!title && item.albums && Array.isArray(item.albums)) {
+      title = item.albums.map(a => a.title || a.name || a).join(' / ');
+    }
+    
+    // Sous-titre : soit direct, soit liste des artistes
+    let sub = item.sub || item.subtitle || item.artist || '';
+    if (!sub && item.albums && Array.isArray(item.albums)) {
+      const count = item.albums.length;
+      const artists = item.albums.map(a => a.artist).filter(Boolean).join(' / ');
+      sub = `${count} Album${count > 1 ? 's' : ''}${artists ? ' • ' + artists : ''}`;
+    }
+
     html += `
       <div class="list-item" onclick="renderDetails(${index})">
-        <img src="${item.cover}" alt="${item.title}" class="${imgClass}" />
+        ${cover ? `<img src="${cover}" alt="${title}" class="${imgClass}" />` : ''}
         <div class="item-details">
-          <span class="item-tag" style="color: ${tagColor}">${item.tag}</span>
-          <h2 class="item-title">${formatAlbumTitles(item.title)}</h2>
-          <span class="item-sub">${item.sub}</span>
+          <span class="item-tag" style="color: ${tagColor}">${tag}</span>
+          <h2 class="item-title">${formatAlbumTitles(title)}</h2>
+          <span class="item-sub">${sub}</span>
         </div>
       </div>
     `;
@@ -65,28 +82,58 @@ function renderList() {
 function renderDetails(index) {
   const item = catalogData[index];
   if (backBtn) backBtn.classList.remove('hidden');
-  if (headerTitle) headerTitle.textContent = item.tag;
+  
+  const tag = item.tag || item.genre || 'MINIDISC';
+  if (headerTitle) headerTitle.textContent = tag;
+  
+  const cover = item.cover || item.image || item.coverUrl || '';
+  
+  let title = item.title || item.name || '';
+  if (!title && item.albums && Array.isArray(item.albums)) {
+    title = item.albums.map(a => a.title || a.name || a).join(' / ');
+  }
+  
+  let sub = item.sub || item.subtitle || item.artist || '';
+  if (!sub && item.albums && Array.isArray(item.albums)) {
+    const artists = item.albums.map(a => a.artist).filter(Boolean).join(' / ');
+    sub = artists;
+  }
   
   let html = `
     <div class="track-container">
       <div class="album-header">
-        <img src="${item.cover}" alt="${item.title}" class="album-cover-large" />
+        ${cover ? `<img src="${cover}" alt="${title}" class="album-cover-large" />` : ''}
         <div>
-          <h2 class="item-title">${formatAlbumTitles(item.title)}</h2>
-          <span class="item-sub">${item.sub}</span>
+          <h2 class="item-title">${formatAlbumTitles(title)}</h2>
+          <span class="item-sub">${sub}</span>
         </div>
       </div>
       <ul class="track-list">
   `;
   
-  if (item.tracks && item.tracks.length > 0) {
-    item.tracks.forEach(track => {
+  // Extraction des pistes (soit sous item.tracks, soit imbriquées dans item.albums)
+  let tracks = item.tracks || [];
+  if (tracks.length === 0 && item.albums) {
+    item.albums.forEach(alb => {
+      if (alb.tracks) {
+        tracks = tracks.concat(alb.tracks);
+      }
+    });
+  }
+
+  if (tracks.length > 0) {
+    tracks.forEach((track, idx) => {
+      const num = track.number || track.trackNumber || (idx + 1);
+      const trackTitle = track.title || track.name || track;
+      const artist = track.artist ? `— <em>${track.artist}</em>` : '';
       html += `
         <li class="track-item">
-          <strong>${track.number}.</strong> ${track.title} ${track.artist ? `— <em>${track.artist}</em>` : ''}
+          <strong>${num}.</strong> ${trackTitle} ${artist}
         </li>
       `;
     });
+  } else {
+    html += `<li class="track-item">Aucune piste répertoriée.</li>`;
   }
   
   html += `
@@ -97,7 +144,7 @@ function renderDetails(index) {
   app.innerHTML = html;
 }
 
-// Gestion du bouton retour
+// Bouton retour
 if (backBtn) {
   backBtn.addEventListener('click', renderList);
 }
