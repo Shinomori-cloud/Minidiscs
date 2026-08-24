@@ -30,6 +30,11 @@
 
   <main id="app"></main>
 
-  <script src="app.js"></script>
+  <!-- Chargement dynamique du JS sans cache -->
+  <script>
+    const jsScript = document.createElement('script');
+    jsScript.src = 'app.js?v=' + Date.now();
+    document.body.appendChild(jsScript);
+  </script>
 </body>
 </html>
