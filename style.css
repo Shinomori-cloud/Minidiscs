@@ -167,8 +167,9 @@ header {
 .refresh-btn {
   background: #ff007f;
   border: 1px solid #000;
-  border-radius: 5px;
-  padding: 3px 5px;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -176,6 +177,7 @@ header {
   color: #ffffff;
   box-shadow: 1px 1px 0px #000;
   transition: transform 0.1s ease;
+  touch-action: manipulation;
 }
 
 .refresh-btn:active {
