@@ -25,26 +25,23 @@ body {
   background-color: #f8fafc;
 }
 
-/* CACHE RALLONGÉ (245px) AVEC DÉGRADÉ SOUS L'ENCART FIXE */
+/* CACHE SUPÉRIEUR POUR MASQUER LE SCROLL DERRIÈRE LE HEADER */
 body::before {
   content: "";
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 245px;
+  height: 90px;
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 250px;
   background-color: #f8fafc;
-  z-index: 900;
+  z-index: 890;
   pointer-events: none;
-
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 220px, transparent 245px);
-  mask-image: linear-gradient(to bottom, black 0px, black 220px, transparent 245px);
 }
 
-/* HEADER FIXE CONTENANT LE TITRE + L'ENCART SÉLECTION */
+/* ENCART 1 : HEADER FIXE D'ORIGINE */
 header {
   position: fixed;
   top: 12px;
@@ -55,27 +52,13 @@ header {
   z-index: 1000;
   
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
   background-color: #ffffff;
   border-radius: 16px;
   border: 2px solid #000;
   box-shadow: 4px 4px 0px #000;
-}
-
-.header-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-}
-
-/* DÉCALAGE DU CONTENU PRINCIPAL */
-main#app {
-  margin-top: 235px;
-  position: relative;
-  z-index: 1;
 }
 
 .header-title-container {
@@ -87,16 +70,16 @@ main#app {
 
 .header-subtitle {
   font-family: 'Righteous', cursive;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 2px;
   color: #7b2cbf;
   text-transform: uppercase;
-  margin-bottom: 1px;
+  margin-bottom: 2px;
 }
 
 .title-90s {
   font-family: 'Righteous', cursive;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   text-transform: uppercase;
   
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 50%, #00f0ff 100%);
@@ -107,17 +90,17 @@ main#app {
   
   letter-spacing: 1px;
   transform: rotate(-1.5deg);
-  margin: 1px 0;
+  margin: 2px 0;
 }
 
 .back-btn {
   background: #ff007f;
   border: 2px solid #000;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: bold;
   color: #fff;
   cursor: pointer;
-  padding: 4px 10px;
+  padding: 6px 12px;
   border-radius: 8px;
   box-shadow: 2px 2px 0px #000;
 }
@@ -131,13 +114,25 @@ main#app {
   display: none;
 }
 
-/* ENCART SÉLECTION DU MOMENT (RÉTRO SOMBRE) */
+/* ENCART 2 : SÉLECTION DU MOMENT FIXE & SOMBRE */
 .featured-container {
+  position: fixed;
+  top: 98px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 568px;
+  z-index: 900;
+
   background: linear-gradient(135deg, #181528 0%, #0d0b18 100%);
   border: 1.5px solid #ff007f;
   border-radius: 12px;
   padding: 8px 10px 10px 10px;
-  box-shadow: inset 0 0 10px rgba(255, 0, 127, 0.15);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+  /* Effet de transparence progressive vers le bas au scroll */
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
 }
 
 .featured-container.hidden {
@@ -208,7 +203,13 @@ main#app {
   display: block;
 }
 
-/* LISTE DE DISQUES */
+/* CONTENU PRINCIPAL (LISTE) */
+main#app {
+  margin-top: 230px;
+  position: relative;
+  z-index: 1;
+}
+
 .list-container {
   display: flex;
   flex-direction: column;
