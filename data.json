@@ -1,23 +1,17 @@
 [
   {
     "genre": "Jeunesse",
-    "md_cover": "images/md_22.jpg",
-    "albums": [
-      {
-        "title": "Musiques de Jeux Vidéos",
-        "artist": "Divers",
-        "cover": "images/ost_jeux_videos.jpg",
-        "tracks": [
-          "01. Super Mario Bros. Theme",
-          "02. Tetris Theme",
-          "03. Zelda Main Theme",
-          "04. Sonic the Hedgehog Theme",
-          "05. Street Fighter II Theme",
-          "06. Donkey Kong Country Theme",
-          "07. Megaman 2 Theme",
-          "08. Final Fantasy VII Victory Fanfare"
-        ]
-      }
+    "title": "Musiques de Jeux Vidéos",
+    "md_cover": "images/md_22.jpg", 
+    "tracks": [
+      "01. Super Mario Bros. Theme",
+      "02. Tetris Theme",
+      "03. Zelda Main Theme",
+      "04. Sonic the Hedgehog Theme",
+      "05. Street Fighter II Theme",
+      "06. Donkey Kong Country Theme",
+      "07. Megaman 2 Theme",
+      "08. Final Fantasy VII Victory Fanfare", 
     ]
   },
   {
