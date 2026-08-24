@@ -132,7 +132,7 @@ main#app {
 .list-item {
   display: flex;
   align-items: center;
-  gap: 16px; /* Plus d'espace d'air avec les grandes images */
+  gap: 16px;
   background-color: var(--card-bg);
   padding: 14px 16px;
   border-radius: 16px;
@@ -152,7 +152,7 @@ main#app {
 
 /* IMAGES TRÈS GRAND FORMAT */
 
-/* Vignette MiniDisc (Format rectangulaire vertical généreux) */
+/* Vignette MiniDisc */
 .md-thumb {
   width: 105px;
   height: 146px;
@@ -162,7 +162,7 @@ main#app {
   box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 
-/* Vignette Album (Format carré très lisible) */
+/* Vignette Album */
 .album-thumb {
   width: 130px;
   height: 130px;
@@ -188,9 +188,18 @@ main#app {
 
 .item-title {
   font-weight: 600;
-  font-size: 1.05rem; /* Légèrement plus grand pour équilibrer l'image */
+  font-size: 1.05rem;
   line-height: 1.35;
   color: var(--text-main);
+}
+
+/* Style pour chaque ligne de titre d'album */
+.title-line {
+  margin-bottom: 4px;
+}
+
+.title-line:last-child {
+  margin-bottom: 0;
 }
 
 .item-sub {
