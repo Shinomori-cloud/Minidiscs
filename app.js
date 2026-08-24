@@ -220,11 +220,16 @@ backBtn.addEventListener('click', () => {
   history.back();
 });
 
-// ÉCOUTEUR SUR LE BOUTON RAFRAÎCHIR DE LA SÉLECTION
+// ÉCOUTEUR OPTIMISÉ POUR HERMIT & MOBILE
 if (refreshFeaturedBtn) {
-  refreshFeaturedBtn.addEventListener('click', () => {
+  const triggerRefresh = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     refreshFeatured();
-  });
+  };
+
+  refreshFeaturedBtn.addEventListener('click', triggerRefresh);
+  refreshFeaturedBtn.addEventListener('touchstart', triggerRefresh, { passive: false });
 }
 
 window.addEventListener('popstate', (event) => {
