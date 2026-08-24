@@ -189,19 +189,19 @@ main#app {
   line-height: 1.35;
 }
 
-/* STYLES DE L'ALTERNANCE DE COULEURS */
+/* CLASSES DE COLORATION AUTOMATIQUE */
 .title-color-1 {
-  color: var(--text-main);
+  color: var(--text-main); /* Ex: #1e293b (Sombre) */
   font-weight: 700;
 }
 
 .title-color-2 {
-  color: #7b2cbf;
+  color: #7b2cbf; /* Ex: Violet rétro (2e album) */
   font-weight: 700;
 }
 
 .title-separator {
-  color: #94a3b8;
+  color: #94a3b8; /* Gris pour le séparateur "/" */
   font-weight: 400;
   margin: 0 2px;
 }
