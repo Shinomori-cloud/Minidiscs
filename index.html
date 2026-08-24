@@ -10,7 +10,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css?v=5">
+  <!-- Chargement dynamique du CSS sans cache -->
+  <script>
+    const cssLink = document.createElement('link');
+    cssLink.rel = 'stylesheet';
+    cssLink.href = 'style.css?v=' + Date.now();
+    document.head.appendChild(cssLink);
+  </script>
 </head>
 <body>
 
