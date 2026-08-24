@@ -32,7 +32,7 @@ body::before {
   top: 0;
   left: 0;
   width: 100%;
-  height: 110px; /* S'arrête juste avant l'en-tête */
+  height: 118px; /* S'arrête juste avant l'en-tête */
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 250px;
