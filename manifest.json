@@ -3,12 +3,14 @@
   "name": "Mes Archives Musicales",
   "icons": [
     {
-      "src": "/Minidiscs/images/pattern.jpg",
+      "src": "images/pattern.jpg",
       "sizes": "192x192 512x512",
-      "type": "image/jpeg"
+      "type": "image/jpeg",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": "/Minidiscs/index.html",
+  "start_url": "./index.html",
+  "scope": "./",
   "background_color": "#f8fafc",
   "theme_color": "#ffffff",
   "display": "standalone",
