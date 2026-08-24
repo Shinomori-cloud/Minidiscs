@@ -33,7 +33,7 @@ body::before {
   top: 0;
   left: 0;
   width: 100%;
-  height: 295px;
+  height: 335px;
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 350px;
@@ -42,21 +42,21 @@ body::before {
   z-index: 800;
   pointer-events: none;
 
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 275px, transparent 295px);
-  mask-image: linear-gradient(to bottom, black 0px, black 275px, transparent 295px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 310px, transparent 335px);
+  mask-image: linear-gradient(to bottom, black 0px, black 310px, transparent 335px);
 }
 
 /* REDUCTION DU CACHE SI LA SELECTION EST MASQUÉE (PAGES ALBUM / TRACKLIST) */
 body:has(.featured-container.hidden)::before {
-  height: 120px;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 95px, transparent 120px);
-  mask-image: linear-gradient(to bottom, black 0px, black 95px, transparent 120px);
+  height: 160px;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
+  mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
 }
 
-/* ENCART 1 : HEADER TITRE FIXE */
+/* ENCART 1 : HEADER TITRE FIXE (ABAISSÉ SOUS LA CAMÉRA ET AGRANDI) */
 header {
   position: fixed;
-  top: 12px;
+  top: 45px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
@@ -66,7 +66,7 @@ header {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px;
+  padding: 16px 14px;
   background-color: #ffffff;
   border-radius: 16px;
   border: 2px solid #000;
@@ -91,7 +91,7 @@ header {
 
 .title-90s {
   font-family: 'Righteous', cursive;
-  font-size: 1.8rem;
+  font-size: 2rem;
   text-transform: uppercase;
   
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 50%, #00f0ff 100%);
@@ -126,10 +126,10 @@ header {
   display: none;
 }
 
-/* ENCART 2 : SÉLECTION DU MOMENT FIXE & SOMBRE */
+/* ENCART 2 : SÉLECTION DU MOMENT FIXE & SOMBRE (ABAISSÉE) */
 .featured-container {
   position: fixed;
-  top: 108px;
+  top: 152px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
@@ -211,16 +211,16 @@ header {
   display: block;
 }
 
-/* CONTENU PRINCIPAL (LISTE DES DISQUES) */
+/* CONTENU PRINCIPAL (PAGE ACCUEIL) */
 main#app {
-  margin-top: 280px;
+  margin-top: 325px;
   position: relative;
   z-index: 1;
 }
 
-/* AJUSTEMENT DU MARGIN-TOP SUR LES AUTRES PAGES */
+/* MARGIN-TOP DÉTAILS (ALBUMS / TRACKLIST) */
 body:has(.featured-container.hidden) main#app {
-  margin-top: 110px;
+  margin-top: 150px;
 }
 
 .list-container {
