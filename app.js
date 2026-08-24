@@ -54,7 +54,7 @@ function renderMDList(pushState = true) {
   currentMD = null;
   currentAlbum = null;
   backBtn.classList.add('hidden');
-  headerTitle.textContent = "Collection MiniDisc";
+  headerTitle.textContent = "COLLECTION MINIDISC";
 
   if (pushState) {
     history.pushState({ view: 'home' }, '', '#home');
@@ -91,14 +91,12 @@ function openMD(index, pushState = true) {
     history.pushState({ view: 'md', mdIndex: index }, '', `#md-${index}`);
   }
 
-  // CAS 1 : Compilation (pistes directes)
   if (currentMD.tracks && (!currentMD.albums || currentMD.albums.length === 0)) {
     headerTitle.textContent = currentMD.title || currentMD.genre || "MiniDisc";
     renderTrackList(currentMD.title || "Compilation", "Artistes variés", currentMD.md_cover, currentMD.tracks);
     return;
   }
 
-  // CAS 2 : MD classique avec albums
   headerTitle.textContent = currentMD.genre || "MiniDisc";
   const borderColor = getBorderColor(currentMD.genre);
 
@@ -175,4 +173,3 @@ window.addEventListener('popstate', (event) => {
     openAlbum(state.albumIndex, false);
   }
 });
- 
