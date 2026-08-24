@@ -40,7 +40,7 @@ fetch('./data.json')
   })
   .then(data => {
     catalogData = data;
-    renderMDList(false); // false = n'ajoute pas d'état dans l'historique au premier chargement
+    renderMDList(false);
   })
   .catch(error => {
     console.error("Détail de l'erreur :", error);
@@ -69,7 +69,7 @@ function renderMDList(pushState = true) {
       : (md.title || 'MiniDisc sans titre');
 
     html += `
-      <div class="list-item" style="border-left-color: ${borderColor};" onclick="openMD(${index})">
+      <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openMD(${index})">
         <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
         <div class="item-details">
           <div class="item-tag" style="color: ${borderColor};">${md.genre || 'MINIDISC'}</div>
@@ -105,7 +105,7 @@ function openMD(index, pushState = true) {
   let html = '<div class="list-container">';
   (currentMD.albums || []).forEach((album, aIndex) => {
     html += `
-      <div class="list-item" style="border-left-color: ${borderColor};" onclick="openAlbum(${aIndex})">
+      <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openAlbum(${aIndex})">
         <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'52\\' height=\\'52\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/></svg>'">
         <div class="item-details">
           <div class="item-title">${album.title}</div>
@@ -159,12 +159,10 @@ function renderTrackList(title, artist, coverSrc, tracks) {
   app.innerHTML = html;
 }
 
-// Gestion du bouton "Retour" de l'application (en haut à gauche)
 backBtn.addEventListener('click', () => {
-  history.back(); // Déclenche le retour en arrière du navigateur
+  history.back();
 });
 
-// Écouteur pour intercepter le bouton "Retour" physique/gestuel du téléphone
 window.addEventListener('popstate', (event) => {
   const state = event.state;
 
@@ -177,3 +175,4 @@ window.addEventListener('popstate', (event) => {
     openAlbum(state.albumIndex, false);
   }
 });
+ 
