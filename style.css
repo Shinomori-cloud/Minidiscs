@@ -66,7 +66,7 @@ header {
 
 /* DÉCALAGE DU CONTENU PRINCIPAL */
 main#app {
-  margin-top: 110px;
+  margin-top: 125px;
   position: relative;
   z-index: 1;
 }
