@@ -1,18 +1,5 @@
 let catalogData = [];
 
-// Fonction automatique pour alterner la couleur des titres séparés par "/"
-function formatAlbumTitles(titleString) {
-  if (!titleString) return '';
-  if (titleString.includes('/')) {
-    const albums = titleString.split('/').map(a => a.trim());
-    return albums.map((album, index) => {
-      const colorClass = (index % 2 === 0) ? 'title-color-1' : 'title-color-2';
-      return `<span class="${colorClass}">${album}</span>`;
-    }).join(' <span class="title-separator">/</span> ');
-  }
-  return `<span class="title-color-1">${titleString}</span>`;
-}
-
 // Éléments du DOM
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
@@ -33,7 +20,7 @@ fetch('./data.json')
     app.innerHTML = `<p style="text-align:center; padding: 20px;">Erreur de chargement du fichier data.json</p>`;
   });
 
-// Affichage de la liste principale des MiniDiscs
+// Affichage de la liste principale
 function renderList() {
   if (backBtn) backBtn.classList.add('hidden');
   if (headerTitle) headerTitle.textContent = "MINIDISC";
@@ -54,7 +41,7 @@ function renderList() {
         <img src="${item.cover}" alt="${item.title}" class="${imgClass}" />
         <div class="item-details">
           <span class="item-tag" style="color: ${tagColor}">${tagText}</span>
-          <h2 class="item-title">${formatAlbumTitles(item.title)}</h2>
+          <h2 class="item-title">${item.title}</h2>
           <span class="item-sub">${item.sub}</span>
         </div>
       </div>
@@ -65,7 +52,7 @@ function renderList() {
   app.innerHTML = html;
 }
 
-// Affichage de la vue détaillée (avec la couche Albums)
+// Affichage de la vue détaillée
 function renderDetails(index) {
   const item = catalogData[index];
   if (!item) return;
@@ -80,13 +67,12 @@ function renderDetails(index) {
       <div class="album-header">
         <img src="${item.cover}" alt="${item.title}" class="album-cover-large" />
         <div>
-          <h2 class="item-title">${formatAlbumTitles(item.title)}</h2>
+          <h2 class="item-title">${item.title}</h2>
           <span class="item-sub">${item.sub}</span>
         </div>
       </div>
   `;
   
-  // Couche 1 : Si le MiniDisc contient plusieurs albums avec leurs propres pochettes/pistes
   if (item.albums && item.albums.length > 0) {
     html += `<div class="albums-sublist">`;
     item.albums.forEach(album => {
@@ -114,7 +100,6 @@ function renderDetails(index) {
     });
     html += `</div>`;
   } 
-  // Couche 2 : Si c'est une compilation directe avec une liste unique de pistes
   else if (item.tracks && item.tracks.length > 0) {
     html += `<ul class="track-list">`;
     item.tracks.forEach(track => {
