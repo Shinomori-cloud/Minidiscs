@@ -1,6 +1,6 @@
 let catalogData = [];
 let currentMD = null;
-let currentAlbum = null; // Ajouté pour mieux gérer la navigation retour
+let currentAlbum = null;
 
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
@@ -40,7 +40,7 @@ fetch('./data.json')
   })
   .then(data => {
     catalogData = data;
-    renderMDList();
+    renderMDList(false); // false = n'ajoute pas d'état dans l'historique au premier chargement
   })
   .catch(error => {
     console.error("Détail de l'erreur :", error);
@@ -50,17 +50,20 @@ fetch('./data.json')
     </p>`;
   });
 
-function renderMDList() {
+function renderMDList(pushState = true) {
   currentMD = null;
   currentAlbum = null;
   backBtn.classList.add('hidden');
   headerTitle.textContent = "Collection MiniDisc";
 
+  if (pushState) {
+    history.pushState({ view: 'home' }, '', '#home');
+  }
+
   let html = '<div class="list-container">';
   catalogData.forEach((md, index) => {
     const borderColor = getBorderColor(md.genre);
     
-    // Si md.albums existe et n'est pas vide, on joint leurs titres. Sinon on prend md.title.
     const displayTitle = (md.albums && md.albums.length > 0) 
       ? md.albums.map(a => a.title).join(' / ') 
       : (md.title || 'MiniDisc sans titre');
@@ -79,19 +82,23 @@ function renderMDList() {
   app.innerHTML = html;
 }
 
-function openMD(index) {
+function openMD(index, pushState = true) {
   currentMD = catalogData[index];
   currentAlbum = null;
   backBtn.classList.remove('hidden');
 
-  // CAS 1 : C'est une compilation (pistes directes sur le MD, pas d'albums)
+  if (pushState) {
+    history.pushState({ view: 'md', mdIndex: index }, '', `#md-${index}`);
+  }
+
+  // CAS 1 : Compilation (pistes directes)
   if (currentMD.tracks && (!currentMD.albums || currentMD.albums.length === 0)) {
     headerTitle.textContent = currentMD.title || currentMD.genre || "MiniDisc";
     renderTrackList(currentMD.title || "Compilation", "Artistes variés", currentMD.md_cover, currentMD.tracks);
     return;
   }
 
-  // CAS 2 : MD classique avec liste d'albums
+  // CAS 2 : MD classique avec albums
   headerTitle.textContent = currentMD.genre || "MiniDisc";
   const borderColor = getBorderColor(currentMD.genre);
 
@@ -111,13 +118,18 @@ function openMD(index) {
   app.innerHTML = html;
 }
 
-function openAlbum(aIndex) {
+function openAlbum(aIndex, pushState = true) {
   currentAlbum = currentMD.albums[aIndex];
   headerTitle.textContent = currentAlbum.title;
+
+  if (pushState) {
+    const mdIndex = catalogData.indexOf(currentMD);
+    history.pushState({ view: 'album', mdIndex: mdIndex, albumIndex: aIndex }, '', `#md-${mdIndex}-album-${aIndex}`);
+  }
+
   renderTrackList(currentAlbum.title, currentAlbum.artist, currentAlbum.cover, currentAlbum.tracks);
 }
 
-// Fonction réutilisable pour afficher la liste de pistes
 function renderTrackList(title, artist, coverSrc, tracks) {
   let html = `
     <div class="track-container">
@@ -147,12 +159,21 @@ function renderTrackList(title, artist, coverSrc, tracks) {
   app.innerHTML = html;
 }
 
+// Gestion du bouton "Retour" de l'application (en haut à gauche)
 backBtn.addEventListener('click', () => {
-  // Si on est dans un album d'un MD multi-albums, le retour revient au MD
-  if (currentAlbum) {
-    openMD(catalogData.indexOf(currentMD));
-  } else {
-    // Si on est dans la vue MD (ou directement dans les pistes d'une compilation), retour à la liste principale
-    renderMDList();
+  history.back(); // Déclenche le retour en arrière du navigateur
+});
+
+// Écouteur pour intercepter le bouton "Retour" physique/gestuel du téléphone
+window.addEventListener('popstate', (event) => {
+  const state = event.state;
+
+  if (!state || state.view === 'home') {
+    renderMDList(false);
+  } else if (state.view === 'md') {
+    openMD(state.mdIndex, false);
+  } else if (state.view === 'album') {
+    currentMD = catalogData[state.mdIndex];
+    openAlbum(state.albumIndex, false);
   }
 });
