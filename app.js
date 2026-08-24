@@ -1,11 +1,38 @@
 let catalogData = [];
+let currentMD = null;
+let currentAlbum = null;
 
-// Éléments du DOM
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
 const headerTitle = document.getElementById('header-title');
 
-// Chargement de data.json
+const genreColors = {
+  'ROCK': '#e63946',
+  'ROCK FRANÇAIS': '#d90429',
+  'ROCK CALIFORNIEN': '#ffb703',
+  'ROCK GARAGE': '#fb8500',
+  'ROCK ATMOSPHÉRIQUE': '#457b9d',
+  'ROCK 80\'S': '#9d4edd',
+  'POP': '#00b4d8',
+  'POP ROCK': '#0077b6',
+  'RAP': '#16a34a',
+  'RAP / REGGAE': '#2a9d8f',
+  'HUMOUR': '#f72585',
+  'OST': '#7209b7',
+  'JEUNESSE': '#ff0676',
+  'METAL': '#b91c1c',
+  'LIVE': '#4b5563',
+  'FOLK ROCK': '#e07a5f',
+  'FRANÇAIS': '#2563eb',
+  'DEFAULT': '#6b7280'
+};
+
+function getBorderColor(genre) {
+  if (!genre) return genreColors['DEFAULT'];
+  const cleanGenre = genre.toUpperCase().trim();
+  return genreColors[cleanGenre] || genreColors['DEFAULT'];
+}
+
 fetch('./data.json')
   .then(response => {
     if (!response.ok) throw new Error(`Erreur réseau (${response.status})`);
@@ -13,120 +40,136 @@ fetch('./data.json')
   })
   .then(data => {
     catalogData = data;
-    renderList();
+    renderMDList(false);
   })
   .catch(error => {
-    console.error("Erreur de chargement de data.json :", error);
-    app.innerHTML = `<p style="text-align:center; padding: 20px;">Erreur de chargement du fichier data.json</p>`;
+    console.error("Détail de l'erreur :", error);
+    app.innerHTML = `<p style="text-align:center; padding:20px; color:#e63946;">
+      Impossible de charger <strong>data.json</strong>.<br><br>
+      <small style="color:#6b7280;">(${error.message})</small>
+    </p>`;
   });
 
-// Affichage de la liste principale
-function renderList() {
-  if (backBtn) backBtn.classList.add('hidden');
-  if (headerTitle) headerTitle.textContent = "MINIDISC";
-  
-  if (window.location.hash !== '') {
-    history.replaceState(null, '', window.location.pathname);
+function renderMDList(pushState = true) {
+  currentMD = null;
+  currentAlbum = null;
+  backBtn.classList.add('hidden');
+  headerTitle.textContent = "COLLECTION MINIDISC";
+
+  if (pushState) {
+    history.pushState({ view: 'home' }, '', '#home');
   }
-  
+
   let html = '<div class="list-container">';
-  
-  catalogData.forEach((item, index) => {
-    const imgClass = item.type === 'md' ? 'md-thumb' : 'album-thumb';
-    const tagColor = item.tagColor || item.color || '#7b2cbf';
-    const tagText = item.tag || item.genre || 'MINIDISC';
+  catalogData.forEach((md, index) => {
+    const borderColor = getBorderColor(md.genre);
     
+    const displayTitle = (md.albums && md.albums.length > 0) 
+      ? md.albums.map(a => a.title).join(' / ') 
+      : (md.title || 'MiniDisc sans titre');
+
     html += `
-      <div class="list-item" onclick="renderDetails(${index})">
-        <img src="${item.cover}" alt="${item.title}" class="${imgClass}" />
+      <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openMD(${index})">
+        <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
         <div class="item-details">
-          <span class="item-tag" style="color: ${tagColor}">${tagText}</span>
-          <h2 class="item-title">${item.title}</h2>
-          <span class="item-sub">${item.sub}</span>
+          <div class="item-tag" style="color: ${borderColor};">${md.genre || 'MINIDISC'}</div>
+          <div class="item-title">${displayTitle}</div>
         </div>
       </div>
     `;
   });
-  
   html += '</div>';
   app.innerHTML = html;
 }
 
-// Affichage de la vue détaillée
-function renderDetails(index) {
-  const item = catalogData[index];
-  if (!item) return;
-  
-  if (backBtn) backBtn.classList.remove('hidden');
-  if (headerTitle) headerTitle.textContent = item.tag || item.genre || "DÉTAILS";
-  
-  history.pushState({ detailIndex: index }, '', `#detail-${index}`);
-  
-  let html = `
-    <div class="track-container">
-      <div class="album-header">
-        <img src="${item.cover}" alt="${item.title}" class="album-cover-large" />
-        <div>
-          <h2 class="item-title">${item.title}</h2>
-          <span class="item-sub">${item.sub}</span>
+function openMD(index, pushState = true) {
+  currentMD = catalogData[index];
+  currentAlbum = null;
+  backBtn.classList.remove('hidden');
+
+  if (pushState) {
+    history.pushState({ view: 'md', mdIndex: index }, '', `#md-${index}`);
+  }
+
+  if (currentMD.tracks && (!currentMD.albums || currentMD.albums.length === 0)) {
+    headerTitle.textContent = currentMD.title || currentMD.genre || "MiniDisc";
+    renderTrackList(currentMD.title || "Compilation", "Artistes variés", currentMD.md_cover, currentMD.tracks);
+    return;
+  }
+
+  headerTitle.textContent = currentMD.genre || "MiniDisc";
+  const borderColor = getBorderColor(currentMD.genre);
+
+  let html = '<div class="list-container">';
+  (currentMD.albums || []).forEach((album, aIndex) => {
+    html += `
+      <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openAlbum(${aIndex})">
+        <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'52\\' height=\\'52\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/></svg>'">
+        <div class="item-details">
+          <div class="item-title">${album.title}</div>
+          <div class="item-sub">${album.artist} • ${album.tracks ? album.tracks.length : 0} pistes</div>
         </div>
       </div>
-  `;
-  
-  if (item.albums && item.albums.length > 0) {
-    html += `<div class="albums-sublist">`;
-    item.albums.forEach(album => {
-      html += `
-        <div class="album-block" style="margin-bottom: 24px;">
-          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-            ${album.cover ? `<img src="${album.cover}" style="width:60px; height:60px; border-radius:8px; object-fit:cover;" />` : ''}
-            <div>
-              <h3 style="font-size: 1.1rem; color: #7b2cbf;">${album.title}</h3>
-              ${album.artist ? `<p style="font-size: 0.85rem; color: #64748b;">${album.artist}</p>` : ''}
-            </div>
-          </div>
-          <ul class="track-list">
-      `;
-      if (album.tracks) {
-        album.tracks.forEach(track => {
-          html += `
-            <li class="track-item">
-              <strong>${track.number}.</strong> ${track.title}
-            </li>
-          `;
-        });
-      }
-      html += `</ul></div>`;
-    });
-    html += `</div>`;
-  } 
-  else if (item.tracks && item.tracks.length > 0) {
-    html += `<ul class="track-list">`;
-    item.tracks.forEach(track => {
-      html += `
-        <li class="track-item">
-          <strong>${track.number}.</strong> ${track.title} ${track.artist ? `— <em>${track.artist}</em>` : ''}
-        </li>
-      `;
-    });
-    html += `</ul>`;
-  }
-  
-  html += `</div>`;
+    `;
+  });
+  html += '</div>';
   app.innerHTML = html;
 }
 
-// Navigation du bouton retour
-if (backBtn) {
-  backBtn.addEventListener('click', () => {
-    renderList();
-  });
+function openAlbum(aIndex, pushState = true) {
+  currentAlbum = currentMD.albums[aIndex];
+  headerTitle.textContent = currentAlbum.title;
+
+  if (pushState) {
+    const mdIndex = catalogData.indexOf(currentMD);
+    history.pushState({ view: 'album', mdIndex: mdIndex, albumIndex: aIndex }, '', `#md-${mdIndex}-album-${aIndex}`);
+  }
+
+  renderTrackList(currentAlbum.title, currentAlbum.artist, currentAlbum.cover, currentAlbum.tracks);
 }
 
-window.addEventListener('popstate', (e) => {
-  if (e.state && e.state.detailIndex !== undefined) {
-    renderDetails(e.state.detailIndex);
+function renderTrackList(title, artist, coverSrc, tracks) {
+  let html = `
+    <div class="track-container">
+      <div class="album-header">
+        <img class="album-cover-large" src="${coverSrc || ''}" onerror="this.style.display='none'">
+        <div>
+          <div style="font-weight:700; font-size:1rem;">${title}</div>
+          <div style="color:var(--text-sub); font-size:0.85rem; margin-top:2px;">${artist}</div>
+        </div>
+      </div>
+      <ul class="track-list">
+  `;
+  
+  if (tracks && tracks.length > 0) {
+    tracks.forEach((track) => {
+      html += `
+        <li class="track-item">
+          <span>${track}</span>
+        </li>
+      `;
+    });
   } else {
-    renderList();
+    html += '<li class="track-item" style="color:var(--text-sub); font-style:italic;">Aucune liste de pistes renseignée.</li>';
+  }
+
+  html += '</ul></div>';
+  app.innerHTML = html;
+}
+
+backBtn.addEventListener('click', () => {
+  history.back();
+});
+
+window.addEventListener('popstate', (event) => {
+  const state = event.state;
+
+  if (!state || state.view === 'home') {
+    renderMDList(false);
+  } else if (state.view === 'md') {
+    openMD(state.mdIndex, false);
+  } else if (state.view === 'album') {
+    currentMD = catalogData[state.mdIndex];
+    openAlbum(state.albumIndex, false);
   }
 });
