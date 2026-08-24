@@ -23,6 +23,7 @@ body {
   background-repeat: repeat;
   background-size: 250px;
   background-color: #f8fafc;
+  background-attachment: fixed; /* Arrière-plan fixe au défilement */
 }
 
 /* CACHE FIXE POUR MASQUER LE SCROLL DERRIÈRE LE HEADER ET LA SÉLECTION */
@@ -38,6 +39,7 @@ body::before {
   background-repeat: repeat;
   background-size: 350px;
   background-color: #f8fafc;
+  background-attachment: fixed; /* Reste parfaitement raccord avec le fond du body */
   z-index: 800;
   pointer-events: none;
 
@@ -121,7 +123,7 @@ header {
 /* ENCART 2 : SÉLECTION DU MOMENT FIXE & SOMBRE */
 .featured-container {
   position: fixed;
-  top: 112px;
+  top: 108px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
