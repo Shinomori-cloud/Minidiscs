@@ -26,17 +26,17 @@ body {
   background-color: #f8fafc;
 }
 
-/* HEADER STYLE 90S */
+/* HEADER STYLE 90S POP */
 header {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 24px;
-  padding: 12px;
+  padding: 14px;
   background-color: #ffffff;
   border-radius: 16px;
   border: 2px solid #000;
-  box-shadow: 4px 4px 0px #000; /* Ombre nette style BD */
+  box-shadow: 4px 4px 0px #000;
 }
 
 .header-title-container {
@@ -47,39 +47,35 @@ header {
 }
 
 .header-subtitle {
-  font-family: 'Rubik One', sans-serif;
-  font-size: 0.65rem;
+  font-family: 'Righteous', cursive;
+  font-size: 0.75rem;
   letter-spacing: 2px;
-  color: #000;
+  color: #7b2cbf; /* Violet */
   text-transform: uppercase;
   margin-bottom: 2px;
 }
 
-/* TITRE EFFET 3D EXTRUDÉ 90S */
+/* TITRE AVEC DÉGRADÉ ROSE/VIOLET/BLEU & EXTRUSION 3D */
 .title-90s {
-  font-family: 'Rubik One', sans-serif;
+  font-family: 'Righteous', cursive;
   font-size: 1.8rem;
   text-transform: uppercase;
-  color: #ffde59; /* Jaune pétant */
   
-  /* Multicouche d'ombres pour créer le bloc 3D avec contour noir */
-  text-shadow: 
-    2px 2px 0px #000,
-    -1px -1px 0px #000,
-    1px -1px 0px #000,
-    -1px 1px 0px #000,
-    1px 1px 0px #000,
-    3px 3px 0px #2563eb,
-    4px 4px 0px #2563eb,
-    5px 5px 0px #000;
-    
+  /* Dégradé de couleur Rose à Bleu */
+  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 50%, #00f0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* Ombres portées style néon/rétro */
+  filter: drop-shadow(2px 2px 0px #000);
+  
   letter-spacing: 1px;
-  transform: rotate(-2deg); /* Légère inclinaison dynamique */
-  margin: 4px 0;
+  transform: rotate(-1.5deg);
+  margin: 2px 0;
 }
 
 .back-btn {
-  background: #ff3366;
+  background: #ff007f;
   border: 2px solid #000;
   font-size: 1.2rem;
   font-weight: bold;
