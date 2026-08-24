@@ -6,6 +6,7 @@ const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
 const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
+const refreshFeaturedBtn = document.getElementById('refresh-featured-btn');
 
 const genreColors = {
   'ROCK': '#e63946',
@@ -218,6 +219,13 @@ function renderTrackList(title, artist, coverSrc, tracks) {
 backBtn.addEventListener('click', () => {
   history.back();
 });
+
+// ÉCOUTEUR SUR LE BOUTON RAFRAÎCHIR DE LA SÉLECTION
+if (refreshFeaturedBtn) {
+  refreshFeaturedBtn.addEventListener('click', () => {
+    refreshFeatured();
+  });
+}
 
 window.addEventListener('popstate', (event) => {
   const state = event.state;
