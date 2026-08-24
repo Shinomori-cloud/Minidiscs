@@ -45,6 +45,14 @@ function formatAlbumTitles(titleString) {
   return `<div class="title-line">${titleString}</div>`;
 }
 
+// Fonction pour mélanger un tableau de manière aléatoire (Fisher-Yates)
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
 fetch('./data.json')
   .then(response => {
     if (!response.ok) throw new Error(`Erreur réseau (${response.status})`);
@@ -52,6 +60,7 @@ fetch('./data.json')
   })
   .then(data => {
     catalogData = data;
+    shuffleArray(catalogData); // Mélange aléatoire de la liste au chargement
     renderMDList(false);
   })
   .catch(error => {
