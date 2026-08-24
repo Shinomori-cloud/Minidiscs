@@ -1,5 +1,6 @@
 let catalogData = [];
 let currentMD = null;
+let currentAlbum = null; // Ajouté pour mieux gérer la navigation retour
 
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
@@ -51,20 +52,25 @@ fetch('./data.json')
 
 function renderMDList() {
   currentMD = null;
+  currentAlbum = null;
   backBtn.classList.add('hidden');
   headerTitle.textContent = "Collection MiniDisc";
 
   let html = '<div class="list-container">';
   catalogData.forEach((md, index) => {
     const borderColor = getBorderColor(md.genre);
-    const albumTitles = md.albums.map(a => a.title).join(' / ');
+    
+    // Si md.albums existe et n'est pas vide, on joint leurs titres. Sinon on prend md.title.
+    const displayTitle = (md.albums && md.albums.length > 0) 
+      ? md.albums.map(a => a.title).join(' / ') 
+      : (md.title || 'MiniDisc sans titre');
 
     html += `
       <div class="list-item" style="border-left-color: ${borderColor};" onclick="openMD(${index})">
         <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
         <div class="item-details">
           <div class="item-tag" style="color: ${borderColor};">${md.genre || 'MINIDISC'}</div>
-          <div class="item-title">${albumTitles}</div>
+          <div class="item-title">${displayTitle}</div>
         </div>
       </div>
     `;
@@ -75,13 +81,22 @@ function renderMDList() {
 
 function openMD(index) {
   currentMD = catalogData[index];
+  currentAlbum = null;
   backBtn.classList.remove('hidden');
-  headerTitle.textContent = currentMD.genre || "MiniDisc";
 
+  // CAS 1 : C'est une compilation (pistes directes sur le MD, pas d'albums)
+  if (currentMD.tracks && (!currentMD.albums || currentMD.albums.length === 0)) {
+    headerTitle.textContent = currentMD.title || currentMD.genre || "MiniDisc";
+    renderTrackList(currentMD.title || "Compilation", "Artistes variés", currentMD.md_cover, currentMD.tracks);
+    return;
+  }
+
+  // CAS 2 : MD classique avec liste d'albums
+  headerTitle.textContent = currentMD.genre || "MiniDisc";
   const borderColor = getBorderColor(currentMD.genre);
 
   let html = '<div class="list-container">';
-  currentMD.albums.forEach((album, aIndex) => {
+  (currentMD.albums || []).forEach((album, aIndex) => {
     html += `
       <div class="list-item" style="border-left-color: ${borderColor};" onclick="openAlbum(${aIndex})">
         <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'52\\' height=\\'52\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/></svg>'">
@@ -97,23 +112,27 @@ function openMD(index) {
 }
 
 function openAlbum(aIndex) {
-  const album = currentMD.albums[aIndex];
-  headerTitle.textContent = album.title;
+  currentAlbum = currentMD.albums[aIndex];
+  headerTitle.textContent = currentAlbum.title;
+  renderTrackList(currentAlbum.title, currentAlbum.artist, currentAlbum.cover, currentAlbum.tracks);
+}
 
+// Fonction réutilisable pour afficher la liste de pistes
+function renderTrackList(title, artist, coverSrc, tracks) {
   let html = `
     <div class="track-container">
       <div class="album-header">
-        <img class="album-cover-large" src="${album.cover || ''}" onerror="this.style.display='none'">
+        <img class="album-cover-large" src="${coverSrc || ''}" onerror="this.style.display='none'">
         <div>
-          <div style="font-weight:700; font-size:1rem;">${album.title}</div>
-          <div style="color:var(--text-sub); font-size:0.85rem; margin-top:2px;">${album.artist}</div>
+          <div style="font-weight:700; font-size:1rem;">${title}</div>
+          <div style="color:var(--text-sub); font-size:0.85rem; margin-top:2px;">${artist}</div>
         </div>
       </div>
       <ul class="track-list">
   `;
   
-  if (album.tracks && album.tracks.length > 0) {
-    album.tracks.forEach((track) => {
+  if (tracks && tracks.length > 0) {
+    tracks.forEach((track) => {
       html += `
         <li class="track-item">
           <span>${track}</span>
@@ -129,9 +148,11 @@ function openAlbum(aIndex) {
 }
 
 backBtn.addEventListener('click', () => {
-  if (headerTitle.textContent !== (currentMD?.genre || "MiniDisc") && currentMD) {
+  // Si on est dans un album d'un MD multi-albums, le retour revient au MD
+  if (currentAlbum) {
     openMD(catalogData.indexOf(currentMD));
   } else {
+    // Si on est dans la vue MD (ou directement dans les pistes d'une compilation), retour à la liste principale
     renderMDList();
   }
 });
