@@ -33,7 +33,6 @@ function getBorderColor(genre) {
   return genreColors[cleanGenre] || genreColors['DEFAULT'];
 }
 
-// Transforme "Album 1 / Album 2" en lignes séparées sans "/"
 function formatAlbumTitles(titleString) {
   if (!titleString) return '';
   if (titleString.includes('/')) {
@@ -45,11 +44,36 @@ function formatAlbumTitles(titleString) {
   return `<div class="title-line">${titleString}</div>`;
 }
 
-// Fonction pour mélanger un tableau de manière aléatoire (Fisher-Yates)
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+// Fonction pour générer le HTML des 3 pochettes de la sélection
+function getFeaturedGridHTML() {
+  const randomPick = [...catalogData].sort(() => 0.5 - Math.random()).slice(0, 3);
+  let html = '';
+  
+  randomPick.forEach(md => {
+    const originalIndex = catalogData.indexOf(md);
+    const borderColor = getBorderColor(md.genre);
+    html += `
+      <div class="featured-item" style="border-color: ${borderColor};" onclick="openMD(${originalIndex})">
+        <img class="featured-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+      </div>
+    `;
+  });
+  
+  return html;
+}
+
+// Action de rafraîchissement au clic sur l'icône
+function refreshFeatured() {
+  const grid = document.getElementById('featured-grid');
+  if (grid) {
+    grid.innerHTML = getFeaturedGridHTML();
   }
 }
 
@@ -60,7 +84,7 @@ fetch('./data.json')
   })
   .then(data => {
     catalogData = data;
-    shuffleArray(catalogData); // Mélange aléatoire de la liste au chargement
+    shuffleArray(catalogData);
     renderMDList(false);
   })
   .catch(error => {
@@ -81,7 +105,30 @@ function renderMDList(pushState = true) {
     history.pushState({ view: 'home' }, '', '#home');
   }
 
-  let html = '<div class="list-container">';
+  let html = '';
+
+  // Encart « Sélection du moment » avec en-tête et bouton refresh
+  if (catalogData.length >= 3) {
+    html += `
+      <div class="featured-container">
+        <div class="featured-header">
+          <span class="featured-title">SÉLECTION DU MOMENT</span>
+          <button class="refresh-btn" onclick="refreshFeatured()" title="Autre sélection">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2,5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6"/>
+              <path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M2.5 16l1.2 0,8A10 10 0 0 0 22 12.5"/>
+            </svg>
+          </button>
+        </div>
+        <div class="featured-grid" id="featured-grid">
+          ${getFeaturedGridHTML()}
+        </div>
+      </div>
+    `;
+  }
+
+  // Liste complète
+  html += '<div class="list-container">';
   catalogData.forEach((md, index) => {
     const borderColor = getBorderColor(md.genre);
     
