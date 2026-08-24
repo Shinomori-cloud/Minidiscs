@@ -12,41 +12,22 @@
   padding: 0;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  color: var(--text-main);
-  padding: 16px;
-  max-width: 600px;
-  margin: 0 auto;
-
-  background-image: url('/Minidiscs/images/pattern.jpg');
-  background-repeat: repeat;
-  background-size: 250px;
-  background-attachment: fixed;
+html {
   background-color: #f8fafc;
 }
 
-/* CACHE EN DÉGRADÉ SOUS LE HEADER : Masque les cartes progressivement avec un fondu */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 140px; /* Recouvre le haut jusqu'à ~25px sous le header */
-  z-index: 900; /* Placé sous le header (1000) mais au-dessus des cartes (1) */
-  pointer-events: none; /* Permet de cliquer à travers */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-main);
+  padding: 0 16px;
+  max-width: 600px;
+  margin: 0 auto;
 
-  /* Reproduit le fond pattern et applique le fondu transparent en bas */
+  /* Image de fond sans 'attachment: fixed' pour éviter les bugs Safari/WebKit */
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 250px;
-  background-attachment: fixed;
-  background-color: #f8fafc;
-
-  /* Dégradé de masque : 100% opaque jusqu'à 100px (sous le header), puis s'efface en fondu jusqu'à 140px */
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 100px, transparent 140px);
-  mask-image: linear-gradient(to bottom, black 0px, black 100px, transparent 140px);
+  min-height: 100vh;
 }
 
 /* HEADER FIXE EN HAUT DE L'ÉCRAN */
@@ -69,11 +50,27 @@ header {
   box-shadow: 4px 4px 0px #000;
 }
 
-/* DECALAGE DU CONTENU PRINCIPAL */
+/* CONTENEUR PRINCIPAL AVEC MASQUE DE FONDU */
 main#app {
-  margin-top: 130px;
-  position: relative;
-  z-index: 1;
+  /* Le padding-top pousse le contenu sous le header */
+  padding-top: 130px;
+  padding-bottom: 30px;
+
+  /* Masque progressif : totalement transparent en haut (0 à 110px), 
+     puis transition progressive vers l'opacité totale entre 110px et 155px.
+     Laisse environ 20-30px d'espace fluide sous le header. */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 110px,
+    black 155px
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 110px,
+    black 155px
+  );
 }
 
 .header-title-container {
