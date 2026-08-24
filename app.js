@@ -5,6 +5,7 @@ let currentAlbum = null;
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
 const headerTitle = document.getElementById('header-title');
+const featuredContainer = document.getElementById('featured-container');
 
 const genreColors = {
   'ROCK': '#e63946',
@@ -51,8 +52,8 @@ function shuffleArray(array) {
   }
 }
 
-// Fonction pour générer le HTML des 3 pochettes de la sélection
 function getFeaturedGridHTML() {
+  if (catalogData.length < 3) return '';
   const randomPick = [...catalogData].sort(() => 0.5 - Math.random()).slice(0, 3);
   let html = '';
   
@@ -61,7 +62,7 @@ function getFeaturedGridHTML() {
     const borderColor = getBorderColor(md.genre);
     html += `
       <div class="featured-item" style="border-color: ${borderColor};" onclick="openMD(${originalIndex})">
-        <img class="featured-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+        <img class="featured-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%231e1b2e\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'16\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
       </div>
     `;
   });
@@ -69,7 +70,6 @@ function getFeaturedGridHTML() {
   return html;
 }
 
-// Action de rafraîchissement au clic sur l'icône
 function refreshFeatured() {
   const grid = document.getElementById('featured-grid');
   if (grid) {
@@ -101,34 +101,16 @@ function renderMDList(pushState = true) {
   backBtn.classList.add('hidden');
   headerTitle.textContent = "COLLECTION MINIDISC";
 
+  if (featuredContainer) {
+    featuredContainer.classList.remove('hidden');
+    refreshFeatured();
+  }
+
   if (pushState) {
     history.pushState({ view: 'home' }, '', '#home');
   }
 
-  let html = '';
-
-  // Encart « Sélection du moment » avec en-tête et bouton refresh
-  if (catalogData.length >= 3) {
-    html += `
-      <div class="featured-container">
-        <div class="featured-header">
-          <span class="featured-title">SÉLECTION DU MOMENT</span>
-          <button class="refresh-btn" onclick="refreshFeatured()" title="Autre sélection">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2,5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21.5 2v6h-6M2.5 22v-6h6"/>
-              <path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M2.5 16l1.2 0,8A10 10 0 0 0 22 12.5"/>
-            </svg>
-          </button>
-        </div>
-        <div class="featured-grid" id="featured-grid">
-          ${getFeaturedGridHTML()}
-        </div>
-      </div>
-    `;
-  }
-
-  // Liste complète
-  html += '<div class="list-container">';
+  let html = '<div class="list-container">';
   catalogData.forEach((md, index) => {
     const borderColor = getBorderColor(md.genre);
     
@@ -154,6 +136,10 @@ function openMD(index, pushState = true) {
   currentMD = catalogData[index];
   currentAlbum = null;
   backBtn.classList.remove('hidden');
+
+  if (featuredContainer) {
+    featuredContainer.classList.add('hidden');
+  }
 
   if (pushState) {
     history.pushState({ view: 'md', mdIndex: index }, '', `#md-${index}`);
@@ -187,6 +173,10 @@ function openMD(index, pushState = true) {
 function openAlbum(aIndex, pushState = true) {
   currentAlbum = currentMD.albums[aIndex];
   headerTitle.textContent = currentAlbum.title;
+
+  if (featuredContainer) {
+    featuredContainer.classList.add('hidden');
+  }
 
   if (pushState) {
     const mdIndex = catalogData.indexOf(currentMD);
