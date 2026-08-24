@@ -51,6 +51,13 @@
     <!-- Contenu injecté par app.js -->
   </main>
 
+  <!-- Enregistrement du Service Worker pour valider le mode PWA dans Chrome -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
+    }
+  </script>
+
   <!-- Script JS principal -->
   <script src="app.js"></script>
 </body>
