@@ -1,7 +1,6 @@
 :root {
   --bg-color: #f8fafc;
-  /* Fond de la carte légèrement opaque (90%) pour bien lire le texte tout en voyant le motif derrière */
-  --card-bg: rgba(255, 255, 255, 0.90);
+  --card-bg: #ffffff;
   --text-main: #1e293b;
   --text-sub: #64748b;
   --border-color: #e2e8f0;
@@ -20,42 +19,84 @@ body {
   max-width: 600px;
   margin: 0 auto;
 
-  /* MOTIF 90'S MEMPHIS EN ARRIÈRE-PLAN */
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
-  background-size: 300px; /* Ajuste la taille du motif selon tes préférences */
-  background-attachment: fixed; /* Le fond reste fixe quand on défile */
+  background-size: 250px;
+  background-attachment: fixed;
+  background-color: #f8fafc;
 }
 
+/* HEADER STYLE 90S */
 header {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.85);
-  padding: 10px 14px;
-  border-radius: 12px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+  padding: 12px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000; /* Ombre nette style BD */
+}
+
+.header-title-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: center;
+}
+
+.header-subtitle {
+  font-family: 'Rubik One', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  color: #000;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+/* TITRE EFFET 3D EXTRUDÉ 90S */
+.title-90s {
+  font-family: 'Rubik One', sans-serif;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  color: #ffde59; /* Jaune pétant */
+  
+  /* Multicouche d'ombres pour créer le bloc 3D avec contour noir */
+  text-shadow: 
+    2px 2px 0px #000,
+    -1px -1px 0px #000,
+    1px -1px 0px #000,
+    -1px 1px 0px #000,
+    1px 1px 0px #000,
+    3px 3px 0px #2563eb,
+    4px 4px 0px #2563eb,
+    5px 5px 0px #000;
+    
+  letter-spacing: 1px;
+  transform: rotate(-2deg); /* Légère inclinaison dynamique */
+  margin: 4px 0;
 }
 
 .back-btn {
-  background: none;
-  border: none;
+  background: #ff3366;
+  border: 2px solid #000;
   font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
   cursor: pointer;
-  padding: 4px 8px;
-  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 0px #000;
+}
+
+.back-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #000;
 }
 
 .back-btn.hidden {
   display: none;
-}
-
-h1 {
-  font-size: 1.3rem;
-  font-weight: 700;
 }
 
 .list-container {
@@ -63,16 +104,11 @@ h1 {
   flex-direction: column;
 }
 
-/* ENCARTS SEMI-TRANSPARENTS SUR LE MOTIF */
 .list-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  
   background-color: var(--card-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-
   padding: 12px;
   border-radius: 12px;
   margin-bottom: 12px;
@@ -80,7 +116,6 @@ h1 {
   
   border: 1.5px solid var(--border-color);
   border-left-width: 6px;
-  
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -134,11 +169,8 @@ h1 {
   color: var(--text-sub);
 }
 
-/* VUE DETAIL / TRACKS */
 .track-container {
   background-color: var(--card-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border-radius: 12px;
   padding: 16px;
   border: 1px solid var(--border-color);
@@ -175,4 +207,3 @@ h1 {
 .track-item:last-child {
   border-bottom: none;
 }
- 
