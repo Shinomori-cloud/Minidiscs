@@ -1,175 +1,101 @@
-let catalogData = [];
-let currentMD = null;
-let currentAlbum = null;
+// Fonction pour alterner les couleurs sur les titres séparés par "/"
+function formatAlbumTitles(titleString) {
+  if (!titleString) return '';
+  
+  if (titleString.includes('/')) {
+    const albums = titleString.split('/').map(a => a.trim());
+    return albums.map((album, index) => {
+      const colorClass = (index % 2 === 0) ? 'title-color-1' : 'title-color-2';
+      return `<span class="${colorClass}">${album}</span>`;
+    }).join(' <span class="title-separator">/</span> ');
+  }
+  
+  return `<span class="title-color-1">${titleString}</span>`;
+}
 
+// Exemple de données (remplace par ton propre tableau si besoin)
+const minidiscData = [
+  {
+    id: "rock-garage",
+    tag: "ROCK GARAGE",
+    tagColor: "#e67e22",
+    type: "md",
+    title: "Siamese Dream / In Utero / Live Through This",
+    sub: "3 Albums • Smashing Pumpkins / Nirvana / Hole",
+    cover: "/Minidiscs/images/rock-garage.jpg",
+    tracks: [
+      { number: 1, title: "Cherub Rock", artist: "Smashing Pumpkins", album: "Siamese Dream" },
+      { number: 2, title: "Serve the Servants", artist: "Nirvana", album: "In Utero" },
+      { number: 3, title: "Violet", artist: "Hole", album: "Live Through This" }
+    ]
+  }
+];
+
+// Gestion de l'affichage principal
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
 const headerTitle = document.getElementById('header-title');
 
-const genreColors = {
-  'ROCK': '#e63946',
-  'ROCK FRANÇAIS': '#d90429',
-  'ROCK CALIFORNIEN': '#ffb703',
-  'ROCK GARAGE': '#fb8500',
-  'ROCK ATMOSPHÉRIQUE': '#457b9d',
-  'ROCK 80\'S': '#9d4edd',
-  'POP': '#00b4d8',
-  'POP ROCK': '#0077b6',
-  'RAP': '#16a34a',
-  'RAP / REGGAE': '#2a9d8f',
-  'HUMOUR': '#f72585',
-  'OST': '#7209b7',
-  'JEUNESSE': '#ff0676',
-  'METAL': '#b91c1c',
-  'LIVE': '#4b5563',
-  'FOLK ROCK': '#e07a5f',
-  'FRANÇAIS': '#2563eb',
-  'DEFAULT': '#6b7280'
-};
-
-function getBorderColor(genre) {
-  if (!genre) return genreColors['DEFAULT'];
-  const cleanGenre = genre.toUpperCase().trim();
-  return genreColors[cleanGenre] || genreColors['DEFAULT'];
-}
-
-fetch('./data.json')
-  .then(response => {
-    if (!response.ok) throw new Error(`Erreur réseau (${response.status})`);
-    return response.json();
-  })
-  .then(data => {
-    catalogData = data;
-    renderMDList(false);
-  })
-  .catch(error => {
-    console.error("Détail de l'erreur :", error);
-    app.innerHTML = `<p style="text-align:center; padding:20px; color:#e63946;">
-      Impossible de charger <strong>data.json</strong>.<br><br>
-      <small style="color:#6b7280;">(${error.message})</small>
-    </p>`;
-  });
-
-function renderMDList(pushState = true) {
-  currentMD = null;
-  currentAlbum = null;
+function renderList() {
   backBtn.classList.add('hidden');
-  headerTitle.textContent = "COLLECTION MINIDISC";
-
-  if (pushState) {
-    history.pushState({ view: 'home' }, '', '#home');
-  }
-
+  headerTitle.textContent = "MINIDISC";
+  
   let html = '<div class="list-container">';
-  catalogData.forEach((md, index) => {
-    const borderColor = getBorderColor(md.genre);
+  
+  minidiscData.forEach((item, index) => {
+    const imgClass = item.type === 'md' ? 'md-thumb' : 'album-thumb';
+    const tagColor = item.tagColor || '#7b2cbf';
     
-    const displayTitle = (md.albums && md.albums.length > 0) 
-      ? md.albums.map(a => a.title).join(' / ') 
-      : (md.title || 'MiniDisc sans titre');
-
     html += `
-      <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openMD(${index})">
-        <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+      <div class="list-item" onclick="renderDetails(${index})">
+        <img src="${item.cover}" alt="${item.title}" class="${imgClass}" />
         <div class="item-details">
-          <div class="item-tag" style="color: ${borderColor};">${md.genre || 'MINIDISC'}</div>
-          <div class="item-title">${displayTitle}</div>
+          <span class="item-tag" style="color: ${tagColor}">${item.tag}</span>
+          <h2 class="item-title">${formatAlbumTitles(item.title)}</h2>
+          <span class="item-sub">${item.sub}</span>
         </div>
       </div>
     `;
   });
+  
   html += '</div>';
   app.innerHTML = html;
 }
 
-function openMD(index, pushState = true) {
-  currentMD = catalogData[index];
-  currentAlbum = null;
+function renderDetails(index) {
+  const item = minidiscData[index];
   backBtn.classList.remove('hidden');
-
-  if (pushState) {
-    history.pushState({ view: 'md', mdIndex: index }, '', `#md-${index}`);
-  }
-
-  if (currentMD.tracks && (!currentMD.albums || currentMD.albums.length === 0)) {
-    headerTitle.textContent = currentMD.title || currentMD.genre || "MiniDisc";
-    renderTrackList(currentMD.title || "Compilation", "Artistes variés", currentMD.md_cover, currentMD.tracks);
-    return;
-  }
-
-  headerTitle.textContent = currentMD.genre || "MiniDisc";
-  const borderColor = getBorderColor(currentMD.genre);
-
-  let html = '<div class="list-container">';
-  (currentMD.albums || []).forEach((album, aIndex) => {
-    html += `
-      <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openAlbum(${aIndex})">
-        <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'52\\' height=\\'52\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/></svg>'">
-        <div class="item-details">
-          <div class="item-title">${album.title}</div>
-          <div class="item-sub">${album.artist} • ${album.tracks ? album.tracks.length : 0} pistes</div>
-        </div>
-      </div>
-    `;
-  });
-  html += '</div>';
-  app.innerHTML = html;
-}
-
-function openAlbum(aIndex, pushState = true) {
-  currentAlbum = currentMD.albums[aIndex];
-  headerTitle.textContent = currentAlbum.title;
-
-  if (pushState) {
-    const mdIndex = catalogData.indexOf(currentMD);
-    history.pushState({ view: 'album', mdIndex: mdIndex, albumIndex: aIndex }, '', `#md-${mdIndex}-album-${aIndex}`);
-  }
-
-  renderTrackList(currentAlbum.title, currentAlbum.artist, currentAlbum.cover, currentAlbum.tracks);
-}
-
-function renderTrackList(title, artist, coverSrc, tracks) {
+  headerTitle.textContent = item.tag;
+  
   let html = `
     <div class="track-container">
       <div class="album-header">
-        <img class="album-cover-large" src="${coverSrc || ''}" onerror="this.style.display='none'">
+        <img src="${item.cover}" alt="${item.title}" class="album-cover-large" />
         <div>
-          <div style="font-weight:700; font-size:1rem;">${title}</div>
-          <div style="color:var(--text-sub); font-size:0.85rem; margin-top:2px;">${artist}</div>
+          <h2 class="item-title">${formatAlbumTitles(item.title)}</h2>
+          <span class="item-sub">${item.sub}</span>
         </div>
       </div>
       <ul class="track-list">
   `;
   
-  if (tracks && tracks.length > 0) {
-    tracks.forEach((track) => {
-      html += `
-        <li class="track-item">
-          <span>${track}</span>
-        </li>
-      `;
-    });
-  } else {
-    html += '<li class="track-item" style="color:var(--text-sub); font-style:italic;">Aucune liste de pistes renseignée.</li>';
-  }
-
-  html += '</ul></div>';
+  item.tracks.forEach(track => {
+    html += `
+      <li class="track-item">
+        <strong>${track.number}.</strong> ${track.title} — <em>${track.artist}</em>
+      </li>
+    `;
+  });
+  
+  html += `
+      </ul>
+    </div>
+  `;
+  
   app.innerHTML = html;
 }
 
-backBtn.addEventListener('click', () => {
-  history.back();
-});
+backBtn.addEventListener('click', renderList);
 
-window.addEventListener('popstate', (event) => {
-  const state = event.state;
-
-  if (!state || state.view === 'home') {
-    renderMDList(false);
-  } else if (state.view === 'md') {
-    openMD(state.mdIndex, false);
-  } else if (state.view === 'album') {
-    currentMD = catalogData[state.mdIndex];
-    openAlbum(state.albumIndex, false);
-  }
-});
+// Initialisation au chargement
+renderList();
