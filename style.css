@@ -41,8 +41,8 @@ body::before {
   z-index: 800;
   pointer-events: none;
 
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 335px, transparent 350px);
-  mask-image: linear-gradient(to bottom, black 0px, black 335px, transparent 350px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 325px, transparent 350px);
+  mask-image: linear-gradient(to bottom, black 0px, black 325px, transparent 350px);
 }
 
 /* ENCART 1 : HEADER TITRE FIXE */
