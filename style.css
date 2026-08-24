@@ -12,22 +12,32 @@
   padding: 0;
 }
 
-html {
-  background-color: #f8fafc;
-}
-
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text-main);
-  padding: 0 16px;
+  padding: 16px;
   max-width: 600px;
   margin: 0 auto;
 
-  /* Image de fond sans 'attachment: fixed' pour éviter les bugs Safari/WebKit */
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 250px;
-  min-height: 100vh;
+  background-color: #f8fafc;
+}
+
+/* CACHE EN HAUT : Masque proprement les cartes quelques millimètres sous l'en-tête */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 105px; /* S'arrête juste avant l'en-tête */
+  background-image: url('/Minidiscs/images/pattern.jpg');
+  background-repeat: repeat;
+  background-size: 250px;
+  background-color: #f8fafc;
+  z-index: 900; /* Sous le header (1000) mais au-dessus des cartes */
 }
 
 /* HEADER FIXE EN HAUT DE L'ÉCRAN */
@@ -50,27 +60,11 @@ header {
   box-shadow: 4px 4px 0px #000;
 }
 
-/* CONTENEUR PRINCIPAL AVEC MASQUE DE FONDU */
+/* DÉCALAGE DU CONTENU PRINCIPAL */
 main#app {
-  /* Le padding-top pousse le contenu sous le header */
-  padding-top: 130px;
-  padding-bottom: 30px;
-
-  /* Masque progressif : totalement transparent en haut (0 à 110px), 
-     puis transition progressive vers l'opacité totale entre 110px et 155px.
-     Laisse environ 20-30px d'espace fluide sous le header. */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 110px,
-    black 155px
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 110px,
-    black 155px
-  );
+  margin-top: 110px;
+  position: relative;
+  z-index: 1;
 }
 
 .header-title-container {
