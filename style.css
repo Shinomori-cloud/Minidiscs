@@ -32,7 +32,7 @@ body::before {
   top: 0;
   left: 0;
   width: 100%;
-  height: 125px;
+  height: 140px;
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 250px;
@@ -40,8 +40,8 @@ body::before {
   z-index: 900;
   pointer-events: none;
 
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 95px, transparent 125px);
-  mask-image: linear-gradient(to bottom, black 0px, black 95px, transparent 125px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 128px, transparent 140px);
+  mask-image: linear-gradient(to bottom, black 0px, black 128px, transparent 140px);
 }
 
 /* HEADER FIXE EN HAUT DE L'ÉCRAN */
@@ -154,8 +154,8 @@ main#app {
 
 /* Vignette MiniDisc (Format rectangulaire vertical généreux) */
 .md-thumb {
-  width: 90px;
-  height: 126px;
+  width: 105px;
+  height: 146px;
   object-fit: cover;
   border-radius: 10px;
   flex-shrink: 0;
@@ -164,8 +164,8 @@ main#app {
 
 /* Vignette Album (Format carré très lisible) */
 .album-thumb {
-  width: 100px;
-  height: 100px;
+  width: 130px;
+  height: 130px;
   object-fit: cover;
   border-radius: 10px;
   flex-shrink: 0;
@@ -217,8 +217,8 @@ main#app {
 
 /* Grande pochette dans la vue album/tracklist */
 .album-cover-large {
-  width: 130px;
-  height: 130px;
+  width: 155px;
+  height: 155px;
   object-fit: cover;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
