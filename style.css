@@ -33,7 +33,7 @@ body::before {
   top: 0;
   left: 0;
   width: 100%;
-  height: 335px;
+  height: 350px;
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 350px;
@@ -42,15 +42,15 @@ body::before {
   z-index: 800;
   pointer-events: none;
 
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 310px, transparent 335px);
-  mask-image: linear-gradient(to bottom, black 0px, black 310px, transparent 335px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 325px, transparent 350px);
+  mask-image: linear-gradient(to bottom, black 0px, black 325px, transparent 350px);
 }
 
 /* REDUCTION DU CACHE SI LA SELECTION EST MASQUÉE (PAGES ALBUM / TRACKLIST) */
 body:has(.featured-container.hidden)::before {
-  height: 160px;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
-  mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
+  height: 175px;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 150px, transparent 175px);
+  mask-image: linear-gradient(to bottom, black 0px, black 150px, transparent 175px);
 }
 
 /* ENCART 1 : HEADER TITRE FIXE (ABAISSÉ SOUS LA CAMÉRA ET AGRANDI) */
@@ -66,7 +66,7 @@ header {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 14px;
+  padding: 20px 16px;
   background-color: #ffffff;
   border-radius: 16px;
   border: 2px solid #000;
@@ -82,7 +82,7 @@ header {
 
 .header-subtitle {
   font-family: 'Righteous', cursive;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   letter-spacing: 2px;
   color: #7b2cbf;
   text-transform: uppercase;
@@ -91,7 +91,7 @@ header {
 
 .title-90s {
   font-family: 'Righteous', cursive;
-  font-size: 2rem;
+  font-size: 2.2rem;
   text-transform: uppercase;
   
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 50%, #00f0ff 100%);
@@ -129,7 +129,7 @@ header {
 /* ENCART 2 : SÉLECTION DU MOMENT FIXE & SOMBRE (ABAISSÉE) */
 .featured-container {
   position: fixed;
-  top: 152px;
+  top: 168px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
@@ -215,14 +215,14 @@ header {
 
 /* CONTENU PRINCIPAL (PAGE ACCUEIL) */
 main#app {
-  margin-top: 325px;
+  margin-top: 340px;
   position: relative;
   z-index: 1;
 }
 
 /* MARGIN-TOP DÉTAILS (ALBUMS / TRACKLIST) */
 body:has(.featured-container.hidden) main#app {
-  margin-top: 150px;
+  margin-top: 165px;
 }
 
 .list-container {
@@ -283,10 +283,11 @@ body:has(.featured-container.hidden) main#app {
   text-transform: uppercase;
 }
 
+/* POLICE DES TITRES D'ALBUMS RÉDUITE */
 .item-title {
   font-weight: 600;
-  font-size: 1.05rem;
-  line-height: 1.35;
+  font-size: 0.92rem;
+  line-height: 1.3;
   color: var(--text-main);
 }
 
