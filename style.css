@@ -25,19 +25,26 @@ body {
   background-color: #f8fafc;
 }
 
-/* CACHE EN HAUT : Masque proprement les cartes quelques millimètres sous l'en-tête */
+/* CACHE EN HAUT AVEC DÉGRADÉ DE TRANSPARENCE EN BAS */
 body::before {
   content: "";
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 118px; /* S'arrête juste avant l'en-tête */
+  height: 125px; /* On rallonge un peu le cache pour créer la zone de fondu */
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 250px;
   background-color: #f8fafc;
-  z-index: 900; /* Sous le header (1000) mais au-dessus des cartes */
+  z-index: 900; /* Sous le header (1000) mais au-dessus des cartes (1) */
+  pointer-events: none; /* Laisse passer les clics/touches */
+
+  /* Masque en dégradé appliqué directement au cache :
+     - De 0 à 95px : 100% opaque (masque complet sous le header)
+     - De 95px à 125px : Fondu progressif vers la transparence totale */
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 95px, transparent 125px);
+  mask-image: linear-gradient(to bottom, black 0px, black 95px, transparent 125px);
 }
 
 /* HEADER FIXE EN HAUT DE L'ÉCRAN */
