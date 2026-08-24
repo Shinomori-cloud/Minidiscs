@@ -25,23 +25,27 @@ body {
   background-color: #f8fafc;
 }
 
-/* CACHE SUPÉRIEUR POUR MASQUER LE SCROLL DERRIÈRE LE HEADER */
+/* CACHE FIXE POUR MASQUER LE SCROLL DERRIÈRE LE HEADER ET LA SÉLECTION */
+/* Il couvre le haut de l'écran et s'estompe juste en dessous de l'encart sombre */
 body::before {
   content: "";
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 90px;
+  height: 255px;
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 250px;
   background-color: #f8fafc;
-  z-index: 890;
+  z-index: 800;
   pointer-events: none;
+
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 220px, transparent 255px);
+  mask-image: linear-gradient(to bottom, black 0px, black 220px, transparent 255px);
 }
 
-/* ENCART 1 : HEADER FIXE D'ORIGINE */
+/* ENCART 1 : HEADER TITRE FIXE */
 header {
   position: fixed;
   top: 12px;
@@ -117,7 +121,7 @@ header {
 /* ENCART 2 : SÉLECTION DU MOMENT FIXE & SOMBRE */
 .featured-container {
   position: fixed;
-  top: 98px;
+  top: 102px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
@@ -128,11 +132,7 @@ header {
   border: 1.5px solid #ff007f;
   border-radius: 12px;
   padding: 8px 10px 10px 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-
-  /* Effet de transparence progressive vers le bas au scroll */
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .featured-container.hidden {
@@ -203,9 +203,9 @@ header {
   display: block;
 }
 
-/* CONTENU PRINCIPAL (LISTE) */
+/* CONTENU PRINCIPAL (LISTE DES DISQUES) */
 main#app {
-  margin-top: 230px;
+  margin-top: 250px;
   position: relative;
   z-index: 1;
 }
