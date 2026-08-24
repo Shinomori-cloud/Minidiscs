@@ -26,8 +26,12 @@ body {
   background-color: #f8fafc;
 }
 
-/* HEADER STYLE 90S POP */
+/* HEADER STYLE 90S POP (PERMANENT / STICKY) */
 header {
+  position: sticky;
+  top: 12px;
+  z-index: 100;
+  
   display: flex;
   align-items: center;
   gap: 12px;
@@ -61,12 +65,10 @@ header {
   font-size: 1.8rem;
   text-transform: uppercase;
   
-  /* Dégradé de couleur Rose à Bleu */
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 50%, #00f0ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   
-  /* Ombres portées style néon/rétro */
   filter: drop-shadow(2px 2px 0px #000);
   
   letter-spacing: 1px;
