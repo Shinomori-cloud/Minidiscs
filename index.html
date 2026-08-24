@@ -5,12 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Collection MiniDisc</title>
   
-  <!-- Police Rétro 90s / Synthwave -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
   
-  <!-- Inscription dynamique du CSS sans cache -->
   <script>
     const cssLink = document.createElement('link');
     cssLink.rel = 'stylesheet';
@@ -20,33 +18,31 @@
 </head>
 <body>
 
-  <header id="main-header">
-    <div class="header-top">
-      <button id="back-btn" class="back-btn hidden">←</button>
-      <div class="header-title-container">
-        <span class="header-subtitle">MES ARCHIVES MUSICALES</span>
-        <h1 id="header-title" class="title-90s">MINIDISC</h1>
-      </div>
-    </div>
-
-    <!-- ENCART SÉLECTION DANS LE HEADER FIXE -->
-    <div id="featured-container" class="featured-container">
-      <div class="featured-header">
-        <span class="featured-title">SÉLECTION DU MOMENT</span>
-        <button class="refresh-btn" onclick="refreshFeatured()" title="Autre sélection">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21.5 2v6h-6M2.5 22v-6h6"/>
-            <path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M2.5 16l1.2 0,8A10 10 0 0 0 22 12.5"/>
-          </svg>
-        </button>
-      </div>
-      <div class="featured-grid" id="featured-grid"></div>
+  <!-- ENCART 1 : HEADER TITRE -->
+  <header>
+    <button id="back-btn" class="back-btn hidden">←</button>
+    <div class="header-title-container">
+      <span class="header-subtitle">MES ARCHIVES MUSICALES</span>
+      <h1 id="header-title" class="title-90s">MINIDISC</h1>
     </div>
   </header>
 
+  <!-- ENCART 2 : SÉLECTION DU MOMENT -->
+  <div id="featured-container" class="featured-container">
+    <div class="featured-header">
+      <span class="featured-title">SÉLECTION DU MOMENT</span>
+      <button class="refresh-btn" onclick="refreshFeatured()" title="Autre sélection">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M2.5 22v-6h6"/>
+          <path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M2.5 16l1.2 0,8A10 10 0 0 0 22 12.5"/>
+        </svg>
+      </button>
+    </div>
+    <div class="featured-grid" id="featured-grid"></div>
+  </div>
+
   <main id="app"></main>
 
-  <!-- Inscription dynamique du JS sans cache -->
   <script>
     const jsScript = document.createElement('script');
     jsScript.src = 'app.js?v=' + Date.now();
