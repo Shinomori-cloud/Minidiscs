@@ -21,7 +21,7 @@ body {
   margin: 0 auto;
 
   /* MOTIF 90'S MEMPHIS EN ARRIÈRE-PLAN */
-  background-image: url('images/pattern.jpg');
+  background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 300px; /* Ajuste la taille du motif selon tes préférences */
   background-attachment: fixed; /* Le fond reste fixe quand on défile */
