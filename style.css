@@ -26,21 +26,34 @@ body {
   background-color: #f8fafc;
 }
 
-/* HEADER STYLE 90S POP (PERMANENT / STICKY) */
+/* HEADER FIXE EN HAUT DE L'ÉCRAN */
 header {
-  position: sticky;
+  position: fixed;
   top: 12px;
-  z-index: 100;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 568px;
+  z-index: 1000;
   
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
   padding: 14px;
   background-color: #ffffff;
   border-radius: 16px;
   border: 2px solid #000;
   box-shadow: 4px 4px 0px #000;
+}
+
+/* DECALAGE + MASQUE EN FONDU POUR LES ENCARTS */
+main#app {
+  margin-top: 110px;
+  padding-top: 15px;
+  
+  /* Les éléments deviennent invisibles quelques millimètres sous le header */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0px, transparent 10px, black 30px);
+  mask-image: linear-gradient(to bottom, transparent 0px, transparent 10px, black 30px);
 }
 
 .header-title-container {
@@ -54,12 +67,11 @@ header {
   font-family: 'Righteous', cursive;
   font-size: 0.75rem;
   letter-spacing: 2px;
-  color: #7b2cbf; /* Violet */
+  color: #7b2cbf;
   text-transform: uppercase;
   margin-bottom: 2px;
 }
 
-/* TITRE AVEC DÉGRADÉ ROSE/VIOLET/BLEU & EXTRUSION 3D */
 .title-90s {
   font-family: 'Righteous', cursive;
   font-size: 1.8rem;
