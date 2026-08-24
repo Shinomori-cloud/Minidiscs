@@ -1,0 +1,16 @@
+{
+  "short_name": "Minidiscs",
+  "name": "Mes Archives Musicales",
+  "icons": [
+    {
+      "src": "/Minidiscs/images/pattern.jpg",
+      "sizes": "192x192 512x512",
+      "type": "image/jpeg"
+    }
+  ],
+  "start_url": "/Minidiscs/index.html",
+  "background_color": "#f8fafc",
+  "theme_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait"
+}
