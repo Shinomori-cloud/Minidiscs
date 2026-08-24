@@ -43,8 +43,8 @@ body::before {
   /* Masque en dégradé appliqué directement au cache :
      - De 0 à 95px : 100% opaque (masque complet sous le header)
      - De 95px à 125px : Fondu progressif vers la transparence totale */
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 95px, transparent 125px);
-  mask-image: linear-gradient(to bottom, black 0px, black 95px, transparent 125px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 108px, transparent 125px);
+  mask-image: linear-gradient(to bottom, black 0px, black 108px, transparent 125px);
 }
 
 /* HEADER FIXE EN HAUT DE L'ÉCRAN */
