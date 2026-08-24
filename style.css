@@ -32,7 +32,7 @@ body::before {
   top: 0;
   left: 0;
   width: 100%;
-  height: 125px; /* On rallonge un peu le cache pour créer la zone de fondu */
+  height: 130px; /* On rallonge un peu le cache pour créer la zone de fondu */
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 250px;
@@ -43,8 +43,8 @@ body::before {
   /* Masque en dégradé appliqué directement au cache :
      - De 0 à 95px : 100% opaque (masque complet sous le header)
      - De 95px à 125px : Fondu progressif vers la transparence totale */
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 108px, transparent 125px);
-  mask-image: linear-gradient(to bottom, black 0px, black 108px, transparent 125px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 115px, transparent 130px);
+  mask-image: linear-gradient(to bottom, black 0px, black 115px, transparent 130px);
 }
 
 /* HEADER FIXE EN HAUT DE L'ÉCRAN */
