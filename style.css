@@ -33,17 +33,17 @@ body::before {
   top: 0;
   left: 0;
   width: 100%;
-  height: 360px;
+  height: 375px;
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
-  background-size: 360px;
+  background-size: 375px;
   background-color: #f8fafc;
   background-attachment: fixed;
   z-index: 800;
   pointer-events: none;
 
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 352px, transparent 360px);
-  mask-image: linear-gradient(to bottom, black 0px, black 352px, transparent 360px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 362px, transparent 375px);
+  mask-image: linear-gradient(to bottom, black 0px, black 362px, transparent 375px);
 }
 
 /* REDUCTION DU CACHE SI LA SELECTION EST MASQUÉE (PAGES ALBUM / TRACKLIST) */
