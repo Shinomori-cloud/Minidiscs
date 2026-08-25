@@ -686,6 +686,34 @@ body:has(.featured-container.hidden) main#app {
 }
 
 /* ==========================================
+   POP-UP TOAST
+   ========================================== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1e1e24;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0px #000;
+  z-index: 9999;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.toast.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 20px);
+}
+
+/* ==========================================
    UTILITAIRES DE MASQUAGE
    ========================================== */
 .hidden {
