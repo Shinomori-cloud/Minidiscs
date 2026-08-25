@@ -49,14 +49,14 @@ body::before {
   mask-image: linear-gradient(to bottom, black 0px, black 375px, transparent 390px);
 }
 
-/* AGRANDISSEMENT DU CACHE SPÉCIFIQUE AU DASHBOARD (POUR LE DÉCALAGE BAS) */
+/* AGRANDISSEMENT DU CACHE SPÉCIFIQUE AU DASHBOARD */
 body:has(.dashboard-container)::before {
   height: 420px;
   -webkit-mask-image: linear-gradient(to bottom, black 0px, black 400px, transparent 420px);
   mask-image: linear-gradient(to bottom, black 0px, black 400px, transparent 420px);
 }
 
-/* RÉDUCTION DU CACHE SUR TOUTES LES AUTRES PAGES (COLLECTION / DETAILS) */
+/* RÉDUCTION DU CACHE SUR TOUTES LES AUTRES PAGES */
 body:has(.featured-container.hidden)::before {
   height: 160px;
   -webkit-mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
@@ -261,7 +261,7 @@ main#app {
   z-index: 1;
 }
 
-/* Marge ajustée pour la page d'accueil avec décalage */
+/* Marge ajustée pour la page d'accueil */
 body:has(.dashboard-container) main#app {
   margin-top: 425px;
 }
