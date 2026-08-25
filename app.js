@@ -15,10 +15,13 @@ const featuredContainer = document.getElementById('featured-container');
 /* ==========================================
    GESTION STRICTE DE L'HISTORIQUE HERMIT
    ========================================== */
+
+// 1. Définition du hash par défaut pour bloquer la sortie de l'application
 if (!window.location.hash || window.location.hash === '#') {
   window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
 }
 
+// 2. Interception du bouton retour physique (popstate)
 window.addEventListener('popstate', (e) => {
   if (!e.state || window.location.hash === '' || window.location.hash === '#dashboard') {
     renderDashboard(false);
@@ -79,6 +82,7 @@ fetch('data.json')
     console.error(err);
   });
 
+// Bouton retour UI dans le Header
 backBtn.addEventListener('click', () => {
   if (currentAlbum !== null) {
     openMD(currentMD, true);
@@ -214,7 +218,7 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 2. LISTE DES MINIDISCS */
+/* 2. LISTE DES MINIDISCS (AVEC FILTRE PAR GENRE) */
 function renderMDList(genreFilter = null, pushState = true) {
   currentMD = null;
   currentAlbum = null;
@@ -276,7 +280,7 @@ function renderMDList(genreFilter = null, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 3. VUE D'UN MINIDISC */
+/* 3. VUE D'UN MINIDISC (ALBUMS OU PISTES DIRECTES) */
 function openMD(index, pushState = true) {
   currentMD = index;
   currentAlbum = null;
@@ -354,7 +358,7 @@ function openMD(index, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 4. VUE TRACKLIST */
+/* 4. VUE TRACKLIST (ALBUM SPÉCIFIQUE) */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
   currentMD = mdIndex;
   currentAlbum = albumIndex;
@@ -482,6 +486,7 @@ function submitNewMD() {
 
   catalogData.push(newMD);
   renderDashboard(false);
+  closeAdminModal();
   
   alert("MiniDisc ajouté au catalogue local ! Pensez à télécharger votre data.json mis à jour.");
   document.getElementById('md-form').reset();
