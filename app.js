@@ -437,7 +437,7 @@ function addAdminAlbumBlock() {
     <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album" required></div>
     <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste" required></div>
     <div class="form-group"><input type="text" class="album-year" placeholder="Année (ex: 1998)"></div>
-    <div class="form-group"><input type="text" class="album-cover" value="/Minidiscs/images/" placeholder="URL Pochette Album"></div>
+    <div class="form-group"><input type="text" class="album-cover" value="images/" placeholder="URL Pochette Album"></div>
     <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne)"></textarea></div>
   `;
   container.appendChild(div);
