@@ -12,22 +12,20 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   INITIALISATION & NAVIGATION HISTORY
+   INITIALISATION & NAVIGATION HISTORY (HERMIT SAFE)
    ========================================== */
 fetch('data.json')
   .then(response => response.json())
   .then(data => {
     catalogData = data;
     
-    // 1. ASTUCE HERMIT : On crée un historique artificiel pour bloquer la fermeture
+    // 1. ASTUCE HERMIT : Création du verrou d'historique
     if (!history.state) {
-      // Étape 0 : Fond d'historique fictif
       history.replaceState({ view: 'root' }, '', '#root');
-      // Étape 1 : Vue Dashboard réelle
       history.pushState({ view: 'dashboard' }, '', '#dashboard');
     }
 
-    // 2. Chargement initial selon le hash URL
+    // 2. Chargement initial SANS faire de pushState supplémentaire pour ne pas casser la pile
     const hash = window.location.hash;
     if (hash.startsWith('#minidiscs')) {
       const parts = hash.split('?genre=');
@@ -49,12 +47,11 @@ fetch('data.json')
     console.error(err);
   });
 
-// Gestion des gestes et du bouton "Précédent" du système
+// Gestion du bouton "Précédent" Android / Hermit
 window.addEventListener('popstate', (e) => {
-  // Si le retour système tente de revenir au "root" fictif ou s'il n'y a plus d'état
+  // Verrou Hermit : si on atteint la racine fictive ou un état nul, on piège le retour
   if (!e.state || e.state.view === 'root' || e.state.view === 'dashboard') {
     renderDashboard(false);
-    // On réinjecte immédiatement l'état fictif + le dashboard pour ré-armer la sécurité
     history.replaceState({ view: 'root' }, '', '#root');
     history.pushState({ view: 'dashboard' }, '', '#dashboard');
     return;
@@ -81,15 +78,9 @@ window.addEventListener('popstate', (e) => {
   }
 });
 
-// Bouton retour du Header
+// Bouton retour visible dans l'entête
 backBtn.addEventListener('click', () => {
-  if (currentAlbum !== null) {
-    openMD(currentMD, true);
-  } else if (currentMD !== null) {
-    renderMDList(currentGenreFilter, true);
-  } else {
-    renderDashboard(true);
-  }
+  window.history.back();
 });
 
 /* ==========================================
@@ -222,7 +213,7 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 2. LISTE DES MINIDISCS (AVEC FILTRE OPTIONNEL PAR GENRE) */
+/* 2. LISTE DES MINIDISCS (FILTRE PAR GENRE OPTIONNEL) */
 function renderMDList(genreFilter = null, pushState = true) {
   currentMD = null;
   currentAlbum = null;
@@ -297,7 +288,7 @@ function openMD(index, pushState = true) {
   const md = catalogData[index];
   const borderColor = getBorderColor(md.genre);
 
-  // CAS COMPILATION : Pas d'albums -> On affiche directement la liste des pistes
+  // CAS COMPILATION : Pas d'albums -> Affichage direct des pistes
   if (!md.albums || md.albums.length === 0) {
     headerTitle.textContent = "PISTES";
 
@@ -364,7 +355,7 @@ function openMD(index, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 4. VUE TRACKLIST (POUR ALBUMS SPÉCIFIQUES) */
+/* 4. VUE TRACKLIST (ALBUM SPÉCIFIQUE) */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
   currentMD = mdIndex;
   currentAlbum = albumIndex;
