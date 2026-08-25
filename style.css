@@ -42,8 +42,8 @@ body::before {
   z-index: 800;
   pointer-events: none;
 
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 310px, transparent 335px);
-  mask-image: linear-gradient(to bottom, black 0px, black 310px, transparent 335px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 340px, transparent 350px);
+  mask-image: linear-gradient(to bottom, black 0px, black 340px, transparent 350px);
 }
 
 /* REDUCTION DU CACHE SI LA SELECTION EST MASQUÉE (PAGES ALBUM / TRACKLIST) */
@@ -129,7 +129,7 @@ header {
 /* ENCART 2 : SÉLECTION DU MOMENT FIXE & SOMBRE (ABAISSÉE) */
 .featured-container {
   position: fixed;
-  top: 152px;
+  top: 162px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
@@ -215,7 +215,7 @@ header {
 
 /* CONTENU PRINCIPAL (PAGE ACCUEIL) */
 main#app {
-  margin-top: 325px;
+  margin-top: 345px;
   position: relative;
   z-index: 1;
 }
