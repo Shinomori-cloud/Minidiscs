@@ -1,3 +1,6 @@
+/* ==========================================
+   VARIABLES GLOBALES & ÉLÉMENTS DOM
+   ========================================== */
 let catalogData = [];
 let currentMD = null;
 let currentAlbum = null;
@@ -6,97 +9,123 @@ const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
 const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
-const refreshFeaturedBtn = document.getElementById('refresh-featured-btn');
 
-const genreColors = {
-  'ROCK': '#e63946',
-  'ROCK FRANÇAIS': '#d90429',
-  'ROCK CALIFORNIEN': '#ffb703',
-  'ROCK GARAGE': '#fb8500',
-  'ROCK ATMOSPHÉRIQUE': '#457b9d',
-  'ROCK 80\'S': '#9d4edd',
-  'POP': '#00b4d8',
-  'POP ROCK': '#0077b6',
-  'RAP': '#16a34a',
-  'RAP / REGGAE': '#2a9d8f',
-  'HUMOUR': '#f72585',
-  'OST': '#7209b7',
-  'JEUNESSE': '#ff0676',
-  'METAL': '#b91c1c',
-  'LIVE': '#4b5563',
-  'FOLK ROCK': '#e07a5f',
-  'FRANÇAIS': '#2563eb',
-  'DEFAULT': '#6b7280'
-};
+/* ==========================================
+   INITIALISATION & NAVIGATION HISTORY
+   ========================================== */
+fetch('catalog.json')
+  .then(response => response.json())
+  .then(data => {
+    catalogData = data;
+    
+    // Chargement initial selon le hash URL
+    const hash = window.location.hash;
+    if (hash === '#minidiscs') {
+      renderMDList(false);
+    } else {
+      renderDashboard(false);
+    }
+  })
+  .catch(err => {
+    app.innerHTML = `<p style="color:red; text-align:center;">Erreur de chargement du catalogue JSON.</p>`;
+    console.error(err);
+  });
 
-function getBorderColor(genre) {
-  if (!genre) return genreColors['DEFAULT'];
-  const cleanGenre = genre.toUpperCase().trim();
-  return genreColors[cleanGenre] || genreColors['DEFAULT'];
-}
-
-function formatAlbumTitles(titleString) {
-  if (!titleString) return '';
-  if (titleString.includes('/')) {
-    return titleString
-      .split('/')
-      .map(t => `<div class="title-line">${t.trim()}</div>`)
-      .join('');
+// Gestion du bouton "Précédent" du navigateur / smartphone
+window.addEventListener('popstate', (e) => {
+  if (!e.state) {
+    renderDashboard(false);
+    return;
   }
-  return `<div class="title-line">${titleString}</div>`;
-}
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-function getFeaturedGridHTML() {
-  if (catalogData.length < 3) return '';
-  const randomPick = [...catalogData].sort(() => 0.5 - Math.random()).slice(0, 3);
-  let html = '';
   
-  randomPick.forEach(md => {
+  switch (e.state.view) {
+    case 'dashboard':
+      renderDashboard(false);
+      break;
+    case 'minidiscs':
+      renderMDList(false);
+      break;
+    case 'albums':
+      if (e.state.mdIndex !== undefined) {
+        openMD(e.state.mdIndex, false);
+      } else {
+        renderMDList(false);
+      }
+      break;
+    case 'tracklist':
+      if (e.state.mdIndex !== undefined && e.state.albumIndex !== undefined) {
+        openAlbum(e.state.mdIndex, e.state.albumIndex, false);
+      } else {
+        renderMDList(false);
+      }
+      break;
+    default:
+      renderDashboard(false);
+  }
+});
+
+// Bouton retour du Header
+backBtn.addEventListener('click', () => {
+  if (currentAlbum !== null) {
+    openMD(currentMD, true);
+  } else if (currentMD !== null) {
+    renderMDList(true);
+  } else {
+    renderDashboard(true);
+  }
+});
+
+/* ==========================================
+   COULEURS PAR GENRE
+   ========================================== */
+function getBorderColor(genre) {
+  if (!genre) return '#7b2cbf';
+  const g = genre.toUpperCase().trim();
+  switch (g) {
+    case 'ROCK': return '#e63946';
+    case 'POP': return '#ff007f';
+    case 'ELECTRO': return '#00f0ff';
+    case 'HIP-HOP': return '#ffb703';
+    case 'INDIE': return '#7b2cbf';
+    case 'METAL': return '#2b2d42';
+    default: return '#7b2cbf';
+  }
+}
+
+function formatAlbumTitles(rawTitle) {
+  if (!rawTitle) return '';
+  return rawTitle.split(' / ').map(t => `<div class="title-line">${t.trim()}</div>`).join('');
+}
+
+/* ==========================================
+   SÉLECTION DU MOMENT (ALEATOIRE)
+   ========================================== */
+function refreshFeatured() {
+  if (!catalogData || catalogData.length === 0) return;
+  
+  const featuredGrid = document.getElementById('featured-grid');
+  if (!featuredGrid) return;
+
+  const shuffled = [...catalogData].sort(() => 0.5 - Math.random());
+  const selected = shuffled.slice(0, 3);
+
+  let html = '';
+  selected.forEach(md => {
     const originalIndex = catalogData.indexOf(md);
-    const borderColor = getBorderColor(md.genre);
     html += `
-      <div class="featured-item" style="border-color: ${borderColor};" onclick="openMD(${originalIndex})">
-        <img class="featured-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%231e1b2e\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'16\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+      <div class="featured-item" onclick="openMD(${originalIndex})">
+        <img class="featured-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
       </div>
     `;
   });
-  
-  return html;
+  featuredGrid.innerHTML = html;
 }
 
-function refreshFeatured() {
-  const grid = document.getElementById('featured-grid');
-  if (grid) {
-    grid.innerHTML = getFeaturedGridHTML();
-  }
-}
+/* ==========================================
+   VUES DE L'APPLICATION
+   ========================================== */
 
-fetch('./data.json')
-  .then(response => {
-    if (!response.ok) throw new Error(`Erreur réseau (${response.status})`);
-    return response.json();
-  })
-  .then(data => {
-    catalogData = data;
-    shuffleArray(catalogData);
-    renderDashboard(false);
-  })
-  .catch(error => {
-    console.error("Détail de l'erreur :", error);
-    app.innerHTML = `<p style="text-align:center; padding:20px; color:#e63946;">
-      Impossible de charger <strong>data.json</strong>.<br><br>
-      <small style="color:#6b7280;">(${error.message})</small>
-    </p>`;
-  });
-
-/* 1. NOUVELLE PAGE D'ACCUEIL / TABLEAU DE BORD */
+/* 1. ACCUEIL / DASHBOARD */
 function renderDashboard(pushState = true) {
   currentMD = null;
   currentAlbum = null;
@@ -112,7 +141,6 @@ function renderDashboard(pushState = true) {
     history.pushState({ view: 'dashboard' }, '', '#dashboard');
   }
 
-  // Calcul du total de MiniDiscs et décompte des genres
   const totalMD = catalogData.length;
   const genreCounts = {};
 
@@ -121,7 +149,6 @@ function renderDashboard(pushState = true) {
     genreCounts[g] = (genreCounts[g] || 0) + 1;
   });
 
-  // Tri par ordre décroissant de fréquence
   const sortedGenres = Object.keys(genreCounts).sort((a, b) => genreCounts[b] - genreCounts[a]);
 
   let genreBadgesHTML = '';
@@ -156,9 +183,10 @@ function renderDashboard(pushState = true) {
   `;
 
   app.innerHTML = html;
+  window.scrollTo(0, 0);
 }
 
-/* 2. PAGE LISTE DES MINIDISCS */
+/* 2. LISTE DES MINIDISCS (SÉLECTION MASQUÉE) */
 function renderMDList(pushState = true) {
   currentMD = null;
   currentAlbum = null;
@@ -166,8 +194,7 @@ function renderMDList(pushState = true) {
   headerTitle.textContent = "COLLECTION";
 
   if (featuredContainer) {
-    featuredContainer.classList.remove('hidden');
-    refreshFeatured();
+    featuredContainer.classList.add('hidden');
   }
 
   if (pushState) {
@@ -194,11 +221,12 @@ function renderMDList(pushState = true) {
   });
   html += '</div>';
   app.innerHTML = html;
+  window.scrollTo(0, 0);
 }
 
-/* 3. PAGE DÉTAILS DU MINIDISC (ALBUMS OU COMPILATION) */
+/* 3. VUE D'UN MINIDISC (ALBUMS) */
 function openMD(index, pushState = true) {
-  currentMD = catalogData[index];
+  currentMD = index;
   currentAlbum = null;
   backBtn.classList.remove('hidden');
 
@@ -206,108 +234,78 @@ function openMD(index, pushState = true) {
     featuredContainer.classList.add('hidden');
   }
 
+  const md = catalogData[index];
+  const borderColor = getBorderColor(md.genre);
+  headerTitle.textContent = md.genre || "ALBUMS";
+
   if (pushState) {
-    history.pushState({ view: 'md', mdIndex: index }, '', `#md-${index}`);
+    history.pushState({ view: 'albums', mdIndex: index }, '', `#md-${index}`);
   }
-
-  if (currentMD.tracks && (!currentMD.albums || currentMD.albums.length === 0)) {
-    headerTitle.textContent = currentMD.title || currentMD.genre || "MiniDisc";
-    renderTrackList(currentMD.title || "Compilation", "Artistes variés", currentMD.md_cover, currentMD.tracks);
-    return;
-  }
-
-  headerTitle.textContent = currentMD.genre || "MiniDisc";
-  const borderColor = getBorderColor(currentMD.genre);
 
   let html = '<div class="list-container">';
-  (currentMD.albums || []).forEach((album, aIndex) => {
-    html += `
-      <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openAlbum(${aIndex})">
-        <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'52\\' height=\\'52\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/></svg>'">
-        <div class="item-details">
-          <div class="item-title">${album.title}</div>
-          <div class="item-sub">${album.artist} • ${album.tracks ? album.tracks.length : 0} pistes</div>
+  if (md.albums && md.albums.length > 0) {
+    md.albums.forEach((album, aIndex) => {
+      html += `
+        <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openAlbum(${index}, ${aIndex})">
+          <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'24\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
+          <div class="item-details">
+            <div class="item-title" style="font-weight: 700; font-size: 1.05rem;">${album.title || 'Album sans titre'}</div>
+            <div class="item-sub">${album.artist || 'Artiste inconnu'}</div>
+            ${album.year ? `<div class="item-sub" style="font-size:0.78rem;">${album.year}</div>` : ''}
+          </div>
         </div>
-      </div>
-    `;
-  });
+      `;
+    });
+  } else {
+    html += `<p style="text-align:center; padding: 20px;">Aucun album trouvé sur ce MiniDisc.</p>`;
+  }
   html += '</div>';
   app.innerHTML = html;
+  window.scrollTo(0, 0);
 }
 
-/* 4. PAGE DÉTAILS DE L'ALBUM (TRACKLIST) */
-function openAlbum(aIndex, pushState = true) {
-  currentAlbum = currentMD.albums[aIndex];
-  headerTitle.textContent = currentAlbum.title;
+/* 4. VUE TRACKLIST */
+function openAlbum(mdIndex, albumIndex, pushState = true) {
+  currentMD = mdIndex;
+  currentAlbum = albumIndex;
+  backBtn.classList.remove('hidden');
 
   if (featuredContainer) {
     featuredContainer.classList.add('hidden');
   }
 
+  const md = catalogData[mdIndex];
+  const album = md.albums[albumIndex];
+  headerTitle.textContent = "PISTES";
+
   if (pushState) {
-    const mdIndex = catalogData.indexOf(currentMD);
-    history.pushState({ view: 'album', mdIndex: mdIndex, albumIndex: aIndex }, '', `#md-${mdIndex}-album-${aIndex}`);
+    history.pushState({ view: 'tracklist', mdIndex: mdIndex, albumIndex: albumIndex }, '', `#md-${mdIndex}-album-${albumIndex}`);
   }
 
-  renderTrackList(currentAlbum.title, currentAlbum.artist, currentAlbum.cover, currentAlbum.tracks);
-}
+  let tracksHTML = '';
+  if (album.tracks && album.tracks.length > 0) {
+    album.tracks.forEach((track, i) => {
+      tracksHTML += `<li class="track-item"><strong>${i + 1}.</strong> ${track}</li>`;
+    });
+  } else {
+    tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
+  }
 
-function renderTrackList(title, artist, coverSrc, tracks) {
   let html = `
     <div class="track-container">
       <div class="album-header">
-        <img class="album-cover-large" src="${coverSrc || ''}" onerror="this.style.display='none'">
+        <img class="album-cover-large" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
         <div>
-          <div style="font-weight:700; font-size:1rem;">${title}</div>
-          <div style="color:var(--text-sub); font-size:0.85rem; margin-top:2px;">${artist}</div>
+          <h2 style="font-size: 1.2rem; font-weight: 800; line-height: 1.2;">${album.title || 'Album sans titre'}</h2>
+          <p style="color: var(--text-sub); font-size: 0.95rem; margin-top: 4px;">${album.artist || 'Artiste inconnu'}</p>
+          ${album.year ? `<p style="color: var(--text-sub); font-size: 0.8rem; margin-top: 2px;">${album.year}</p>` : ''}
         </div>
       </div>
       <ul class="track-list">
+        ${tracksHTML}
+      </ul>
+    </div>
   `;
-  
-  if (tracks && tracks.length > 0) {
-    tracks.forEach((track) => {
-      html += `
-        <li class="track-item">
-          <span>${track}</span>
-        </li>
-      `;
-    });
-  } else {
-    html += '<li class="track-item" style="color:var(--text-sub); font-style:italic;">Aucune liste de pistes renseignée.</li>';
-  }
-
-  html += '</ul></div>';
   app.innerHTML = html;
+  window.scrollTo(0, 0);
 }
-
-backBtn.addEventListener('click', () => {
-  history.back();
-});
-
-// ÉCOUTEUR OPTIMISÉ POUR HERMIT & MOBILE
-if (refreshFeaturedBtn) {
-  const triggerRefresh = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    refreshFeatured();
-  };
-
-  refreshFeaturedBtn.addEventListener('click', triggerRefresh);
-  refreshFeaturedBtn.addEventListener('touchstart', triggerRefresh, { passive: false });
-}
-
-window.addEventListener('popstate', (event) => {
-  const state = event.state;
-
-  if (!state || state.view === 'dashboard') {
-    renderDashboard(false);
-  } else if (state.view === 'minidiscs') {
-    renderMDList(false);
-  } else if (state.view === 'md') {
-    openMD(state.mdIndex, false);
-  } else if (state.view === 'album') {
-    currentMD = catalogData[state.mdIndex];
-    openAlbum(state.albumIndex, false);
-  }
-});
