@@ -186,7 +186,7 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 2. LISTE DES MINIDISCS (SÉLECTION MASQUÉE) */
+/* 2. LISTE DES MINIDISCS */
 function renderMDList(pushState = true) {
   currentMD = null;
   currentAlbum = null;
@@ -264,7 +264,7 @@ function openMD(index, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 4. VUE TRACKLIST */
+/* 4. VUE TRACKLIST (NUMÉROTATION CORRIGÉE) */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
   currentMD = mdIndex;
   currentAlbum = albumIndex;
@@ -284,8 +284,14 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
 
   let tracksHTML = '';
   if (album.tracks && album.tracks.length > 0) {
-    album.tracks.forEach((track, i) => {
-      tracksHTML += `<li class="track-item"><strong>${i + 1}.</strong> ${track}</li>`;
+    album.tracks.forEach((track) => {
+      // Découpe la piste si elle commence par un numéro pour styliser ce numéro en gras
+      const match = track.match(/^(\d+\.)\s*(.*)$/);
+      if (match) {
+        tracksHTML += `<li class="track-item"><strong class="track-num">${match[1]}</strong> ${match[2]}</li>`;
+      } else {
+        tracksHTML += `<li class="track-item">${track}</li>`;
+      }
     });
   } else {
     tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
