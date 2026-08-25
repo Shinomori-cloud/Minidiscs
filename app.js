@@ -49,15 +49,13 @@ window.addEventListener('popstate', (e) => {
       renderMDList(e.state.genre || null, false);
       break;
     case 'albums':
-      if (e.state.mdIndex !== undefined) {
-        openMD(e.state.mdIndex, false);
-      } else {
-        renderMDList(null, false);
-      }
-      break;
     case 'tracklist':
-      if (e.state.mdIndex !== undefined && e.state.albumIndex !== undefined) {
-        openAlbum(e.state.mdIndex, e.state.albumIndex, false);
+      if (e.state.mdIndex !== undefined) {
+        if (e.state.albumIndex !== undefined) {
+          openAlbum(e.state.mdIndex, e.state.albumIndex, false);
+        } else {
+          openMD(e.state.mdIndex, false);
+        }
       } else {
         renderMDList(null, false);
       }
@@ -101,7 +99,7 @@ function formatAlbumTitles(rawTitle) {
 }
 
 /* ==========================================
-   SÉLECTION DU MOMENT (ALEATOIRE)
+   SÉLECTION DU MOMENT (ALÉATOIRE)
    ========================================== */
 function refreshFeatured() {
   if (!catalogData || catalogData.length === 0) return;
@@ -254,7 +252,7 @@ function renderMDList(genreFilter = null, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 3. VUE D'UN MINIDISC (ALBUMS) */
+/* 3. VUE D'UN MINIDISC (ALBUMS OU PISTES DIRECTES SI COMPILATION) */
 function openMD(index, pushState = true) {
   currentMD = index;
   currentAlbum = null;
@@ -266,6 +264,50 @@ function openMD(index, pushState = true) {
 
   const md = catalogData[index];
   const borderColor = getBorderColor(md.genre);
+
+  // CAS COMPILATION : Pas d'albums -> On affiche directement la liste des pistes
+  if (!md.albums || md.albums.length === 0) {
+    headerTitle.textContent = "PISTES";
+
+    if (pushState) {
+      history.pushState({ view: 'tracklist', mdIndex: index, isDirectTracks: true }, '', `#md-${index}`);
+    }
+
+    let tracksHTML = '';
+    if (md.tracks && md.tracks.length > 0) {
+      md.tracks.forEach((track) => {
+        const match = track.match(/^(\d+\.)\s*(.*)$/);
+        if (match) {
+          tracksHTML += `<li class="track-item"><strong class="track-num">${match[1]}</strong> ${match[2]}</li>`;
+        } else {
+          tracksHTML += `<li class="track-item">${track}</li>`;
+        }
+      });
+    } else {
+      tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
+    }
+
+    let html = `
+      <div class="track-container">
+        <div class="album-header">
+          <img class="album-cover-large" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+          <div>
+            <h2 style="font-size: 1.2rem; font-weight: 800; line-height: 1.2;">${md.title || 'Compilation'}</h2>
+            <p style="color: var(--text-sub); font-size: 0.95rem; margin-top: 4px;">${md.artist || 'Artistes divers'}</p>
+            ${md.genre ? `<p style="color: ${borderColor}; font-size: 0.8rem; margin-top: 2px; font-weight: 800;">${md.genre}</p>` : ''}
+          </div>
+        </div>
+        <ul class="track-list">
+          ${tracksHTML}
+        </ul>
+      </div>
+    `;
+    app.innerHTML = html;
+    window.scrollTo(0, 0);
+    return;
+  }
+
+  // CAS CLASSIQUE : Plusieurs albums sur le MiniDisc
   headerTitle.textContent = md.genre || "ALBUMS";
 
   if (pushState) {
@@ -273,28 +315,24 @@ function openMD(index, pushState = true) {
   }
 
   let html = '<div class="list-container">';
-  if (md.albums && md.albums.length > 0) {
-    md.albums.forEach((album, aIndex) => {
-      html += `
-        <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openAlbum(${index}, ${aIndex})">
-          <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'24\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
-          <div class="item-details">
-            <div class="item-title" style="font-weight: 700; font-size: 1.05rem;">${album.title || 'Album sans titre'}</div>
-            <div class="item-sub">${album.artist || 'Artiste inconnu'}</div>
-            ${album.year ? `<div class="item-sub" style="font-size:0.78rem;">${album.year}</div>` : ''}
-          </div>
+  md.albums.forEach((album, aIndex) => {
+    html += `
+      <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openAlbum(${index}, ${aIndex})">
+        <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'24\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
+        <div class="item-details">
+          <div class="item-title" style="font-weight: 700; font-size: 1.05rem;">${album.title || 'Album sans titre'}</div>
+          <div class="item-sub">${album.artist || 'Artiste inconnu'}</div>
+          ${album.year ? `<div class="item-sub" style="font-size:0.78rem;">${album.year}</div>` : ''}
         </div>
-      `;
-    });
-  } else {
-    html += `<p style="text-align:center; padding: 20px;">Aucun album trouvé sur ce MiniDisc.</p>`;
-  }
+      </div>
+    `;
+  });
   html += '</div>';
   app.innerHTML = html;
   window.scrollTo(0, 0);
 }
 
-/* 4. VUE TRACKLIST */
+/* 4. VUE TRACKLIST (POUR ALBUMS SPÉCIFIQUES) */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
   currentMD = mdIndex;
   currentAlbum = albumIndex;
