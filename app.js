@@ -86,7 +86,7 @@ fetch('./data.json')
   .then(data => {
     catalogData = data;
     shuffleArray(catalogData);
-    renderMDList(false);
+    renderDashboard(false);
   })
   .catch(error => {
     console.error("Détail de l'erreur :", error);
@@ -96,11 +96,12 @@ fetch('./data.json')
     </p>`;
   });
 
-function renderMDList(pushState = true) {
+/* 1. NOUVELLE PAGE D'ACCUEIL / TABLEAU DE BORD */
+function renderDashboard(pushState = true) {
   currentMD = null;
   currentAlbum = null;
   backBtn.classList.add('hidden');
-  headerTitle.textContent = "COLLECTION MINIDISC";
+  headerTitle.textContent = "MINIDISCS";
 
   if (featuredContainer) {
     featuredContainer.classList.remove('hidden');
@@ -108,7 +109,69 @@ function renderMDList(pushState = true) {
   }
 
   if (pushState) {
-    history.pushState({ view: 'home' }, '', '#home');
+    history.pushState({ view: 'dashboard' }, '', '#dashboard');
+  }
+
+  // Calcul du total de MiniDiscs et décompte des genres
+  const totalMD = catalogData.length;
+  const genreCounts = {};
+
+  catalogData.forEach(md => {
+    const g = (md.genre || 'AUTRE').toUpperCase().trim();
+    genreCounts[g] = (genreCounts[g] || 0) + 1;
+  });
+
+  // Tri par ordre décroissant de fréquence
+  const sortedGenres = Object.keys(genreCounts).sort((a, b) => genreCounts[b] - genreCounts[a]);
+
+  let genreBadgesHTML = '';
+  sortedGenres.forEach(g => {
+    const color = getBorderColor(g);
+    genreBadgesHTML += `
+      <div class="genre-badge" style="border-left-color: ${color};">
+        <span class="genre-name" style="color:${color}">${g}</span>
+        <span class="genre-count">${genreCounts[g]}</span>
+      </div>
+    `;
+  });
+
+  let html = `
+    <div class="dashboard-container">
+      <div class="dashboard-card">
+        <div class="dashboard-stat-main">
+          <span class="stat-number">${totalMD}</span>
+          <span class="stat-label">MiniDiscs dans la collection</span>
+        </div>
+        
+        <div class="dashboard-section-title">RÉPARTITION PAR GENRE</div>
+        <div class="genres-grid">
+          ${genreBadgesHTML}
+        </div>
+
+        <button class="btn-primary" onclick="renderMDList()">
+          VOIR TOUS LES MINIDISCS &rarr;
+        </button>
+      </div>
+    </div>
+  `;
+
+  app.innerHTML = html;
+}
+
+/* 2. PAGE LISTE DES MINIDISCS */
+function renderMDList(pushState = true) {
+  currentMD = null;
+  currentAlbum = null;
+  backBtn.classList.remove('hidden');
+  headerTitle.textContent = "COLLECTION";
+
+  if (featuredContainer) {
+    featuredContainer.classList.remove('hidden');
+    refreshFeatured();
+  }
+
+  if (pushState) {
+    history.pushState({ view: 'minidiscs' }, '', '#minidiscs');
   }
 
   let html = '<div class="list-container">';
@@ -133,6 +196,7 @@ function renderMDList(pushState = true) {
   app.innerHTML = html;
 }
 
+/* 3. PAGE DÉTAILS DU MINIDISC (ALBUMS OU COMPILATION) */
 function openMD(index, pushState = true) {
   currentMD = catalogData[index];
   currentAlbum = null;
@@ -171,6 +235,7 @@ function openMD(index, pushState = true) {
   app.innerHTML = html;
 }
 
+/* 4. PAGE DÉTAILS DE L'ALBUM (TRACKLIST) */
 function openAlbum(aIndex, pushState = true) {
   currentAlbum = currentMD.albums[aIndex];
   headerTitle.textContent = currentAlbum.title;
@@ -235,7 +300,9 @@ if (refreshFeaturedBtn) {
 window.addEventListener('popstate', (event) => {
   const state = event.state;
 
-  if (!state || state.view === 'home') {
+  if (!state || state.view === 'dashboard') {
+    renderDashboard(false);
+  } else if (state.view === 'minidiscs') {
     renderMDList(false);
   } else if (state.view === 'md') {
     openMD(state.mdIndex, false);
