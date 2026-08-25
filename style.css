@@ -29,7 +29,7 @@ body {
   background-attachment: fixed;
 }
 
-/* CACHE DE SCROLL FIXE (HAUTEUR ACCUEIL) */
+/* CACHE DE SCROLL FIXE (HAUTEUR DE BASE) */
 body::before {
   content: "";
   position: fixed;
@@ -49,7 +49,14 @@ body::before {
   mask-image: linear-gradient(to bottom, black 0px, black 375px, transparent 390px);
 }
 
-/* RÉDUCTION DU CACHE SUR TOUTES LES AUTRES PAGES */
+/* AGRANDISSEMENT DU CACHE SPÉCIFIQUE AU DASHBOARD (POUR LE DÉCALAGE BAS) */
+body:has(.dashboard-container)::before {
+  height: 420px;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 400px, transparent 420px);
+  mask-image: linear-gradient(to bottom, black 0px, black 400px, transparent 420px);
+}
+
+/* RÉDUCTION DU CACHE SUR TOUTES LES AUTRES PAGES (COLLECTION / DETAILS) */
 body:has(.featured-container.hidden)::before {
   height: 160px;
   -webkit-mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
@@ -80,6 +87,12 @@ header {
 
 body:has(.featured-container.hidden) header {
   padding: 10px 14px;
+}
+
+/* Redescend le header uniquement sur l'accueil */
+body:has(.dashboard-container) header {
+  top: 65px;
+  padding: 14px;
 }
 
 .header-title-container {
@@ -118,7 +131,7 @@ body:has(.featured-container.hidden) .header-subtitle {
   margin: 2px 0;
 }
 
-/* Titre plus imposant uniquement sur la page d'accueil */
+/* Titre imposant sur la page d'accueil */
 body:has(.dashboard-container) .title-90s {
   font-size: 2.6rem;
   margin: 4px 0;
@@ -162,6 +175,11 @@ body:has(.dashboard-container) .title-90s {
   border-radius: 12px;
   padding: 10px 12px 12px 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Redescend la sélection uniquement sur l'accueil */
+body:has(.dashboard-container) .featured-container {
+  top: 215px;
 }
 
 .featured-container.hidden {
@@ -243,6 +261,12 @@ main#app {
   z-index: 1;
 }
 
+/* Marge ajustée pour la page d'accueil avec décalage */
+body:has(.dashboard-container) main#app {
+  margin-top: 425px;
+}
+
+/* Marge pour les pages où la sélection est masquée */
 body:has(.featured-container.hidden) main#app {
   margin-top: 150px;
 }
