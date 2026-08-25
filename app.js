@@ -437,7 +437,7 @@ function addAdminAlbumBlock() {
     <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album" required></div>
     <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste" required></div>
     <div class="form-group"><input type="text" class="album-year" placeholder="Année (ex: 1998)"></div>
-    <div class="form-group"><input type="text" class="album-cover" placeholder="URL Pochette Album"></div>
+    <div class="form-group"><input type="text" class="album-cover" value="/Minidiscs/images/" placeholder="URL Pochette Album"></div>
     <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne)"></textarea></div>
   `;
   container.appendChild(div);
@@ -490,6 +490,9 @@ function submitNewMD() {
   
   alert("MiniDisc ajouté au catalogue local ! Pensez à télécharger votre data.json mis à jour.");
   document.getElementById('md-form').reset();
+  
+  // Réinitialisation explicite du préremplissage des pochettes
+  document.getElementById('md-cover').value = "/Minidiscs/images/";
   document.getElementById('albums-container').innerHTML = '';
   adminAlbumCount = 0;
   toggleAdminType();
