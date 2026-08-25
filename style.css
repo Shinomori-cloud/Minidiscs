@@ -129,7 +129,7 @@ header {
 /* ENCART 2 : SÉLECTION DU MOMENT FIXE & SOMBRE (ABAISSÉE) */
 .featured-container {
   position: fixed;
-  top: 162px;
+  top: 180px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
