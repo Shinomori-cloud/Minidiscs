@@ -56,7 +56,7 @@ body:has(.featured-container.hidden)::before {
 /* ENCART 1 : HEADER TITRE FIXE (ABAISSÉ SOUS LA CAMÉRA ET AGRANDI) */
 header {
   position: fixed;
-  top: 45px;
+  top: 50px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
