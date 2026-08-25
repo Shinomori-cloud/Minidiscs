@@ -186,7 +186,7 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 2. LISTE DES MINIDISCS */
+/* 2. LISTE DES MINIDISCS (MÉLANGÉE ALÉATOIREMENT) */
 function renderMDList(pushState = true) {
   currentMD = null;
   currentAlbum = null;
@@ -201,8 +201,13 @@ function renderMDList(pushState = true) {
     history.pushState({ view: 'minidiscs' }, '', '#minidiscs');
   }
 
+  // Association des éléments à leur index d'origine puis mélange
+  const shuffledCatalog = catalogData
+    .map((md, originalIndex) => ({ md, originalIndex }))
+    .sort(() => 0.5 - Math.random());
+
   let html = '<div class="list-container">';
-  catalogData.forEach((md, index) => {
+  shuffledCatalog.forEach(({ md, originalIndex }) => {
     const borderColor = getBorderColor(md.genre);
     
     const rawTitle = (md.albums && md.albums.length > 0) 
@@ -210,7 +215,7 @@ function renderMDList(pushState = true) {
       : (md.title || 'MiniDisc sans titre');
 
     html += `
-      <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openMD(${index})">
+      <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openMD(${originalIndex})">
         <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
         <div class="item-details">
           <div class="item-tag" style="color: ${borderColor};">${md.genre || 'MINIDISC'}</div>
@@ -264,7 +269,7 @@ function openMD(index, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 4. VUE TRACKLIST (NUMÉROTATION CORRIGÉE) */
+/* 4. VUE TRACKLIST */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
   currentMD = mdIndex;
   currentAlbum = albumIndex;
@@ -285,7 +290,6 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   let tracksHTML = '';
   if (album.tracks && album.tracks.length > 0) {
     album.tracks.forEach((track) => {
-      // Découpe la piste si elle commence par un numéro pour styliser ce numéro en gras
       const match = track.match(/^(\d+\.)\s*(.*)$/);
       if (match) {
         tracksHTML += `<li class="track-item"><strong class="track-num">${match[1]}</strong> ${match[2]}</li>`;
