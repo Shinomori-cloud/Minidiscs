@@ -1300,35 +1300,6 @@
     ]
   },
   {
-    "genre": "Live",
-    "md_cover": "images/md_16.jpg",
-    "albums": [
-      {
-        "title": "Placebo Live",
-        "artist": "Placebo",
-        "cover": "images/placebo_live.jpg",
-        "tracks": [
-          "01. Bionic (Live)",
-          "02. Every You Every Me (Live)",
-          "03. Nancy Boy (Live)",
-          "04. Pure Morning (Live)",
-          "05. Teenage Angst (Live)"
-        ]
-      },
-      {
-        "title": "Placebo Acoustic",
-        "artist": "Placebo",
-        "cover": "images/placebo_acoustic.jpg",
-        "tracks": [
-          "06. My Sweet Prince (Acoustic)",
-          "07. Without You I'm Nothing (Acoustic)",
-          "08. 36 Degrees (Acoustic)",
-          "09. Teenage Angst (Acoustic)"
-        ]
-      }
-    ]
-  },
-  {
     "genre": "Humour",
     "md_cover": "images/md_17.jpg",
     "albums": [
@@ -1609,27 +1580,6 @@
           "01. Musique 1",
           "02. Musique 2",
           "03. Musique 3"
-        ]
-      }
-    ]
-  },
-  {
-    "genre": "Live",
-    "md_cover": "images/md_36.jpg",
-    "albums": [
-      {
-        "title": "Woodstock Live",
-        "artist": "Divers",
-        "cover": "images/woodstock.jpg",
-        "tracks": [
-          "01. Star Spangled Banner (Jimi Hendrix)",
-          "02. Freedom (Richie Havens)",
-          "03. With a Little Help from My Friends (Joe Cocker)",
-          "04. Soul Sacrifice (Santana)",
-          "05. I'm Going Home (Ten Years After)",
-          "06. Volunteers (Jefferson Airplane)",
-          "07. Dance to the Music (Sly & The Family Stone)",
-          "08. Rainbows (Canned Heat)"
         ]
       }
     ]
