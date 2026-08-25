@@ -1523,7 +1523,7 @@
     "md_cover": "images/md_34.jpg",
     "albums": [
       {
-        "title": "Machina / The Machines of God",
+        "title": "Machina The Machines of God",
         "artist": "The Smashing Pumpkins",
         "cover": "images/smashing_pumpkins_machina.jpg",
         "tracks": [
@@ -1545,7 +1545,7 @@
         ]
       },
       {
-        "title": "Holy Wood (In the Shadow of the Valley of Death)",
+        "title": "Holy Wood",
         "artist": "Marilyn Manson",
         "cover": "images/manson_holy_wood.jpg",
         "tracks": [
