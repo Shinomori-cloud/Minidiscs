@@ -5,6 +5,7 @@ let catalogData = [];
 let currentMD = null;
 let currentAlbum = null;
 let currentGenreFilter = null;
+let adminAlbumCount = 0;
 
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
@@ -14,23 +15,17 @@ const featuredContainer = document.getElementById('featured-container');
 /* ==========================================
    GESTION STRICTE DE L'HISTORIQUE HERMIT
    ========================================== */
-
-// 1. Définition du hash par défaut pour bloquer la sortie de l'application
 if (!window.location.hash || window.location.hash === '#') {
   window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
 }
 
-// 2. Interception du bouton retour physique (popstate)
 window.addEventListener('popstate', (e) => {
-  // Si l'état est nul ou qu'on retombe sur le dashboard sans hash
   if (!e.state || window.location.hash === '' || window.location.hash === '#dashboard') {
     renderDashboard(false);
-    // On force le maintien du hash pour que l'historique Hermit ne retombe pas à zéro
     window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
     return;
   }
 
-  // Restauration de la vue selon l'état d'historique
   switch (e.state.view) {
     case 'dashboard':
       renderDashboard(false);
@@ -84,7 +79,6 @@ fetch('data.json')
     console.error(err);
   });
 
-// Bouton retour UI dans le Header
 backBtn.addEventListener('click', () => {
   if (currentAlbum !== null) {
     openMD(currentMD, true);
@@ -208,6 +202,10 @@ function renderDashboard(pushState = true) {
         <button class="btn-primary" onclick="renderMDList(null)">
           VOIR TOUS LES MINIDISCS &rarr;
         </button>
+
+        <div class="dashboard-footer">
+          <button class="btn-add-md" onclick="openAdminModal()">＋ Ajouter un MD</button>
+        </div>
       </div>
     </div>
   `;
@@ -216,7 +214,7 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 2. LISTE DES MINIDISCS (AVEC FILTRE PAR GENRE) */
+/* 2. LISTE DES MINIDISCS */
 function renderMDList(genreFilter = null, pushState = true) {
   currentMD = null;
   currentAlbum = null;
@@ -278,7 +276,7 @@ function renderMDList(genreFilter = null, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 3. VUE D'UN MINIDISC (ALBUMS OU PISTES DIRECTES) */
+/* 3. VUE D'UN MINIDISC */
 function openMD(index, pushState = true) {
   currentMD = index;
   currentAlbum = null;
@@ -356,7 +354,7 @@ function openMD(index, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 4. VUE TRACKLIST (ALBUM SPÉCIFIQUE) */
+/* 4. VUE TRACKLIST */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
   currentMD = mdIndex;
   currentAlbum = albumIndex;
@@ -405,4 +403,99 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   `;
   app.innerHTML = html;
   window.scrollTo(0, 0);
+}
+
+/* ==========================================
+   GESTION DU FORMULAIRE ADMIN (MODAL)
+   ========================================== */
+function openAdminModal() {
+  document.getElementById('admin-modal').classList.remove('hidden');
+}
+
+function closeAdminModal() {
+  document.getElementById('admin-modal').classList.add('hidden');
+}
+
+function toggleAdminType() {
+  const isCompil = document.querySelector('input[name="md-type"]:checked').value === 'compil';
+  document.getElementById('section-compil').classList.toggle('hidden', !isCompil);
+  document.getElementById('section-albums').classList.toggle('hidden', isCompil);
+  if (!isCompil && adminAlbumCount === 0) addAdminAlbumBlock();
+}
+
+function addAdminAlbumBlock() {
+  adminAlbumCount++;
+  const container = document.getElementById('albums-container');
+  const div = document.createElement('div');
+  div.className = 'album-block';
+  div.innerHTML = `
+    <h4>Album #${adminAlbumCount}</h4>
+    <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album" required></div>
+    <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste" required></div>
+    <div class="form-group"><input type="text" class="album-year" placeholder="Année (ex: 1998)"></div>
+    <div class="form-group"><input type="text" class="album-cover" placeholder="URL Pochette Album"></div>
+    <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne)"></textarea></div>
+  `;
+  container.appendChild(div);
+}
+
+function submitNewMD() {
+  const genre = document.getElementById('md-genre').value.trim();
+  const mdCover = document.getElementById('md-cover').value.trim();
+  const type = document.querySelector('input[name="md-type"]:checked').value;
+
+  if (!genre) {
+    alert("Veuillez renseigner au moins le genre.");
+    return;
+  }
+
+  let globalTrackCounter = 1;
+  const newMD = { genre: genre, md_cover: mdCover };
+
+  if (type === 'compil') {
+    newMD.title = document.getElementById('compil-title').value.trim();
+    newMD.artist = document.getElementById('compil-artist').value.trim();
+    
+    const rawTracks = document.getElementById('compil-tracks').value.split('\n');
+    newMD.tracks = rawTracks
+      .filter(t => t.trim() !== '')
+      .map(t => `${String(globalTrackCounter++).padStart(2, '0')}. ${t.trim()}`);
+  } else {
+    newMD.albums = [];
+    const blocks = document.querySelectorAll('.album-block');
+    
+    blocks.forEach(block => {
+      const rawTracks = block.querySelector('.album-tracks').value.split('\n');
+      const formattedTracks = rawTracks
+        .filter(t => t.trim() !== '')
+        .map(t => `${String(globalTrackCounter++).padStart(2, '0')}. ${t.trim()}`);
+
+      newMD.albums.push({
+        title: block.querySelector('.album-title').value.trim(),
+        artist: block.querySelector('.album-artist').value.trim(),
+        year: block.querySelector('.album-year').value.trim(),
+        cover: block.querySelector('.album-cover').value.trim(),
+        tracks: formattedTracks
+      });
+    });
+  }
+
+  catalogData.push(newMD);
+  renderDashboard(false);
+  
+  alert("MiniDisc ajouté au catalogue local ! Pensez à télécharger votre data.json mis à jour.");
+  document.getElementById('md-form').reset();
+  document.getElementById('albums-container').innerHTML = '';
+  adminAlbumCount = 0;
+  toggleAdminType();
+}
+
+function downloadUpdatedJSON() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(catalogData, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", "data.json");
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
 }
