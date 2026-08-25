@@ -4,23 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MiniDiscs Collection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- HEADER APPLICATION -->
-  <header class="app-header">
+  <!-- HEADER FIXE RETRO 90S -->
+  <header>
     <button id="back-btn" class="back-btn hidden">&larr;</button>
-    <h1 id="header-title">MINIDISCS</h1>
+    <div class="header-title-container">
+      <div class="header-subtitle">COLLECTION</div>
+      <div id="header-title" class="title-90s">MINIDISCS</div>
+    </div>
   </header>
 
-  <!-- CONTENEUR SÉLECTION DU MOMENT -->
+  <!-- SELECTION DU MOMENT (ACCUEIL) -->
   <div id="featured-container" class="featured-container">
-    <div class="featured-title">SÉLECTION DU MOMENT</div>
+    <div class="featured-header">
+      <span class="featured-title">SÉLECTION DU MOMENT</span>
+      <button class="refresh-btn" onclick="refreshFeatured()">🔄</button>
+    </div>
     <div id="featured-grid" class="featured-grid"></div>
   </div>
 
-  <!-- MAIN APP CONTAINER -->
+  <!-- APPLICATION PRINCIPALE -->
   <main id="app"></main>
 
   <!-- MODALE FORMULAIRE ADMIN -->
