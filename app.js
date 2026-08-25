@@ -19,9 +19,12 @@ fetch('data.json')
   .then(data => {
     catalogData = data;
     
-    // 1. On verrouille un état racine dans l'historique pour éviter la fermeture de l'application
+    // 1. ASTUCE HERMIT : On crée un historique artificiel pour bloquer la fermeture
     if (!history.state) {
-      history.replaceState({ view: 'dashboard' }, '', '#dashboard');
+      // Étape 0 : Fond d'historique fictif
+      history.replaceState({ view: 'root' }, '', '#root');
+      // Étape 1 : Vue Dashboard réelle
+      history.pushState({ view: 'dashboard' }, '', '#dashboard');
     }
 
     // 2. Chargement initial selon le hash URL
@@ -48,10 +51,12 @@ fetch('data.json')
 
 // Gestion des gestes et du bouton "Précédent" du système
 window.addEventListener('popstate', (e) => {
-  // Si l'utilisateur est revenu à la racine ou qu'il n'y a plus d'état
-  if (!e.state || e.state.view === 'dashboard') {
+  // Si le retour système tente de revenir au "root" fictif ou s'il n'y a plus d'état
+  if (!e.state || e.state.view === 'root' || e.state.view === 'dashboard') {
     renderDashboard(false);
-    history.replaceState({ view: 'dashboard' }, '', '#dashboard');
+    // On réinjecte immédiatement l'état fictif + le dashboard pour ré-armer la sécurité
+    history.replaceState({ view: 'root' }, '', '#root');
+    history.pushState({ view: 'dashboard' }, '', '#dashboard');
     return;
   }
   
