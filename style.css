@@ -215,7 +215,7 @@ header {
 
 /* CONTENU PRINCIPAL (PAGE ACCUEIL) */
 main#app {
-  margin-top: 345px;
+  margin-top: 365px;
   position: relative;
   z-index: 1;
 }
