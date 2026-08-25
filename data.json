@@ -1,6 +1,6 @@
 [
   {
-    "genre": "Jeunesse",
+    "genre": "Compilation",
     "title": "Video Games",
     "md_cover": "images/md_22.jpg", 
     "tracks": [
@@ -194,7 +194,7 @@
     ]
   },
   {
-    "genre": "OST",
+    "genre": "Compilation",
     "md_cover": "images/md_27.jpg",
     "albums": [
       {
@@ -366,7 +366,7 @@
     ]
   },
   {
-    "genre": "Rock Garage",
+    "genre": "Garage",
     "md_cover": "images/md_31.jpg",
     "albums": [
       {
@@ -513,8 +513,8 @@
     ]
   },
   {
-  "genre": "Compil 90",
-  "title": "Compil 90",
+  "genre": "Compilation",
+  "title": "Compil' 90",
   "artist": "Divers Artistes",
   "md_cover": "images/md_01.jpg",
   "tracks": [
@@ -1245,7 +1245,7 @@
     ]
   },
   {
-    "genre": "Jeunesse",
+    "genre": "OST",
     "md_cover": "images/md_15.jpg",
     "albums": [
       {
@@ -1669,7 +1669,7 @@
     ]
   },
   {
-    "genre": "Rock Garage",
+    "genre": "Garage",
     "md_cover": "images/md_38.jpg",
     "albums": [
       {
