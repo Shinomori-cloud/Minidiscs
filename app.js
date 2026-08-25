@@ -1,7 +1,7 @@
 /* ==========================================
    VARIABLES GLOBALES & ÉLÉMENTS DOM
    ========================================== */
-let catalogData = [];
+let catalogData = null; // Initialisé à null pour distinguer "en cours" et "vide"
 let currentMD = null;
 let currentAlbum = null;
 let currentGenreFilter = null;
@@ -57,7 +57,10 @@ window.addEventListener('popstate', (e) => {
    INITIALISATION DATA
    ========================================== */
 fetch('data.json')
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error("Erreur de réseau lors du chargement du fichier JSON.");
+    return response.json();
+  })
   .then(data => {
     catalogData = data;
     
@@ -78,6 +81,7 @@ fetch('data.json')
     }
   })
   .catch(err => {
+    catalogData = [];
     app.innerHTML = `<p style="color:red; text-align:center;">Erreur de chargement du catalogue JSON.</p>`;
     console.error(err);
   });
@@ -160,6 +164,12 @@ function renderDashboard(pushState = true) {
   backBtn.classList.add('hidden');
   headerTitle.textContent = "MINIDISCS";
 
+  // Si le JSON n'a pas encore fini de charger
+  if (catalogData === null) {
+    app.innerHTML = `<p style="text-align:center; padding: 40px; color: var(--text-sub);">Chargement de la collection...</p>`;
+    return;
+  }
+
   if (featuredContainer) {
     featuredContainer.classList.remove('hidden');
     refreshFeatured();
@@ -220,6 +230,8 @@ function renderDashboard(pushState = true) {
 
 /* 2. LISTE DES MINIDISCS (AVEC FILTRE PAR GENRE) */
 function renderMDList(genreFilter = null, pushState = true) {
+  if (catalogData === null) return;
+  
   currentMD = null;
   currentAlbum = null;
   currentGenreFilter = genreFilter;
@@ -282,6 +294,8 @@ function renderMDList(genreFilter = null, pushState = true) {
 
 /* 3. VUE D'UN MINIDISC (ALBUMS OU PISTES DIRECTES) */
 function openMD(index, pushState = true) {
+  if (!catalogData || !catalogData[index]) return;
+
   currentMD = index;
   currentAlbum = null;
   backBtn.classList.remove('hidden');
@@ -317,7 +331,7 @@ function openMD(index, pushState = true) {
     let html = `
       <div class="track-container">
         <div class="album-header">
-          <img class="album-cover-large" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+          <img class="album-cover-large" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
           <div>
             <h2 style="font-size: 1.2rem; font-weight: 800; line-height: 1.2;">${md.title || 'Compilation'}</h2>
             <p style="color: var(--text-sub); font-size: 0.95rem; margin-top: 4px;">${md.artist || 'Artistes divers'}</p>
@@ -344,7 +358,7 @@ function openMD(index, pushState = true) {
   md.albums.forEach((album, aIndex) => {
     html += `
       <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openAlbum(${index}, ${aIndex})">
-        <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'24\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
+        <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'24\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
         <div class="item-details">
           <div class="item-title" style="font-weight: 700; font-size: 1.05rem;">${album.title || 'Album sans titre'}</div>
           <div class="item-sub">${album.artist || 'Artiste inconnu'}</div>
@@ -360,6 +374,8 @@ function openMD(index, pushState = true) {
 
 /* 4. VUE TRACKLIST (ALBUM SPÉCIFIQUE) */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
+  if (!catalogData || !catalogData[mdIndex] || !catalogData[mdIndex].albums[albumIndex]) return;
+
   currentMD = mdIndex;
   currentAlbum = albumIndex;
   backBtn.classList.remove('hidden');
@@ -393,7 +409,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   let html = `
     <div class="track-container">
       <div class="album-header">
-        <img class="album-cover-large" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
+        <img class="album-cover-large" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
         <div>
           <h2 style="font-size: 1.2rem; font-weight: 800; line-height: 1.2;">${album.title || 'Album sans titre'}</h2>
           <p style="color: var(--text-sub); font-size: 0.95rem; margin-top: 4px;">${album.artist || 'Artiste inconnu'}</p>
@@ -444,6 +460,11 @@ function addAdminAlbumBlock() {
 }
 
 function submitNewMD() {
+  if (catalogData === null) {
+    alert("Le catalogue est en cours de chargement, patientez un instant.");
+    return;
+  }
+
   const genre = document.getElementById('md-genre').value.trim();
   const mdCover = document.getElementById('md-cover').value.trim();
   const type = document.querySelector('input[name="md-type"]:checked').value;
@@ -491,7 +512,6 @@ function submitNewMD() {
   alert("MiniDisc ajouté au catalogue local ! Pensez à télécharger votre data.json mis à jour.");
   document.getElementById('md-form').reset();
   
-  // Réinitialisation explicite du préremplissage des pochettes
   document.getElementById('md-cover').value = "images/";
   document.getElementById('albums-container').innerHTML = '';
   adminAlbumCount = 0;
@@ -499,11 +519,27 @@ function submitNewMD() {
 }
 
 function downloadUpdatedJSON() {
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(catalogData, null, 2));
+  if (catalogData === null) {
+    alert("Le catalogue n'est pas encore chargé !");
+    return;
+  }
+
+  if (catalogData.length === 0) {
+    alert("Le catalogue est vide !");
+    return;
+  }
+
+  const jsonString = JSON.stringify(catalogData, null, 2);
+  const blob = new Blob([jsonString], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  
   const downloadAnchor = document.createElement('a');
-  downloadAnchor.setAttribute("href", dataStr);
-  downloadAnchor.setAttribute("download", "data.json");
+  downloadAnchor.href = url;
+  downloadAnchor.download = "data.json";
+  
   document.body.appendChild(downloadAnchor);
   downloadAnchor.click();
-  downloadAnchor.remove();
+  document.body.removeChild(downloadAnchor);
+
+  setTimeout(() => URL.revokeObjectURL(url), 100);
 }
