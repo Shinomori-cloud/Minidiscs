@@ -284,8 +284,8 @@ body:has(.featured-container.hidden) main#app {
 }
 
 .item-title {
-  font-weight: 600;
-  font-size: 1.05rem;
+  font-weight: 500;
+  font-size: 0.95rem;
   line-height: 1.35;
   color: var(--text-main);
 }
