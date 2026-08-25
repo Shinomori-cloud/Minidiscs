@@ -12,6 +12,17 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
+   GESTION DE LA SÉCURITÉ SORTIE (HERMIT)
+   ========================================== */
+function lockRootHistory() {
+  // On s'assure d'avoir au moins deux niveaux sous le Dashboard pour bloquer le kill de la WebView
+  if (!history.state || history.state.view !== 'dashboard') {
+    history.replaceState({ view: 'root' }, '', '#root');
+    history.pushState({ view: 'dashboard' }, '', '#dashboard');
+  }
+}
+
+/* ==========================================
    INITIALISATION & NAVIGATION HISTORY
    ========================================== */
 fetch('data.json')
@@ -19,15 +30,10 @@ fetch('data.json')
   .then(data => {
     catalogData = data;
     
-    // 1. ASTUCE HERMIT : On crée un historique artificiel pour bloquer la fermeture
-    if (!history.state) {
-      // Étape 0 : Fond d'historique fictif
-      history.replaceState({ view: 'root' }, '', '#root');
-      // Étape 1 : Vue Dashboard réelle
-      history.pushState({ view: 'dashboard' }, '', '#dashboard');
-    }
+    // Verrouillage au premier chargement
+    lockRootHistory();
 
-    // 2. Chargement initial selon le hash URL
+    // Chargement initial selon le hash URL
     const hash = window.location.hash;
     if (hash.startsWith('#minidiscs')) {
       const parts = hash.split('?genre=');
@@ -49,14 +55,12 @@ fetch('data.json')
     console.error(err);
   });
 
-// Gestion des gestes et du bouton "Précédent" du système
+// Interception du bouton Retour système
 window.addEventListener('popstate', (e) => {
-  // Si le retour système tente de revenir au "root" fictif ou s'il n'y a plus d'état
+  // Si l'utilisateur revient sur la racine ou le dashboard
   if (!e.state || e.state.view === 'root' || e.state.view === 'dashboard') {
     renderDashboard(false);
-    // On réinjecte immédiatement l'état fictif + le dashboard pour ré-armer la sécurité
-    history.replaceState({ view: 'root' }, '', '#root');
-    history.pushState({ view: 'dashboard' }, '', '#dashboard');
+    lockRootHistory();
     return;
   }
   
@@ -78,6 +82,7 @@ window.addEventListener('popstate', (e) => {
       break;
     default:
       renderDashboard(false);
+      lockRootHistory();
   }
 });
 
@@ -174,7 +179,7 @@ function renderDashboard(pushState = true) {
   }
 
   if (pushState) {
-    history.pushState({ view: 'dashboard' }, '', '#dashboard');
+    lockRootHistory();
   }
 
   const totalMD = catalogData.length;
