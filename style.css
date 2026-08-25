@@ -73,6 +73,15 @@ header {
   box-shadow: 4px 4px 0px #000;
 }
 
+/* MODIFICATIONS DE L'EN-TÊTE SUR LES PAGES DÉTAILS */
+body:has(.featured-container.hidden) .header-subtitle {
+  display: none;
+}
+
+body:has(.featured-container.hidden) header {
+  padding: 10px 14px;
+}
+
 .header-title-container {
   display: flex;
   flex-direction: column;
