@@ -3,62 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mes Archives Musicales</title>
-  
-  <!-- Lien vers le manifest PWA (pour le plein écran sans barre d'adresse) -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#ffffff">
-
-  <!-- Directives pour forcer le mode autonome / plein écran sur mobile -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-  <!-- Polices Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
-
-  <!-- Feuille de style -->
+  <title>MiniDiscs Collection</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- ENCART 1 : HEADER TITRE FIXE -->
-  <header>
+  <!-- HEADER APPLICATION -->
+  <header class="app-header">
     <button id="back-btn" class="back-btn hidden">&larr;</button>
-    <div class="header-title-container">
-      <span id="header-subtitle" class="header-subtitle">MES ARCHIVES MUSICALES</span>
-      <h1 id="header-title" class="title-90s">MINIDISCS</h1>
-    </div>
+    <h1 id="header-title">MINIDISCS</h1>
   </header>
 
-  <!-- ENCART 2 : SÉLECTION DU MOMENT FIXE & SOMBRE -->
+  <!-- CONTENEUR SÉLECTION DU MOMENT -->
   <div id="featured-container" class="featured-container">
-    <div class="featured-header">
-      <span class="featured-title">SÉLECTION DU MOMENT</span>
-      <button id="refresh-featured-btn" class="refresh-btn" title="Changer la sélection">
-        &#8635;
-      </button>
-    </div>
-    <div id="featured-grid" class="featured-grid">
-      <!-- Généré dynamiquement via app.js -->
+    <div class="featured-title">SÉLECTION DU MOMENT</div>
+    <div id="featured-grid" class="featured-grid"></div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <main id="app"></main>
+
+  <!-- MODALE FORMULAIRE ADMIN -->
+  <div id="admin-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>+ Ajouter un MiniDisc</h2>
+        <button class="close-btn" onclick="closeAdminModal()">&times;</button>
+      </div>
+
+      <form id="md-form">
+        <div class="form-group">
+          <label>Genre</label>
+          <input type="text" id="md-genre" placeholder="ex: ROCK, SYNTHWAVE" required>
+        </div>
+
+        <div class="form-group">
+          <label>URL / Chemin Pochette MiniDisc</label>
+          <input type="text" id="md-cover" placeholder="img/covers/md-01.jpg">
+        </div>
+
+        <div class="form-group">
+          <label>Structure du MiniDisc :</label>
+          <div class="radio-group">
+            <label><input type="radio" name="md-type" value="compil" checked onchange="toggleAdminType()"> Compilation</label>
+            <label><input type="radio" name="md-type" value="albums" onchange="toggleAdminType()"> Série d'albums</label>
+          </div>
+        </div>
+
+        <!-- VUE COMPILATION -->
+        <div id="section-compil">
+          <div class="form-group">
+            <label>Titre de la compilation</label>
+            <input type="text" id="compil-title" placeholder="ex: Best of 90s">
+          </div>
+          <div class="form-group">
+            <label>Artiste(s)</label>
+            <input type="text" id="compil-artist" placeholder="ex: Artistes Divers">
+          </div>
+          <div class="form-group">
+            <label>Pistes (une par ligne, sans numéro)</label>
+            <textarea id="compil-tracks" placeholder="Piste A&#10;Piste B"></textarea>
+          </div>
+        </div>
+
+        <!-- VUE SÉRIE D'ALBUMS -->
+        <div id="section-albums" class="hidden">
+          <div id="albums-container"></div>
+          <button type="button" class="btn-sub" onclick="addAdminAlbumBlock()">+ Ajouter un album</button>
+        </div>
+
+        <button type="button" class="btn-primary-modal" onclick="submitNewMD()">Ajouter au catalogue local</button>
+      </form>
+
+      <div class="export-zone">
+        <button class="btn-export" onclick="downloadUpdatedJSON()">💾 Télécharger data.json</button>
+      </div>
     </div>
   </div>
 
-  <!-- CONTENU PRINCIPAL (LISTE / DÉTAILS) -->
-  <main id="app">
-    <!-- Contenu injecté par app.js -->
-  </main>
-
-  <!-- Enregistrement du Service Worker pour valider le mode PWA dans Chrome -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
-    }
-  </script>
-
-  <!-- Script JS principal -->
   <script src="app.js"></script>
 </body>
 </html>
