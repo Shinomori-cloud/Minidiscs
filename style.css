@@ -468,6 +468,14 @@ body:has(.featured-container.hidden) main#app {
   border-top: 1px solid var(--border-color);
   border-right: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.1s ease;
+  touch-action: manipulation;
+}
+
+.genre-badge:active {
+  transform: scale(0.96);
+  background-color: #f1f5f9;
 }
 
 .genre-name {
