@@ -513,17 +513,42 @@
     ]
   },
   {
-    "genre": "Compil 90",
-    "md_cover": "images/md_01.jpg",
-    "albums": [
-      {
-        "title": "Compil 90",
-        "artist": "Divers",
-        "cover": "images/compil_90.jpg",
-        "tracks": []
-      }
-    ]
-  },
+  "genre": "Compil 90",
+  "title": "Compil 90",
+  "artist": "Divers Artistes",
+  "md_cover": "images/md_01.jpg",
+  "tracks": [
+    "1. Scorpions - Wind of Change",
+    "2. Crash Test Dummies - Mmm Mmm Mmm Mmm",
+    "3. Francis Cabrel - Je t'aimais, je t'aime, je t'aimerai",
+    "4. Jean-Jacques Goldman - Bonne idée",
+    "5. Whitney Houston - I Will Always Love You",
+    "6. Youssou N'Dour & Neneh Cherry - 7 Seconds",
+    "7. Counting Crows - Mr. Jones",
+    "8. Bruce Springsteen - Streets of Philadelphia",
+    "9. Stevie Wonder - Free",
+    "10. Jimmy Cliff - I Can See Clearly Now",
+    "11. The Cranberries - Zombie",
+    "12. Michael Jackson - Black or White",
+    "13. No Doubt - Don't Speak",
+    "14. Scatman John - Scatman (Ski-Ba-Bop-Ba-Dop-Bop)",
+    "15. Aqua - Barbie Girl",
+    "16. Gala - Freed from Desire",
+    "17. Robert Miles - Children (Dreamland)",
+    "18. La Bouche - Be My Lover",
+    "19. Cher - Believe",
+    "20. Ace of Base - All That She Wants",
+    "21. Coolio feat. L.V. - Gangsta's Paradise",
+    "22. Blackstreet feat. Dr. Dre - No Diggity",
+    "23. Mariah Carey - Without You",
+    "24. Natalie Imbruglia - Torn",
+    "25. Alanis Morissette - Ironic",
+    "26. Spin Doctors - Two Princes",
+    "27. Manu Chao - Clandestino",
+    "28. Will Smith - Gettin' Jiggy Wit It",
+    "29. The Verve - Bitter Sweet Symphony"
+   ]
+  }, 
   {
     "genre": "Humour",
     "md_cover": "images/md_02.jpg",
