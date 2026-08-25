@@ -13,7 +13,7 @@ const featuredContainer = document.getElementById('featured-container');
 /* ==========================================
    INITIALISATION & NAVIGATION HISTORY
    ========================================== */
-fetch('catalog.json')
+fetch('data.json')
   .then(response => response.json())
   .then(data => {
     catalogData = data;
