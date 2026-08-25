@@ -4,6 +4,7 @@
 let catalogData = [];
 let currentMD = null;
 let currentAlbum = null;
+let currentGenreFilter = null;
 
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
@@ -20,8 +21,10 @@ fetch('data.json')
     
     // Chargement initial selon le hash URL
     const hash = window.location.hash;
-    if (hash === '#minidiscs') {
-      renderMDList(false);
+    if (hash.startsWith('#minidiscs')) {
+      const parts = hash.split('?genre=');
+      const genre = parts[1] ? decodeURIComponent(parts[1]) : null;
+      renderMDList(genre, false);
     } else {
       renderDashboard(false);
     }
@@ -43,20 +46,20 @@ window.addEventListener('popstate', (e) => {
       renderDashboard(false);
       break;
     case 'minidiscs':
-      renderMDList(false);
+      renderMDList(e.state.genre || null, false);
       break;
     case 'albums':
       if (e.state.mdIndex !== undefined) {
         openMD(e.state.mdIndex, false);
       } else {
-        renderMDList(false);
+        renderMDList(null, false);
       }
       break;
     case 'tracklist':
       if (e.state.mdIndex !== undefined && e.state.albumIndex !== undefined) {
         openAlbum(e.state.mdIndex, e.state.albumIndex, false);
       } else {
-        renderMDList(false);
+        renderMDList(null, false);
       }
       break;
     default:
@@ -69,7 +72,7 @@ backBtn.addEventListener('click', () => {
   if (currentAlbum !== null) {
     openMD(currentMD, true);
   } else if (currentMD !== null) {
-    renderMDList(true);
+    renderMDList(currentGenreFilter, true);
   } else {
     renderDashboard(true);
   }
@@ -129,6 +132,7 @@ function refreshFeatured() {
 function renderDashboard(pushState = true) {
   currentMD = null;
   currentAlbum = null;
+  currentGenreFilter = null;
   backBtn.classList.add('hidden');
   headerTitle.textContent = "MINIDISCS";
 
@@ -155,7 +159,7 @@ function renderDashboard(pushState = true) {
   sortedGenres.forEach(g => {
     const color = getBorderColor(g);
     genreBadgesHTML += `
-      <div class="genre-badge" style="border-left-color: ${color};">
+      <div class="genre-badge" style="border-left-color: ${color};" onclick="renderMDList('${g}')">
         <span class="genre-name" style="color:${color}">${g}</span>
         <span class="genre-count">${genreCounts[g]}</span>
       </div>
@@ -175,7 +179,7 @@ function renderDashboard(pushState = true) {
           ${genreBadgesHTML}
         </div>
 
-        <button class="btn-primary" onclick="renderMDList()">
+        <button class="btn-primary" onclick="renderMDList(null)">
           VOIR TOUS LES MINIDISCS &rarr;
         </button>
       </div>
@@ -186,44 +190,65 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 2. LISTE DES MINIDISCS (MÉLANGÉE ALÉATOIREMENT) */
-function renderMDList(pushState = true) {
+/* 2. LISTE DES MINIDISCS (AVEC FILTRE OPTIONNEL PAR GENRE) */
+function renderMDList(genreFilter = null, pushState = true) {
   currentMD = null;
   currentAlbum = null;
+  currentGenreFilter = genreFilter;
   backBtn.classList.remove('hidden');
-  headerTitle.textContent = "COLLECTION";
+
+  if (genreFilter) {
+    headerTitle.textContent = genreFilter.toUpperCase();
+  } else {
+    headerTitle.textContent = "COLLECTION";
+  }
 
   if (featuredContainer) {
     featuredContainer.classList.add('hidden');
   }
 
   if (pushState) {
-    history.pushState({ view: 'minidiscs' }, '', '#minidiscs');
+    const urlHash = genreFilter ? `#minidiscs?genre=${encodeURIComponent(genreFilter)}` : '#minidiscs';
+    history.pushState({ view: 'minidiscs', genre: genreFilter }, '', urlHash);
   }
 
-  // Association des éléments à leur index d'origine puis mélange
-  const shuffledCatalog = catalogData
-    .map((md, originalIndex) => ({ md, originalIndex }))
-    .sort(() => 0.5 - Math.random());
+  // Filtrage éventuel par genre
+  let filteredCatalog = catalogData.map((md, originalIndex) => ({ md, originalIndex }));
+  
+  if (genreFilter) {
+    filteredCatalog = filteredCatalog.filter(({ md }) => {
+      const g = (md.genre || 'AUTRE').toUpperCase().trim();
+      return g === genreFilter.toUpperCase().trim();
+    });
+  }
+
+  // Mélange aléatoire de la liste affichée
+  const shuffledCatalog = filteredCatalog.sort(() => 0.5 - Math.random());
 
   let html = '<div class="list-container">';
-  shuffledCatalog.forEach(({ md, originalIndex }) => {
-    const borderColor = getBorderColor(md.genre);
-    
-    const rawTitle = (md.albums && md.albums.length > 0) 
-      ? md.albums.map(a => a.title).join(' / ') 
-      : (md.title || 'MiniDisc sans titre');
+  
+  if (shuffledCatalog.length === 0) {
+    html += `<p style="text-align:center; padding: 20px;">Aucun MiniDisc trouvé pour ce genre.</p>`;
+  } else {
+    shuffledCatalog.forEach(({ md, originalIndex }) => {
+      const borderColor = getBorderColor(md.genre);
+      
+      const rawTitle = (md.albums && md.albums.length > 0) 
+        ? md.albums.map(a => a.title).join(' / ') 
+        : (md.title || 'MiniDisc sans titre');
 
-    html += `
-      <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openMD(${originalIndex})">
-        <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
-        <div class="item-details">
-          <div class="item-tag" style="color: ${borderColor};">${md.genre || 'MINIDISC'}</div>
-          <div class="item-title">${formatAlbumTitles(rawTitle)}</div>
+      html += `
+        <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openMD(${originalIndex})">
+          <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+          <div class="item-details">
+            <div class="item-tag" style="color: ${borderColor};">${md.genre || 'MINIDISC'}</div>
+            <div class="item-title">${formatAlbumTitles(rawTitle)}</div>
+          </div>
         </div>
-      </div>
-    `;
-  });
+      `;
+    });
+  }
+  
   html += '</div>';
   app.innerHTML = html;
   window.scrollTo(0, 0);
