@@ -1,3 +1,6 @@
+/* ==========================================
+   VARIABLES & DESIGN DE BASE
+   ========================================== */
 :root {
   --bg-color: #f8fafc;
   --card-bg: #ffffff;
@@ -26,14 +29,14 @@ body {
   background-attachment: fixed;
 }
 
-/* CACHE FIXE POUR MASQUER LE SCROLL DERRIÈRE LE HEADER ET LA SÉLECTION */
+/* CACHE DE SCROLL FIXE (HAUTEUR ACCUEIL) */
 body::before {
   content: "";
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 375px;
+  height: 390px;
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: repeat;
   background-size: 375px;
@@ -42,18 +45,20 @@ body::before {
   z-index: 800;
   pointer-events: none;
 
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 362px, transparent 375px);
-  mask-image: linear-gradient(to bottom, black 0px, black 362px, transparent 375px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 375px, transparent 390px);
+  mask-image: linear-gradient(to bottom, black 0px, black 375px, transparent 390px);
 }
 
-/* REDUCTION DU CACHE SI LA SELECTION EST MASQUÉE (PAGES ALBUM / TRACKLIST) */
+/* RÉDUCTION DU CACHE SUR TOUTES LES AUTRES PAGES */
 body:has(.featured-container.hidden)::before {
   height: 160px;
   -webkit-mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
   mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
 }
 
-/* ENCART 1 : HEADER TITRE FIXE */
+/* ==========================================
+   HEADER & TITRE FIXES
+   ========================================== */
 header {
   position: fixed;
   top: 50px;
@@ -71,11 +76,6 @@ header {
   border-radius: 16px;
   border: 2px solid #000;
   box-shadow: 4px 4px 0px #000;
-}
-
-/* MODIFICATIONS DE L'EN-TÊTE SUR LES PAGES DÉTAILS */
-body:has(.featured-container.hidden) .header-subtitle {
-  display: none;
 }
 
 body:has(.featured-container.hidden) header {
@@ -98,6 +98,10 @@ body:has(.featured-container.hidden) header {
   margin-bottom: 2px;
 }
 
+body:has(.featured-container.hidden) .header-subtitle {
+  display: none;
+}
+
 .title-90s {
   font-family: 'Righteous', cursive;
   font-size: 2rem;
@@ -114,10 +118,10 @@ body:has(.featured-container.hidden) header {
   margin: 2px 0;
 }
 
-/* AGRANDISSEMENT DU TITRE UNIQUEMENT SUR LA PAGE D'ACCUEIL */
+/* Titre plus imposant uniquement sur la page d'accueil */
 body:has(.dashboard-container) .title-90s {
-  font-size: 2.3rem;
-  margin: 0;
+  font-size: 2.6rem;
+  margin: 4px 0;
 }
 
 .back-btn {
@@ -141,10 +145,12 @@ body:has(.dashboard-container) .title-90s {
   display: none;
 }
 
-/* ENCART 2 : SÉLECTION DU MOMENT FIXE & SOMBRE */
+/* ==========================================
+   SÉLECTION DU MOMENT (ACCUEIL SEULEMENT)
+   ========================================== */
 .featured-container {
   position: fixed;
-  top: 180px;
+  top: 190px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
@@ -154,12 +160,12 @@ body:has(.dashboard-container) .title-90s {
   background: linear-gradient(135deg, #181528 0%, #0d0b18 100%);
   border: 1.5px solid #ff007f;
   border-radius: 12px;
-  padding: 8px 10px 10px 10px;
+  padding: 10px 12px 12px 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .featured-container.hidden {
-  display: none;
+  display: none !important;
 }
 
 .featured-header {
@@ -208,7 +214,7 @@ body:has(.dashboard-container) .title-90s {
 
 .featured-item {
   flex: 0 1 auto;
-  height: 110px;
+  height: 125px;
   border-radius: 6px;
   overflow: hidden;
   border: 1.5px solid #000;
@@ -228,18 +234,22 @@ body:has(.dashboard-container) .title-90s {
   display: block;
 }
 
-/* CONTENU PRINCIPAL (PAGE ACCUEIL) */
+/* ==========================================
+   MAIN APP & MARGES PAR VUE
+   ========================================== */
 main#app {
-  margin-top: 365px;
+  margin-top: 395px;
   position: relative;
   z-index: 1;
 }
 
-/* MARGIN-TOP DÉTAILS (ALBUMS / TRACKLIST) */
 body:has(.featured-container.hidden) main#app {
   margin-top: 150px;
 }
 
+/* ==========================================
+   LISTES & CARTES DE CONTENU
+   ========================================== */
 .list-container {
   display: flex;
   flex-direction: column;
@@ -318,6 +328,7 @@ body:has(.featured-container.hidden) main#app {
   color: var(--text-sub);
 }
 
+/* TRACKLIST DETAIL */
 .track-container {
   background-color: var(--card-bg);
   border-radius: 16px;
@@ -357,7 +368,9 @@ body:has(.featured-container.hidden) main#app {
   border-bottom: none;
 }
 
-/* STYLES TABLEAU DE BORD (ACCUEIL COMPACT) */
+/* ==========================================
+   TABLEAU DE BORD (ACCUEIL COMPACT)
+   ========================================== */
 .dashboard-container {
   display: flex;
   flex-direction: column;
