@@ -392,6 +392,13 @@ body:has(.featured-container.hidden) main#app {
   border-bottom: none;
 }
 
+.track-num {
+  font-weight: 800;
+  color: var(--text-main);
+  display: inline-block;
+  min-width: 28px;
+}
+
 /* ==========================================
    TABLEAU DE BORD (ACCUEIL COMPACT)
    ========================================== */
