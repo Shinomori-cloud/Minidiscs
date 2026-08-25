@@ -492,7 +492,7 @@ function submitNewMD() {
   document.getElementById('md-form').reset();
   
   // Réinitialisation explicite du préremplissage des pochettes
-  document.getElementById('md-cover').value = "/Minidiscs/images/";
+  document.getElementById('md-cover').value = "images/";
   document.getElementById('albums-container').innerHTML = '';
   adminAlbumCount = 0;
   toggleAdminType();
