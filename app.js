@@ -12,20 +12,27 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   INITIALISATION & NAVIGATION HISTORY (HERMIT SAFE)
+   VERROU HISTORIQUE SPÉCIFIQUE HERMIT
+   ========================================== */
+// On arme le piège d'historique IMMÉDIATEMENT, sans attendre le JSON
+(function initHermitHistoryLock() {
+  if (!history.state || history.state.view !== 'dashboard') {
+    // 1. On remplace la page d'ouverture par la racine fictive
+    history.replaceState({ view: 'root' }, '', '#root');
+    // 2. On empile le vrai dashboard par-dessus
+    history.pushState({ view: 'dashboard' }, '', '#dashboard');
+  }
+})();
+
+/* ==========================================
+   INITIALISATION & CHARGEMENT DATA
    ========================================== */
 fetch('data.json')
   .then(response => response.json())
   .then(data => {
     catalogData = data;
-    
-    // 1. ASTUCE HERMIT : Création du verrou d'historique
-    if (!history.state) {
-      history.replaceState({ view: 'root' }, '', '#root');
-      history.pushState({ view: 'dashboard' }, '', '#dashboard');
-    }
 
-    // 2. Chargement initial SANS faire de pushState supplémentaire pour ne pas casser la pile
+    // Chargement de la vue initiale selon l'URL (sans repousser d'état)
     const hash = window.location.hash;
     if (hash.startsWith('#minidiscs')) {
       const parts = hash.split('?genre=');
@@ -47,17 +54,23 @@ fetch('data.json')
     console.error(err);
   });
 
-// Gestion du bouton "Précédent" Android / Hermit
+/* ==========================================
+   GESTION DU POPSTATE (GESTES ET RETOUR HERMIT)
+   ========================================== */
 window.addEventListener('popstate', (e) => {
-  // Verrou Hermit : si on atteint la racine fictive ou un état nul, on piège le retour
-  if (!e.state || e.state.view === 'root' || e.state.view === 'dashboard') {
+  // Si le retour système touche au root (le fond de pile dans Hermit)
+  if (!e.state || e.state.view === 'root') {
+    // On force l'affichage du Dashboard
     renderDashboard(false);
-    history.replaceState({ view: 'root' }, '', '#root');
+    // On ré-arme immédiatement un cran d'historique devant pour ré-emprisonner le retour système
     history.pushState({ view: 'dashboard' }, '', '#dashboard');
     return;
   }
   
   switch (e.state.view) {
+    case 'dashboard':
+      renderDashboard(false);
+      break;
     case 'minidiscs':
       renderMDList(e.state.genre || null, false);
       break;
@@ -78,32 +91,30 @@ window.addEventListener('popstate', (e) => {
   }
 });
 
-// Bouton retour visible dans l'entête
+// Bouton retour du Header : gère le retour proprement sans dépendre uniquement de l'historique
 backBtn.addEventListener('click', () => {
-  window.history.back();
+  if (currentAlbum !== null) {
+    openMD(currentMD, true);
+  } else if (currentMD !== null) {
+    renderMDList(currentGenreFilter, true);
+  } else {
+    renderDashboard(true);
+  }
 });
 
 /* ==========================================
    COULEURS DYNAMIQUES PAR GENRE
    ========================================== */
 const genreColorPalette = [
-  '#e63946', // Rouge
-  '#ff007f', // Rose néon
-  '#00f0ff', // Cyan
-  '#ffb703', // Jaune / Orange
-  '#7b2cbf', // Violet
-  '#70e000', // Vert pomme
-  '#ff70a6', // Rose corail
-  '#3a86ef', // Bleu roi
-  '#ff9770', // Pêche
-  '#06d6a0'  // Vert menthe
+  '#e63946', '#ff007f', '#00f0ff', '#ffb703', 
+  '#7b2cbf', '#70e000', '#ff70a6', '#3a86ef', 
+  '#ff9770', '#06d6a0'
 ];
 
 const genreColorMap = {};
 
 function getBorderColor(genre) {
   if (!genre) return '#7b2cbf';
-  
   const g = genre.toUpperCase().trim();
 
   if (genreColorMap[g]) {
@@ -112,7 +123,6 @@ function getBorderColor(genre) {
 
   const assignedCount = Object.keys(genreColorMap).length;
   const color = genreColorPalette[assignedCount % genreColorPalette.length];
-  
   genreColorMap[g] = color;
   
   return color;
@@ -355,7 +365,7 @@ function openMD(index, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 4. VUE TRACKLIST (ALBUM SPÉCIFIQUE) */
+/* 4. VUE TRACKLIST (POUR ALBUMS SPÉCIFIQUES) */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
   currentMD = mdIndex;
   currentAlbum = albumIndex;
