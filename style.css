@@ -252,8 +252,8 @@ body:has(.featured-container.hidden) main#app {
 }
 
 .md-thumb {
-  width: 105px;
-  height: 146px;
+  width: 99px;
+  height: 136px;
   object-fit: cover;
   border-radius: 10px;
   flex-shrink: 0;
