@@ -350,3 +350,107 @@ body:has(.featured-container.hidden) main#app {
 .track-item:last-child {
   border-bottom: none;
 }
+
+/* STYLES TABLEAU DE BORD (ACCUEIL) */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dashboard-card {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  padding: 20px;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+}
+
+.dashboard-stat-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.stat-number {
+  font-family: 'Righteous', cursive;
+  font-size: 3.2rem;
+  line-height: 1;
+  color: #7b2cbf;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-sub);
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+.dashboard-section-title {
+  font-family: 'Righteous', cursive;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  color: var(--text-sub);
+  margin-bottom: 12px;
+}
+
+.genres-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.genre-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-color);
+  padding: 8px 10px;
+  border-radius: 8px;
+  border-left: 4px solid var(--border-color);
+  border-top: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.genre-name {
+  font-size: 0.75rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 6px;
+}
+
+.genre-count {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 0.95rem;
+  padding: 14px;
+  border: 2px solid #000;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px #000;
+  transition: transform 0.1s ease;
+  touch-action: manipulation;
+}
+
+.btn-primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000;
+}
