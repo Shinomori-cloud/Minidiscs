@@ -19,12 +19,24 @@ fetch('data.json')
   .then(data => {
     catalogData = data;
     
-    // Chargement initial selon le hash URL
+    // 1. On verrouille un état racine dans l'historique pour éviter la fermeture de l'application
+    if (!history.state) {
+      history.replaceState({ view: 'dashboard' }, '', '#dashboard');
+    }
+
+    // 2. Chargement initial selon le hash URL
     const hash = window.location.hash;
     if (hash.startsWith('#minidiscs')) {
       const parts = hash.split('?genre=');
       const genre = parts[1] ? decodeURIComponent(parts[1]) : null;
       renderMDList(genre, false);
+    } else if (hash.startsWith('#md-')) {
+      const mdIndex = parseInt(hash.replace('#md-', ''), 10);
+      if (!isNaN(mdIndex) && catalogData[mdIndex]) {
+        openMD(mdIndex, false);
+      } else {
+        renderDashboard(false);
+      }
     } else {
       renderDashboard(false);
     }
@@ -34,17 +46,16 @@ fetch('data.json')
     console.error(err);
   });
 
-// Gestion du bouton "Précédent" du navigateur / smartphone
+// Gestion des gestes et du bouton "Précédent" du système
 window.addEventListener('popstate', (e) => {
-  if (!e.state) {
+  // Si l'utilisateur est revenu à la racine ou qu'il n'y a plus d'état
+  if (!e.state || e.state.view === 'dashboard') {
     renderDashboard(false);
+    history.replaceState({ view: 'dashboard' }, '', '#dashboard');
     return;
   }
   
   switch (e.state.view) {
-    case 'dashboard':
-      renderDashboard(false);
-      break;
     case 'minidiscs':
       renderMDList(e.state.genre || null, false);
       break;
@@ -210,7 +221,6 @@ function renderMDList(genreFilter = null, pushState = true) {
     history.pushState({ view: 'minidiscs', genre: genreFilter }, '', urlHash);
   }
 
-  // Filtrage éventuel par genre
   let filteredCatalog = catalogData.map((md, originalIndex) => ({ md, originalIndex }));
   
   if (genreFilter) {
@@ -220,7 +230,6 @@ function renderMDList(genreFilter = null, pushState = true) {
     });
   }
 
-  // Mélange aléatoire de la liste affichée
   const shuffledCatalog = filteredCatalog.sort(() => 0.5 - Math.random());
 
   let html = '<div class="list-container">';
