@@ -12,25 +12,29 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   GARDENAGE D'HISTORIQUE HERMIT (TECHNIQUE D'ANCRAGE)
+   GESTION STRICTE DE L'HISTORIQUE HERMIT
    ========================================== */
-// Force la présence d'au moins un état dans la pile au lancement
-if (window.location.hash === '' || window.location.hash === '#') {
+
+// 1. Définition du hash par défaut pour bloquer la sortie de l'application
+if (!window.location.hash || window.location.hash === '#') {
   window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
-  window.history.pushState({ view: 'dashboard' }, '', '#dashboard');
 }
 
-// Gestion des gestes et du retour système Android/Hermit
+// 2. Interception du bouton retour physique (popstate)
 window.addEventListener('popstate', (e) => {
-  // Si on est remonté jusqu'au dashboard ou si l'état est vide
-  if (!e.state || e.state.view === 'dashboard' || window.location.hash === '#dashboard' || window.location.hash === '') {
+  // Si l'état est nul ou qu'on retombe sur le dashboard sans hash
+  if (!e.state || window.location.hash === '' || window.location.hash === '#dashboard') {
     renderDashboard(false);
-    // On ré-arme l'ancrage sans recharger la page
-    window.history.pushState({ view: 'dashboard' }, '', '#dashboard');
+    // On force le maintien du hash pour que l'historique Hermit ne retombe pas à zéro
+    window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
     return;
   }
-  
+
+  // Restauration de la vue selon l'état d'historique
   switch (e.state.view) {
+    case 'dashboard':
+      renderDashboard(false);
+      break;
     case 'minidiscs':
       renderMDList(e.state.genre || null, false);
       break;
@@ -80,7 +84,7 @@ fetch('data.json')
     console.error(err);
   });
 
-// Bouton retour du Header
+// Bouton retour UI dans le Header
 backBtn.addEventListener('click', () => {
   if (currentAlbum !== null) {
     openMD(currentMD, true);
@@ -163,7 +167,7 @@ function renderDashboard(pushState = true) {
     refreshFeatured();
   }
 
-  if (pushState) {
+  if (pushState && window.location.hash !== '#dashboard') {
     history.pushState({ view: 'dashboard' }, '', '#dashboard');
   }
 
@@ -212,7 +216,7 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 2. LISTE DES MINIDISCS (FILTRE PAR GENRE OPTIONNEL) */
+/* 2. LISTE DES MINIDISCS (AVEC FILTRE PAR GENRE) */
 function renderMDList(genreFilter = null, pushState = true) {
   currentMD = null;
   currentAlbum = null;
@@ -274,7 +278,7 @@ function renderMDList(genreFilter = null, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 3. VUE D'UN MINIDISC (ALBUMS OU PISTES DIRECTES SI COMPILATION) */
+/* 3. VUE D'UN MINIDISC (ALBUMS OU PISTES DIRECTES) */
 function openMD(index, pushState = true) {
   currentMD = index;
   currentAlbum = null;
@@ -352,7 +356,7 @@ function openMD(index, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 4. VUE TRACKLIST (POUR ALBUMS SPÉCIFIQUES) */
+/* 4. VUE TRACKLIST (ALBUM SPÉCIFIQUE) */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
   currentMD = mdIndex;
   currentAlbum = albumIndex;
