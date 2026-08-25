@@ -12,27 +12,53 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   VERROU HISTORIQUE SPÉCIFIQUE HERMIT
+   GARDENAGE D'HISTORIQUE HERMIT (TECHNIQUE D'ANCRAGE)
    ========================================== */
-// On arme le piège d'historique IMMÉDIATEMENT, sans attendre le JSON
-(function initHermitHistoryLock() {
-  if (!history.state || history.state.view !== 'dashboard') {
-    // 1. On remplace la page d'ouverture par la racine fictive
-    history.replaceState({ view: 'root' }, '', '#root');
-    // 2. On empile le vrai dashboard par-dessus
-    history.pushState({ view: 'dashboard' }, '', '#dashboard');
+// Force la présence d'au moins un état dans la pile au lancement
+if (window.location.hash === '' || window.location.hash === '#') {
+  window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
+  window.history.pushState({ view: 'dashboard' }, '', '#dashboard');
+}
+
+// Gestion des gestes et du retour système Android/Hermit
+window.addEventListener('popstate', (e) => {
+  // Si on est remonté jusqu'au dashboard ou si l'état est vide
+  if (!e.state || e.state.view === 'dashboard' || window.location.hash === '#dashboard' || window.location.hash === '') {
+    renderDashboard(false);
+    // On ré-arme l'ancrage sans recharger la page
+    window.history.pushState({ view: 'dashboard' }, '', '#dashboard');
+    return;
   }
-})();
+  
+  switch (e.state.view) {
+    case 'minidiscs':
+      renderMDList(e.state.genre || null, false);
+      break;
+    case 'albums':
+    case 'tracklist':
+      if (e.state.mdIndex !== undefined) {
+        if (e.state.albumIndex !== undefined) {
+          openAlbum(e.state.mdIndex, e.state.albumIndex, false);
+        } else {
+          openMD(e.state.mdIndex, false);
+        }
+      } else {
+        renderMDList(null, false);
+      }
+      break;
+    default:
+      renderDashboard(false);
+  }
+});
 
 /* ==========================================
-   INITIALISATION & CHARGEMENT DATA
+   INITIALISATION DATA
    ========================================== */
 fetch('data.json')
   .then(response => response.json())
   .then(data => {
     catalogData = data;
-
-    // Chargement de la vue initiale selon l'URL (sans repousser d'état)
+    
     const hash = window.location.hash;
     if (hash.startsWith('#minidiscs')) {
       const parts = hash.split('?genre=');
@@ -54,44 +80,7 @@ fetch('data.json')
     console.error(err);
   });
 
-/* ==========================================
-   GESTION DU POPSTATE (GESTES ET RETOUR HERMIT)
-   ========================================== */
-window.addEventListener('popstate', (e) => {
-  // Si le retour système touche au root (le fond de pile dans Hermit)
-  if (!e.state || e.state.view === 'root') {
-    // On force l'affichage du Dashboard
-    renderDashboard(false);
-    // On ré-arme immédiatement un cran d'historique devant pour ré-emprisonner le retour système
-    history.pushState({ view: 'dashboard' }, '', '#dashboard');
-    return;
-  }
-  
-  switch (e.state.view) {
-    case 'dashboard':
-      renderDashboard(false);
-      break;
-    case 'minidiscs':
-      renderMDList(e.state.genre || null, false);
-      break;
-    case 'albums':
-    case 'tracklist':
-      if (e.state.mdIndex !== undefined) {
-        if (e.state.albumIndex !== undefined) {
-          openAlbum(e.state.mdIndex, e.state.albumIndex, false);
-        } else {
-          openMD(e.state.mdIndex, false);
-        }
-      } else {
-        renderMDList(null, false);
-      }
-      break;
-    default:
-      renderDashboard(false);
-  }
-});
-
-// Bouton retour du Header : gère le retour proprement sans dépendre uniquement de l'historique
+// Bouton retour du Header
 backBtn.addEventListener('click', () => {
   if (currentAlbum !== null) {
     openMD(currentMD, true);
@@ -298,7 +287,6 @@ function openMD(index, pushState = true) {
   const md = catalogData[index];
   const borderColor = getBorderColor(md.genre);
 
-  // CAS COMPILATION : Pas d'albums -> Affichage direct des pistes
   if (!md.albums || md.albums.length === 0) {
     headerTitle.textContent = "PISTES";
 
@@ -340,7 +328,6 @@ function openMD(index, pushState = true) {
     return;
   }
 
-  // CAS CLASSIQUE : Plusieurs albums sur le MiniDisc
   headerTitle.textContent = md.genre || "ALBUMS";
 
   if (pushState) {
