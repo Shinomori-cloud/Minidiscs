@@ -6,11 +6,28 @@ let currentMD = null;
 let currentAlbum = null;
 let currentGenreFilter = null;
 let adminAlbumCount = 0;
+let toastTimeout = null;
 
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
 const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
+
+/* ==========================================
+   UTILITAIRE TOAST (NOTIFICATIONS VISUELLES)
+   ========================================== */
+function showToast(message, duration = 2500) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+
+  clearTimeout(toastTimeout);
+  toast.textContent = message;
+  toast.classList.remove('hidden');
+
+  toastTimeout = setTimeout(() => {
+    toast.classList.add('hidden');
+  }, duration);
+}
 
 /* ==========================================
    GESTION STRICTE DE L'HISTORIQUE HERMIT
@@ -164,7 +181,6 @@ function renderDashboard(pushState = true) {
   backBtn.classList.add('hidden');
   headerTitle.textContent = "MINIDISCS";
 
-  // Si le JSON n'a pas encore fini de charger
   if (catalogData === null) {
     app.innerHTML = `<p style="text-align:center; padding: 40px; color: var(--text-sub);">Chargement de la collection...</p>`;
     return;
@@ -461,7 +477,7 @@ function addAdminAlbumBlock() {
 
 function submitNewMD() {
   if (catalogData === null) {
-    alert("Le catalogue est en cours de chargement, patientez un instant.");
+    showToast("⏳ Now Loading... Patientez un instant");
     return;
   }
 
@@ -470,7 +486,7 @@ function submitNewMD() {
   const type = document.querySelector('input[name="md-type"]:checked').value;
 
   if (!genre) {
-    alert("Veuillez renseigner au moins le genre.");
+    showToast("⚠️ Veuillez renseigner au moins le genre");
     return;
   }
 
@@ -509,7 +525,7 @@ function submitNewMD() {
   renderDashboard(false);
   closeAdminModal();
   
-  alert("MiniDisc ajouté au catalogue local ! Pensez à télécharger votre data.json mis à jour.");
+  showToast("✅ MiniDisc ajouté ! Téléchargez votre data.json");
   document.getElementById('md-form').reset();
   
   document.getElementById('md-cover').value = "images/";
@@ -520,12 +536,12 @@ function submitNewMD() {
 
 function downloadUpdatedJSON() {
   if (catalogData === null) {
-    alert("Le catalogue n'est pas encore chargé !");
+    showToast("⏳ Now Loading... Patientez un instant");
     return;
   }
 
   if (catalogData.length === 0) {
-    alert("Le catalogue est vide !");
+    showToast("⚠️ Le catalogue est vide !");
     return;
   }
 
@@ -542,4 +558,6 @@ function downloadUpdatedJSON() {
   document.body.removeChild(downloadAnchor);
 
   setTimeout(() => URL.revokeObjectURL(url), 100);
+
+  showToast("✅ Téléchargement réussi !");
 }
