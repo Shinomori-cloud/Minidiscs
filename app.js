@@ -93,20 +93,38 @@ backBtn.addEventListener('click', () => {
 });
 
 /* ==========================================
-   COULEURS PAR GENRE
+   COULEURS DYNAMIQUES PAR GENRE
    ========================================== */
+const genreColorPalette = [
+  '#e63946', // Rouge
+  '#ff007f', // Rose néon
+  '#00f0ff', // Cyan
+  '#ffb703', // Jaune / Orange
+  '#7b2cbf', // Violet
+  '#70e000', // Vert pomme
+  '#ff70a6', // Rose corail
+  '#3a86ef', // Bleu roi
+  '#ff9770', // Pêche
+  '#06d6a0'  // Vert menthe
+];
+
+const genreColorMap = {};
+
 function getBorderColor(genre) {
   if (!genre) return '#7b2cbf';
+  
   const g = genre.toUpperCase().trim();
-  switch (g) {
-    case 'ROCK': return '#e63946';
-    case 'POP': return '#ff007f';
-    case 'ELECTRO': return '#00f0ff';
-    case 'HIP-HOP': return '#ffb703';
-    case 'INDIE': return '#7b2cbf';
-    case 'METAL': return '#2b2d42';
-    default: return '#7b2cbf';
+
+  if (genreColorMap[g]) {
+    return genreColorMap[g];
   }
+
+  const assignedCount = Object.keys(genreColorMap).length;
+  const color = genreColorPalette[assignedCount % genreColorPalette.length];
+  
+  genreColorMap[g] = color;
+  
+  return color;
 }
 
 function formatAlbumTitles(rawTitle) {
