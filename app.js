@@ -30,6 +30,26 @@ function showToast(message, duration = 2500) {
 }
 
 /* ==========================================
+   UTILITAIRES MULTI-GENRE
+   ========================================== */
+// Normalise le champ genre en tableau nettoyé : "Pop, Rock" -> ["POP", "ROCK"]
+function getNormalizedGenres(genreData) {
+  if (!genreData) return ['AUTRE'];
+  if (Array.isArray(genreData)) {
+    const list = genreData.map(g => String(g).toUpperCase().trim()).filter(g => g !== '');
+    return list.length > 0 ? list : ['AUTRE'];
+  }
+  const list = String(genreData).split(',').map(g => g.toUpperCase().trim()).filter(g => g !== '');
+  return list.length > 0 ? list : ['AUTRE'];
+}
+
+// Renvoie les genres sous forme de texte lisible pour l'affichage (ex: "Pop / Rock")
+function formatGenresText(genreData) {
+  const genres = getNormalizedGenres(genreData);
+  return genres.join(' / ');
+}
+
+/* ==========================================
    GESTION STRICTE DE L'HISTORIQUE HERMIT
    ========================================== */
 
@@ -125,17 +145,17 @@ const genreColorPalette = [
 
 const genreColorMap = {};
 
-function getBorderColor(genre) {
-  if (!genre) return '#7b2cbf';
-  const g = genre.toUpperCase().trim();
+function getBorderColor(genreData) {
+  const genres = getNormalizedGenres(genreData);
+  const primaryGenre = genres[0] || 'AUTRE';
 
-  if (genreColorMap[g]) {
-    return genreColorMap[g];
+  if (genreColorMap[primaryGenre]) {
+    return genreColorMap[primaryGenre];
   }
 
   const assignedCount = Object.keys(genreColorMap).length;
   const color = genreColorPalette[assignedCount % genreColorPalette.length];
-  genreColorMap[g] = color;
+  genreColorMap[primaryGenre] = color;
   
   return color;
 }
@@ -198,9 +218,12 @@ function renderDashboard(pushState = true) {
   const totalMD = catalogData.length;
   const genreCounts = {};
 
+  // Comptage multi-genre
   catalogData.forEach(md => {
-    const g = (md.genre || 'AUTRE').toUpperCase().trim();
-    genreCounts[g] = (genreCounts[g] || 0) + 1;
+    const genres = getNormalizedGenres(md.genre);
+    genres.forEach(g => {
+      genreCounts[g] = (genreCounts[g] || 0) + 1;
+    });
   });
 
   const sortedGenres = Object.keys(genreCounts).sort((a, b) => genreCounts[b] - genreCounts[a]);
@@ -271,9 +294,10 @@ function renderMDList(genreFilter = null, pushState = true) {
   let filteredCatalog = catalogData.map((md, originalIndex) => ({ md, originalIndex }));
   
   if (genreFilter) {
+    const targetGenre = genreFilter.toUpperCase().trim();
     filteredCatalog = filteredCatalog.filter(({ md }) => {
-      const g = (md.genre || 'AUTRE').toUpperCase().trim();
-      return g === genreFilter.toUpperCase().trim();
+      const genres = getNormalizedGenres(md.genre);
+      return genres.includes(targetGenre);
     });
   }
 
@@ -286,6 +310,7 @@ function renderMDList(genreFilter = null, pushState = true) {
   } else {
     shuffledCatalog.forEach(({ md, originalIndex }) => {
       const borderColor = getBorderColor(md.genre);
+      const displayGenre = formatGenresText(md.genre);
       
       const rawTitle = (md.albums && md.albums.length > 0) 
         ? md.albums.map(a => a.title).join(' / ') 
@@ -295,7 +320,7 @@ function renderMDList(genreFilter = null, pushState = true) {
         <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openMD(${originalIndex})">
           <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
           <div class="item-details">
-            <div class="item-tag" style="color: ${borderColor};">${md.genre || 'MINIDISC'}</div>
+            <div class="item-tag" style="color: ${borderColor};">${displayGenre}</div>
             <div class="item-title">${formatAlbumTitles(rawTitle)}</div>
           </div>
         </div>
@@ -322,6 +347,7 @@ function openMD(index, pushState = true) {
 
   const md = catalogData[index];
   const borderColor = getBorderColor(md.genre);
+  const displayGenre = formatGenresText(md.genre);
 
   if (!md.albums || md.albums.length === 0) {
     headerTitle.textContent = "PISTES";
@@ -351,7 +377,7 @@ function openMD(index, pushState = true) {
           <div>
             <h2 style="font-size: 1.2rem; font-weight: 800; line-height: 1.2;">${md.title || 'Compilation'}</h2>
             <p style="color: var(--text-sub); font-size: 0.95rem; margin-top: 4px;">${md.artist || 'Artistes divers'}</p>
-            ${md.genre ? `<p style="color: ${borderColor}; font-size: 0.8rem; margin-top: 2px; font-weight: 800;">${md.genre}</p>` : ''}
+            ${displayGenre ? `<p style="color: ${borderColor}; font-size: 0.8rem; margin-top: 2px; font-weight: 800;">${displayGenre}</p>` : ''}
           </div>
         </div>
         <ul class="track-list">
@@ -364,7 +390,7 @@ function openMD(index, pushState = true) {
     return;
   }
 
-  headerTitle.textContent = md.genre || "ALBUMS";
+  headerTitle.textContent = displayGenre || "ALBUMS";
 
   if (pushState) {
     history.pushState({ view: 'albums', mdIndex: index }, '', `#md-${index}`);
@@ -481,17 +507,22 @@ function submitNewMD() {
     return;
   }
 
-  const genre = document.getElementById('md-genre').value.trim();
+  const rawGenreInput = document.getElementById('md-genre').value.trim();
   const mdCover = document.getElementById('md-cover').value.trim();
   const type = document.querySelector('input[name="md-type"]:checked').value;
 
-  if (!genre) {
-    showToast("⚠️ Veuillez renseigner au moins le genre");
+  if (!rawGenreInput) {
+    showToast("⚠️ Veuillez renseigner au moins un genre");
     return;
   }
 
+  // Traitement multi-genre pour les ajouts : si séparés par une virgule, on crée un tableau
+  const parsedGenres = rawGenreInput.includes(',') 
+    ? rawGenreInput.split(',').map(g => g.trim()).filter(g => g !== '')
+    : [rawGenreInput];
+
   let globalTrackCounter = 1;
-  const newMD = { genre: genre, md_cover: mdCover };
+  const newMD = { genre: parsedGenres, md_cover: mdCover };
 
   if (type === 'compil') {
     newMD.title = document.getElementById('compil-title').value.trim();
