@@ -68,6 +68,49 @@ function formatGenresText(genreData) {
 }
 
 /* ==========================================
+   UTILITAIRES D'ALÉATOIRE FIXÉ SUR 24 HEURES
+   ========================================== */
+
+// Génère une clé unique sous forme de chaîne pour la journée en cours (ex: "2026-08-26")
+function getDailySeed() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+
+// Fonction de hachage simple (cyrb53) basée sur une chaîne
+function cyrb53(str, seed = 0) {
+  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0, ch; i < str.length; i++) {
+    ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+}
+
+// Mélange déterministe (Fisher-Yates) fixe sur 24h
+function dailyShuffle(array, extraSeedKey = '') {
+  const copy = [...array];
+  const seedString = getDailySeed() + extraSeedKey;
+  let hash = cyrb53(seedString);
+
+  // Pseudo Random Number Generator simple dérivé du hachage
+  function seededRandom() {
+    hash = (hash * 9301 + 49297) % 233280;
+    return hash / 233280;
+  }
+
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(seededRandom() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+
+  return copy;
+}
+
+/* ==========================================
    GESTION STRICTE DE L'HISTORIQUE HERMIT
    ========================================== */
 
@@ -184,7 +227,7 @@ function formatAlbumTitles(rawTitle) {
 }
 
 /* ==========================================
-   SÉLECTION DU MOMENT (ALÉATOIRE)
+   SÉLECTION DU MOMENT (ALÉATOIRE 24H)
    ========================================== */
 function refreshFeatured() {
   if (!catalogData || catalogData.length === 0) return;
@@ -192,7 +235,7 @@ function refreshFeatured() {
   const featuredGrid = document.getElementById('featured-grid');
   if (!featuredGrid) return;
 
-  const shuffled = [...catalogData].sort(() => 0.5 - Math.random());
+  const shuffled = dailyShuffle(catalogData, '-featured');
   const selected = shuffled.slice(0, 3);
 
   let html = '';
@@ -285,7 +328,7 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 2. LISTE DES MINIDISCS (FILTRE PAR GENRE AMÉLIORÉ) */
+/* 2. LISTE DES MINIDISCS (FILTRE PAR GENRE + MÉLANGE FIXE 24H) */
 function renderMDList(genreFilter = null, pushState = true) {
   if (catalogData === null) return;
   
@@ -319,7 +362,9 @@ function renderMDList(genreFilter = null, pushState = true) {
     });
   }
 
-  const shuffledCatalog = filteredCatalog.sort(() => 0.5 - Math.random());
+  // Application du mélange 24h déterministe avec une clé propre au genre
+  const seedSuffix = genreFilter ? `-mdlist-${genreFilter}` : '-mdlist-all';
+  const shuffledCatalog = dailyShuffle(filteredCatalog, seedSuffix);
 
   let html = '<div class="list-container">';
   
@@ -352,7 +397,7 @@ function renderMDList(genreFilter = null, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 3. VUE D'UN MINIDISC (ALBUMS AVEC GENRES SPÉCIFIQUES) */
+/* 3. VUE D'UN MINIDISC (ALBUMS) */
 function openMD(index, pushState = true) {
   if (!catalogData || !catalogData[index]) return;
 
@@ -418,7 +463,6 @@ function openMD(index, pushState = true) {
 
   let html = '<div class="list-container">';
   md.albums.forEach((album, aIndex) => {
-    // Genres propres de l'album (ou ceux du MD en fallback)
     const albumGenres = getAlbumGenres(album, md);
     const albumColor = getBorderColor(albumGenres);
     const albumGenreText = albumGenres.join(' / ');
