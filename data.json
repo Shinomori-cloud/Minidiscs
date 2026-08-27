@@ -1784,64 +1784,6 @@
   },
   {
     "genre": [
-      "Rap"
-    ],
-    "md_cover": "images/",
-    "albums": [
-      {
-        "title": "Quelques balles de plus pour... le calibre qu'il te faut",
-        "artist": "Stomy Bugsy",
-        "year": "1998",
-        "cover": "images/stomy_bugsy_calibre.jpg",
-        "tracks": [
-          "01. Quand Bugsy et son gang dégomment (feat. Nèg'Marrons, Ärsenik & Hamed Daye)",
-          "02. J'prie Dieu",
-          "03. Les Balances (feat. Passi &amp; Hamed Daye)",
-          "04. Mes forces décuplent quand on m'inculpe (Cavale Mix)",
-          "05. Gangster d'amour",
-          "06. Oyé Sapapaya (feat. Doc Gynéco)",
-          "07. Wohs Nipal",
-          "08. Voilà c'que j't'avais dit",
-          "09. Mon papa à moi est un gangster (Remix)",
-          "10. La vie c'est comme ça",
-          "11. Brève évasion",
-          "12. J'avance pour ma familia",
-          "13. Derniers pas dans la mafia",
-          "14. Un reup qui fait reup"
-        ],
-        "genre": [
-          "Rap"
-        ]
-      },
- {
-        "title": "Mixomatose",
-        "artist": "Gang Show lapin",
-        "year": "1999",
-        "cover": "images/gang_show_mixomatose.jpg",
-        "tracks": [
-          "15. Intro",
-          "16. Qui veut quoi?",
-          "17. Les 2 doigts",
-          "18. Les jumeaux",
-          "19. Sauvage",
-          "20. XVIII Zone",
-          "21. J't'en veux pas",
-          "22. Milite pour les tiens",
-          "23. Hymne du Show Lapin",
-          "24. Quand t'as un bijou",
-          "25. Pourquoi tant de haine",
-          "26. Rien que du naturel...",
-          "27. La routine",
-          "28. Jalouse-moi",
-          "29. Soirée Chirée"
-        ],
-        "genre": [
-          "Rap"
-        ]
-      }
-    ]
-  {
-    "genre": [
       "Français",
       "Variété"
     ],
