@@ -908,20 +908,19 @@
         "artist": "Louise Attaque",
         "cover": "images/louise_attaque.jpg",
         "tracks": [
-          "01. J't'emmène au vent",
-          "02. Ton invitation",
-          "03. Les nuits parisiennes",
-          "04. L'lea",
-          "05. Savoir",
-          "06. Arrache-moi",
-          "07. Lean on Me",
-          "08. Cracher nos souhaits",
-          "09. Les nuages",
-          "10. La brune",
-          "11. Amours",
+          "01. Amours",
+          "02. J't'emmène au vent",
+          "03. Ton invitation",
+          "04. La brune",
+          "05. Les nuits parisiennes",
+          "06. L'imposture",
+          "07. Savoir",
+          "08. Arrache-moi",
+          "09. Léa",
+          "10. Fatigante",
+          "11. Tes yeux se moquent",
           "12. Vous avez l'heure",
-          "13. Tu dis rien",
-          "14. Les nuits parisiennes (Acoustique)"
+          "13. Toute cette histoire"
         ]
       },
       {
@@ -929,17 +928,18 @@
         "artist": "Noir Désir",
         "cover": "images/noir_desir_visages_figures.jpg",
         "tracks": [
-          "15. L'Enfant roi",
+          "14. L'Enfant roi",
           "16. Le Grand Incendie",
           "17. Le Vent nous portera",
           "18. Des armes",
           "19. L'Appartement",
-          "20. À ton étoile",
+          "20. Des visages des figures",
           "21. Son style 1",
           "22. Son style 2",
-          "23. Des visages des figures",
-          "24. Volonté",
-          "25. Europe"
+          "23. A l'envers à l'endroit",
+          "24. Lost",
+          "25. Bouquets de nerfs",
+          "25. L'Europe"
         ]
       },
       {
@@ -950,14 +950,14 @@
           "26. Jeune et con",
           "27. Sauver cette étoile",
           "28. Jours étranges",
-          "29. J'veux qu'on baise sur le maquis",
-          "30. Rock'n'Roll Star",
-          "31. My Lover",
-          "32. Hallelujah",
-          "33. Creep (Live)",
-          "34. Soleil 2000",
-          "35. Petit Prince",
-          "36. Montée en neige"
+          "29. J'veux m'en aller",
+          "30. Hallelujah",
+          "31. Crépuscule",
+          "32. Soleil 2000",
+          "33. Amandine II",
+          "34. Rock'n'Roll Star",
+          "35. My Funny Valentine",
+          "36. Petit Prince"
         ]
       }
     ]
