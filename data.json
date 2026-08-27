@@ -425,7 +425,7 @@
           "34. She Walks on Me",
           "35. I Think That I Would Die",
           "36. Gutless",
-          "37. Olympia"
+          "37. Rock Star (Olympia)"
         ]
       }
     ]
@@ -1699,18 +1699,21 @@
           "08. A Hard Day's Night",
           "09. And I Love Her",
           "10. Eight Days a Week",
-          "11. Help!",
-          "12. Yesterday",
-          "13. Ticket to Ride",
-          "14. Drive My Car",
-          "15. Norwegian Wood (This Bird Has Flown)",
-          "16. Nowhere Man",
-          "17. Michelle",
-          "18. In My Life",
-          "19. Girl",
-          "20. Paperback Writer",
-          "21. Eleanor Rigby",
-          "22. Yellow Submarine"
+          "11. I Feel Fine",
+          "12. Ticket to Ride",
+          "13. Yesterday",
+          "14. Help!",
+          "15. You've Got To Hide Your Love Away",
+          "16. We Can Work It Out",
+          "17. Day Tripper",
+          "18. Drive My Car",
+          "19. Norwegian Wood (This Bird Has Flown)",
+          "20. Nowhere Man",
+          "21. Michelle",
+          "22. In My Life",
+          "23. Girl",
+          "25. Eleanor Rigby",
+          "26. Yellow Submarine"
         ]
       },
       {
@@ -1718,18 +1721,17 @@
         "artist": "The Blues Brothers",
         "cover": "images/blues_brothers.jpg",
         "tracks": [
-          "23. Main Title Theme",
-          "24. Peter Gunn Theme",
-          "25. Gimme Some Lovin'",
-          "26. Shake a Tail Feather",
-          "27. Everybody Needs Somebody to Love",
-          "28. Think",
-          "29. Theme from Rawhide",
-          "30. Stand by Your Man",
-          "31. Sweet Home Chicago",
-          "32. She Caught the Katy",
-          "33. Minnie the Moocher",
-          "34. Do You Love Me"
+          "27. She Caught The Katy",
+          "28. Peter Gunn Theme",
+          "29. Gimme Some Lovin'",
+          "30. Shake a Tail Feather",
+          "31. Everybody Needs Somebody to Love",
+          "32. The Old Landmark",
+          "33. Think",
+          "34. Theme from Rawhide",
+          "35. Minnie the Moocher",
+          "36. Sweet Home Chicago",
+          "37. JailHouse Rock"
         ]
       },
       {
@@ -1737,18 +1739,18 @@
         "artist": "AC/DC",
         "cover": "images/acdc_stiff_upper_lip.jpg",
         "tracks": [
-          "35. Stiff Upper Lip",
-          "36. Meltdown",
-          "37. House of Jazz",
-          "38. Hold Me Back",
-          "39. Safe in New York City",
-          "40. Can't Stand Still",
-          "41. Can't Stop Rock 'n' Roll",
-          "42. Satellite Blues",
-          "43. Damned",
-          "44. Come and Get It",
-          "45. All Screwed Up",
-          "46. Give It Up"
+          "38. Stiff Upper Lip",
+          "39. Meltdown",
+          "40. House of Jazz",
+          "41. Hold Me Back",
+          "42. Safe in New York City",
+          "43. Can't Stand Still",
+          "44. Can't Stop Rock 'n' Roll",
+          "45. Satellite Blues",
+          "46. Damned",
+          "47. Come and Get It",
+          "48. All Screwed Up",
+          "49. Give It Up"
         ]
       }
     ]
