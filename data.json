@@ -1748,10 +1748,10 @@
   {
     "genre": [
       "Rock",
-      "Folk Rock",
+      "Folk",
       "Live"
     ],
-    "md_cover": "images/md_20",
+    "md_cover": "images/md_20.jpg",
     "title": "Live from Mars",
     "artist": "Ben Harper",
     "tracks": [
