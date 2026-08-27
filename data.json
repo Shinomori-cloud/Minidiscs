@@ -626,8 +626,7 @@
           "10. What's on My Mind",
           "11. Delilah",
           "12. Fee Fi Fo",
-          "13. Dying in the Sun",
-          "14. Sorry Son"
+          "13. Dying in the Sun"
         ]
       },
       {
@@ -635,21 +634,19 @@
         "artist": "Red Hot Chili Peppers",
         "cover": "images/rhcp_californication.jpg",
         "tracks": [
-          "15. Around the World",
-          "16. Parallel Universe",
-          "17. Scar Tissue",
-          "18. Otherside",
-          "19. Get on Top",
-          "20. Californication",
-          "21. Easily",
-          "22. Porcelain",
-          "23. Emit Remmus",
-          "24. I Like Dirt",
-          "25. This Velvet Glove",
-          "26. Savior",
-          "27. Purple Stain",
-          "28. Right on Time",
-          "29. Road Trippin'"
+          "14. Around the World",
+          "15. Parallel Universe",
+          "16. Scar Tissue",
+          "17. Otherside",
+          "18. Get on Top",
+          "19. Californication",
+          "20. Easily",
+          "21. Emit Remmus",
+          "22. I Like Dirt",
+          "23. This Velvet Glove",
+          "24. Savior",
+          "25. Purple Stain",
+          "26. Road Trippin'"
         ]
       },
       {
@@ -657,16 +654,18 @@
         "artist": "Garbage",
         "cover": "images/garbage_version_2.jpg",
         "tracks": [
-          "30. Temptation Waits",
-          "31. I Think I'm Paranoid",
-          "32. Special",
-          "33. Medication",
-          "34. Push It",
-          "35. The Trick Is to Keep Breathing",
-          "36. Dumb",
-          "37. Sleep Together",
-          "38. Wicked Ways",
-          "39. You Look So Fine"
+          "27. Temptation Waits",
+          "28. I Think I'm Paranoid",
+          "29. When I Grow Up",
+          "30. Medication",
+          "31. Special",
+          "32. Hammering in My Head",
+          "33. Push It",
+          "34. The Trick Is to Keep Breathing",
+          "35. Dumb",
+          "36. Sleep Together",
+          "37. Wicked Ways",
+          "38. You Look So Fine"
         ]
       }
     ]
