@@ -1813,9 +1813,9 @@
           "Rap"
         ]
       },
-      {
+ {
         "title": "Mixomatose",
-        "artist": "Gang Show Lapin",
+        "artist": "Gang Show lapin",
         "year": "1999",
         "cover": "images/gang_show_mixomatose.jpg",
         "tracks": [
@@ -1835,7 +1835,11 @@
           "28. Jalouse-moi",
           "29. Soirée Chirée"
         ],
-  },
+        "genre": [
+          "Rap"
+        ]
+      }
+    ]
   {
     "genre": [
       "Français",
