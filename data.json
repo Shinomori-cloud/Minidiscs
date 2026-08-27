@@ -26,12 +26,18 @@
           "01. Breakout (Foo Fighters)",
           "02. Do It Again (Smash Mouth)",
           "03. Deep Inside of You (Third Eye Blind)",
-          "04. Total Eclipse of the Heart (The Dan Band)",
-          "05. Hemorrhage (In My Hands) (Fuel)",
-          "06. Bad Sneakers (The Push Stars)",
-          "07. Any Major Dude Will Tell You (Wilco)",
-          "08. Only A Fool Would Say That (Ivy)",
-          "09. Can't Find the Time (Hootie & The Blowfish)"
+          "04. Total Immortal (The Offspring)",
+          "05. The World Ain't Slowin' Down (Ellis Paul)",
+          "06. Any Major Dude Will Tell You (Wilco)",
+          "07. "Only a Fool Would Say That" (Ivy)",
+          "08. Can't Find the Time (Hootie & The Blowfish)",
+          "09. Bodhisattva (Brian Setzer Orchestra)",
+          "10. Bad Sneakers (The Push Stars)",
+          "11. Reelin' In the Years (Marvelous 3)",
+          "12. Strange Condition (Pete Yorn)",
+          "13. Barrytown (Ben Folds Five)",
+          "14. Razor Boy (Billy Goodrum)",
+          "15. Where He Can Hide (Tom Wolfe)"
         ]
       },
       {
@@ -39,16 +45,20 @@
         "artist": "Divers",
         "cover": "images/ost_cruel_intentions.jpg",
         "tracks": [
-          "10. Every You Every Me (Placebo)",
-          "11. Praise You (Fatboy Slim)",
-          "12. Bittersweet Symphony (The Verve)",
-          "13. Colorblind (Counting Crows)",
-          "14. Secretly (Skunk Anansie)",
-          "15. Comatose (PMA)",
-          "16. Lovefool (The Cardigans)",
-          "17. Coffee & TV (Blur)",
-          "18. Bedroom Dancing (Day One)",
-          "19. You Blew Me Off (Bare Jr.)"
+          "16. Every You Every Me (Placebo)",
+          "17. Praise You (Fatboy Slim)",
+          "18. Coffee & TV (Blur)",
+          "19. Bedroom Dancing (Day One)",
+          "20. Colorblind (Counting Crows)",
+          "21. Ordinary Life (Kristen Barry)",
+          "22. Comin'Up from Behind (Marcy Playground)",
+          "23. Secretly (Skunk Anansie)",
+          "24. This Love (Craig Armstrong)",
+          "25. You Could Make a Killing (Aimee Mann)",
+          "26. Addictive (Faithless)",
+          "27. Trip on Love (Abra Moore)",
+          "28. You Blew Me Off (Bare, Jr.)",
+          "29. Bittersweet Symphony (The Verve)"
         ]
       }
     ]
