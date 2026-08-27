@@ -164,18 +164,19 @@
         "tracks": [
           "01. Viens voir le docteur",
           "02. Dans ma rue",
-          "03. Nirvanico",
+          "03. Nirvana",
           "04. Passement de jambes",
-          "05. Ne chercher pas la petite bête",
-          "06. Même si je me tais",
-          "07. Les filles du docteur",
-          "08. Est-ce que ça va ?",
-          "09. Vanessa",
-          "10. Classez-moi dans la variété",
-          "11. Si toutes les filles étaient carrées",
-          "12. Tel père tel fils",
-          "13. Les rythmes de nos vies",
-          "14. Ma salope à moi"
+          "05. Né ici",
+          "06. Vanessa",
+          "07. Classez-moi dans la varièt",
+          "08. Les filles du moove",
+          "09. Si tu crois que je pèze",
+          "10. No se vende la calle",
+          "11. Celui qui vient chez toi (quand tu n'es pas là)",
+          "12. Est-ce que ça l'fait ?",
+          "13. Tel père tel fils (Papa was a Rolling Stone)",
+          "14. Première consultation",
+          "15. Ma salope à moi"
         ]
       },
       {
@@ -183,12 +184,24 @@
         "artist": "Doc Gynéco",
         "cover": "images/doc_gyneco_liaisons_dangereuses.jpg",
         "tracks": [
-          "15. C'est beau la vie",
-          "16. Dans ma rue (Remix)",
-          "17. Viens voir le docteur (Remix)",
-          "18. Liaisons dangereuses",
-          "19. Tout le monde le sait",
-          "20. L'homme qui ne savait pas dire non"
+          "16. Dans ma ruche",
+          "17. Viens faire un tour dans les cités",
+          "18. Dangereuse Liaison",
+          "19. Funk Master sex the bitches (Interlude)",
+          "20. L'homme qui ne valait pas dix centimes",
+          "21. Armagedon",
+          "22. Janis",
+          "23. Menuet",
+          "24. Petit menuet (Interlude)",
+          "25. Les mêmes droits",
+          "26. Simplet Funky",
+          "27. Arrête de mentir",
+          "28. L'oiseau se cache",
+          "29. L'interlude des Simpson",
+          "30. Hexagonal",
+          "31. L'or et la soie",
+          "32. Paranoïa",
+          "33. C'est beau la vie"
         ]
       }
     ]
