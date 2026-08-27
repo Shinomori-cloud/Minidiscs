@@ -1245,7 +1245,8 @@
           "08. Screenager",
           "09. Darkshines",
           "10. Feeling Good",
-          "11. Megalomania"
+          "11. Megalomania",
+          "12. Futurism"
         ]
       },
       {
@@ -1253,18 +1254,18 @@
         "artist": "Radiohead",
         "cover": "images/radiohead_the_bends.jpg",
         "tracks": [
-          "12. Planet Telex",
-          "13. The Bends",
-          "14. High and Dry",
-          "15. Fake Plastic Trees",
-          "16. Bones",
-          "17. Nice Dream",
-          "18. Just",
-          "19. My Iron Lung",
-          "20. Bullet Proof... I Wish I Was",
-          "21. Black Star",
-          "22. Sulk",
-          "23. Street Spirit (Fade Out)"
+          "13. Planet Telex",
+          "14. The Bends",
+          "15. High and Dry",
+          "16. Fake Plastic Trees",
+          "17. Bones",
+          "18. Nice Dream",
+          "19. Just",
+          "20. My Iron Lung",
+          "21. Bullet Proof... I Wish I Was",
+          "22. Black Star",
+          "23. Sulk",
+          "24. Street Spirit (Fade Out)"
         ]
       },
       {
@@ -1272,16 +1273,17 @@
         "artist": "Travis",
         "cover": "images/travis_the_man_who.jpg",
         "tracks": [
-          "24. Writing to Reach You",
-          "25. The Fear",
-          "26. As You Are",
-          "27. Driftwood",
-          "28. The Last Laugh of the Laughter",
-          "29. Turn",
-          "30. Luv",
-          "31. She's So Strange",
-          "32. Slide Show",
-          "33. Blue Flashing Light"
+          "25. Writing to Reach You",
+          "26. The Fear",
+          "27. As You Are",
+          "28. Driftwood",
+          "29. The Last Laugh of the Laughter",
+          "30. Turn",
+          "31. Why Does It Rain On Me",
+          "32. Luv",
+          "33. She's So Strange",
+          "34. Slide Show",
+          "35. Blue Flashing Light (Hidden track)"
         ]
       }
     ]
