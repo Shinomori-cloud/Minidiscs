@@ -1,20 +1,5 @@
 [
   {
-    "genre": "Compilation",
-    "title": "Video Games",
-    "md_cover": "images/md_22.jpg",
-    "tracks": [
-      "01. Super Mario Bros. Theme",
-      "02. Tetris Theme",
-      "03. Zelda Main Theme",
-      "04. Sonic the Hedgehog Theme",
-      "05. Street Fighter II Theme",
-      "06. Donkey Kong Country Theme",
-      "07. Megaman 2 Theme",
-      "08. Final Fantasy VII Victory Fanfare"
-    ]
-  },
-  {
     "genre": "OST",
     "md_cover": "images/md_23.jpg",
     "albums": [
@@ -645,54 +630,6 @@
           "29. On est encore là, Pt.2",
           "30. Harcore sur le Beat",
           "31. Outro"
-        ]
-      }
-    ]
-  },
-  {
-    "genre": "Français",
-    "md_cover": "images/md_06.jpg",
-    "albums": [
-      {
-        "title": "Renaud 85-95",
-        "artist": "Renaud",
-        "cover": "images/renaud_85_95.jpg",
-        "tracks": [
-          "01. Mistral gagnant",
-          "02. Morgane de toi",
-          "03. Marchand de cailloux",
-          "04. Putain de camion",
-          "05. Jonathan",
-          "06. La pêche à la ligne",
-          "07. Tu vas au bal ?",
-          "08. Le sirop d'rue",
-          "09. C'est quand qu'on va où ?",
-          "10. Ballade nord-irlandaise",
-          "11. Miss Maggie",
-          "12. Trois matelots",
-          "13. Me jette pas",
-          "14. L'aquarium"
-        ]
-      },
-      {
-        "title": "Best of",
-        "artist": "France Gall",
-        "cover": "images/france_gall_bestof.jpg",
-        "tracks": [
-          "15. Ella, elle l'a",
-          "16. Résiste",
-          "17. Il jouait du piano debout",
-          "18. Évidemment",
-          "19. Babacar",
-          "20. Hong-Kong Star",
-          "21. Calypso",
-          "22. Diego libre dans sa tête",
-          "23. Débranche",
-          "24. Si, maman, si",
-          "25. Musique",
-          "26. Viens je t'emmène",
-          "27. Cézanne peint",
-          "28. Tout pour la musique"
         ]
       }
     ]
@@ -1385,7 +1322,8 @@
           "09. Lounge Act",
           "10. Stay Away",
           "11. On a Plain",
-          "12. Something in the Way"
+          "12. Something in the Way",
+          "13. Endless, Nameless (Hidden Track)"
         ]
       },
       {
@@ -1393,16 +1331,17 @@
         "artist": "Placebo",
         "cover": "images/placebo_placebo.jpg",
         "tracks": [
-          "13. Come Home",
-          "14. Teenage Angst",
-          "15. Bionic",
-          "16. 36 Degrees",
-          "17. Hang On to Your IQ",
-          "18. Nancy Boy",
-          "19. I Know",
-          "20. Bruise Pristine",
-          "21. Lady of the Flowers",
-          "22. Swallow"
+          "14. Come Home",
+          "15. Teenage Angst",
+          "16. Bionic",
+          "17. 36 Degrees",
+          "18. Hang On to Your IQ",
+          "19. Nancy Boy",
+          "20. I Know",
+          "21. Bruise Pristine",
+          "22. Lady of the Flowers",
+          "23. Swallow",
+          "24. H.K. Farewell (Hidden Track)"
         ]
       },
       {
@@ -1410,18 +1349,20 @@
         "artist": "K's Choice",
         "cover": "images/ks_choice_cocoon_crash.jpg",
         "tracks": [
-          "23. Believe",
-          "24. In Addition",
-          "25. Everything for Free",
-          "26. Now Is Means",
-          "27. Butterflies Instead",
-          "28. If You're Not Scared",
-          "29. 2000 Seconds",
-          "30. Too Many Happy Couples",
-          "31. Cocoon Crash",
-          "32. Hide",
-          "33. Always Everywhere",
-          "34. All"
+          "25. Believe",
+          "26. In Your Room",
+          "27. Everything for Free",
+          "28. Now Is Mine",
+          "29. Butterflies Instead",
+          "30. If You're Not Scared",
+          "31. 20,000 Seconds",
+          "32. Too Many Happy Faces",
+          "33. Cocoon Crash",
+          "34. Hide",
+          "35. Freestyle",
+          "36. Quiet Little Place",
+          "37. God in My Bed",
+          "38. Winners"
         ]
       }
     ]
@@ -1521,10 +1462,10 @@
           "09. Liberate",
           "10. Prosthetics",
           "11. No Life",
-          "12. Purity",
-          "13. Diluted",
-          "14. Only One",
-          "15. Scissors"
+          "12. Diluted",
+          "13. Only One",
+          "14. Scissors",
+          "15. Eeyore"
         ]
       },
       {
@@ -1536,16 +1477,17 @@
           "17. Needles",
           "18. Deer Dance",
           "19. Jet Pilot",
-          "20. Bounce",
-          "21. Forest",
-          "22. ATWA",
-          "23. Science",
-          "24. Toxicity",
-          "25. Psycho",
-          "26. Chop Suey!",
-          "27. Aerials",
-          "28. Shimmy",
-          "29. X"
+          "20. X",
+          "21. Chop Suey!",
+          "22. Bounce",
+          "23. Forest",
+          "24. ATWA",
+          "25. Science",
+          "26. Shimmy",
+          "27. Toxicity",
+          "28. Psycho",
+          "29. Aerials",
+          "30. Der Voghormia"
         ]
       },
       {
@@ -1553,18 +1495,18 @@
         "artist": "Deftones",
         "cover": "images/deftones_white_pony.jpg",
         "tracks": [
-          "30. Feiticeira",
-          "31. Digital Bath",
-          "32. Elite",
-          "33. Rx Queen",
-          "34. Street Carp",
-          "35. Teenager",
-          "36. Knife Prty",
-          "37. Korea",
-          "38. Passenger",
-          "39. Change (In the House of Flies)",
-          "40. Pink Maggit",
-          "41. Back to School (Mini Maggit)"
+          "31. Back to School (Mini Maggit)",
+          "32. Feiticeira",
+          "33. Digital Bath",
+          "34. Elite",
+          "35. Rx Queen",
+          "36. Street Carp",
+          "37. Teenager",
+          "38. Knife Prty",
+          "39. Korea",
+          "40. Passenger",
+          "41. Change (In the House of Flies)",
+          "42. Pink Maggit"
         ]
       }
     ]
@@ -1607,38 +1549,6 @@
           "20. No One Like You",
           "21. Is There Anybody There?",
           "22. Send Me an Angel"
-        ]
-      }
-    ]
-  },
-  {
-    "genre": "Rap",
-    "md_cover": "images/md_42.jpg",
-    "albums": [
-      {
-        "title": "Quelques balles de plus pour... Le calibre qu'il te faut",
-        "artist": "Stomy Bugsy",
-        "cover": "images/stomy_bugsy_calibre.jpg",
-        "tracks": [
-          "01. Mon papa à moi est un gangster",
-          "02. La vie c'est comme ça",
-          "03. Hoochie Koochie",
-          "04. Mes forces s'en vont",
-          "05. J'avance pour ma familia",
-          "06. Quand Bugsy déboule",
-          "07. Avoir le pouvoir",
-          "08. Dernier jour de prison",
-          "09. Les balles perdues"
-        ]
-      },
-      {
-        "title": "Mixomatose",
-        "artist": "Gang Show Lapin",
-        "cover": "images/gang_show_mixomatose.jpg",
-        "tracks": [
-          "10. Track 1",
-          "11. Track 2",
-          "12. Track 3"
         ]
       }
     ]
