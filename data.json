@@ -595,14 +595,38 @@
         "artist": "Les Inconnus",
         "cover": "images/les_inconnus_boulversifiant.jpg",
         "tracks": [
-          "01. Auteuil Neuilly Passy",
-          "02. C'est toi que je t'aime",
-          "03. Rap-Tout (Vampires)",
-          "04. Is Good",
-          "05. Vice Et Versa",
-          "06. C'est ton destin",
-          "07. Biouman",
-          "08. Les insectes sont nos amis"
+          "01. Rap-Tout",
+          "02. La Mano Verda (Negra Bouch'Beat - c'est toi que je t'aime)",
+          "03. Auteuil, Neuilly, Passy (rap BCBG)",
+          "04. Isabelle (a les yeux bleus)",
+          "05. C'est ton destin",
+          "06. Florent Brunel",
+          "07. Rap Shit",
+          "08. Un chagrin d'amour (Didier Barbelavie et Félix Grave)",
+          "09. La Chanson de Biouman",
+          "10. Le Hit des hits (les chansons françaises)",
+          "11. Auteuil Neuilly Passy (Rap BCBG) (instrumental)",
+          "12. Vice et Versa",
+          "13. Chanson hard rock (poésie)"
+        ]
+      },
+      {
+        "title": "Sketchs",
+        "artist": "Les Inconnus",
+        "cover": "images/",
+        "tracks": [
+          "14. Télémagouille",
+          "15. La Z.U.P.",
+          "16. Les pétasses",
+          "17. Les vigiles",
+          "18. Les Branleurs",
+          "19. Le Cid",
+          "20. La révolution",
+          "21. Pétition Abel Chemoul",
+          "22. Les publicités",
+          "23. La quête",
+          "24. Les gosses",
+          "25. Les Téléphones"
         ]
       }
     ]
