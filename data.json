@@ -1640,5 +1640,454 @@
         ]
       }
     ]
+  },
+  {
+    "genre": [
+      "OST",
+      "Alternative Rock",
+      "Pop Rock"
+    ],
+    "md_cover": "images/",
+    "albums": [
+      {
+        "title": "The Faculty",
+        "artist": "Various",
+        "year": "1999",
+        "cover": "images/ost_the_faculty.jpg",
+        "tracks": [
+          "01. Another Brick In The Wall (Part 2) (Class of '99, Layne Staley, Tom Morello, Stephen P...)",
+          "02. The Kids Aren't Alright (The Offspring)",
+          "03. I'm Eighteen (Creed)",
+          "04. Helpless (D Generation)",
+          "05. School's Out (Soul Asylum)",
+          "06. Medication (Garbage)",
+          "07. Haunting Me (Stabbing Westward)",
+          "08. Maybe Someday (Flick)",
+          "09. Resuscitation (Sheryl Crow)",
+          "10. It's Over Now (Neve)",
+          "11. Stay Young (Oasis)",
+          "12. Another Brick In the Wall (Part1) (Class of '99)"
+        ],
+        "genre": [
+          "OST",
+          "Alternative Rock"
+        ]
+      },
+      {
+        "title": "Empire Records",
+        "artist": "Various",
+        "year": "1997",
+        "cover": "images/ost_empire_records.jpg",
+        "tracks": [
+          "13. Til I Hear It From You (Gin Blossoms)",
+          "14. Video Killed The Radio Star (The Buggles)",
+          "15. Liar (The Cranberries)",
+          "16. Money (The Flying Lizards)",
+          "17. A Girl Like You (Edwyn Collins)",
+          "18. Free (The Martini's)",
+          "19. Crazy Life (Toad The Wet Sprocket)",
+          "20. Bright As Yellow (The Innocence Mission)",
+          "21. I Don't Want To Live Today (Ape Hangers)",
+          "22. Whole Lotta Trouble (Cracker)",
+          "23. If You Want Blood (You've Got It) (AC/DC)",
+          "24. Seems (Queen Sarah Saturday)",
+          "25. Ready, Steady, Go (The Meices)",
+          "26. What You Are (Drill)",
+          "27. Nice Overalls (Lustre)",
+          "28. Here It Comes Again (PLEASE)",
+          "29. The Ballad Of El Goodo (Evan Dando)",
+          "30. How (The Cranberries)",
+          "31. Plowed (Sponge)",
+          "32. Sugarhigh (Coyote Shivers)"
+        ],
+        "genre": [
+          "OST",
+          "Alternative Rock",
+          "Pop Rock"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": [
+      "Metal"
+    ],
+    "md_cover": "images/md_21.jpg",
+    "title": "Best of the Beast",
+    "artist": "Iron Maiden",
+    "tracks": [
+      "01. Children Of The Damned",
+      "02. The Prisoner",
+      "03. Flight Of Icarus",
+      "04. Die With Your Boots On",
+      "05. The Trooper",
+      "06. 2 Minutes to Midnight",
+      "07. Powerslave",
+      "08. Sea of Madness",
+      "09. Heaven Can Wait",
+      "10. Moonchild",
+      "11. Infinite Dreams",
+      "12. Can I Play with Madness",
+      "13. The Evil That Men Do",
+      "14. Seventh Son of a Seventh Son",
+      "15. The Clairvoyant",
+      "16. Only the Good Die Young",
+      "17. Holy Smoke",
+      "18. From Here To Eternity",
+      "19. Afraid To Shoot Strangers",
+      "20. Fear Of The Dark",
+      "21. Transylvania",
+      "22. The Prophecy",
+      "23. Dance of Death",
+      "24. Killers",
+      "25. Sanctuary",
+      "26. The Writing on the Wall"
+    ]
+  },
+  {
+    "genre": [
+      "Rock",
+      "Folk Rock",
+      "Live"
+    ],
+    "md_cover": "images/md_20",
+    "title": "Live from Mars",
+    "artist": "Ben Harper",
+    "tracks": [
+      "01. Glory & Consequence",
+      "02. Excuse Me Mr.",
+      "03. Alone",
+      "04. Sexual Healing",
+      "05. Woman In You",
+      "06. Ground On Down",
+      "07. Steal My Kisses",
+      "08. Burn One Down",
+      "09. Mama's Got A Girlfriend Now",
+      "10. Welcome To The Cruel World",
+      "11. Forgiven",
+      "12. Medley: Faded/Whole Lotta Love",
+      "13. Waiting On An Angel",
+      "14. Roses From My Friends",
+      "15. Power Of The Gospel",
+      "16. Pleasure And Pain",
+      "17. Please Bleed",
+      "18. The Drugs Don't Work",
+      "19. In The Lord's Arms",
+      "20. Not Fire, Not Ice",
+      "21. Beloved One",
+      "22. Number Three",
+      "23. Walk Away",
+      "24. Another Lonely Day",
+      "25. Medley: Like A King/I'll Rise"
+    ]
+  },
+  {
+    "genre": [
+      "Rap"
+    ],
+    "md_cover": "images/",
+    "albums": [
+      {
+        "title": "Quelques balles de plus pour... le calibre qu'il te faut",
+        "artist": "Stomy Bugsy",
+        "year": "1998",
+        "cover": "images/stomy_bugsy_calibre.jpg",
+        "tracks": [
+          "01. Quand Bugsy et son gang dégomment (feat. Nèg'Marrons, Ärsenik & Hamed Daye)",
+          "02. J'prie Dieu",
+          "03. Les Balances (feat. Passi &amp; Hamed Daye)",
+          "04. Mes forces décuplent quand on m'inculpe (Cavale Mix)",
+          "05. Gangster d'amour",
+          "06. Oyé Sapapaya (feat. Doc Gynéco)",
+          "07. Wohs Nipal",
+          "08. Voilà c'que j't'avais dit",
+          "09. Mon papa à moi est un gangster (Remix)",
+          "10. La vie c'est comme ça",
+          "11. Brève évasion",
+          "12. J'avance pour ma familia",
+          "13. Derniers pas dans la mafia",
+          "14. Un reup qui fait reup"
+        ],
+        "genre": [
+          "Rap"
+        ]
+      },
+      {
+        "title": "Mixomatose",
+        "artist": "Gang Show Lapin",
+        "year": "1999",
+        "cover": "images/gang_show_mixomatose.jpg",
+        "tracks": [
+          "15. Intro",
+          "16. Qui veut quoi?",
+          "17. Les 2 doigts",
+          "18. Les jumeaux",
+          "19. Sauvage",
+          "20. XVIII Zone",
+          "21. J't'en veux pas",
+          "22. Milite pour les tiens",
+          "23. Hymne du Show Lapin",
+          "24. Quand t'as un bijou",
+          "25. Pourquoi tant de haine",
+          "26. Rien que du naturel...",
+          "27. La routine",
+          "28. Jalouse-moi",
+          "29. Soirée Chirée"
+        ],
+        "genre": [
+          "Rap"
+        ]
+      },
+      {
+        "title": "",
+        "artist": "",
+        "year": "",
+        "cover": "images/",
+        "tracks": []
+      }
+    ]
+  },
+  {
+    "genre": [
+      "Français",
+      "Variété"
+    ],
+    "md_cover": "images/md_06.jpg",
+    "albums": [
+      {
+        "title": "The Meilleur of Renaud 85-95",
+        "artist": "Renaud",
+        "year": "1995",
+        "cover": "images/renaud_85_95.jpg",
+        "tracks": [
+          "01. Miss Maggie",
+          "02. La Pêche À La Ligne",
+          "03. Mistral Gagnant",
+          "04. Morts Les Enfants",
+          "05. Fatigué",
+          "06. La Mère À Titi",
+          "07. Triviale Poursuite",
+          "08. Me Jette Pas",
+          "09. Putain De Camion",
+          "10. Marchand De Cailloux",
+          "11. P’tit Voleur",
+          "12. La Ballade Nord-Irlandaise",
+          "13. Welcome Gorby",
+          "14. Tout In Haut De Ch’Terril",
+          "15. C’est Quand Qu’On Va Où ?"
+        ],
+        "genre": [
+          "Français",
+          "Variété"
+        ]
+      },
+      {
+        "title": "Best of France Gall",
+        "artist": "France Gall",
+        "year": "1995",
+        "cover": "images/france_gall_bestof.jpg",
+        "tracks": [
+          "16. Ella, elle l'a",
+          "17. Évidemment",
+          "18. Il jouait du piano debout",
+          "19. La déclaration d'amour",
+          "20. Résiste",
+          "21. Si maman si",
+          "22. Babacar",
+          "23. Besoin d'amour",
+          "24. Débranche",
+          "25. Diego libre dans sa tête",
+          "26. Musique",
+          "27. Viens je t'emmène"
+        ],
+        "genre": [
+          "Français",
+          "Variété"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": [
+      "OST",
+      "Varitété"
+    ],
+    "md_cover": "images/md_27",
+    "title": "Greatest Film Songs",
+    "artist": "Various",
+    "tracks": [
+      "01. Back to the Future - The power of love",
+      "02. Beverly Hills Cop - The heat is on",
+      "03. Lethal Weapon 3 - It's probably me",
+      "04. Ghostbusters - Main theme",
+      "05. Rocky IV - Living in America",
+      "06. Forrest Gump - Suite",
+      "07. Rambo - It's long road",
+      "08. Indiana Jones - Opening titles",
+      "09. Top Gun - Take me breath away",
+      "10. Rain Man - Leaving Wallbrook, on the road",
+      "11. Jurassic Park - Welcome to Jurassic Park",
+      "12. Home Alone - The house",
+      "13. Bagdad Cafe - Calling you",
+      "14. Ghost - Unchained melody",
+      "15. Gremlins - The gift",
+      "16. Total Recall - The dream",
+      "17. Lion King - Can you feel the love tonight",
+      "18. Mission - The mission",
+      "19. Who Framed Roger Rabbit - Why don't you do right?",
+      "20. Once Upon the Time in the West - One upon a time in the west",
+      "21. Robocop - Rock shop",
+      "22. Home Alone - Somewhere in my memory",
+      "23. Terminator 2 - Main title",
+      "24. Leon - Two ways out",
+      "25. Leon - Shape of my heart",
+      "26. Braveheart - Main theme",
+      "27. Bad Boys - Theme from Cops",
+      "28. Love Story - Main theme",
+      "29. The Godfather - The godfather waltz",
+      "30. The Blues Brothers - Think",
+      "31. Speed - Main theme",
+      "32. Men in Black - Main theme",
+      "33. Titanic - The portrait",
+      "34. Saving Private Ryan - ... Revisiting Normandy",
+      "35. American Beauty - American Beauty",
+      "36. Armageddon - I don't want to miss a thing",
+      "37. Requiem for a Dream - Main Theme"
+    ]
+  },
+  {
+    "genre": [
+      "Rock",
+      "Folk"
+    ],
+    "md_cover": "images/md_29.jpg",
+    "albums": [
+      {
+        "title": "Greatest Hits",
+        "artist": "Bruce Springsteen",
+        "year": "1995",
+        "cover": "images/bruce_springsteen_best.jpg",
+        "tracks": [
+          "01. Atlantic City",
+          "02. Badlands",
+          "03. Born to Run",
+          "04. The River",
+          "05. Racing in the Street",
+          "06. Streets of Philadelphia - Single Edit",
+          "07. The Promised Land",
+          "08. Thunder Road",
+          "09. Darkness On the Edge of Town",
+          "10. Something in the Night",
+          "11. Jungleland",
+          "12. Point Blank"
+        ],
+        "genre": [
+          "Rock",
+          "Folk"
+        ]
+      },
+      {
+        "title": "Harvest",
+        "artist": "Neil Young",
+        "year": "1972",
+        "cover": "images/neil_young_harvest.jpg",
+        "tracks": [
+          "13. Out on the Weekend",
+          "14. Harvest",
+          "15. A Man Needs a Maid",
+          "16. Heart of Gold",
+          "17. Are You Ready for the Country?",
+          "18. Old Man",
+          "19. There's a World",
+          "20. Alabama",
+          "21. The Needle and the Damage Done",
+          "22. Words (Between the Lines of Age)"
+        ],
+        "genre": [
+          "Rock",
+          "Folk"
+        ]
+      },
+      {
+        "title": "Greatest Hits",
+        "artist": "Bob Dylan",
+        "year": "1967",
+        "cover": "images/bob_dylan_greatest_hits.jpg",
+        "tracks": [
+          "23. Rainy Day Women #12 & 35",
+          "24. Blowin' in the Wind",
+          "25. The Times They Are A-Changin'",
+          "26. It Ain't Me, Babe",
+          "27. Like a Rolling Stone",
+          "28. Mr. Tambourine Man",
+          "29. Subterranean Homesick Blues",
+          "30. I Want You",
+          "31. Positively 4th Street",
+          "32. Just like a Woman"
+        ],
+        "genre": [
+          "Rock",
+          "Folk"
+        ]
+      }
+    ]
+  },
+  {
+    "genre": [
+      "Metal",
+      "Pop Rock"
+    ],
+    "md_cover": "images/",
+    "albums": [
+      {
+        "title": "XX: 1977-1997",
+        "artist": "Toto",
+        "year": "1997",
+        "cover": "images/toto_xx.jpg",
+        "tracks": [
+          "01. Goin' Home",
+          "02. Tale of a Man",
+          "03. Last Night",
+          "04. In a Word",
+          "05. Modern Eyes",
+          "06. Right Part of Me",
+          "07. Mrs. Johnson",
+          "08. Miss Sun",
+          "09. Love Is a Man's World On the Run",
+          "10. Dave's Gone Skiing",
+          "11. Baba Mnumzane - Live",
+          "12. Africa - Live"
+        ],
+        "genre": [
+          "Pop Rock"
+        ]
+      },
+      {
+        "title": "Best of Rockers'n'Ballads",
+        "artist": "Scorpions",
+        "year": "1989",
+        "cover": "images/scorpions_best_of.jpg",
+        "tracks": [
+          "13. Rock you like a hurricane",
+          "14. I can't explain",
+          "15. Rhythm of love",
+          "16. Big city nights",
+          "17. Lovedrive",
+          "18. Is there anybody there?",
+          "19. Holiday",
+          "20. Still living you",
+          "21. No one like you",
+          "22. Blackout",
+          "23. Another piece of meat",
+          "24. You give me all I need",
+          "25. Hey you",
+          "26. The Zoo",
+          "27. China White"
+        ],
+        "genre": [
+          "Metal"
+        ]
+      }
+    ]
   }
 ]
