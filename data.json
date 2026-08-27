@@ -129,40 +129,6 @@
     ]
   },
   {
-    "genre": "Humour",
-    "md_cover": "images/md_25.jpg",
-    "albums": [
-      {
-        "title": "Les OVNI",
-        "artist": "Gérard de Suresnes",
-        "cover": "images/gerard_ovnis.jpg",
-        "tracks": [
-          "01. Débat sur les OVNI - Intro",
-          "02. Débat sur les OVNI - Partie 1",
-          "03. Débat sur les OVNI - Partie 2"
-        ]
-      },
-      {
-        "title": "Les routiers et la CB",
-        "artist": "Gérard de Suresnes",
-        "cover": "images/gerard_routiers.jpg",
-        "tracks": [
-          "04. Débat sur la CB et les routiers - Partie 1",
-          "05. Débat sur la CB et les routiers - Partie 2"
-        ]
-      },
-      {
-        "title": "Les grèves",
-        "artist": "Gérard de Suresnes",
-        "cover": "images/gerard_greves.jpg",
-        "tracks": [
-          "06. Débat sur les grèves - Partie 1",
-          "07. Débat sur les grèves - Partie 2"
-        ]
-      }
-    ]
-  },
-  {
     "genre": "Rap",
     "md_cover": "images/md_26.jpg",
     "albums": [
@@ -216,29 +182,6 @@
     ]
   },
   {
-    "genre": "Compilation",
-    "md_cover": "images/md_27.jpg",
-    "albums": [
-      {
-        "title": "Musiques de Films",
-        "artist": "Divers",
-        "cover": "images/ost_compil_cinema.jpg",
-        "tracks": [
-          "01. Titanic Main Theme",
-          "02. Gladiator Main Theme",
-          "03. Matrix Theme",
-          "04. Inception Theme",
-          "05. Interstellar Theme",
-          "06. Braveheart Main Theme",
-          "07. Jurassic Park Theme",
-          "08. Star Wars Imperial March",
-          "09. Indiana Jones Theme",
-          "10. Back to the Future Theme"
-        ]
-      }
-    ]
-  },
-  {
     "genre": "Pop Rock",
     "md_cover": "images/md_28.jpg",
     "albums": [
@@ -280,65 +223,6 @@
           "24. Velvet Morning",
           "25. Come On",
           "26. Deep Freeze (Hidden Track)"
-        ]
-      }
-    ]
-  },
-  {
-    "genre": "Folk Rock",
-    "md_cover": "images/md_29.jpg",
-    "albums": [
-      {
-        "title": "Best of",
-        "artist": "Bruce Springsteen",
-        "cover": "images/bruce_springsteen_best.jpg",
-        "tracks": [
-          "01. Born to Run",
-          "02. Thunder Road",
-          "03. Badlands",
-          "04. Hungry Heart",
-          "05. Dancing in the Dark",
-          "06. Born in the U.S.A.",
-          "07. My Hometown",
-          "08. Glory Days",
-          "09. Brilliant Disguise",
-          "10. Human Touch",
-          "11. Better Days",
-          "12. Streets of Philadelphia"
-        ]
-      },
-      {
-        "title": "Harvest",
-        "artist": "Neil Young",
-        "cover": "images/neil_young_harvest.jpg",
-        "tracks": [
-          "13. Out on the Weekend",
-          "14. Harvest",
-          "15. A Man Needs a Maid",
-          "16. Heart of Gold",
-          "17. Are You Ready for the Country?",
-          "18. Old Man",
-          "19. There's a World",
-          "20. Alabama",
-          "21. The Needle and the Damage Done",
-          "22. Words (Between the Lines of Age)"
-        ]
-      },
-      {
-        "title": "Greatest Hits",
-        "artist": "Bob Dylan",
-        "cover": "images/bob_dylan_greatest_hits.jpg",
-        "tracks": [
-          "23. Blowin' in the Wind",
-          "24. Like a Rolling Stone",
-          "25. Mr. Tambourine Man",
-          "26. Subterranean Homesick Blues",
-          "27. I Want You",
-          "28. Positively 4th Street",
-          "29. Just Like a Woman",
-          "30. Knockin' on Heaven's Door",
-          "31. Lay Lady Lay",
-          "32. Rainy Day Women #12 & 35"
         ]
       }
     ]
@@ -547,43 +431,6 @@
           "28. Where Do I Begin (The Chemical Brothers)"
         ]
       }
-    ]
-  },
-  {
-    "genre": "Compilation",
-    "title": "Compil' 90",
-    "artist": "Divers Artistes",
-    "md_cover": "images/md_01.jpg",
-    "tracks": [
-      "1. Scorpions - Wind of Change",
-      "2. Crash Test Dummies - Mmm Mmm Mmm Mmm",
-      "3. Francis Cabrel - Je t'aimais, je t'aime, je t'aimerai",
-      "4. Jean-Jacques Goldman - Bonne idée",
-      "5. Whitney Houston - I Will Always Love You",
-      "6. Youssou N'Dour & Neneh Cherry - 7 Seconds",
-      "7. Counting Crows - Mr. Jones",
-      "8. Bruce Springsteen - Streets of Philadelphia",
-      "9. Stevie Wonder - Free",
-      "10. Jimmy Cliff - I Can See Clearly Now",
-      "11. The Cranberries - Zombie",
-      "12. Michael Jackson - Black or White",
-      "13. No Doubt - Don't Speak",
-      "14. Scatman John - Scatman (Ski-Ba-Bop-Ba-Dop-Bop)",
-      "15. Aqua - Barbie Girl",
-      "16. Gala - Freed from Desire",
-      "17. Robert Miles - Children (Dreamland)",
-      "18. La Bouche - Be My Lover",
-      "19. Cher - Believe",
-      "20. Ace of Base - All That She Wants",
-      "21. Coolio feat. L.V. - Gangsta's Paradise",
-      "22. Blackstreet feat. Dr. Dre - No Diggity",
-      "23. Mariah Carey - Without You",
-      "24. Natalie Imbruglia - Torn",
-      "25. Alanis Morissette - Ironic",
-      "26. Spin Doctors - Two Princes",
-      "27. Manu Chao - Clandestino",
-      "28. Will Smith - Gettin' Jiggy Wit It",
-      "29. The Verve - Bitter Sweet Symphony"
     ]
   },
   {
@@ -846,55 +693,6 @@
           "26. Viens je t'emmène",
           "27. Cézanne peint",
           "28. Tout pour la musique"
-        ]
-      }
-    ]
-  },
-  {
-    "genre": "OST",
-    "md_cover": "images/md_07.jpg",
-    "albums": [
-      {
-        "title": "The Faculty",
-        "artist": "Divers",
-        "cover": "images/ost_the_faculty.jpg",
-        "tracks": [
-          "01. Another Brick in the Wall (Class of '99)",
-          "02. The Kids Aren't Alright (The Offspring)",
-          "03. I'm Eighteen (Creed)",
-          "04. Bad Hospital (Garbage)",
-          "05. Stargazer (Sheryl Crow)",
-          "06. Helpless (Shawn Mullins)",
-          "07. School's Out (Soul Asylum)",
-          "08. Stay Young (Oasis)",
-          "09. Another Brick in the Wall (Part 2) (Class of '99)",
-          "10. Haunt Me (Lullaby for Sarah) (Stabbing Westward)",
-          "11. Maybe Someday (The Cure)",
-          "12. Resuscite Me (Townies)",
-          "13. Changes (Shawn Mullins)"
-        ]
-      },
-      {
-        "title": "Empire Records",
-        "artist": "Divers",
-        "cover": "images/ost_empire_records.jpg",
-        "tracks": [
-          "14. Til I Hear It from You (Gin Blossoms)",
-          "15. A Girl Like You (Edwyn Collins)",
-          "16. Free (The Martinis)",
-          "17. Crazy Life (Toad the Wet Sprocket)",
-          "18. Bright As Yellow (The Innocence Mission)",
-          "19. Circle of Friends (Better Than Ezra)",
-          "20. Mad Life (Cranes)",
-          "21. Whole Lotta Trouble (Lush)",
-          "22. Ready, Steady, Go (The Meices)",
-          "23. What You Are (Dramarama)",
-          "24. Nice Overalls (Lustre)",
-          "25. Here It Comes Again (The Sea Monkeys)",
-          "26. Ballad of El Goodo (Evan Dando)",
-          "27. Sugarhigh (Coyote Shivers)",
-          "28. The Ballad of El Goodo (Big Star)",
-          "29. SOG (Suicidal Tendencies)"
         ]
       }
     ]
@@ -1171,16 +969,17 @@
           "14. So Lonely",
           "15. Message in a Bottle",
           "16. Walking on the Moon",
-          "17. Don't Stand So Close to Me",
-          "18. De Do Do Do, De Da Da Da",
-          "19. Every Little Thing She Does Is Magic",
-          "20. Invisible Sun",
-          "21. Every Breath You Take",
-          "22. King of Pain",
-          "23. Wrapped Around Your Finger",
-          "24. Tea in the Sahara",
-          "25. Synchronicity II",
-          "26. Don't Stand So Close to Me '86"
+          "17. The Bed's Too Big Without You",
+          "18. Don't Stand So Close to Me",
+          "19. De Do Do Do, De Da Da Da",
+          "20. Every Little Thing She Does Is Magic",
+          "21. Invisible Sun",
+          "22. Spirits in The Material World",
+          "23. Synchronicity II",
+          "24. Every Breath You Take",
+          "25. King of Pain",
+          "26. Wrappe Around Your Finger",
+          "27. Tea in the Sahara"
         ]
       },
       {
@@ -1188,17 +987,17 @@
         "artist": "R.E.M.",
         "cover": "images/rem_out_of_time.jpg",
         "tracks": [
-          "27. Radio Song",
-          "28. Losing My Religion",
-          "29. Low",
-          "30. Near Wild Heaven",
-          "31. Endgame",
-          "32. Shiny Happy People",
-          "33. Belong",
-          "34. Half a World Away",
-          "35. Texarkana",
-          "36. Country Feedback",
-          "37. Me in Honey"
+          "28. Radio Song",
+          "29. Losing My Religion",
+          "30. Low",
+          "31. Near Wild Heaven",
+          "32. Endgame",
+          "33. Shiny Happy People",
+          "34. Belong",
+          "35. Half a World Away",
+          "36. Texarkana",
+          "37. Country Feedback",
+          "38. Me in Honey"
         ]
       }
     ]
@@ -1324,86 +1123,6 @@
           "33. She's So Strange",
           "34. Slide Show",
           "35. Blue Flashing Light (Hidden track)"
-        ]
-      }
-    ]
-  },
-  {
-    "genre": "OST",
-    "md_cover": "images/md_15.jpg",
-    "albums": [
-      {
-        "title": "Le Roi Lion",
-        "artist": "Disney",
-        "cover": "images/roi_lion.jpg",
-        "tracks": [
-          "01. L'Histoire de la vie",
-          "02. Je voudrais déjà être roi",
-          "03. Soyez prêtes",
-          "04. Hakuna Matata",
-          "05. L'Amour brille sous les étoiles",
-          "06. Rapport du matin",
-          "07. Can You Feel the Love Tonight"
-        ]
-      },
-      {
-        "title": "Aladdin",
-        "artist": "Disney",
-        "cover": "images/aladdin.jpg",
-        "tracks": [
-          "08. Nuits d'Arabie",
-          "09. Un ami comme moi",
-          "10. Prince Ali",
-          "11. Ce rêve bleu",
-          "12. Prince Ali (Reprise)"
-        ]
-      },
-      {
-        "title": "Le Retour de Jafar",
-        "artist": "Disney",
-        "cover": "images/retour_de_jafar.jpg",
-        "tracks": [
-          "13. Une équipe de choc",
-          "14. Tu n'es qu'un second rôle",
-          "15. Je prends soin de moi",
-          "16. C'est l'oubli"
-        ]
-      },
-      {
-        "title": "Robin des Bois",
-        "artist": "Disney",
-        "cover": "images/robin_des_bois.jpg",
-        "tracks": [
-          "17. Quel beau jour en Angleterre",
-          "18. Messire Prince Jean",
-          "19. Amour",
-          "20. Libellule",
-          "21. Pas à Nottingham"
-        ]
-      }
-    ]
-  },
-  {
-    "genre": "Humour",
-    "md_cover": "images/md_17.jpg",
-    "albums": [
-      {
-        "title": "Les 35 heures",
-        "artist": "Gérard de Suresnes",
-        "cover": "images/gerard_35_heures.jpg",
-        "tracks": [
-          "01. Débat sur les 35 heures - Partie 1",
-          "02. Débat sur les 35 heures - Partie 2",
-          "03. Appels des auditeurs"
-        ]
-      },
-      {
-        "title": "L'Internet",
-        "artist": "Gérard de Suresnes",
-        "cover": "images/gerard_internet.jpg",
-        "tracks": [
-          "04. Débat sur Internet - Partie 1",
-          "05. Débat sur Internet - Partie 2"
         ]
       }
     ]
@@ -1559,60 +1278,6 @@
     ]
   },
   {
-    "genre": "Live",
-    "md_cover": "images/md_20.jpg",
-    "albums": [
-      {
-        "title": "Live from Mars",
-        "artist": "Ben Harper",
-        "cover": "images/ben_harper_live_from_mars.jpg",
-        "tracks": [
-          "01. Glory & Consequence (Live)",
-          "02. Excuse Me Mr. (Live)",
-          "03. Ground on Down (Live)",
-          "04. Steal My Kisses (Live)",
-          "05. Burn One Down (Live)",
-          "06. With My Own Two Hands (Live)",
-          "07. Sexual Healing (Live)",
-          "08. Woman in You (Live)",
-          "09. Faded (Live)",
-          "10. Roses from My Friends (Live)",
-          "11. The Power of the Gospel (Live)",
-          "12. Gold to Me (Live)"
-        ]
-      }
-    ]
-  },
-  {
-    "genre": "Metal",
-    "md_cover": "images/md_21.jpg",
-    "albums": [
-      {
-        "title": "Best of the Beast",
-        "artist": "Iron Maiden",
-        "cover": "images/iron_maiden_best.jpg",
-        "tracks": [
-          "01. The Number of the Beast",
-          "02. Iron Maiden",
-          "03. Run to the Hills",
-          "04. Fear of the Dark",
-          "05. The Trooper",
-          "06. Hallowed Be Thy Name",
-          "07. Wasted Years",
-          "08. Bring Your Daughter... to the Slaughter",
-          "09. Wrathchild",
-          "10. Phantom of the Opera",
-          "11. Aces High",
-          "12. 2 Minutes to Midnight",
-          "13. Can I Play with Madness",
-          "14. Be Quick or Be Dead",
-          "15. Man on the Edge",
-          "16. Virus"
-        ]
-      }
-    ]
-  },
-  {
     "genre": "Metal",
     "md_cover": "images/md_34.jpg",
     "albums": [
@@ -1662,22 +1327,6 @@
           "32. The Fall of Adam",
           "33. King Kill 33°",
           "34. Count to Six and Die (The Vacuum of Infinite Space Encompassing)"
-        ]
-      }
-    ]
-  },
-  {
-    "genre": "Jeunesse",
-    "md_cover": "images/md_35.jpg",
-    "albums": [
-      {
-        "title": "Debo & Nico, terrain et musiques enfance",
-        "artist": "Debo & Nico",
-        "cover": "images/debo_nico_enfance.jpg",
-        "tracks": [
-          "01. Musique 1",
-          "02. Musique 2",
-          "03. Musique 3"
         ]
       }
     ]
