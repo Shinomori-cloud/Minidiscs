@@ -1665,9 +1665,8 @@
           "08. Maybe Someday (Flick)",
           "09. Resuscitation (Sheryl Crow)",
           "10. It's Over Now (Neve)",
-          "11. Changes(Shauwn Mullins)",
-          "12. Stay Young (Oasis)",
-          "13. Another Brick In the Wall (Part1) (Class of '99)"
+          "11. Stay Young (Oasis)",
+          "12. Another Brick In the Wall (Part1) (Class of '99)"
         ],
         "genre": [
           "OST",
@@ -1680,26 +1679,26 @@
         "year": "1997",
         "cover": "images/ost_empire_records.jpg",
         "tracks": [
-          "14. Til I Hear It From You (Gin Blossoms)",
-          "15. Video Killed The Radio Star (The Buggles)",
-          "16. Liar (The Cranberries)",
-          "17. Money (The Flying Lizards)",
-          "18. A Girl Like You (Edwyn Collins)",
-          "19. Free (The Martini's)",
-          "20. Crazy Life (Toad The Wet Sprocket)",
-          "21. Bright As Yellow (The Innocence Mission)",
-          "22. I Don't Want To Live Today (Ape Hangers)",
-          "23. Whole Lotta Trouble (Cracker)",
-          "24. If You Want Blood (You've Got It) (AC/DC)",
-          "25. Seems (Queen Sarah Saturday)",
-          "26. Ready, Steady, Go (The Meices)",
-          "27. What You Are (Drill)",
-          "28. Nice Overalls (Lustre)",
-          "29. Here It Comes Again (PLEASE)",
-          "30. The Ballad Of El Goodo (Evan Dando)",
-          "31. How (The Cranberries)",
-          "32. Plowed (Sponge)",
-          "33. Sugarhigh (Coyote Shivers)"
+          "13. Til I Hear It From You (Gin Blossoms)",
+          "14. Video Killed The Radio Star (The Buggles)",
+          "15. Liar (The Cranberries)",
+          "16. Money (The Flying Lizards)",
+          "17. A Girl Like You (Edwyn Collins)",
+          "18. Free (The Martini's)",
+          "19. Crazy Life (Toad The Wet Sprocket)",
+          "20. Bright As Yellow (The Innocence Mission)",
+          "21. I Don't Want To Live Today (Ape Hangers)",
+          "22. Whole Lotta Trouble (Cracker)",
+          "23. If You Want Blood (You've Got It) (AC/DC)",
+          "24. Seems (Queen Sarah Saturday)",
+          "25. Ready, Steady, Go (The Meices)",
+          "26. What You Are (Drill)",
+          "27. Nice Overalls (Lustre)",
+          "28. Here It Comes Again (PLEASE)",
+          "29. The Ballad Of El Goodo (Evan Dando)",
+          "30. How (The Cranberries)",
+          "31. Plowed (Sponge)",
+          "32. Sugarhigh (Coyote Shivers)"
         ],
         "genre": [
           "OST",
@@ -1748,10 +1747,10 @@
   {
     "genre": [
       "Rock",
-      "Folk",
+      "Folk Rock",
       "Live"
     ],
-    "md_cover": "images/md_20.jpg",
+    "md_cover": "images/md_20",
     "title": "Live from Mars",
     "artist": "Ben Harper",
     "tracks": [
@@ -1780,6 +1779,72 @@
       "23. Walk Away",
       "24. Another Lonely Day",
       "25. Medley: Like A King/I'll Rise"
+    ]
+  },
+  {
+    "genre": [
+      "Rap"
+    ],
+    "md_cover": "images/",
+    "albums": [
+      {
+        "title": "Quelques balles de plus pour... le calibre qu'il te faut",
+        "artist": "Stomy Bugsy",
+        "year": "1998",
+        "cover": "images/stomy_bugsy_calibre.jpg",
+        "tracks": [
+          "01. Quand Bugsy et son gang dégomment (feat. Nèg'Marrons, Ärsenik & Hamed Daye)",
+          "02. J'prie Dieu",
+          "03. Les Balances (feat. Passi &amp; Hamed Daye)",
+          "04. Mes forces décuplent quand on m'inculpe (Cavale Mix)",
+          "05. Gangster d'amour",
+          "06. Oyé Sapapaya (feat. Doc Gynéco)",
+          "07. Wohs Nipal",
+          "08. Voilà c'que j't'avais dit",
+          "09. Mon papa à moi est un gangster (Remix)",
+          "10. La vie c'est comme ça",
+          "11. Brève évasion",
+          "12. J'avance pour ma familia",
+          "13. Derniers pas dans la mafia",
+          "14. Un reup qui fait reup"
+        ],
+        "genre": [
+          "Rap"
+        ]
+      },
+      {
+        "title": "Mixomatose",
+        "artist": "Gang Show Lapin",
+        "year": "1999",
+        "cover": "images/gang_show_mixomatose.jpg",
+        "tracks": [
+          "15. Intro",
+          "16. Qui veut quoi?",
+          "17. Les 2 doigts",
+          "18. Les jumeaux",
+          "19. Sauvage",
+          "20. XVIII Zone",
+          "21. J't'en veux pas",
+          "22. Milite pour les tiens",
+          "23. Hymne du Show Lapin",
+          "24. Quand t'as un bijou",
+          "25. Pourquoi tant de haine",
+          "26. Rien que du naturel...",
+          "27. La routine",
+          "28. Jalouse-moi",
+          "29. Soirée Chirée"
+        ],
+        "genre": [
+          "Rap"
+        ]
+      },
+      {
+        "title": "",
+        "artist": "",
+        "year": "",
+        "cover": "images/",
+        "tracks": []
+      }
     ]
   },
   {
@@ -1847,7 +1912,7 @@
       "OST",
       "Varitété"
     ],
-    "md_cover": "images/md_27.jpg",
+    "md_cover": "images/md_27",
     "title": "Greatest Film Songs",
     "artist": "Various",
     "tracks": [
@@ -2024,5 +2089,64 @@
         ]
       }
     ]
+  },
+  {
+    "genre": [
+      "Rap"
+    ],
+    "md_cover": "images/",
+    "albums": [
+      {
+        "title": "Quelques balles de plus pour... le calibre qu'il te faut",
+        "artist": "Stomy Bugsy",
+        "year": "1998",
+        "cover": "images/stomy_bugsy_calibre.jpg",
+        "tracks": [
+          "01. Quand Bugsy et son gang dégomment (feat. Nèg'Marrons, Ärsenik & Hamed Daye)",
+          "02. J'prie Dieu",
+          "03. Les Balances (feat. Passi & Hamed Daye)",
+          "04. Mes forces décuplent quand on m'inculpe (Cavale Mix)",
+          "05. Gangster d'amour",
+          "06. Oyé Sapapaya (feat. Doc Gynéco)",
+          "07. Wohs Nipal",
+          "08. Voilà c'que j't'avais dit",
+          "09. Mon papa à moi est un gangster (Remix)",
+          "10. La vie c'est comme ça",
+          "11. Brève évasion",
+          "12. J'avance pour ma familia",
+          "13. Derniers pas dans la mafia",
+          "14. Un reup qui fait reup"
+        ],
+        "genre": [
+          "Rap"
+        ]
+      },
+      {
+        "title": "Mixomatose",
+        "artist": "Gang Show Lapin",
+        "year": "1999",
+        "cover": "images/gang_show_mixomatose.jpg",
+        "tracks": [
+          "15. Intro",
+          "16. Qui veut quoi?",
+          "17. Les 2 doigts",
+          "18. Les jumeaux",
+          "19. Sauvage",
+          "20. XVIII Zone",
+          "21. J't'en veux pas",
+          "22. Milite pour les tiens",
+          "23. Hymne du Show Lapin",
+          "24. Quand t'as un bijou",
+          "25. Pourquoi tant de haine",
+          "26. Rien que du naturel...",
+          "27. La routine",
+          "28. Jalouse-moi",
+          "29. Soirée Chirée"
+        ],
+        "genre": [
+          "Rap"
+        ]
+      }
+    ]
   }
-] 
+]
