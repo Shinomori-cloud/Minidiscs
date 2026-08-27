@@ -504,35 +504,46 @@
     "md_cover": "images/md_33.jpg",
     "albums": [
       {
-        "title": "Vanilla Sky",
-        "artist": "Divers",
-        "cover": "images/ost_vanilla_sky.jpg",
-        "tracks": [
-          "01. All the Right Friends (R.E.M.)",
-          "02. Everything in Its Right Place (Radiohead)",
-          "03. Vanilla Sky (Paul McCartney)",
-          "04. Solsbury Hill (Peter Gabriel)",
-          "05. I Fall to Pieces (Patsy Cline)",
-          "06. Sweetness Follows (R.E.M.)",
-          "07. Where Do I Begin (Chemical Brothers)",
-          "08. One of Us (Joan Osborne)",
-          "09. Afrika Shox (Leftfield)",
-          "10. Elevator Beat (Nancy Wilson)",
-          "11. Sweetness Follows (Acoustic)"
-        ]
-      },
-      {
         "title": "Amnesiac",
         "artist": "Radiohead",
         "cover": "images/radiohead_amnesiac.jpg",
         "tracks": [
-          "12. Packt Like Sardines in a Crushd Tin Box",
-          "13. Pyramid Song",
-          "14. Pulk/Pull Revolving Doors",
-          "15. You and Whose Army?",
-          "16. I Might Be Wrong",
-          "17. Knives Out",
-          "18. Morning Bell/Amnesiac"
+          "01. Packt Like Sardines in a Crushd Tin Box",
+          "02. Pyramid Song",
+          "03. Pulk/Pull Revolving Doors",
+          "04. You and Whose Army?",
+          "05. I Might Be Wrong",
+          "06. Knives Out",
+          "08. Dollars and Cents",
+          "07. Morning Bell/Amnesiac",
+          "08. Dollars and Cents",
+          "09. Hunting Bears",
+          "10. Like Spinning Plates",
+          "11. Life in a Glasshouse"
+        ]
+      },
+      {
+        "title": "Vanilla Sky",
+        "artist": "Divers",
+        "cover": "images/ost_vanilla_sky.jpg",
+        "tracks": [
+          "12. All the Right Friends (R.E.M.)",
+          "13. Everything in Its Right Place (Radiohead)",
+          "14. Vanilla Sky (Paul McCartney)",
+          "15. Solsbury Hill (Peter Gabriel)",
+          "16. I Fall Appart (Julianna Gianni)",
+          "17. Porpoise Song (The Monkees)",
+          "18. Mondo '77 (Looper)",
+          "19. Have You Forgotten (Red House Painters)",
+          "20. Directions (Josg Rouse)",
+          "21. Afrika Shox (Leftfield)",
+          "22. Svefn-g-englar (Sigur Ros),
+          "23. Last Goodbye (Jeff Buckley),
+          "24. Can We Still Be Friends (Todd Rundgren),
+          "25. 4th Time Around (Bob Dylan)
+          "26. Elevator Beat (Nancy Wilson),
+          "27.Sweetness Follows (R.E.M.),
+          "28. Where Do I Begin (The Chemical Brothers)
         ]
       }
     ]
