@@ -1477,12 +1477,13 @@
           "05. The Kids Aren't Alright",
           "06. Feelings",
           "07. She's Got Issues",
-          "08. Wally Gator",
-          "09. Why Don't You Get a Job?",
-          "10. Americana",
-          "11. Pay the Man",
-          "12. No Brakes",
-          "13. End of the Line"
+          "08. Walla Walla",
+          "09. The End of the Line",
+          "10. No Brakes",
+          "11. Why Don't You Get a Job",
+          "12. Americana",
+          "13. Pay the Man",
+          "14. Pretty Fly (reprise)"
         ]
       },
       {
@@ -1490,17 +1491,18 @@
         "artist": "Buckcherry",
         "cover": "images/buckcherry.jpg",
         "tracks": [
-          "14. Lit Up",
-          "15. For the Movies",
-          "16. Check Your Head",
-          "17. Dirty Mind",
-          "18. For the Movies",
-          "19. Lawless and Loud",
-          "20. Related",
-          "21. Borderline",
-          "22. Get Back",
-          "23. Baby",
-          "24. Drink the Water"
+          "15. Lit Up",
+          "16. Crushed",
+          "17. Dead Again",
+          "18. Check Your Head",
+          "19. Dirty Mind",
+          "20. For the Movies",
+          "21. Lawless and  Lulu",
+          "22. Related",
+          "23. Borderline",
+          "24. Get Back",
+          "25. Baby",
+          "26. Drink Water"
         ]
       },
       {
@@ -1508,17 +1510,17 @@
         "artist": "Foo Fighters",
         "cover": "images/foo_fighters_there_is_nothing.jpg",
         "tracks": [
-          "25. Stacked Actors",
-          "26. Breakout",
-          "27. Learn to Fly",
-          "28. Gimme Stitches",
-          "29. Generator",
-          "30. Aurora",
-          "31. Live-A-Board",
-          "32. Next Year",
-          "33. Headwires",
-          "34. Ain't It the Life",
-          "35. M.I.A."
+          "27. Stacked Actors",
+          "28. Breakout",
+          "29. Learn to Fly",
+          "30. Gimme Stitches",
+          "31. Generator",
+          "32. Aurora",
+          "33. Live-In Skin",
+          "34. Next Year",
+          "35. Headwires",
+          "36. Ain't It the Life",
+          "37. M.I.A."
         ]
       }
     ]
