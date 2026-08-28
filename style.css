@@ -257,7 +257,7 @@ main#app {
   z-index: 1;
 }
 
-/* Marge ajustée pour la page d'accueil (prend en compte la double grille Types / Genres) */
+/* Marge ajustée pour la page d'accueil */
 body:has(.dashboard-container) main#app {
   margin-top: 435px;
 }
@@ -446,6 +446,35 @@ body:has(.featured-container.hidden) main#app {
   text-align: center;
 }
 
+/* GRILLE DE BOUTONS TYPES (AJOUTÉ POUR FIXER L'AFFICHAGE) */
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.type-btn {
+  background-color: #f1f5f9;
+  color: var(--text-main);
+  border: 1.5px solid #000;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.1s ease;
+}
+
+.type-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px #000;
+}
+
 .genres-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -507,6 +536,39 @@ body:has(.featured-container.hidden) main#app {
 
 .btn-primary:active {
   transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+/* BOUTONS D'ACTION (ÉDITION & SUPPRESSION SUR FICHE ET CARTES) */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btn-edit, .btn-delete {
+  border: 1.5px solid #000;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 1.5px 1.5px 0px #000;
+  transition: transform 0.1s ease;
+}
+
+.btn-edit {
+  background-color: #ffb703;
+  color: #000;
+}
+
+.btn-delete {
+  background-color: #e63946;
+  color: #fff;
+}
+
+.btn-edit:active, .btn-delete:active {
+  transform: translate(1px, 1px);
   box-shadow: 0px 0px 0px #000;
 }
 
@@ -599,7 +661,7 @@ body:has(.featured-container.hidden) main#app {
   color: var(--text-sub);
 }
 
-.form-group input, .form-group textarea {
+.form-group input, .form-group textarea, .form-group select {
   width: 100%;
   padding: 10px;
   background: #f8fafc;
