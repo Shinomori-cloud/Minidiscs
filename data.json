@@ -2993,23 +2993,19 @@
       "Humour"
     ],
     "md_cover": "images/md_17.jpg",
-    "albums": [
-      {
-        "title": "Les Débats de Gérard : Les 35 heures, l'Internet",
-        "artist": "Gérard de Suresnes",
-        "cover": "images/debats_gerard_17.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "Humour"
+    "title": "Les Débats de Gérard : Les 35 heures, l'Internet",
+    "artist": "Gérard de Suresnes",
+    "cover": "images/debats_gerard_17.jpg",
+    "types": [
+       "A MODIFIER 1",
+       "A MODIFIER 2"
+    ],
+    "genres": [
+       "Humour"
         ],
         "tracks": [
           "01. Les 35 heures",
           "02. L'Internet"
-        ]
-      }
     ]
   }
 ]
