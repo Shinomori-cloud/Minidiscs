@@ -48,27 +48,25 @@ function clearLocalBackup() {
    GESTION DU BOUTON ET DE LA BARRE DE RECHERCHE
    ========================================== */
 function toggleSearch() {
-  const searchBar = document.getElementById('search-bar');
-  const searchInput = document.getElementById('search-input');
+  const topSearch = document.getElementById('top-search');
+  const searchInput = document.getElementById('top-search-input');
   const fabBtn = document.getElementById('search-fab-btn');
 
-  if (!searchBar) return;
+  if (!topSearch) return;
 
-  const isOpen = searchBar.classList.contains('open');
+  const isClosed = topSearch.classList.contains('closed');
 
-  if (isOpen) {
-    searchBar.classList.remove('open');
-    searchBar.classList.add('closed');
-    fabBtn.textContent = '🔍';
+  if (!isClosed) {
+    topSearch.classList.add('closed');
+    if (fabBtn) fabBtn.textContent = '🔍';
     if (currentSearchQuery !== '') {
       currentSearchQuery = '';
       if (searchInput) searchInput.value = '';
       renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
     }
   } else {
-    searchBar.classList.remove('closed');
-    searchBar.classList.add('open');
-    fabBtn.textContent = '✕';
+    topSearch.classList.remove('closed');
+    if (fabBtn) fabBtn.textContent = '✕';
     if (searchInput) searchInput.focus();
   }
 }
@@ -106,21 +104,20 @@ function onSearchInput(value) {
 }
 
 function updateSearchVisibility(show) {
-  const fabContainer = document.getElementById('search-fab-container');
-  if (!fabContainer) return;
+  const fabBtn = document.getElementById('search-fab-btn');
+  const topSearch = document.getElementById('top-search');
+  const searchInput = document.getElementById('top-search-input');
 
   if (show) {
-    fabContainer.classList.remove('hidden');
+    if (fabBtn) fabBtn.classList.remove('hidden');
   } else {
-    fabContainer.classList.add('hidden');
-    const searchBar = document.getElementById('search-bar');
-    const searchInput = document.getElementById('search-input');
-    const fabBtn = document.getElementById('search-fab-btn');
-    if (searchBar) {
-      searchBar.classList.remove('open');
-      searchBar.classList.add('closed');
+    if (fabBtn) {
+      fabBtn.classList.add('hidden');
+      fabBtn.textContent = '🔍';
     }
-    if (fabBtn) fabBtn.textContent = '🔍';
+    if (topSearch) {
+      topSearch.classList.add('closed');
+    }
     currentSearchQuery = '';
     if (searchInput) searchInput.value = '';
   }
@@ -585,7 +582,7 @@ function openMD(index, pushState = true) {
       tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
     }
 
-    app.innerHTML = `
+   app.innerHTML = `
       <div class="track-container">
         ${adminControls}
         <div class="album-header">
