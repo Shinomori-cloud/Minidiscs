@@ -24,12 +24,42 @@
   <div id="featured-container" class="featured-container">
     <div class="featured-header">
       <span class="featured-title">SÉLECTION DU MOMENT</span>
+      <!-- AJOUT : Bouton de rafraîchissement manquant -->
+      <button id="refresh-btn" class="refresh-btn" title="Rafraîchir la sélection">🔄</button>
     </div>
     <div id="featured-grid" class="featured-grid"></div>
   </div>
 
   <!-- APPLICATION PRINCIPALE -->
-  <main id="app"></main>
+  <main id="app">
+    <!-- Structure initiale générée ou servie de fallback pour le Dashboard -->
+    <div class="dashboard-container">
+      <div class="dashboard-card">
+        
+        <div class="dashboard-stat-main">
+          <span id="stat-count" class="stat-number">0</span>
+          <span class="stat-label">MiniDiscs</span>
+        </div>
+
+        <!-- AJOUT : Section & Grille des Types (ALBUM, LIVE, COMPIL, etc.) -->
+        <div class="dashboard-section-title">TYPES DE MINIDISCS</div>
+        <div id="types-grid" class="types-grid"></div>
+
+        <!-- Section des Genres -->
+        <div class="dashboard-section-title">GENRES MUSICAUX</div>
+        <div id="genres-grid" class="genres-grid"></div>
+
+        <!-- Bouton Voir Tout -->
+        <button id="btn-all-md" class="btn-primary">VOIR TOUTE LA COLLECTION</button>
+
+        <!-- AJOUT : Pied de carte avec bouton d'ajout Admin -->
+        <div class="dashboard-footer">
+          <button id="btn-open-admin" class="btn-add-md" onclick="openAdminModal()">+ Ajouter un MD</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
 
   <!-- MODALE FORMULAIRE ADMIN -->
   <div id="admin-modal" class="modal hidden">
