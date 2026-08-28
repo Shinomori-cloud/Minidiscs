@@ -328,4 +328,414 @@ function renderDashboard(pushState = true) {
         <div class="genres-grid">${genreBadgesHTML}</div>
 
         <button class="btn-primary" style="margin-top: 10px;" onclick="renderMDList({})">
-          VO
+          VOIR TOUS LES MINIDISCS &rarr;
+        </button>
+
+        <div class="dashboard-footer">
+          <button class="btn-add-md" onclick="openAdminModal()">＋ Ajouter un MD</button>
+        </div>
+      </div>
+    </div>
+  `;
+  window.scrollTo(0, 0);
+}
+
+/* 2. LISTE DES MINIDISCS */
+function renderMDList(filters = {}, pushState = true) {
+  if (catalogData === null) return;
+  const { genre = null, type = null } = filters;
+  
+  currentMD = null;
+  currentAlbum = null;
+  currentGenreFilter = genre;
+  currentTypeFilter = type;
+  backBtn.classList.remove('hidden');
+
+  headerTitle.textContent = genre ? genre.toUpperCase() : (type ? type.toUpperCase() : "COLLECTION");
+
+  if (featuredContainer) featuredContainer.classList.add('hidden');
+
+  if (pushState) {
+    let urlHash = '#minidiscs';
+    const params = [];
+    if (genre) params.push(`genre=${encodeURIComponent(genre)}`);
+    if (type) params.push(`type=${encodeURIComponent(type)}`);
+    if (params.length > 0) urlHash += '?' + params.join('&');
+    history.pushState({ view: 'minidiscs', genre, type }, '', urlHash);
+  }
+
+  let filteredCatalog = catalogData.map((md, originalIndex) => ({ md, originalIndex }));
+  if (genre) {
+    filteredCatalog = filteredCatalog.filter(({ md }) => getMDAllGenres(md).includes(genre.toUpperCase().trim()));
+  }
+  if (type) {
+    filteredCatalog = filteredCatalog.filter(({ md }) => getMDAllTypes(md).includes(type.toUpperCase().trim()));
+  }
+
+  const seedSuffix = genre ? `-genre-${genre}` : (type ? `-type-${type}` : '-all');
+  const shuffledCatalog = dailyShuffle(filteredCatalog, seedSuffix);
+
+  let html = '<div class="list-container">';
+  if (shuffledCatalog.length === 0) {
+    html += `<p style="text-align:center; padding: 20px;">Aucun MiniDisc trouvé.</p>`;
+  } else {
+    shuffledCatalog.forEach(({ md, originalIndex }) => {
+      const allGenres = getMDAllGenres(md);
+      const borderColor = getBorderColor(allGenres);
+      const rawTitle = (md.albums && md.albums.length > 0) 
+        ? md.albums.map(a => a.title).join(' / ') 
+        : (md.title || 'MiniDisc sans titre');
+
+      html += `
+        <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openMD(${originalIndex})">
+          <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+          <div class="item-details">
+            <div class="item-tag" style="color: ${borderColor};">${allGenres.join(' / ')}</div>
+            <div class="item-title">${formatAlbumTitles(rawTitle)}</div>
+          </div>
+        </div>
+      `;
+    });
+  }
+  html += '</div>';
+  app.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+/* 3. VUE D'UN MINIDISC (COMPILATION OU LISTE D'ALBUMS) */
+function openMD(index, pushState = true) {
+  if (!catalogData || !catalogData[index]) return;
+
+  currentMD = index;
+  currentAlbum = null;
+  backBtn.classList.remove('hidden');
+
+  if (featuredContainer) featuredContainer.classList.add('hidden');
+
+  const md = catalogData[index];
+  const allMdGenres = getMDAllGenres(md);
+  const borderColor = getBorderColor(allMdGenres);
+
+  // Barre de contrôle (Modifier / Supprimer) avec suppression de la propagation d'événement
+  const adminControls = `
+    <div class="md-admin-controls" style="margin-bottom: 15px; display: flex; gap: 10px;">
+      <button class="btn-primary" style="background-color: #ffb703; color: #000; padding: 6px 12px; font-size: 0.85rem;" onclick="event.stopPropagation(); openAdminModal(${index})">✏️ Modifier</button>
+      <button class="btn-primary" style="background-color: #e63946; color: #fff; padding: 6px 12px; font-size: 0.85rem;" onclick="event.stopPropagation(); deleteMD(${index})">🗑️ Supprimer</button>
+    </div>
+  `;
+
+  if (!md.albums || md.albums.length === 0) {
+    headerTitle.textContent = "PISTES";
+    if (pushState) history.pushState({ view: 'tracklist', mdIndex: index, isDirectTracks: true }, '', `#md-${index}`);
+
+    let tracksHTML = '';
+    if (md.tracks && md.tracks.length > 0) {
+      md.tracks.forEach((track) => {
+        const match = track.match(/^(\d+\.)\s*(.*)$/);
+        tracksHTML += match 
+          ? `<li class="track-item"><strong class="track-num">${match[1]}</strong> ${match[2]}</li>`
+          : `<li class="track-item">${track}</li>`;
+      });
+    } else {
+      tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
+    }
+
+    app.innerHTML = `
+      <div class="track-container">
+        ${adminControls}
+        <div class="album-header">
+          <img class="album-cover-large" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+          <div>
+            <h2 style="font-size: 1.2rem; font-weight: 800;">${md.title || 'Compilation'}</h2>
+            <p style="color: var(--text-sub); font-size: 0.95rem;">${md.artist || 'Artistes divers'}</p>
+            <p style="color: ${borderColor}; font-size: 0.8rem; font-weight: 800;">${allMdGenres.join(' / ')}</p>
+          </div>
+        </div>
+        <ul class="track-list">${tracksHTML}</ul>
+      </div>
+    `;
+    window.scrollTo(0, 0);
+    return;
+  }
+
+  headerTitle.textContent = allMdGenres.join(' / ') || "ALBUMS";
+  if (pushState) history.pushState({ view: 'albums', mdIndex: index }, '', `#md-${index}`);
+
+  let html = `<div class="list-container">${adminControls}`;
+  md.albums.forEach((album, aIndex) => {
+    const albumGenres = getAlbumGenres(album, md);
+    const albumColor = getBorderColor(albumGenres);
+
+    html += `
+      <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px;" onclick="openAlbum(${index}, ${aIndex})">
+        <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'24\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
+        <div class="item-details">
+          <div class="item-tag" style="color: ${albumColor};">${albumGenres.join(' / ')}</div>
+          <div class="item-title" style="font-weight: 700;">${album.title || 'Album sans titre'}</div>
+          <div class="item-sub">${album.artist || 'Artiste inconnu'}</div>
+          ${album.year ? `<div class="item-sub" style="font-size:0.78rem;">${album.year}</div>` : ''}
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  app.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+/* 4. VUE TRACKLIST ALBUM SPÉCIFIQUE */
+function openAlbum(mdIndex, albumIndex, pushState = true) {
+  if (!catalogData || !catalogData[mdIndex] || !catalogData[mdIndex].albums[albumIndex]) return;
+
+  currentMD = mdIndex;
+  currentAlbum = albumIndex;
+  backBtn.classList.remove('hidden');
+  if (featuredContainer) featuredContainer.classList.add('hidden');
+
+  const md = catalogData[mdIndex];
+  const album = md.albums[albumIndex];
+  const albumGenres = getAlbumGenres(album, md);
+  const albumColor = getBorderColor(albumGenres);
+
+  headerTitle.textContent = "PISTES";
+  if (pushState) history.pushState({ view: 'tracklist', mdIndex, albumIndex }, '', `#md-${mdIndex}-album-${albumIndex}`);
+
+  let tracksHTML = '';
+  if (album.tracks && album.tracks.length > 0) {
+    album.tracks.forEach((track) => {
+      const match = track.match(/^(\d+\.)\s*(.*)$/);
+      tracksHTML += match 
+        ? `<li class="track-item"><strong class="track-num">${match[1]}</strong> ${match[2]}</li>`
+        : `<li class="track-item">${track}</li>`;
+    });
+  } else {
+    tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
+  }
+
+  app.innerHTML = `
+    <div class="track-container">
+      <div class="album-header">
+        <img class="album-cover-large" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
+        <div>
+          <h2 style="font-size: 1.2rem; font-weight: 800;">${album.title || 'Album sans titre'}</h2>
+          <p style="color: var(--text-sub); font-size: 0.95rem;">${album.artist || 'Artiste inconnu'}</p>
+          <p style="color: ${albumColor}; font-size: 0.8rem; font-weight: 800;">${albumGenres.join(' / ')}</p>
+          ${album.year ? `<p style="color: var(--text-sub); font-size: 0.8rem;">${album.year}</p>` : ''}
+        </div>
+      </div>
+      <ul class="track-list">${tracksHTML}</ul>
+    </div>
+  `;
+  window.scrollTo(0, 0);
+}
+
+/* ==========================================
+   SUPPRESSION ET MODIFICATION
+   ========================================== */
+
+function deleteMD(index) {
+  if (!catalogData || !catalogData[index]) return;
+  
+  const md = catalogData[index];
+  const title = md.title || (md.albums ? md.albums.map(a => a.title).join(' / ') : 'ce MiniDisc');
+  
+  if (confirm(`Voulez-vous vraiment supprimer définitivement "${title}" ?`)) {
+    catalogData.splice(index, 1);
+    showToast("🗑️ MiniDisc supprimé ! N'oubliez pas de télécharger votre data.json.");
+    renderDashboard(true);
+  }
+}
+
+/* ==========================================
+   GESTION DE LA MODALE ADMIN (AJOUT ET ÉDITION)
+   ========================================== */
+
+function openAdminModal(indexToEdit = null) {
+  editingMDIndex = indexToEdit;
+  const modalTitle = document.querySelector('#admin-modal h3');
+  const albumsContainer = document.getElementById('albums-container');
+  albumsContainer.innerHTML = '';
+  adminAlbumCount = 0;
+
+  if (editingMDIndex !== null) {
+    const md = catalogData[editingMDIndex];
+    if (modalTitle) modalTitle.textContent = "✏️ Modifier le MiniDisc";
+
+    document.getElementById('md-genre').value = Array.isArray(md.genre) ? md.genre.join(', ') : (md.genre || '');
+    if (document.getElementById('md-type-tags')) {
+      document.getElementById('md-type-tags').value = Array.isArray(md.type) ? md.type.join(', ') : (md.type || '');
+    }
+    document.getElementById('md-cover').value = md.md_cover || 'images/';
+
+    const isCompil = !md.albums || md.albums.length === 0;
+    
+    // Support des deux valeurs d'option (albums/album) pour éviter le crash
+    const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
+    const radioAlbums = document.querySelector('input[name="md-type"][value="albums"]') || document.querySelector('input[name="md-type"][value="album"]');
+    
+    if (isCompil && radioCompil) radioCompil.checked = true;
+    if (!isCompil && radioAlbums) radioAlbums.checked = true;
+
+    toggleAdminType();
+
+    if (isCompil) {
+      document.getElementById('compil-title').value = md.title || '';
+      document.getElementById('compil-artist').value = md.artist || '';
+      document.getElementById('compil-tracks').value = md.tracks ? md.tracks.map(t => t.replace(/^\d+\.\s*/, '')).join('\n') : '';
+    } else {
+      md.albums.forEach(album => {
+        addAdminAlbumBlock();
+        const block = albumsContainer.lastElementChild;
+        block.querySelector('.album-title').value = album.title || '';
+        block.querySelector('.album-artist').value = album.artist || '';
+        if (block.querySelector('.album-type')) block.querySelector('.album-type').value = Array.isArray(album.type) ? album.type.join(', ') : (album.type || '');
+        block.querySelector('.album-genre').value = Array.isArray(album.genre) ? album.genre.join(', ') : (album.genre || '');
+        block.querySelector('.album-year').value = album.year || '';
+        block.querySelector('.album-cover').value = album.cover || 'images/';
+        block.querySelector('.album-tracks').value = album.tracks ? album.tracks.map(t => t.replace(/^\d+\.\s*/, '')).join('\n') : '';
+      });
+    }
+
+  } else {
+    if (modalTitle) modalTitle.textContent = "＋ Ajouter un MiniDisc";
+    document.getElementById('md-form').reset();
+    document.getElementById('md-cover').value = "images/";
+    const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
+    if (radioCompil) radioCompil.checked = true;
+    toggleAdminType();
+  }
+
+  document.getElementById('admin-modal').classList.remove('hidden');
+}
+
+function closeAdminModal() {
+  document.getElementById('admin-modal').classList.add('hidden');
+  editingMDIndex = null;
+}
+
+function toggleAdminType() {
+  const checkedRadio = document.querySelector('input[name="md-type"]:checked');
+  const isCompil = checkedRadio ? checkedRadio.value === 'compil' : true;
+  
+  document.getElementById('section-compil').classList.toggle('hidden', !isCompil);
+  document.getElementById('section-albums').classList.toggle('hidden', isCompil);
+  if (!isCompil && adminAlbumCount === 0) addAdminAlbumBlock();
+}
+
+function addAdminAlbumBlock() {
+  adminAlbumCount++;
+  const container = document.getElementById('albums-container');
+  const div = document.createElement('div');
+  div.className = 'album-block';
+  div.innerHTML = `
+    <h4>Album #${adminAlbumCount}</h4>
+    <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album" required></div>
+    <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste" required></div>
+    <div class="form-group"><input type="text" class="album-type" placeholder="Type(s) de l'album (ex: Album, Live)"></div>
+    <div class="form-group"><input type="text" class="album-genre" placeholder="Genre(s) de l'album (séparés par virgule)"></div>
+    <div class="form-group"><input type="text" class="album-year" placeholder="Année (ex: 1998)"></div>
+    <div class="form-group"><input type="text" class="album-cover" value="images/" placeholder="URL Pochette Album"></div>
+    <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne)"></textarea></div>
+  `;
+  container.appendChild(div);
+}
+
+function submitNewMD() {
+  if (catalogData === null) return;
+
+  const rawGenreInput = document.getElementById('md-genre').value.trim();
+  const rawTypeInput = document.getElementById('md-type-tags') ? document.getElementById('md-type-tags').value.trim() : '';
+  const mdCover = document.getElementById('md-cover').value.trim();
+  const checkedRadio = document.querySelector('input[name="md-type"]:checked');
+  const typeFormat = checkedRadio ? checkedRadio.value : 'compil';
+
+  if (!rawGenreInput) {
+    showToast("⚠️ Veuillez renseigner au moins un genre");
+    return;
+  }
+
+  const parsedMDGenres = rawGenreInput.includes(',') 
+    ? rawGenreInput.split(',').map(g => g.trim()).filter(g => g !== '')
+    : [rawGenreInput];
+
+  const parsedMDTypes = rawTypeInput 
+    ? (rawTypeInput.includes(',') ? rawTypeInput.split(',').map(t => t.trim()).filter(t => t !== '') : [rawTypeInput])
+    : ['ALBUM'];
+
+  let globalTrackCounter = 1;
+  const targetMD = { genre: parsedMDGenres, type: parsedMDTypes, md_cover: mdCover };
+
+  if (typeFormat === 'compil') {
+    targetMD.title = document.getElementById('compil-title').value.trim();
+    targetMD.artist = document.getElementById('compil-artist').value.trim();
+    
+    const rawTracks = document.getElementById('compil-tracks').value.split('\n');
+    targetMD.tracks = rawTracks
+      .filter(t => t.trim() !== '')
+      .map(t => `${String(globalTrackCounter++).padStart(2, '0')}. ${t.trim()}`);
+  } else {
+    targetMD.albums = [];
+    document.querySelectorAll('.album-block').forEach(block => {
+      const rawTracks = block.querySelector('.album-tracks').value.split('\n');
+      const formattedTracks = rawTracks
+        .filter(t => t.trim() !== '')
+        .map(t => `${String(globalTrackCounter++).padStart(2, '0')}. ${t.trim()}`);
+
+      const rawAlbumGenre = block.querySelector('.album-genre').value.trim();
+      const parsedAlbumGenres = rawAlbumGenre 
+        ? (rawAlbumGenre.includes(',') ? rawAlbumGenre.split(',').map(g => g.trim()).filter(g => g !== '') : [rawAlbumGenre])
+        : [];
+
+      const rawAlbumType = block.querySelector('.album-type') ? block.querySelector('.album-type').value.trim() : '';
+      const parsedAlbumTypes = rawAlbumType 
+        ? (rawAlbumType.includes(',') ? rawAlbumType.split(',').map(t => t.trim()).filter(t => t !== '') : [rawAlbumType])
+        : [];
+
+      const albumObj = {
+        title: block.querySelector('.album-title').value.trim(),
+        artist: block.querySelector('.album-artist').value.trim(),
+        year: block.querySelector('.album-year').value.trim(),
+        cover: block.querySelector('.album-cover').value.trim(),
+        tracks: formattedTracks
+      };
+
+      if (parsedAlbumGenres.length > 0) albumObj.genre = parsedAlbumGenres;
+      if (parsedAlbumTypes.length > 0) albumObj.type = parsedAlbumTypes;
+
+      targetMD.albums.push(albumObj);
+    });
+  }
+
+  if (editingMDIndex !== null) {
+    catalogData[editingMDIndex] = targetMD;
+    showToast("✅ MiniDisc modifié ! Pensez à exporter votre JSON.");
+  } else {
+    catalogData.push(targetMD);
+    showToast("✅ MiniDisc ajouté ! Téléchargez votre data.json");
+  }
+
+  closeAdminModal();
+  renderDashboard(false);
+}
+
+function downloadUpdatedJSON() {
+  if (!catalogData || catalogData.length === 0) {
+    showToast("⚠️ Le catalogue est vide !");
+    return;
+  }
+
+  const jsonString = JSON.stringify(catalogData, null, 2);
+  const blob = new Blob([jsonString], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.href = url;
+  downloadAnchor.download = "data.json";
+  
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  document.body.removeChild(downloadAnchor);
+
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+  showToast("✅ Téléchargement réussi !");
+}
