@@ -850,7 +850,7 @@ body:has(.featured-container.hidden) main#app {
 
 /* Espace entre chaque bloc album d'un même MiniDisc */
 .md-album-item {
-  margin-bottom: 10px;
+  margin-bottom: 9px;
 }
 
 .md-album-item:last-child {
@@ -859,10 +859,10 @@ body:has(.featured-container.hidden) main#app {
 
 /* Titre de l'album (police réduite) */
 .md-album-title {
-  font-size: 1rem;
-  font-weight: 900;
+  font-size: 1,2rem;
+  font-weight: 700;
   line-height: 1.5;
-  margin-bottom: 3px; /* Espace très serré avec l'artiste */
+  margin-bottom: 2px; /* Espace très serré avec l'artiste */
 }
 
 /* Artiste sous l'album (police plus petite et discrète) */
