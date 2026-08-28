@@ -416,7 +416,6 @@ function openMD(index, pushState = true) {
   const allMdGenres = getMDAllGenres(md);
   const borderColor = getBorderColor(allMdGenres);
 
-  // Barre de contrôle (Modifier / Supprimer) avec suppression de la propagation d'événement
   const adminControls = `
     <div class="md-admin-controls" style="margin-bottom: 15px; display: flex; gap: 10px;">
       <button class="btn-primary" style="background-color: #ffb703; color: #000; padding: 6px 12px; font-size: 0.85rem;" onclick="event.stopPropagation(); openAdminModal(${index})">✏️ Modifier</button>
@@ -569,14 +568,13 @@ function openAdminModal(indexToEdit = null) {
 
     const isCompil = !md.albums || md.albums.length === 0;
     
-    // Support des deux valeurs d'option (albums/album) pour éviter le crash
     const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
     const radioAlbums = document.querySelector('input[name="md-type"][value="albums"]') || document.querySelector('input[name="md-type"][value="album"]');
     
     if (isCompil && radioCompil) radioCompil.checked = true;
     if (!isCompil && radioAlbums) radioAlbums.checked = true;
 
-    toggleAdminType();
+    toggleAdminType(true);
 
     if (isCompil) {
       document.getElementById('compil-title').value = md.title || '';
@@ -602,7 +600,7 @@ function openAdminModal(indexToEdit = null) {
     document.getElementById('md-cover').value = "images/";
     const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
     if (radioCompil) radioCompil.checked = true;
-    toggleAdminType();
+    toggleAdminType(false);
   }
 
   document.getElementById('admin-modal').classList.remove('hidden');
@@ -613,13 +611,17 @@ function closeAdminModal() {
   editingMDIndex = null;
 }
 
-function toggleAdminType() {
+function toggleAdminType(isInit = false) {
   const checkedRadio = document.querySelector('input[name="md-type"]:checked');
   const isCompil = checkedRadio ? checkedRadio.value === 'compil' : true;
   
   document.getElementById('section-compil').classList.toggle('hidden', !isCompil);
   document.getElementById('section-albums').classList.toggle('hidden', isCompil);
-  if (!isCompil && adminAlbumCount === 0) addAdminAlbumBlock();
+
+  // N'ajoute un bloc vide que si nous créons un nouveau MD ou s'il n'y a aucun album présent
+  if (!isCompil && !isInit && document.getElementById('albums-container').children.length === 0) {
+    addAdminAlbumBlock();
+  }
 }
 
 function addAdminAlbumBlock() {
@@ -627,8 +629,12 @@ function addAdminAlbumBlock() {
   const container = document.getElementById('albums-container');
   const div = document.createElement('div');
   div.className = 'album-block';
+  div.style.cssText = "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px; position: relative;";
   div.innerHTML = `
-    <h4>Album #${adminAlbumCount}</h4>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <h4 style="margin: 0;">Album</h4>
+      <button type="button" onclick="removeAdminAlbumBlock(this)" style="background: #e63946; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">🗑️ Supprimer l'album</button>
+    </div>
     <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album" required></div>
     <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste" required></div>
     <div class="form-group"><input type="text" class="album-type" placeholder="Type(s) de l'album (ex: Album, Live)"></div>
@@ -638,6 +644,13 @@ function addAdminAlbumBlock() {
     <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne)"></textarea></div>
   `;
   container.appendChild(div);
+}
+
+function removeAdminAlbumBlock(button) {
+  const block = button.closest('.album-block');
+  if (block) {
+    block.remove();
+  }
 }
 
 function submitNewMD() {
@@ -675,7 +688,14 @@ function submitNewMD() {
       .map(t => `${String(globalTrackCounter++).padStart(2, '0')}. ${t.trim()}`);
   } else {
     targetMD.albums = [];
-    document.querySelectorAll('.album-block').forEach(block => {
+    const albumBlocks = document.querySelectorAll('.album-block');
+    
+    if (albumBlocks.length === 0) {
+      showToast("⚠️ Veuillez ajouter au moins un album.");
+      return;
+    }
+
+    albumBlocks.forEach(block => {
       const rawTracks = block.querySelector('.album-tracks').value.split('\n');
       const formattedTracks = rawTracks
         .filter(t => t.trim() !== '')
