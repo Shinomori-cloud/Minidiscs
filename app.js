@@ -1,158 +1,52 @@
 /* ==========================================
-   VARIABLES GLOBALES ET ÉTAT DE L'APPLICATION
+   VARIABLES GLOBALES & ÉLÉMENTS DOM
    ========================================== */
 let catalogData = null;
-let currentSearchQuery = '';
 let currentMD = null;
 let currentAlbum = null;
 let currentGenreFilter = null;
 let currentTypeFilter = null;
-let editingMDIndex = null;
+let currentSearchQuery = '';
 let adminAlbumCount = 0;
+let editingMDIndex = null;
+let toastTimeout = null;
 let hasUnsavedChanges = false;
 
-// Éléments DOM principaux
+const STORAGE_KEY = 'minidisc_catalog_backup';
+
 const app = document.getElementById('app');
-const headerTitle = document.getElementById('header-title');
 const backBtn = document.getElementById('back-btn');
+const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
-const toast = document.getElementById('toast');
 
 /* ==========================================
-   INITIALISATION ET CHARGEMENT
+   PROTECTION ANTI-FERMETURE ET STOCKAGE LOCAL
    ========================================== */
-document.addEventListener('DOMContentLoaded', () => {
-  initApp();
-  setupNavigation();
-  setupSearchListeners();
+window.addEventListener('beforeunload', (e) => {
+  if (hasUnsavedChanges) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
 });
 
-function initApp() {
-  const localBackup = localStorage.getItem('catalogData_backup');
-  if (localBackup) {
-    try {
-      catalogData = JSON.parse(localBackup);
-      hasUnsavedChanges = true;
-      handleInitialRoute();
-      return;
-    } catch (e) {
-      console.error("Erreur de lecture du backup local", e);
-    }
-  }
-
-  fetch('data.json')
-    .then(res => res.json())
-    .then(data => {
-      catalogData = data;
-      hasUnsavedChanges = false;
-      handleInitialRoute();
-    })
-    .catch(err => {
-      console.error("Erreur de chargement du JSON", err);
-      if (app) app.innerHTML = `<p style="text-align:center; padding: 40px; color: #e63946;">Erreur de chargement des données.</p>`;
-    });
-}
-
 function saveLocalBackup() {
-  if (catalogData) {
-    localStorage.setItem('catalogData_backup', JSON.stringify(catalogData));
+  if (!catalogData) return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(catalogData));
     hasUnsavedChanges = true;
+  } catch (err) {
+    console.error("Erreur de sauvegarde locale:", err);
   }
 }
 
 function clearLocalBackup() {
-  localStorage.removeItem('catalogData_backup');
+  localStorage.removeItem(STORAGE_KEY);
   hasUnsavedChanges = false;
 }
 
-function showToast(message, duration = 3000) {
-  if (!toast) return;
-  toast.textContent = message;
-  toast.classList.remove('hidden');
-  toast.classList.add('visible');
-  setTimeout(() => {
-    toast.classList.remove('visible');
-    toast.classList.add('hidden');
-  }, duration);
-}
-
 /* ==========================================
-   ROUTAGE ET NAVIGATION HASH
+   GESTION DU BOUTON ET DE LA BARRE DE RECHERCHE
    ========================================== */
-function handleInitialRoute() {
-  const hash = window.location.hash;
-  
-  if (hash.startsWith('#md-')) {
-    const albumMatch = hash.match(/^#md-(\d+)-album-(\d+)$/);
-    const mdMatch = hash.match(/^#md-(\d+)$/);
-
-    if (albumMatch) {
-      openAlbum(parseInt(albumMatch[1]), parseInt(albumMatch[2]), false);
-    } else if (mdMatch) {
-      openMD(parseInt(mdMatch[1]), false);
-    } else {
-      renderDashboard(false);
-    }
-  } else if (hash.startsWith('#minidiscs')) {
-    const params = new URLSearchParams(hash.split('?')[1] || '');
-    renderMDList({ genre: params.get('genre'), type: params.get('type') }, false);
-  } else {
-    renderDashboard(false);
-  }
-}
-
-function setupNavigation() {
-  window.addEventListener('popstate', (e) => {
-    if (e.state && e.state.view) {
-      switch (e.state.view) {
-        case 'dashboard':
-          renderDashboard(false);
-          break;
-        case 'minidiscs':
-          renderMDList({ genre: e.state.genre, type: e.state.type }, false);
-          break;
-        case 'albums':
-        case 'tracklist':
-          if (e.state.albumIndex !== undefined) {
-            openAlbum(e.state.mdIndex, e.state.albumIndex, false);
-          } else if (e.state.mdIndex !== undefined) {
-            openMD(e.state.mdIndex, false);
-          }
-          break;
-      }
-    } else {
-      handleInitialRoute();
-    }
-  });
-
-  if (backBtn) {
-    backBtn.addEventListener('click', goBack);
-  }
-}
-
-function goBack() {
-  if (currentAlbum !== null) {
-    openMD(currentMD);
-  } else if (currentMD !== null) {
-    renderMDList({ genre: currentGenreFilter, type: currentTypeFilter });
-  } else {
-    renderDashboard();
-  }
-}
-
-/* ==========================================
-   RECHERCHE ET FILTRES
-   ========================================== */
-function setupSearchListeners() {
-  const searchInput = document.getElementById('search-input');
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      currentSearchQuery = e.target.value.toLowerCase().trim();
-      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
-    });
-  }
-}
-
 function toggleSearch() {
   const searchBar = document.getElementById('search-bar');
   const searchInput = document.getElementById('search-input');
@@ -165,7 +59,7 @@ function toggleSearch() {
   if (isOpen) {
     searchBar.classList.remove('open');
     searchBar.classList.add('closed');
-    if (fabBtn) fabBtn.textContent = '🔍';
+    fabBtn.textContent = '🔍';
     if (currentSearchQuery !== '') {
       currentSearchQuery = '';
       if (searchInput) searchInput.value = '';
@@ -174,135 +68,330 @@ function toggleSearch() {
   } else {
     searchBar.classList.remove('closed');
     searchBar.classList.add('open');
-    if (fabBtn) fabBtn.textContent = '✕';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    fabBtn.textContent = '✕';
     if (searchInput) searchInput.focus();
   }
 }
 
-function updateSearchVisibility(show) {
-  const fabBtn = document.getElementById('search-fab-btn');
-  const searchBar = document.getElementById('search-bar');
-  
-  if (fabBtn) fabBtn.style.display = show ? 'flex' : 'none';
-  if (!show && searchBar) {
-    searchBar.classList.remove('open');
-    searchBar.classList.add('closed');
-    if (fabBtn) fabBtn.textContent = '🔍';
-  }
-}
-
-/* ==========================================
-   UTILITAIRES DE DONNÉES
-   ========================================== */
-function getMDAllGenres(md) {
-  const set = new Set();
-  if (Array.isArray(md.genre)) md.genre.forEach(g => set.add(g.toUpperCase().trim()));
-  else if (md.genre) set.add(md.genre.toUpperCase().trim());
-
-  if (md.albums) {
-    md.albums.forEach(a => {
-      if (Array.isArray(a.genre)) a.genre.forEach(g => set.add(g.toUpperCase().trim()));
-      else if (a.genre) set.add(a.genre.toUpperCase().trim());
-    });
-  }
-  return Array.from(set);
-}
-
-function getMDAllTypes(md) {
-  const set = new Set();
-  if (Array.isArray(md.type)) md.type.forEach(t => set.add(t.toUpperCase().trim()));
-  else if (md.type) set.add(md.type.toUpperCase().trim());
-
-  if (md.albums) {
-    md.albums.forEach(a => {
-      if (Array.isArray(a.type)) a.type.forEach(t => set.add(t.toUpperCase().trim()));
-      else if (a.type) set.add(a.type.toUpperCase().trim());
-    });
-  }
-  if (set.size === 0) set.add('ALBUM');
-  return Array.from(set);
-}
-
-function getAlbumGenres(album, md) {
-  if (Array.isArray(album.genre) && album.genre.length > 0) return album.genre.map(g => g.toUpperCase().trim());
-  if (typeof album.genre === 'string' && album.genre.trim() !== '') return [album.genre.toUpperCase().trim()];
-  return getMDAllGenres(md);
-}
-
-function getBorderColor(genres) {
-  const gList = Array.isArray(genres) ? genres : [genres];
-  const primary = gList[0] ? gList[0].toUpperCase() : '';
-
-  const colorMap = {
-    'ROCK': '#e63946',
-    'POP': '#ff007f',
-    'JAZZ': '#ffb703',
-    'ELECTRO': '#00f5d4',
-    'RAP': '#7209b7',
-    'HIP-HOP': '#7209b7',
-    'METAL': '#d62828',
-    'CLASSICAL': '#4a4e69',
-    'REGGAE': '#52b788',
-    'BLUES': '#0077b6'
-  };
-
-  return colorMap[primary] || '#40e0d0';
-}
-
-function formatAlbumTitles(titleString) {
-  if (!titleString) return '';
-  return titleString.split(' / ').map(t => `<span class="title-part">${t}</span>`).join(' / ');
-}
-
-function dailyShuffle(array, seedSuffix = '') {
-  const today = new Date().toISOString().slice(0, 10);
-  let seed = 0;
-  const str = today + seedSuffix;
-  for (let i = 0; i < str.length; i++) {
-    seed = (seed << 5) - seed + str.charCodeAt(i);
-    seed |= 0;
-  }
-  
-  const pseudoRandom = () => {
-    const x = Math.sin(seed++) * 10000;
-    return x - Math.floor(x);
-  };
-
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(pseudoRandom() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
-
 function mdMatchesSearch(md, query) {
   if (!query) return true;
-  if (md.title && md.title.toLowerCase().includes(query)) return true;
-  if (md.artist && md.artist.toLowerCase().includes(query)) return true;
-  
+  const q = query.toLowerCase().trim();
+
+  if (md.title && md.title.toLowerCase().includes(q)) return true;
+  if (md.artist && md.artist.toLowerCase().includes(q)) return true;
+
   const genres = getMDAllGenres(md);
-  if (genres.some(g => g.toLowerCase().includes(query))) return true;
+  if (genres.some(g => g.toLowerCase().includes(q))) return true;
 
   const types = getMDAllTypes(md);
-  if (types.some(t => t.toLowerCase().includes(query))) return true;
+  if (types.some(t => t.toLowerCase().includes(q))) return true;
 
-  if (md.tracks && md.tracks.some(t => t.toLowerCase().includes(query))) return true;
+  if (md.tracks && md.tracks.some(t => t.toLowerCase().includes(q))) return true;
 
-  if (md.albums) {
-    return md.albums.some(a => {
-      if (a.title && a.title.toLowerCase().includes(query)) return true;
-      if (a.artist && a.artist.toLowerCase().includes(query)) return true;
-      if (a.tracks && a.tracks.some(t => t.toLowerCase().includes(query))) return true;
-      return false;
-    });
+  if (md.albums && md.albums.length > 0) {
+    for (const album of md.albums) {
+      if (album.title && album.title.toLowerCase().includes(q)) return true;
+      if (album.artist && album.artist.toLowerCase().includes(q)) return true;
+      if (album.year && String(album.year).includes(q)) return true;
+      if (album.tracks && album.tracks.some(t => t.toLowerCase().includes(q))) return true;
+    }
   }
+
   return false;
 }
 
+function onSearchInput(value) {
+  currentSearchQuery = value;
+  renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
+}
+
+function updateSearchVisibility(show) {
+  const fabContainer = document.getElementById('search-fab-container');
+  if (!fabContainer) return;
+
+  if (show) {
+    fabContainer.classList.remove('hidden');
+  } else {
+    fabContainer.classList.add('hidden');
+    const searchBar = document.getElementById('search-bar');
+    const searchInput = document.getElementById('search-input');
+    const fabBtn = document.getElementById('search-fab-btn');
+    if (searchBar) {
+      searchBar.classList.remove('open');
+      searchBar.classList.add('closed');
+    }
+    if (fabBtn) fabBtn.textContent = '🔍';
+    currentSearchQuery = '';
+    if (searchInput) searchInput.value = '';
+  }
+}
+
 /* ==========================================
-   FONCTIONS DE RENDU DE VUES
+   UTILITAIRE TOAST
+   ========================================== */
+function showToast(message, duration = 3000) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+
+  clearTimeout(toastTimeout);
+  toast.textContent = message;
+  toast.classList.remove('hidden');
+
+  toastTimeout = setTimeout(() => {
+    toast.classList.add('hidden');
+  }, duration);
+}
+
+/* ==========================================
+   UTILITAIRES MULTI-GENRE & MULTI-TYPE
+   ========================================== */
+function getNormalizedList(data) {
+  if (!data) return [];
+  if (Array.isArray(data)) {
+    return data.map(v => String(v).toUpperCase().trim()).filter(v => v !== '');
+  }
+  return String(data).split(',').map(v => v.toUpperCase().trim()).filter(v => v !== '');
+}
+
+function getNormalizedGenres(genreData) {
+  return getNormalizedList(genreData);
+}
+
+function getMDAllGenres(md) {
+  const genresSet = new Set(getNormalizedGenres(md.genre));
+  if (md.albums && md.albums.length > 0) {
+    md.albums.forEach(album => {
+      getNormalizedGenres(album.genre).forEach(g => genresSet.add(g));
+    });
+  }
+  const result = Array.from(genresSet);
+  return result.length > 0 ? result : ['AUTRE'];
+}
+
+function getAlbumGenres(album, parentMd) {
+  const albumGenres = getNormalizedGenres(album.genre);
+  if (albumGenres.length > 0) return albumGenres;
+  const parentGenres = getNormalizedGenres(parentMd ? parentMd.genre : null);
+  return parentGenres.length > 0 ? parentGenres : ['AUTRE'];
+}
+
+function getNormalizedTypes(typeData) {
+  return getNormalizedList(typeData);
+}
+
+function getMDAllTypes(md) {
+  const typesSet = new Set(getNormalizedTypes(md.type));
+  if (md.albums && md.albums.length > 0) {
+    md.albums.forEach(album => {
+      getNormalizedTypes(album.type).forEach(t => typesSet.add(t));
+    });
+  }
+  const result = Array.from(typesSet);
+  return result.length > 0 ? result : ['ALBUM'];
+}
+
+/* ==========================================
+   UTILITAIRES D'ALÉATOIRE FIXÉ SUR 24 HEURES
+   ========================================== */
+function getDailySeed() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+
+function cyrb53(str, seed = 0) {
+  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0, ch; i < str.length; i++) {
+    ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+}
+
+function dailyShuffle(array, extraSeedKey = '') {
+  const copy = [...array];
+  const seedString = getDailySeed() + extraSeedKey;
+  let hash = cyrb53(seedString);
+
+  function seededRandom() {
+    hash = (hash * 9301 + 49297) % 233280;
+    return hash / 233280;
+  }
+
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(seededRandom() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+
+  return copy;
+}
+
+/* ==========================================
+   GESTION STRICTE DE L'HISTORIQUE HERMIT
+   ========================================== */
+if (!window.location.hash || window.location.hash === '#') {
+  window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
+}
+
+window.addEventListener('popstate', (e) => {
+  if (!e.state || window.location.hash === '' || window.location.hash === '#dashboard') {
+    renderDashboard(false);
+    window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
+    return;
+  }
+
+  switch (e.state.view) {
+    case 'dashboard':
+      renderDashboard(false);
+      break;
+    case 'minidiscs':
+      renderMDList({ genre: e.state.genre || null, type: e.state.type || null }, false);
+      break;
+    case 'albums':
+    case 'tracklist':
+      if (e.state.mdIndex !== undefined) {
+        if (e.state.albumIndex !== undefined) {
+          openAlbum(e.state.mdIndex, e.state.albumIndex, false);
+        } else {
+          openMD(e.state.mdIndex, false);
+        }
+      } else {
+        renderMDList({}, false);
+      }
+      break;
+    default:
+      renderDashboard(false);
+  }
+});
+
+/* ==========================================
+   INITIALISATION DATA & ÉCOUTEURS GLOBAUX
+   ========================================== */
+backBtn.addEventListener('click', () => {
+  if (currentAlbum !== null) {
+    openMD(currentMD, true);
+  } else if (currentMD !== null) {
+    renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, true);
+  } else {
+    renderDashboard(true);
+  }
+});
+
+fetch('data.json')
+  .then(response => {
+    if (!response.ok) throw new Error("Erreur de réseau lors du chargement du fichier JSON.");
+    return response.json();
+  })
+  .then(data => {
+    const savedBackup = localStorage.getItem(STORAGE_KEY);
+    
+    if (savedBackup) {
+      try {
+        catalogData = JSON.parse(savedBackup);
+        hasUnsavedChanges = true;
+        setTimeout(() => showToast("⚡ Session restaurée : modifications non exportées !"), 500);
+      } catch (e) {
+        catalogData = data;
+      }
+    } else {
+      catalogData = data;
+    }
+
+    const hash = window.location.hash;
+    if (hash.startsWith('#minidiscs')) {
+      const urlParams = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
+      const genre = urlParams.get('genre');
+      const type = urlParams.get('type');
+      renderMDList({ genre, type }, false);
+    } else if (hash.startsWith('#md-')) {
+      const mdIndex = parseInt(hash.replace('#md-', ''), 10);
+      if (!isNaN(mdIndex) && catalogData[mdIndex]) {
+        openMD(mdIndex, false);
+      } else {
+        renderDashboard(false);
+      }
+    } else {
+      renderDashboard(false);
+    }
+  })
+  .catch(err => {
+    const savedBackup = localStorage.getItem(STORAGE_KEY);
+    if (savedBackup) {
+      try {
+        catalogData = JSON.parse(savedBackup);
+        hasUnsavedChanges = true;
+        showToast("⚡ Données chargées depuis la sauvegarde locale !");
+        renderDashboard(false);
+        return;
+      } catch (e) {}
+    }
+
+    catalogData = [];
+    app.innerHTML = `
+      <div style="text-align:center; padding: 40px; color: var(--text-sub);">
+        <p style="color: #e63946; font-weight: bold; font-size: 1.1rem;">⚠️ Erreur de chargement de data.json</p>
+      </div>
+    `;
+    console.error(err);
+  });
+
+/* ==========================================
+   COULEURS DYNAMIQUES PAR GENRE
+   ========================================== */
+const genreColorPalette = [
+  '#e63946', '#ff007f', '#00f0ff', '#ffb703', 
+  '#7b2cbf', '#70e000', '#ff70a6', '#3a86ef', 
+  '#ff9770', '#06d6a0'
+];
+const genreColorMap = {};
+
+function getBorderColor(genreData) {
+  const genres = getNormalizedGenres(genreData);
+  const primaryGenre = genres[0] || 'AUTRE';
+
+  if (genreColorMap[primaryGenre]) {
+    return genreColorMap[primaryGenre];
+  }
+
+  const assignedCount = Object.keys(genreColorMap).length;
+  const color = genreColorPalette[assignedCount % genreColorPalette.length];
+  genreColorMap[primaryGenre] = color;
+  
+  return color;
+}
+
+function formatAlbumTitles(rawTitle) {
+  if (!rawTitle) return '';
+  return rawTitle.split(' / ').map(t => `<div class="title-line">${t.trim()}</div>`).join('');
+}
+
+/* ==========================================
+   SÉLECTION DU MOMENT (24H)
+   ========================================== */
+function renderFeatured() {
+  if (!catalogData || catalogData.length === 0) return;
+  const featuredGrid = document.getElementById('featured-grid');
+  if (!featuredGrid) return;
+
+  const shuffled = dailyShuffle(catalogData, '-featured');
+  const selected = shuffled.slice(0, 3);
+
+  let html = '';
+  selected.forEach(md => {
+    const originalIndex = catalogData.indexOf(md);
+    html += `
+      <div class="featured-item" onclick="openMD(${originalIndex})">
+        <img class="featured-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+      </div>
+    `;
+  });
+  featuredGrid.innerHTML = html;
+}
+
+/* ==========================================
+   VUES DE L'APPLICATION
    ========================================== */
 
 /* 1. DASHBOARD */
@@ -311,10 +400,10 @@ function renderDashboard(pushState = true) {
   currentAlbum = null;
   currentGenreFilter = null;
   currentTypeFilter = null;
-  
-  if (backBtn) backBtn.classList.add('hidden');
+  backBtn.classList.add('hidden');
+  headerTitle.textContent = "MINIDISCS";
+
   updateSearchVisibility(false);
-  if (headerTitle) headerTitle.textContent = "COLLECTION";
 
   if (catalogData === null) {
     app.innerHTML = `<p style="text-align:center; padding: 40px; color: var(--text-sub);">Chargement de la collection...</p>`;
@@ -388,26 +477,6 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
-function renderFeatured() {
-  if (!catalogData || catalogData.length === 0 || !featuredContainer) return;
-  const shuffled = dailyShuffle(catalogData, '-featured');
-  const featured = shuffled[0];
-  const originalIndex = catalogData.indexOf(featured);
-  
-  const genres = getMDAllGenres(featured);
-  const title = (featured.albums && featured.albums.length > 0)
-    ? featured.albums.map(a => a.title).join(' / ')
-    : (featured.title || 'MiniDisc');
-
-  featuredContainer.innerHTML = `
-    <div class="featured-card" onclick="openMD(${originalIndex})">
-      <div class="featured-tag">DÉCOUVERTE DU JOUR</div>
-      <div class="featured-title">${formatAlbumTitles(title)}</div>
-      <div class="featured-sub">${genres.join(' / ')}</div>
-    </div>
-  `;
-}
-
 /* 2. LISTE DES MINIDISCS */
 function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
@@ -417,13 +486,11 @@ function renderMDList(filters = {}, pushState = true) {
   currentAlbum = null;
   currentGenreFilter = genre;
   currentTypeFilter = type;
-  if (backBtn) backBtn.classList.remove('hidden');
+  backBtn.classList.remove('hidden');
 
   updateSearchVisibility(true);
 
-  if (headerTitle) {
-    headerTitle.textContent = genre ? genre.toUpperCase() : (type ? type.toUpperCase() : "COLLECTION");
-  }
+  headerTitle.textContent = genre ? genre.toUpperCase() : (type ? type.toUpperCase() : "COLLECTION");
 
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
@@ -485,7 +552,7 @@ function openMD(index, pushState = true) {
 
   currentMD = index;
   currentAlbum = null;
-  if (backBtn) backBtn.classList.remove('hidden');
+  backBtn.classList.remove('hidden');
 
   updateSearchVisibility(false);
 
@@ -503,7 +570,7 @@ function openMD(index, pushState = true) {
   `;
 
   if (!md.albums || md.albums.length === 0) {
-    if (headerTitle) headerTitle.textContent = "PISTES";
+    headerTitle.textContent = "PISTES";
     if (pushState) history.pushState({ view: 'tracklist', mdIndex: index, isDirectTracks: true }, '', `#md-${index}`);
 
     let tracksHTML = '';
@@ -536,7 +603,7 @@ function openMD(index, pushState = true) {
     return;
   }
 
-  if (headerTitle) headerTitle.textContent = allMdGenres.join(' / ') || "ALBUMS";
+  headerTitle.textContent = allMdGenres.join(' / ') || "ALBUMS";
   if (pushState) history.pushState({ view: 'albums', mdIndex: index }, '', `#md-${index}`);
 
   let html = `<div class="list-container">${adminControls}`;
@@ -567,7 +634,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
 
   currentMD = mdIndex;
   currentAlbum = albumIndex;
-  if (backBtn) backBtn.classList.remove('hidden');
+  backBtn.classList.remove('hidden');
 
   updateSearchVisibility(false);
 
@@ -578,7 +645,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   const albumGenres = getAlbumGenres(album, md);
   const albumColor = getBorderColor(albumGenres);
 
-  if (headerTitle) headerTitle.textContent = "PISTES";
+  headerTitle.textContent = "PISTES";
   if (pushState) history.pushState({ view: 'tracklist', mdIndex, albumIndex }, '', `#md-${mdIndex}-album-${albumIndex}`);
 
   let tracksHTML = '';
@@ -634,7 +701,7 @@ function openAdminModal(indexToEdit = null) {
   editingMDIndex = indexToEdit;
   const modalTitle = document.querySelector('#admin-modal h3');
   const albumsContainer = document.getElementById('albums-container');
-  if (albumsContainer) albumsContainer.innerHTML = '';
+  albumsContainer.innerHTML = '';
   adminAlbumCount = 0;
 
   if (editingMDIndex !== null) {
@@ -677,21 +744,18 @@ function openAdminModal(indexToEdit = null) {
 
   } else {
     if (modalTitle) modalTitle.textContent = "＋ Ajouter un MiniDisc";
-    const form = document.getElementById('md-form');
-    if (form) form.reset();
+    document.getElementById('md-form').reset();
     document.getElementById('md-cover').value = "images/";
     const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
     if (radioCompil) radioCompil.checked = true;
     toggleAdminType(false);
   }
 
-  const modal = document.getElementById('admin-modal');
-  if (modal) modal.classList.remove('hidden');
+  document.getElementById('admin-modal').classList.remove('hidden');
 }
 
 function closeAdminModal() {
-  const modal = document.getElementById('admin-modal');
-  if (modal) modal.classList.add('hidden');
+  document.getElementById('admin-modal').classList.add('hidden');
   editingMDIndex = null;
 }
 
@@ -699,14 +763,10 @@ function toggleAdminType(isInit = false) {
   const checkedRadio = document.querySelector('input[name="md-type"]:checked');
   const isCompil = checkedRadio ? checkedRadio.value === 'compil' : true;
   
-  const secCompil = document.getElementById('section-compil');
-  const secAlbums = document.getElementById('section-albums');
-  
-  if (secCompil) secCompil.classList.toggle('hidden', !isCompil);
-  if (secAlbums) secAlbums.classList.toggle('hidden', isCompil);
+  document.getElementById('section-compil').classList.toggle('hidden', !isCompil);
+  document.getElementById('section-albums').classList.toggle('hidden', isCompil);
 
-  const container = document.getElementById('albums-container');
-  if (!isCompil && !isInit && container && container.children.length === 0) {
+  if (!isCompil && !isInit && document.getElementById('albums-container').children.length === 0) {
     addAdminAlbumBlock();
   }
 }
@@ -714,8 +774,6 @@ function toggleAdminType(isInit = false) {
 function addAdminAlbumBlock() {
   adminAlbumCount++;
   const container = document.getElementById('albums-container');
-  if (!container) return;
-
   const div = document.createElement('div');
   div.className = 'album-block';
   div.style.cssText = "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px; position: relative;";
