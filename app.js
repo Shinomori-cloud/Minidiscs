@@ -264,27 +264,31 @@ window.addEventListener('popstate', (e) => {
 });
 
 /* ==========================================
-   CHARGEMENT DES DONNÉES ET INITIALISATION
+   CHARGEMENT DES DONNÉES ET INITIALISATION (COMPATIBILITÉ HERMIT)
    ========================================== */
 
-// Chargement du fichier JSON
 fetch('data.json')
   .then(response => response.json())
   .then(data => {
     catalogData = data;
 
-    // Verrouille l'historique initial pour éviter de quitter l'application au premier retour
-    if (!history.state) {
-      history.replaceState({ view: 'home' }, '', window.location.pathname);
+    // Initialisation forcée de l'historique avec hash
+    if (!location.hash || location.hash === '') {
+      history.replaceState({ view: 'home' }, '', '#home');
     }
 
-    // Gestion de l'historique de navigation (Bouton Retour)
+    // Gestion du bouton Retour
     window.addEventListener('popstate', (event) => {
       const state = event.state;
+      const hash = location.hash;
 
-      // Si pas d'état ou retour à la racine, on réaffiche le tableau de bord
-      if (!state || state.view === 'home') {
+      // Si on revient à l'accueil (#home ou vide)
+      if (!state || state.view === 'home' || hash === '#home' || hash === '') {
         renderDashboard(false);
+        // On s'assure de garder le hash #home actif
+        if (location.hash !== '#home') {
+          history.pushState({ view: 'home' }, '', '#home');
+        }
         return;
       }
 
@@ -297,7 +301,7 @@ fetch('data.json')
       }
     });
 
-    // Premier rendu de l'application
+    // Premier rendu
     renderDashboard(false);
   })
   .catch(error => {
