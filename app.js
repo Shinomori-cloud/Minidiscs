@@ -9,6 +9,9 @@ let currentTypeFilter = null;
 let adminAlbumCount = 0;
 let editingMDIndex = null;
 let toastTimeout = null;
+let hasUnsavedChanges = false;
+
+const STORAGE_KEY = 'minidisc_catalog_backup';
 
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
@@ -16,9 +19,34 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
+   PROTECTION ANTI-FERMETURE ET STOCKAGE LOCAL
+   ========================================== */
+window.addEventListener('beforeunload', (e) => {
+  if (hasUnsavedChanges) {
+    e.preventDefault();
+    e.returnValue = ''; // Déclenche l'alerte de confirmation du navigateur
+  }
+});
+
+function saveLocalBackup() {
+  if (!catalogData) return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(catalogData));
+    hasUnsavedChanges = true;
+  } catch (err) {
+    console.error("Erreur de sauvegarde locale:", err);
+  }
+}
+
+function clearLocalBackup() {
+  localStorage.removeItem(STORAGE_KEY);
+  hasUnsavedChanges = false;
+}
+
+/* ==========================================
    UTILITAIRE TOAST (NOTIFICATIONS VISUELLES)
    ========================================== */
-function showToast(message, duration = 2500) {
+function showToast(message, duration = 3000) {
   const toast = document.getElementById('toast');
   if (!toast) return;
 
@@ -174,8 +202,20 @@ fetch('data.json')
     return response.json();
   })
   .then(data => {
-    catalogData = data;
+    const savedBackup = localStorage.getItem(STORAGE_KEY);
     
+    if (savedBackup) {
+      try {
+        catalogData = JSON.parse(savedBackup);
+        hasUnsavedChanges = true;
+        setTimeout(() => showToast("⚡ Session restaurée : modifications non exportées en cours !"), 500);
+      } catch (e) {
+        catalogData = data;
+      }
+    } else {
+      catalogData = data;
+    }
+
     const hash = window.location.hash;
     if (hash.startsWith('#minidiscs')) {
       const urlParams = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
@@ -194,6 +234,17 @@ fetch('data.json')
     }
   })
   .catch(err => {
+    const savedBackup = localStorage.getItem(STORAGE_KEY);
+    if (savedBackup) {
+      try {
+        catalogData = JSON.parse(savedBackup);
+        hasUnsavedChanges = true;
+        showToast("⚡ Données chargées depuis la sauvegarde locale !");
+        renderDashboard(false);
+        return;
+      } catch (e) {}
+    }
+
     catalogData = [];
     app.innerHTML = `
       <div style="text-align:center; padding: 40px; color: var(--text-sub);">
@@ -316,6 +367,7 @@ function renderDashboard(pushState = true) {
   app.innerHTML = `
     <div class="dashboard-container">
       <div class="dashboard-card">
+        ${hasUnsavedChanges ? `<div style="background: #ffb703; color: #000; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; text-align: center;">⚠️ Vous avez des modifications non exportées en JSON.</div>` : ''}
         <div class="dashboard-stat-main">
           <span class="stat-number">${totalMD}</span>
           <span class="stat-label">MiniDiscs dans la collection</span>
@@ -540,7 +592,8 @@ function deleteMD(index) {
   
   if (confirm(`Voulez-vous vraiment supprimer définitivement "${title}" ?`)) {
     catalogData.splice(index, 1);
-    showToast("🗑️ MiniDisc supprimé ! N'oubliez pas de télécharger votre data.json.");
+    saveLocalBackup();
+    showToast("🗑️ MiniDisc supprimé ! Pensez à exporter votre JSON.");
     renderDashboard(true);
   }
 }
@@ -618,7 +671,6 @@ function toggleAdminType(isInit = false) {
   document.getElementById('section-compil').classList.toggle('hidden', !isCompil);
   document.getElementById('section-albums').classList.toggle('hidden', isCompil);
 
-  // N'ajoute un bloc vide que si nous créons un nouveau MD ou s'il n'y a aucun album présent
   if (!isCompil && !isInit && document.getElementById('albums-container').children.length === 0) {
     addAdminAlbumBlock();
   }
@@ -731,9 +783,10 @@ function submitNewMD() {
     showToast("✅ MiniDisc modifié ! Pensez à exporter votre JSON.");
   } else {
     catalogData.push(targetMD);
-    showToast("✅ MiniDisc ajouté ! Téléchargez votre data.json");
+    showToast("✅ MiniDisc ajouté ! Pensez à exporter votre JSON.");
   }
 
+  saveLocalBackup();
   closeAdminModal();
   renderDashboard(false);
 }
@@ -757,5 +810,8 @@ function downloadUpdatedJSON() {
   document.body.removeChild(downloadAnchor);
 
   setTimeout(() => URL.revokeObjectURL(url), 100);
-  showToast("✅ Téléchargement réussi !");
+  
+  clearLocalBackup();
+  showToast("✅ Téléchargement réussi ! Sauvegarde réinitialisée.");
+  renderDashboard(false);
 }
