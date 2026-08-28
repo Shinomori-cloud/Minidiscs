@@ -20,6 +20,28 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
+   GESTION DU BOUTON RETOUR (POPSTATE ISOLÉ)
+   ========================================== */
+window.addEventListener('popstate', (event) => {
+  const state = event.state;
+
+  // Si l'utilisateur revient à l'accueil ou qu'il n'y a plus d'historique web
+  if (!state || state.view === 'home') {
+    renderDashboard(false);
+    return;
+  }
+
+  // Si on est dans les sous-pages, on navigue en interne sans fermer l'app
+  if (state.view === 'minidiscs') {
+    renderMDList({ genre: state.genre, type: state.type }, false);
+  } else if (state.view === 'md') {
+    openMD(state.index, false);
+  } else if (state.view === 'album') {
+    openAlbum(state.mdIndex, state.albumIndex, false);
+  }
+});
+
+/* ==========================================
    PROTECTION ANTI-FERMETURE ET STOCKAGE LOCAL
    ========================================== */
 window.addEventListener('beforeunload', (e) => {
