@@ -850,7 +850,7 @@ body:has(.featured-container.hidden) main#app {
 
 /* Espace entre chaque bloc album d'un même MiniDisc */
 .md-album-item {
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 }
 
 .md-album-item:last-child {
@@ -861,13 +861,13 @@ body:has(.featured-container.hidden) main#app {
 .md-album-title {
   font-size: 1,3rem;
   font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 0,6px; /* Espace très serré avec l'artiste */
+  line-height: 1;
+  margin-bottom: 0,5px; /* Espace très serré avec l'artiste */
 }
 
 /* Artiste sous l'album (police plus petite et discrète) */
 .md-album-artist {
   font-size: 0.80rem;
   color: var(--text-sub, #666);
-  line-height: 1;
+  line-height: 0,9;
 }
