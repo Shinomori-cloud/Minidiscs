@@ -6,6 +6,7 @@ let currentMD = null;
 let currentAlbum = null;
 let currentGenreFilter = null;
 let currentTypeFilter = null;
+let currentSearchQuery = '';
 let adminAlbumCount = 0;
 let editingMDIndex = null;
 let toastTimeout = null;
@@ -24,7 +25,7 @@ const featuredContainer = document.getElementById('featured-container');
 window.addEventListener('beforeunload', (e) => {
   if (hasUnsavedChanges) {
     e.preventDefault();
-    e.returnValue = ''; // Déclenche l'alerte de confirmation du navigateur
+    e.returnValue = '';
   }
 });
 
@@ -44,7 +45,89 @@ function clearLocalBackup() {
 }
 
 /* ==========================================
-   UTILITAIRE TOAST (NOTIFICATIONS VISUELLES)
+   GESTION DU BOUTON ET DE LA BARRE DE RECHERCHE
+   ========================================== */
+function toggleSearch() {
+  const searchBar = document.getElementById('search-bar');
+  const searchInput = document.getElementById('search-input');
+  const fabBtn = document.getElementById('search-fab-btn');
+
+  if (!searchBar) return;
+
+  const isOpen = searchBar.classList.contains('open');
+
+  if (isOpen) {
+    searchBar.classList.remove('open');
+    searchBar.classList.add('closed');
+    fabBtn.textContent = '🔍';
+    if (currentSearchQuery !== '') {
+      currentSearchQuery = '';
+      if (searchInput) searchInput.value = '';
+      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
+    }
+  } else {
+    searchBar.classList.remove('closed');
+    searchBar.classList.add('open');
+    fabBtn.textContent = '✕';
+    if (searchInput) searchInput.focus();
+  }
+}
+
+function mdMatchesSearch(md, query) {
+  if (!query) return true;
+  const q = query.toLowerCase().trim();
+
+  if (md.title && md.title.toLowerCase().includes(q)) return true;
+  if (md.artist && md.artist.toLowerCase().includes(q)) return true;
+
+  const genres = getMDAllGenres(md);
+  if (genres.some(g => g.toLowerCase().includes(q))) return true;
+
+  const types = getMDAllTypes(md);
+  if (types.some(t => t.toLowerCase().includes(q))) return true;
+
+  if (md.tracks && md.tracks.some(t => t.toLowerCase().includes(q))) return true;
+
+  if (md.albums && md.albums.length > 0) {
+    for (const album of md.albums) {
+      if (album.title && album.title.toLowerCase().includes(q)) return true;
+      if (album.artist && album.artist.toLowerCase().includes(q)) return true;
+      if (album.year && String(album.year).includes(q)) return true;
+      if (album.tracks && album.tracks.some(t => t.toLowerCase().includes(q))) return true;
+    }
+  }
+
+  return false;
+}
+
+function onSearchInput(value) {
+  currentSearchQuery = value;
+  renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
+}
+
+function updateSearchVisibility(show) {
+  const fabContainer = document.getElementById('search-fab-container');
+  if (!fabContainer) return;
+
+  if (show) {
+    fabContainer.classList.remove('hidden');
+  } else {
+    fabContainer.classList.add('hidden');
+    const searchBar = document.getElementById('search-bar');
+    const searchInput = document.getElementById('search-input');
+    const fabBtn = document.getElementById('search-fab-btn');
+    if (searchBar) {
+      searchBar.classList.remove('open');
+      searchBar.classList.add('closed');
+    }
+    if (fabBtn) fabBtn.textContent = '🔍';
+    currentSearchQuery = '';
+    if (searchInput) searchInput.value = '';
+  }
+}
+
+/* ==========================================
+   UTILITAIRE TOAST
    ========================================== */
 function showToast(message, duration = 3000) {
   const toast = document.getElementById('toast');
@@ -208,7 +291,7 @@ fetch('data.json')
       try {
         catalogData = JSON.parse(savedBackup);
         hasUnsavedChanges = true;
-        setTimeout(() => showToast("⚡ Session restaurée : modifications non exportées en cours !"), 500);
+        setTimeout(() => showToast("⚡ Session restaurée : modifications non exportées !"), 500);
       } catch (e) {
         catalogData = data;
       }
@@ -320,6 +403,8 @@ function renderDashboard(pushState = true) {
   backBtn.classList.add('hidden');
   headerTitle.textContent = "MINIDISCS";
 
+  updateSearchVisibility(false);
+
   if (catalogData === null) {
     app.innerHTML = `<p style="text-align:center; padding: 40px; color: var(--text-sub);">Chargement de la collection...</p>`;
     return;
@@ -403,6 +488,8 @@ function renderMDList(filters = {}, pushState = true) {
   currentTypeFilter = type;
   backBtn.classList.remove('hidden');
 
+  updateSearchVisibility(true);
+
   headerTitle.textContent = genre ? genre.toUpperCase() : (type ? type.toUpperCase() : "COLLECTION");
 
   if (featuredContainer) featuredContainer.classList.add('hidden');
@@ -417,6 +504,7 @@ function renderMDList(filters = {}, pushState = true) {
   }
 
   let filteredCatalog = catalogData.map((md, originalIndex) => ({ md, originalIndex }));
+  
   if (genre) {
     filteredCatalog = filteredCatalog.filter(({ md }) => getMDAllGenres(md).includes(genre.toUpperCase().trim()));
   }
@@ -424,12 +512,16 @@ function renderMDList(filters = {}, pushState = true) {
     filteredCatalog = filteredCatalog.filter(({ md }) => getMDAllTypes(md).includes(type.toUpperCase().trim()));
   }
 
+  if (currentSearchQuery) {
+    filteredCatalog = filteredCatalog.filter(({ md }) => mdMatchesSearch(md, currentSearchQuery));
+  }
+
   const seedSuffix = genre ? `-genre-${genre}` : (type ? `-type-${type}` : '-all');
   const shuffledCatalog = dailyShuffle(filteredCatalog, seedSuffix);
 
   let html = '<div class="list-container">';
   if (shuffledCatalog.length === 0) {
-    html += `<p style="text-align:center; padding: 20px;">Aucun MiniDisc trouvé.</p>`;
+    html += `<p style="text-align:center; padding: 40px; color: var(--text-sub);">Aucun MiniDisc trouvé.</p>`;
   } else {
     shuffledCatalog.forEach(({ md, originalIndex }) => {
       const allGenres = getMDAllGenres(md);
@@ -454,13 +546,15 @@ function renderMDList(filters = {}, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 3. VUE D'UN MINIDISC (COMPILATION OU LISTE D'ALBUMS) */
+/* 3. VUE D'UN MINIDISC */
 function openMD(index, pushState = true) {
   if (!catalogData || !catalogData[index]) return;
 
   currentMD = index;
   currentAlbum = null;
   backBtn.classList.remove('hidden');
+
+  updateSearchVisibility(false);
 
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
@@ -541,6 +635,9 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   currentMD = mdIndex;
   currentAlbum = albumIndex;
   backBtn.classList.remove('hidden');
+
+  updateSearchVisibility(false);
+
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
   const md = catalogData[mdIndex];
@@ -583,7 +680,6 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
 /* ==========================================
    SUPPRESSION ET MODIFICATION
    ========================================== */
-
 function deleteMD(index) {
   if (!catalogData || !catalogData[index]) return;
   
@@ -599,9 +695,8 @@ function deleteMD(index) {
 }
 
 /* ==========================================
-   GESTION DE LA MODALE ADMIN (AJOUT ET ÉDITION)
+   GESTION DE LA MODALE ADMIN
    ========================================== */
-
 function openAdminModal(indexToEdit = null) {
   editingMDIndex = indexToEdit;
   const modalTitle = document.querySelector('#admin-modal h3');
