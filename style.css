@@ -862,7 +862,7 @@ body:has(.featured-container.hidden) main#app {
   font-size: 1,4rem;
   font-weight: 650;
   line-height: 1;
-  margin-bottom: 0,7px; /* Espace très serré avec l'artiste */
+  margin-bottom: 0,9px; /* Espace très serré avec l'artiste */
 }
 
 /* Artiste sous l'album (police plus petite et discrète) */
