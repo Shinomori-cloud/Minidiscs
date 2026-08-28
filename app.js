@@ -264,7 +264,7 @@ window.addEventListener('popstate', (e) => {
 });
 
 /* ==========================================
-   CHARGEMENT DES DONNÉES ET INITIALISATION (COMPATIBILITÉ HERMIT)
+   CHARGEMENT DES DONNÉES ET INITIALISATION (HERMIT FIX)
    ========================================== */
 
 fetch('data.json')
@@ -272,21 +272,22 @@ fetch('data.json')
   .then(data => {
     catalogData = data;
 
-    // Initialisation forcée de l'historique avec hash
-    if (!location.hash || location.hash === '') {
-      history.replaceState({ view: 'home' }, '', '#home');
+    // Force la création d'un historique à 2 niveaux dès l'ouverture dans Hermit
+    if (history.length <= 1) {
+      history.replaceState({ view: 'root' }, '', '#root');
+      history.pushState({ view: 'home' }, '', '#home');
     }
 
-    // Gestion du bouton Retour
+    // Interception du bouton Retour
     window.addEventListener('popstate', (event) => {
       const state = event.state;
       const hash = location.hash;
 
-      // Si on revient à l'accueil (#home ou vide)
-      if (!state || state.view === 'home' || hash === '#home' || hash === '') {
+      // Si l'utilisateur recule jusqu'à la racine fictive (#root) ou l'accueil (#home)
+      if (!state || state.view === 'root' || state.view === 'home' || hash === '#root' || hash === '#home') {
         renderDashboard(false);
-        // On s'assure de garder le hash #home actif
-        if (location.hash !== '#home') {
+        // Si on a atteint le fond de la pile (#root), on ré-injecte l'accueil pour ne jamais laisser l'historique vide
+        if (hash === '#root' || (state && state.view === 'root')) {
           history.pushState({ view: 'home' }, '', '#home');
         }
         return;
