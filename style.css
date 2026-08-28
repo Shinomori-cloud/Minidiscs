@@ -168,7 +168,7 @@ body:has(.featured-container.hidden) .header-subtitle {
 
 /* Titre imposant sur la page d'accueil */
 body:has(.dashboard-container) .title-90s {
-  font-size: 2.6rem;
+  font-size: 3rem;
   margin: 4px 0;
 }
 
