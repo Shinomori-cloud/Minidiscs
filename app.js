@@ -48,8 +48,8 @@ function clearLocalBackup() {
    GESTION DU BOUTON ET DE LA BARRE DE RECHERCHE
    ========================================== */
 function toggleSearch() {
-  const topSearch = document.getElementById('top-search');
-  const searchInput = document.getElementById('top-search-input');
+  const topSearch = document.getElementById('search-bar');
+  const searchInput = document.getElementById('search-input');
   const fabBtn = document.getElementById('search-fab-btn');
 
   if (!topSearch) return;
@@ -57,7 +57,6 @@ function toggleSearch() {
   const isClosed = topSearch.classList.contains('closed');
 
   if (!isClosed) {
-    // Si la barre est ouverte et qu'on re-clique sur la loupe/croix, on la ferme et on réinitialise
     topSearch.classList.add('closed');
     if (fabBtn) fabBtn.textContent = '🔍';
     if (currentSearchQuery !== '') {
@@ -66,7 +65,6 @@ function toggleSearch() {
       renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
     }
   } else {
-    // Si la barre est fermée, on l'ouvre
     topSearch.classList.remove('closed');
     if (fabBtn) fabBtn.textContent = '✕';
     if (searchInput) searchInput.focus();
@@ -107,8 +105,8 @@ function onSearchInput(value) {
 
 function updateSearchVisibility(show) {
   const fabBtn = document.getElementById('search-fab-btn');
-  const topSearch = document.getElementById('top-search');
-  const searchInput = document.getElementById('top-search-input');
+  const topSearch = document.getElementById('search-bar');
+  const searchInput = document.getElementById('search-input');
 
   if (show) {
     if (fabBtn) fabBtn.classList.remove('hidden');
