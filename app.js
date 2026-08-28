@@ -1,6 +1,6 @@
 /* ==========================================
    VARIABLES & DESIGN DE BASE
-   ========================================== */
+   ========================================= */
 :root {
   --bg-color: #f8fafc;
   --card-bg: #ffffff;
@@ -31,6 +31,60 @@ body {
   background-color: #f8fafc;
   background-attachment: fixed;
   min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(248, 250, 252, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: -1;
+  pointer-events: none;
+  
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0,0,0,1) 0px,
+    rgba(0,0,0,1) 180px,
+    rgba(0,0,0,0) 240px,
+    rgba(0,0,0,0) calc(100vh - 80px),
+    rgba(0,0,0,1) 100vh
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0,0,0,1) 0px,
+    rgba(0,0,0,1) 180px,
+    rgba(0,0,0,0) 240px,
+    rgba(0,0,0,0) calc(100vh - 80px),
+    rgba(0,0,0,1) 100vh
+  );
+}
+
+/* ==========================================
+   BARRE DE RECHERCHE HAUT DE PAGE
+   ========================================== */
+.top-search-container {
+  width: 100%;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 101;
+}
+
+.top-search-container input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 2px solid #000;
+  background: #ffffff;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 3px 3px 0px #000;
+  outline: none;
 }
 
 /* ==========================================
@@ -647,72 +701,6 @@ main#app {
   opacity: 0;
   pointer-events: none;
   transform: translate(-50%, 20px);
-}
-
-/* ==========================================
-   BOUTON FLOTTANT & BARRE DE RECHERCHE (FAB)
-   ========================================== */
-.search-fab-container {
-  position: fixed;
-  bottom: 24px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  z-index: 3000;
-}
-
-.search-fab-btn {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #ff007f;
-  color: #ffffff;
-  border: 2px solid #000;
-  font-size: 1.2rem;
-  box-shadow: 3px 3px 0px #000;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.search-fab-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0px #000;
-}
-
-.search-bar {
-  overflow: hidden;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
-  white-space: nowrap;
-}
-
-.search-bar.closed {
-  width: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.search-bar.open {
-  width: calc(100vw - 100px);
-  max-width: 340px;
-  opacity: 1;
-  margin-right: 10px;
-}
-
-.search-bar input {
-  width: 100%;
-  padding: 10px 16px;
-  border-radius: 25px;
-  border: 2px solid #000;
-  background: #ffffff;
-  color: var(--text-main);
-  font-size: 0.9rem;
-  font-weight: 600;
-  box-shadow: 3px 3px 0px #000;
-  outline: none;
 }
 
 /* ==========================================
