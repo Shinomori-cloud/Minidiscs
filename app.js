@@ -264,74 +264,44 @@ window.addEventListener('popstate', (e) => {
 });
 
 /* ==========================================
-   INITIALISATION DATA & ÉCOUTEURS GLOBAUX
+   CHARGEMENT DES DONNÉES ET INITIALISATION
    ========================================== */
-backBtn.addEventListener('click', () => {
-  if (currentAlbum !== null) {
-    openMD(currentMD, true);
-  } else if (currentMD !== null) {
-    renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, true);
-  } else {
-    renderDashboard(true);
-  }
-});
 
+// Chargement du fichier JSON
 fetch('data.json')
-  .then(response => {
-    if (!response.ok) throw new Error("Erreur de réseau lors du chargement du fichier JSON.");
-    return response.json();
-  })
+  .then(response => response.json())
   .then(data => {
-    const savedBackup = localStorage.getItem(STORAGE_KEY);
-    
-    if (savedBackup) {
-      try {
-        catalogData = JSON.parse(savedBackup);
-        hasUnsavedChanges = true;
-        setTimeout(() => showToast("⚡ Session restaurée : modifications non exportées !"), 500);
-      } catch (e) {
-        catalogData = data;
-      }
-    } else {
-      catalogData = data;
+    catalogData = data;
+
+    // Verrouille l'historique initial pour éviter de quitter l'application au premier retour
+    if (!history.state) {
+      history.replaceState({ view: 'home' }, '', window.location.pathname);
     }
 
-    const hash = window.location.hash;
-    if (hash.startsWith('#minidiscs')) {
-      const urlParams = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
-      const genre = urlParams.get('genre');
-      const type = urlParams.get('type');
-      renderMDList({ genre, type }, false);
-    } else if (hash.startsWith('#md-')) {
-      const mdIndex = parseInt(hash.replace('#md-', ''), 10);
-      if (!isNaN(mdIndex) && catalogData[mdIndex]) {
-        openMD(mdIndex, false);
-      } else {
-        renderDashboard(false);
-      }
-    } else {
-      renderDashboard(false);
-    }
-  })
-  .catch(err => {
-    const savedBackup = localStorage.getItem(STORAGE_KEY);
-    if (savedBackup) {
-      try {
-        catalogData = JSON.parse(savedBackup);
-        hasUnsavedChanges = true;
-        showToast("⚡ Données chargées depuis la sauvegarde locale !");
+    // Gestion de l'historique de navigation (Bouton Retour)
+    window.addEventListener('popstate', (event) => {
+      const state = event.state;
+
+      // Si pas d'état ou retour à la racine, on réaffiche le tableau de bord
+      if (!state || state.view === 'home') {
         renderDashboard(false);
         return;
-      } catch (e) {}
-    }
+      }
 
-    catalogData = [];
-    app.innerHTML = `
-      <div style="text-align:center; padding: 40px; color: var(--text-sub);">
-        <p style="color: #e63946; font-weight: bold; font-size: 1.1rem;">⚠️ Erreur de chargement de data.json</p>
-      </div>
-    `;
-    console.error(err);
+      if (state.view === 'minidiscs') {
+        renderMDList({ genre: state.genre, type: state.type }, false);
+      } else if (state.view === 'md') {
+        openMD(state.index, false);
+      } else if (state.view === 'album') {
+        openAlbum(state.mdIndex, state.albumIndex, false);
+      }
+    });
+
+    // Premier rendu de l'application
+    renderDashboard(false);
+  })
+  .catch(error => {
+    console.error('Erreur lors du chargement des données :', error);
   });
 
 /* ==========================================
