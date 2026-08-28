@@ -489,7 +489,7 @@ function openMD(index, pushState = true) {
   const displayGenre = allMdGenres.join(' / ');
 
   if (!md.albums || md.albums.length === 0) {
-    headerTitle.textContent = "PISTES";
+    headerTitle.textContent = "TITRES";
 
     if (pushState) {
       history.pushState({ view: 'tracklist', mdIndex: index, isDirectTracks: true }, '', `#md-${index}`);
@@ -529,7 +529,7 @@ function openMD(index, pushState = true) {
     return;
   }
 
-  headerTitle.textContent = displayGenre || "ALBUMS";
+  headerTitle.textContent = "ALBUMS";
 
   if (pushState) {
     history.pushState({ view: 'albums', mdIndex: index }, '', `#md-${index}`);
@@ -576,7 +576,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   const albumColor = getBorderColor(albumGenres);
   const albumGenreText = albumGenres.join(' / ');
 
-  headerTitle.textContent = "PISTES";
+  headerTitle.textContent = "TITRES";
 
   if (pushState) {
     history.pushState({ view: 'tracklist', mdIndex: mdIndex, albumIndex: albumIndex }, '', `#md-${mdIndex}-album-${albumIndex}`);
