@@ -53,11 +53,11 @@ body::before {
   mask-image: linear-gradient(to bottom, black 0px, black 375px, transparent 390px);
 }
 
-/* AGRANDISSEMENT DU CACHE SPÉCIFIQUE AU DASHBOARD */
+/* AGRANDISSEMENT DU CACHE SPÉCIFIQUE AU DASHBOARD (AJUSTÉ POUR TYPE + GENRE) */
 body:has(.dashboard-container)::before {
-  height: 420px;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 400px, transparent 420px);
-  mask-image: linear-gradient(to bottom, black 0px, black 400px, transparent 420px);
+  height: 440px;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 415px, transparent 440px);
+  mask-image: linear-gradient(to bottom, black 0px, black 415px, transparent 440px);
 }
 
 /* RÉDUCTION DU CACHE SUR TOUTES LES AUTRES PAGES */
@@ -257,9 +257,9 @@ main#app {
   z-index: 1;
 }
 
-/* Marge ajustée pour la page d'accueil */
+/* Marge ajustée pour la page d'accueil (prend en compte la double grille Types / Genres) */
 body:has(.dashboard-container) main#app {
-  margin-top: 425px;
+  margin-top: 435px;
 }
 
 /* Marge pour les pages où la sélection est masquée */
