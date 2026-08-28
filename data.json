@@ -2964,15 +2964,13 @@
       "Humour"
     ],
     "md_cover": "images/md_25.jpg",
-    "albums": [
-      {
-        "title": "Les Débats de Gérard : Les OVNI, les Routiers et la CB, les Grèves",
-        "artist": "La Dream Teaz",
-        "cover": "images/debats_gerard_25.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
+    "title": "Les Débats de Gérard : Les OVNI, les Routiers et la CB, les Grèves",
+    "artist": "La Dream Teaz",
+     cover": "images/debats_gerard_25.jpg",
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
+    ],
         "genres": [
           "Humour"
         ],
@@ -2980,8 +2978,6 @@
           "01. Les OVNI",
           "02. Les Routiers et la CB",
           "03. Les grèves"
-        ]
-      }
     ]
   },
   {
