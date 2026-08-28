@@ -5,6 +5,7 @@ let catalogData = null; // Initialisé à null pour distinguer "en cours" et "vi
 let currentMD = null;
 let currentAlbum = null;
 let currentGenreFilter = null;
+let currentTypeFilter = null;
 let adminAlbumCount = 0;
 let toastTimeout = null;
 
@@ -30,15 +31,23 @@ function showToast(message, duration = 2500) {
 }
 
 /* ==========================================
-   UTILITAIRES MULTI-GENRE (MD & ALBUMS)
+   UTILITAIRES MULTI-GENRE & MULTI-TYPE
    ========================================== */
-// Normalise un champ genre (texte ou tableau) en tableau nettoyé : "Pop, Rock" -> ["POP", "ROCK"]
-function getNormalizedGenres(genreData) {
-  if (!genreData) return [];
-  if (Array.isArray(genreData)) {
-    return genreData.map(g => String(g).toUpperCase().trim()).filter(g => g !== '');
+
+// Normalise une valeur (texte ou tableau) en tableau nettoyé et mis en majuscules
+function getNormalizedList(data) {
+  if (!data) return [];
+  if (Array.isArray(data)) {
+    return data.map(v => String(v).toUpperCase().trim()).filter(v => v !== '');
   }
-  return String(genreData).split(',').map(g => g.toUpperCase().trim()).filter(g => g !== '');
+  return String(data).split(',').map(v => v.toUpperCase().trim()).filter(v => v !== '');
+}
+
+/* --- LOGIQUE GENRES --- */
+
+// Normalise un champ genre
+function getNormalizedGenres(genreData) {
+  return getNormalizedList(genreData);
 }
 
 // Récupère TOUS les genres uniques d'un MiniDisc (ses propres genres + ceux de ses albums)
@@ -61,17 +70,38 @@ function getAlbumGenres(album, parentMd) {
   return parentGenres.length > 0 ? parentGenres : ['AUTRE'];
 }
 
-// Formate les genres en texte lisible pour l'affichage (ex: "Pop / Rock")
-function formatGenresText(genreData) {
-  const genres = getNormalizedGenres(genreData);
-  return genres.length > 0 ? genres.join(' / ') : '';
+/* --- LOGIQUE TYPES --- */
+
+// Normalise un champ type
+function getNormalizedTypes(typeData) {
+  return getNormalizedList(typeData);
+}
+
+// Récupère TOUS les types uniques d'un MiniDisc (ses propres types + ceux de ses albums)
+function getMDAllTypes(md) {
+  const typesSet = new Set(getNormalizedTypes(md.type));
+  if (md.albums && md.albums.length > 0) {
+    md.albums.forEach(album => {
+      getNormalizedTypes(album.type).forEach(t => typesSet.add(t));
+    });
+  }
+  const result = Array.from(typesSet);
+  return result.length > 0 ? result : ['ALBUM'];
+}
+
+// Renvoie les types effectifs d'un album (ses types propres ou par défaut ceux du MD)
+function getAlbumTypes(album, parentMd) {
+  const albumTypes = getNormalizedTypes(album.type);
+  if (albumTypes.length > 0) return albumTypes;
+  const parentTypes = getNormalizedTypes(parentMd ? parentMd.type : null);
+  return parentTypes.length > 0 ? parentTypes : ['ALBUM'];
 }
 
 /* ==========================================
    UTILITAIRES D'ALÉATOIRE FIXÉ SUR 24 HEURES
    ========================================== */
 
-// Génère une clé unique sous forme de chaîne pour la journée en cours (ex: "2026-08-26")
+// Génère une clé unique sous forme de chaîne pour la journée en cours (ex: "2026-08-28")
 function getDailySeed() {
   const d = new Date();
   return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
@@ -96,7 +126,6 @@ function dailyShuffle(array, extraSeedKey = '') {
   const seedString = getDailySeed() + extraSeedKey;
   let hash = cyrb53(seedString);
 
-  // Pseudo Random Number Generator simple dérivé du hachage
   function seededRandom() {
     hash = (hash * 9301 + 49297) % 233280;
     return hash / 233280;
@@ -114,12 +143,10 @@ function dailyShuffle(array, extraSeedKey = '') {
    GESTION STRICTE DE L'HISTORIQUE HERMIT
    ========================================== */
 
-// 1. Définition du hash par défaut pour bloquer la sortie de l'application
 if (!window.location.hash || window.location.hash === '#') {
   window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
 }
 
-// 2. Interception du bouton retour physique (popstate)
 window.addEventListener('popstate', (e) => {
   if (!e.state || window.location.hash === '' || window.location.hash === '#dashboard') {
     renderDashboard(false);
@@ -132,7 +159,7 @@ window.addEventListener('popstate', (e) => {
       renderDashboard(false);
       break;
     case 'minidiscs':
-      renderMDList(e.state.genre || null, false);
+      renderMDList({ genre: e.state.genre || null, type: e.state.type || null }, false);
       break;
     case 'albums':
     case 'tracklist':
@@ -143,7 +170,7 @@ window.addEventListener('popstate', (e) => {
           openMD(e.state.mdIndex, false);
         }
       } else {
-        renderMDList(null, false);
+        renderMDList({}, false);
       }
       break;
     default:
@@ -164,9 +191,10 @@ fetch('data.json')
     
     const hash = window.location.hash;
     if (hash.startsWith('#minidiscs')) {
-      const parts = hash.split('?genre=');
-      const genre = parts[1] ? decodeURIComponent(parts[1]) : null;
-      renderMDList(genre, false);
+      const urlParams = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
+      const genre = urlParams.get('genre');
+      const type = urlParams.get('type');
+      renderMDList({ genre, type }, false);
     } else if (hash.startsWith('#md-')) {
       const mdIndex = parseInt(hash.replace('#md-', ''), 10);
       if (!isNaN(mdIndex) && catalogData[mdIndex]) {
@@ -189,14 +217,14 @@ backBtn.addEventListener('click', () => {
   if (currentAlbum !== null) {
     openMD(currentMD, true);
   } else if (currentMD !== null) {
-    renderMDList(currentGenreFilter, true);
+    renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, true);
   } else {
     renderDashboard(true);
   }
 });
 
 /* ==========================================
-   COULEURS DYNAMIQUES PAR GENRE
+   COULEURS DYNAMIQUES PAR GENRE ET TYPE
    ========================================== */
 const genreColorPalette = [
   '#e63946', '#ff007f', '#00f0ff', '#ffb703', 
@@ -259,6 +287,7 @@ function renderDashboard(pushState = true) {
   currentMD = null;
   currentAlbum = null;
   currentGenreFilter = null;
+  currentTypeFilter = null;
   backBtn.classList.add('hidden');
   headerTitle.textContent = "MINIDISCS";
 
@@ -278,22 +307,41 @@ function renderDashboard(pushState = true) {
 
   const totalMD = catalogData.length;
   const genreCounts = {};
+  const typeCounts = {};
 
-  // Comptage global incluant les genres des MDs et de tous leurs albums
+  // Comptage global incluant les genres et types des MDs et de tous leurs albums
   catalogData.forEach(md => {
     const allGenres = getMDAllGenres(md);
     allGenres.forEach(g => {
       genreCounts[g] = (genreCounts[g] || 0) + 1;
     });
+
+    const allTypes = getMDAllTypes(md);
+    allTypes.forEach(t => {
+      typeCounts[t] = (typeCounts[t] || 0) + 1;
+    });
   });
 
-  const sortedGenres = Object.keys(genreCounts).sort((a, b) => genreCounts[b] - genreCounts[a]);
+  // Badges Types
+  const sortedTypes = Object.keys(typeCounts).sort((a, b) => typeCounts[b] - typeCounts[a]);
+  let typeBadgesHTML = '';
+  sortedTypes.forEach(t => {
+    const color = '#ff007f'; // Style unifié pour les types
+    typeBadgesHTML += `
+      <div class="genre-badge" style="border-left-color: ${color};" onclick="renderMDList({ type: '${t}' })">
+        <span class="genre-name" style="color:${color}">${t}</span>
+        <span class="genre-count">${typeCounts[t]}</span>
+      </div>
+    `;
+  });
 
+  // Badges Genres
+  const sortedGenres = Object.keys(genreCounts).sort((a, b) => genreCounts[b] - genreCounts[a]);
   let genreBadgesHTML = '';
   sortedGenres.forEach(g => {
     const color = getBorderColor(g);
     genreBadgesHTML += `
-      <div class="genre-badge" style="border-left-color: ${color};" onclick="renderMDList('${g}')">
+      <div class="genre-badge" style="border-left-color: ${color};" onclick="renderMDList({ genre: '${g}' })">
         <span class="genre-name" style="color:${color}">${g}</span>
         <span class="genre-count">${genreCounts[g]}</span>
       </div>
@@ -308,12 +356,17 @@ function renderDashboard(pushState = true) {
           <span class="stat-label">MiniDiscs dans la collection</span>
         </div>
         
-        <div class="dashboard-section-title">RÉPARTITION PAR GENRE</div>
+        <div class="dashboard-section-title">RÉPARTITION PAR TYPE</div>
+        <div class="genres-grid">
+          ${typeBadgesHTML}
+        </div>
+
+        <div class="dashboard-section-title" style="margin-top: 14px;">RÉPARTITION PAR GENRE</div>
         <div class="genres-grid">
           ${genreBadgesHTML}
         </div>
 
-        <button class="btn-primary" onclick="renderMDList(null)">
+        <button class="btn-primary" style="margin-top: 10px;" onclick="renderMDList({})">
           VOIR TOUS LES MINIDISCS &rarr;
         </button>
 
@@ -328,17 +381,22 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
-/* 2. LISTE DES MINIDISCS (FILTRE PAR GENRE + MÉLANGE FIXE 24H) */
-function renderMDList(genreFilter = null, pushState = true) {
+/* 2. LISTE DES MINIDISCS (FILTRE PAR GENRE / TYPE + MÉLANGE FIXE 24H) */
+function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
+  
+  const { genre = null, type = null } = filters;
   
   currentMD = null;
   currentAlbum = null;
-  currentGenreFilter = genreFilter;
+  currentGenreFilter = genre;
+  currentTypeFilter = type;
   backBtn.classList.remove('hidden');
 
-  if (genreFilter) {
-    headerTitle.textContent = genreFilter.toUpperCase();
+  if (genre) {
+    headerTitle.textContent = genre.toUpperCase();
+  } else if (type) {
+    headerTitle.textContent = type.toUpperCase();
   } else {
     headerTitle.textContent = "COLLECTION";
   }
@@ -348,28 +406,44 @@ function renderMDList(genreFilter = null, pushState = true) {
   }
 
   if (pushState) {
-    const urlHash = genreFilter ? `#minidiscs?genre=${encodeURIComponent(genreFilter)}` : '#minidiscs';
-    history.pushState({ view: 'minidiscs', genre: genreFilter }, '', urlHash);
+    let urlHash = '#minidiscs';
+    const params = [];
+    if (genre) params.push(`genre=${encodeURIComponent(genre)}`);
+    if (type) params.push(`type=${encodeURIComponent(type)}`);
+    if (params.length > 0) urlHash += '?' + params.join('&');
+    
+    history.pushState({ view: 'minidiscs', genre, type }, '', urlHash);
   }
 
   let filteredCatalog = catalogData.map((md, originalIndex) => ({ md, originalIndex }));
   
-  if (genreFilter) {
-    const targetGenre = genreFilter.toUpperCase().trim();
+  if (genre) {
+    const targetGenre = genre.toUpperCase().trim();
     filteredCatalog = filteredCatalog.filter(({ md }) => {
       const allGenres = getMDAllGenres(md);
       return allGenres.includes(targetGenre);
     });
   }
 
-  // Application du mélange 24h déterministe avec une clé propre au genre
-  const seedSuffix = genreFilter ? `-mdlist-${genreFilter}` : '-mdlist-all';
+  if (type) {
+    const targetType = type.toUpperCase().trim();
+    filteredCatalog = filteredCatalog.filter(({ md }) => {
+      const allTypes = getMDAllTypes(md);
+      return allTypes.includes(targetType);
+    });
+  }
+
+  // Application du mélange 24h déterministe avec une clé propre au filtre
+  let seedSuffix = '-mdlist-all';
+  if (genre) seedSuffix = `-mdlist-genre-${genre}`;
+  if (type) seedSuffix = `-mdlist-type-${type}`;
+  
   const shuffledCatalog = dailyShuffle(filteredCatalog, seedSuffix);
 
   let html = '<div class="list-container">';
   
   if (shuffledCatalog.length === 0) {
-    html += `<p style="text-align:center; padding: 20px;">Aucun MiniDisc trouvé pour ce genre.</p>`;
+    html += `<p style="text-align:center; padding: 20px;">Aucun MiniDisc trouvé.</p>`;
   } else {
     shuffledCatalog.forEach(({ md, originalIndex }) => {
       const allGenres = getMDAllGenres(md);
@@ -569,6 +643,7 @@ function addAdminAlbumBlock() {
     <h4>Album #${adminAlbumCount}</h4>
     <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album" required></div>
     <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste" required></div>
+    <div class="form-group"><input type="text" class="album-type" placeholder="Type(s) de l'album (ex: Album, Live - séparés par virgule)"></div>
     <div class="form-group"><input type="text" class="album-genre" placeholder="Genre(s) de l'album (séparés par virgule)"></div>
     <div class="form-group"><input type="text" class="album-year" placeholder="Année (ex: 1998)"></div>
     <div class="form-group"><input type="text" class="album-cover" value="images/" placeholder="URL Pochette Album"></div>
@@ -584,8 +659,9 @@ function submitNewMD() {
   }
 
   const rawGenreInput = document.getElementById('md-genre').value.trim();
+  const rawTypeInput = document.getElementById('md-type-tags') ? document.getElementById('md-type-tags').value.trim() : '';
   const mdCover = document.getElementById('md-cover').value.trim();
-  const type = document.querySelector('input[name="md-type"]:checked').value;
+  const typeFormat = document.querySelector('input[name="md-type"]:checked').value;
 
   if (!rawGenreInput) {
     showToast("⚠️ Veuillez renseigner au moins un genre pour le MiniDisc");
@@ -596,10 +672,14 @@ function submitNewMD() {
     ? rawGenreInput.split(',').map(g => g.trim()).filter(g => g !== '')
     : [rawGenreInput];
 
-  let globalTrackCounter = 1;
-  const newMD = { genre: parsedMDGenres, md_cover: mdCover };
+  const parsedMDTypes = rawTypeInput 
+    ? (rawTypeInput.includes(',') ? rawTypeInput.split(',').map(t => t.trim()).filter(t => t !== '') : [rawTypeInput])
+    : ['ALBUM'];
 
-  if (type === 'compil') {
+  let globalTrackCounter = 1;
+  const newMD = { genre: parsedMDGenres, type: parsedMDTypes, md_cover: mdCover };
+
+  if (typeFormat === 'compil') {
     newMD.title = document.getElementById('compil-title').value.trim();
     newMD.artist = document.getElementById('compil-artist').value.trim();
     
@@ -622,6 +702,11 @@ function submitNewMD() {
         ? (rawAlbumGenre.includes(',') ? rawAlbumGenre.split(',').map(g => g.trim()).filter(g => g !== '') : [rawAlbumGenre])
         : [];
 
+      const rawAlbumType = block.querySelector('.album-type') ? block.querySelector('.album-type').value.trim() : '';
+      const parsedAlbumTypes = rawAlbumType 
+        ? (rawAlbumType.includes(',') ? rawAlbumType.split(',').map(t => t.trim()).filter(t => t !== '') : [rawAlbumType])
+        : [];
+
       const albumObj = {
         title: block.querySelector('.album-title').value.trim(),
         artist: block.querySelector('.album-artist').value.trim(),
@@ -632,6 +717,10 @@ function submitNewMD() {
 
       if (parsedAlbumGenres.length > 0) {
         albumObj.genre = parsedAlbumGenres;
+      }
+
+      if (parsedAlbumTypes.length > 0) {
+        albumObj.type = parsedAlbumTypes;
       }
 
       newMD.albums.push(albumObj);
