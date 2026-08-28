@@ -1864,14 +1864,12 @@
       "A MODIFIER 2"
     ],
     "md_cover": "images/md_37.jpg",
-    "albums": [
-      {
-        "title": "S&M",
-        "artist": "Metallica",
-        "cover": "images/metallica_sm.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
+    "title": "S&M",
+    "artist": "Metallica",
+    "cover": "images/metallica_sm.jpg",
+    "types": [
+        "A MODIFIER 1",
+        "A MODIFIER 2"
         ],
         "genres": [
           "A MODIFIER 1",
@@ -1899,8 +1897,6 @@
           "19. One",
           "20. Enter Sandman",
           "21. Battery"
-        ]
-      }
     ]
   },
   {
@@ -2278,14 +2274,12 @@
       "Live"
     ],
     "md_cover": "images/md_36.jpg",
-    "albums": [
-      {
-        "title": "Woodstock",
-        "artist": "Various Artists",
-        "cover": "images/woodstock.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
+    "title": "Woodstock",
+    "artist": "Various Artists",
+    "cover": "images/woodstock.jpg",
+    "types": [
+       "A MODIFIER 1",
+       "A MODIFIER 2"
         ],
         "genres": [
           "A MODIFIER 1",
@@ -2318,8 +2312,6 @@
           "24. The Butterfield Blues Band*– Love March",
           "25. Jimi Hendrix– Star Spangled Banner",
           "26. Jimi Hendrix– Purple Haze & Instrumental Solo"
-        ]
-      }
     ]
   },
   {
@@ -2486,14 +2478,12 @@
       "Metal"
     ],
     "md_cover": "images/md_21.jpg",
-    "albums": [
-      {
-        "title": "Best of the Beast",
-        "artist": "Iron Maiden",
-        "cover": "images/iron_maiden_best_of_the_beast.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
+    "title": "Best of the Beast",
+    "artist": "Iron Maiden",
+    "cover": "images/iron_maiden_best_of_the_beast.jpg",
+    "types": [
+       "A MODIFIER 1",
+       "A MODIFIER 2"
         ],
         "genres": [
           "A MODIFIER 1",
@@ -2526,8 +2516,6 @@
           "24. Killers",
           "25. Sanctuary",
           "26. The Writing on the Wall"
-        ]
-      }
     ]
   },
   {
@@ -2541,14 +2529,12 @@
       "Live"
     ],
     "md_cover": "images/md_20.jpg",
-    "albums": [
-      {
-        "title": "Live from Mars",
-        "artist": "Ben Harper",
-        "cover": "images/ben_harper_live_from_mars.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
+    "title": "Live from Mars",
+    "artist": "Ben Harper",
+    "cover": "images/ben_harper_live_from_mars.jpg",
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
         ],
         "genres": [
           "A MODIFIER 1",
@@ -2580,8 +2566,6 @@
           "23. Walk Away",
           "24. Another Lonely Day",
           "25. Medley: Like A King/I'll Rise"
-        ]
-      }
     ]
   },
   {
@@ -2666,14 +2650,12 @@
       "Variété"
     ],
     "md_cover": "images/md_27.jpg",
-    "albums": [
-      {
-        "title": "Greatest Film Songs",
-        "artist": "Various",
-        "cover": "images/greatest_film_songs.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
+    "title": "Greatest Film Songs",
+    "artist": "Various",
+    "cover": "images/greatest_film_songs.jpg",
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
         ],
         "genres": [
           "OST",
@@ -2717,8 +2699,6 @@
           "35. American Beauty - American Beauty",
           "36. Armageddon - I don't want to miss a thing",
           "37. Requiem for a Dream - Main Theme"
-        ]
-      }
     ]
   },
   {
