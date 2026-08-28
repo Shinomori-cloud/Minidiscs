@@ -30,28 +30,41 @@ body {
   background-position: center center;
   background-color: #f8fafc;
   background-attachment: fixed;
-  min-height: 100vh;
 }
 
-/* CACHE DE SCROLL FIXE - STABLE MOBILE */
+/* CACHE DE SCROLL FIXE (HAUTEUR DE BASE) */
 body::before {
   content: "";
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  height: 380px;
+  width: 100%;
+  height: 390px;
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
   background-color: #f8fafc;
   background-attachment: fixed;
-  z-index: 50;
+  z-index: 800;
   pointer-events: none;
 
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 375px, transparent 390px);
+  mask-image: linear-gradient(to bottom, black 0px, black 375px, transparent 390px);
+}
+
+/* AGRANDISSEMENT DU CACHE SPÉCIFIQUE AU DASHBOARD (AJUSTÉ POUR TYPE + GENRE) */
+body:has(.dashboard-container)::before {
+  height: 440px;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 415px, transparent 440px);
+  mask-image: linear-gradient(to bottom, black 0px, black 415px, transparent 440px);
+}
+
+/* RÉDUCTION DU CACHE SUR TOUTES LES AUTRES PAGES */
+body:has(.featured-container.hidden)::before {
+  height: 160px;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
+  mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
 }
 
 /* ==========================================
@@ -59,12 +72,12 @@ body::before {
    ========================================== */
 header {
   position: fixed;
-  top: 16px;
+  top: 50px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
   max-width: 568px;
-  z-index: 100;
+  z-index: 1000;
   
   display: flex;
   align-items: center;
@@ -74,6 +87,16 @@ header {
   border-radius: 16px;
   border: 2px solid #000;
   box-shadow: 4px 4px 0px #000;
+}
+
+body:has(.featured-container.hidden) header {
+  padding: 10px 14px;
+}
+
+/* Redescend le header uniquement sur l'accueil */
+body:has(.dashboard-container) header {
+  top: 65px;
+  padding: 14px;
 }
 
 .header-title-container {
@@ -92,6 +115,10 @@ header {
   margin-bottom: 2px;
 }
 
+body:has(.featured-container.hidden) .header-subtitle {
+  display: none;
+}
+
 .title-90s {
   font-family: 'Righteous', cursive;
   font-size: 2rem;
@@ -106,6 +133,12 @@ header {
   letter-spacing: 1px;
   transform: rotate(-1.5deg);
   margin: 2px 0;
+}
+
+/* Titre imposant sur la page d'accueil */
+body:has(.dashboard-container) .title-90s {
+  font-size: 2.6rem;
+  margin: 4px 0;
 }
 
 .back-btn {
@@ -126,35 +159,40 @@ header {
 }
 
 /* ==========================================
-   SÉLECTION DU MOMENT (DÉCOUVERTE DU JOUR)
+   SÉLECTION DU MOMENT (ACCUEIL SEULEMENT)
    ========================================== */
 .featured-container {
   position: fixed;
-  top: 125px;
+  top: 190px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
   max-width: 568px;
-  z-index: 95;
+  z-index: 900;
 
   background: linear-gradient(135deg, #181528 0%, #0d0b18 100%);
   border: 1.5px solid #ff007f;
   border-radius: 12px;
-  padding: 10px 12px;
+  padding: 10px 12px 12px 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Redescend la sélection uniquement sur l'accueil */
+body:has(.dashboard-container) .featured-container {
+  top: 215px;
 }
 
 .featured-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   padding: 0 2px;
 }
 
 .featured-title {
   font-family: 'Righteous', cursive;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   letter-spacing: 1.5px;
   color: #ffb703;
   text-transform: uppercase;
@@ -165,8 +203,8 @@ header {
   background: #ff007f;
   border: 1px solid #000;
   border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 0.85rem;
+  padding: 6px 10px;
+  font-size: 0.9rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -186,12 +224,11 @@ header {
   display: flex;
   justify-content: center;
   gap: 12px;
-  min-height: 100px;
 }
 
 .featured-item {
   flex: 0 1 auto;
-  height: 120px;
+  height: 125px;
   border-radius: 6px;
   overflow: hidden;
   border: 1.5px solid #000;
@@ -215,208 +252,19 @@ header {
    MAIN APP & MARGES PAR VUE
    ========================================== */
 main#app {
-  margin-top: 320px;
+  margin-top: 395px;
   position: relative;
-  z-index: 10;
+  z-index: 1;
 }
 
-/* Ajustement si la section découverte est masquée */
-.featured-container.hidden + main#app,
-main#app:has(.track-container) {
-  margin-top: 120px;
+/* Marge ajustée pour la page d'accueil */
+body:has(.dashboard-container) main#app {
+  margin-top: 435px;
 }
 
-/* ==========================================
-   TABLEAU DE BORD (ACCUEIL COMPACT)
-   ========================================== */
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.dashboard-card {
-  background-color: var(--card-bg);
-  border-radius: 16px;
-  padding: 14px;
-  border: 2px solid #000;
-  box-shadow: 4px 4px 0px #000;
-}
-
-.dashboard-stat-main {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  justify-content: center;
-  gap: 8px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 10px;
-}
-
-.stat-number {
-  font-family: 'Righteous', cursive;
-  font-size: 2rem;
-  line-height: 1;
-  color: #7b2cbf;
-}
-
-.stat-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--text-sub);
-  letter-spacing: 0.5px;
-}
-
-.dashboard-section-title {
-  font-family: 'Righteous', cursive;
-  font-size: 0.65rem;
-  letter-spacing: 1.5px;
-  color: var(--text-sub);
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-/* GRILLES DE BOUTONS TYPES & GENRES */
-.types-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.type-btn {
-  background-color: #f1f5f9;
-  color: var(--text-main);
-  border: 1.5px solid #000;
-  padding: 8px 10px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  cursor: pointer;
-  box-shadow: 2px 2px 0px #000;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: transform 0.1s ease;
-}
-
-.type-btn:active {
-  transform: translate(1px, 1px);
-  box-shadow: 0px 0px 0px #000;
-}
-
-.genres-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-  margin-bottom: 12px;
-}
-
-.genre-badge {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--bg-color);
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  border-left: 3px solid var(--accent-color);
-  cursor: pointer;
-  transition: transform 0.1s ease, background-color 0.1s ease;
-  touch-action: manipulation;
-}
-
-.genre-badge:active {
-  transform: scale(0.96);
-  background-color: #f1f5f9;
-}
-
-.genre-name {
-  font-size: 0.72rem;
-  font-weight: 800;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-right: 4px;
-}
-
-.genre-count {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-.btn-primary {
-  width: 100%;
-  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
-  color: #ffffff;
-  font-weight: bold;
-  font-size: 0.88rem;
-  padding: 10px;
-  border: 2px solid #000;
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 2px 2px 0px #000;
-  transition: transform 0.1s ease;
-  touch-action: manipulation;
-  margin-bottom: 10px;
-}
-
-.btn-primary:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0px #000;
-}
-
-/* BOUTONS D'ACTION & FOOTER */
-.action-buttons, .md-admin-controls {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.btn-edit, .btn-delete {
-  border: 1.5px solid #000;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  cursor: pointer;
-  box-shadow: 1.5px 1.5px 0px #000;
-  transition: transform 0.1s ease;
-}
-
-.btn-edit { background-color: #ffb703; color: #000; }
-.btn-delete { background-color: #e63946; color: #fff; }
-
-.btn-edit:active, .btn-delete:active {
-  transform: translate(1px, 1px);
-  box-shadow: 0px 0px 0px #000;
-}
-
-.dashboard-footer {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 8px;
-  border-top: 1px dashed var(--border-color);
-}
-
-.btn-add-md {
-  background-color: #f1f5f9;
-  color: #7b2cbf;
-  border: 1.5px solid #000;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-weight: 800;
-  font-size: 0.78rem;
-  cursor: pointer;
-  box-shadow: 1.5px 1.5px 0px #000;
-  transition: transform 0.1s ease;
-}
-
-.btn-add-md:active {
-  transform: translate(1px, 1px);
-  box-shadow: 0px 0px 0px #000;
+/* Marge pour les pages où la sélection est masquée */
+body:has(.featured-container.hidden) main#app {
+  margin-top: 150px;
 }
 
 /* ==========================================
@@ -436,6 +284,7 @@ main#app:has(.track-container) {
   border-radius: 16px;
   margin-bottom: 14px;
   cursor: pointer;
+  
   border: 1.5px solid var(--border-color);
   border-left-width: 6px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
@@ -486,6 +335,14 @@ main#app:has(.track-container) {
   color: var(--text-main);
 }
 
+.title-line {
+  margin-bottom: 4px;
+}
+
+.title-line:last-child {
+  margin-bottom: 0;
+}
+
 .item-sub {
   font-size: 0.88rem;
   color: var(--text-sub);
@@ -517,13 +374,20 @@ main#app:has(.track-container) {
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-.track-list { list-style: none; }
+.track-list {
+  list-style: none;
+}
+
 .track-item {
   padding: 12px 0;
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   font-size: 0.95rem;
 }
-.track-item:last-child { border-bottom: none; }
+
+.track-item:last-child {
+  border-bottom: none;
+}
+
 .track-num {
   font-weight: 800;
   color: var(--text-main);
@@ -532,7 +396,210 @@ main#app:has(.track-container) {
 }
 
 /* ==========================================
-   STYLES MODALE ADMIN
+   TABLEAU DE BORD (ACCUEIL COMPACT)
+   ========================================== */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-card {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  padding: 12px 14px;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+}
+
+.dashboard-stat-main {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 10px;
+}
+
+.stat-number {
+  font-family: 'Righteous', cursive;
+  font-size: 2rem;
+  line-height: 1;
+  color: #7b2cbf;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-sub);
+  letter-spacing: 0.5px;
+}
+
+.dashboard-section-title {
+  font-family: 'Righteous', cursive;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  color: var(--text-sub);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+/* GRILLE DE BOUTONS TYPES */
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.type-btn {
+  background-color: #f1f5f9;
+  color: var(--text-main);
+  border: 1.5px solid #000;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.1s ease;
+}
+
+.type-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+.genres-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.genre-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-color);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border-left: 3px solid var(--border-color);
+  border-top: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.1s ease;
+  touch-action: manipulation;
+}
+
+.genre-badge:active {
+  transform: scale(0.96);
+  background-color: #f1f5f9;
+}
+
+.genre-name {
+  font-size: 0.68rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 4px;
+}
+
+.genre-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 0.88rem;
+  padding: 10px;
+  border: 2px solid #000;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+  transition: transform 0.1s ease;
+  touch-action: manipulation;
+  margin-bottom: 10px;
+}
+
+.btn-primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+/* BOUTONS D'ACTION (ÉDITION & SUPPRESSION) */
+.action-buttons, .md-admin-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn-edit, .btn-delete {
+  border: 1.5px solid #000;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 1.5px 1.5px 0px #000;
+  transition: transform 0.1s ease;
+}
+
+.btn-edit {
+  background-color: #ffb703;
+  color: #000;
+}
+
+.btn-delete {
+  background-color: #e63946;
+  color: #fff;
+}
+
+.btn-edit:active, .btn-delete:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+/* BOUTON D'AJOUT ADMIN (Pied de carte Dashboard) */
+.dashboard-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border-color);
+}
+
+.btn-add-md {
+  background-color: #f1f5f9;
+  color: #7b2cbf;
+  border: 1.5px solid #000;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.78rem;
+  cursor: pointer;
+  box-shadow: 1.5px 1.5px 0px #000;
+  transition: transform 0.1s ease;
+}
+
+.btn-add-md:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+/* ==========================================
+   STYLES MODALE DE SAISIE ADMIN
    ========================================== */
 .modal {
   position: fixed;
@@ -582,7 +649,10 @@ main#app:has(.track-container) {
   line-height: 1;
 }
 
-.form-group { margin-bottom: 12px; }
+.form-group {
+  margin-bottom: 12px;
+}
+
 .form-group label {
   display: block;
   font-size: 0.8rem;
@@ -606,8 +676,17 @@ main#app:has(.track-container) {
   font-family: monospace;
 }
 
-.radio-group { display: flex; gap: 15px; margin-top: 4px; }
-.radio-group label { font-size: 0.85rem; color: var(--text-main); font-weight: normal; }
+.radio-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 4px;
+}
+
+.radio-group label {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  font-weight: normal;
+}
 
 .album-block {
   background: #f1f5f9;
@@ -624,7 +703,9 @@ main#app:has(.track-container) {
   font-family: 'Righteous', cursive;
 }
 
-.album-block input, .album-block textarea { margin-bottom: 8px; }
+.album-block input, .album-block textarea {
+  margin-bottom: 8px;
+}
 
 .btn-sub {
   background: var(--border-color);
@@ -697,7 +778,7 @@ main#app:has(.track-container) {
 }
 
 /* ==========================================
-   BOUTON FLOTTANT & BARRE DE RECHERCHE (FAB)
+   BOUTON FLOTTANT & BARRE DE RECHERCHE (AJOUT)
    ========================================== */
 .search-fab-container {
   position: fixed;
@@ -706,7 +787,7 @@ main#app:has(.track-container) {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  z-index: 999; /* Z-index renforcé pour être toujours au-dessus */
+  z-index: 1500;
 }
 
 .search-fab-btn {
