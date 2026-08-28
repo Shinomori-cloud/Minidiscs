@@ -7,7 +7,6 @@
         "title": "Me, Myself & Irene",
         "artist": "Divers",
         "cover": "images/ost_me_myself_irene.jpg",
-        "tracks": [
           "01. Breakout (Foo Fighters)",
           "02. Do It Again (Smash Mouth)",
           "03. Deep Inside of You (Third Eye Blind)",
@@ -1822,17 +1821,17 @@
         "cover": "images/france_gall_bestof.jpg",
         "tracks": [
           "16. Ella, elle l'a",
-          "17. Évidemment",
-          "18. Il jouait du piano debout",
-          "19. La déclaration d'amour",
-          "20. Résiste",
-          "21. Si maman si",
-          "22. Babacar",
-          "23. Besoin d'amour",
-          "24. Débranche",
+          "17. Résiste",
+          "18. Evidemment",
+          "19. Si Maman si",
+          "20. La déclaration d'amour",
+          "21. Il jouait du piano debout",
+          "22. Besoin d'amour",
+          "23. Débranche",
+          "24. Viens je t'emmène",
           "25. Diego libre dans sa tête",
-          "26. Musique",
-          "27. Viens je t'emmène"
+          "26. Babacar",
+          "27. Musique"
         ],
         "genre": [
           "Français",
