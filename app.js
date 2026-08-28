@@ -264,49 +264,74 @@ window.addEventListener('popstate', (e) => {
 });
 
 /* ==========================================
-   CHARGEMENT DES DONNÉES ET INITIALISATION (HERMIT FIX)
+   INITIALISATION DATA & ÉCOUTEURS GLOBAUX
    ========================================== */
+backBtn.addEventListener('click', () => {
+  if (currentAlbum !== null) {
+    openMD(currentMD, true);
+  } else if (currentMD !== null) {
+    renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, true);
+  } else {
+    renderDashboard(true);
+  }
+});
 
 fetch('data.json')
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error("Erreur de réseau lors du chargement du fichier JSON.");
+    return response.json();
+  })
   .then(data => {
-    catalogData = data;
-
-    // Force la création d'un historique à 2 niveaux dès l'ouverture dans Hermit
-    if (history.length <= 1) {
-      history.replaceState({ view: 'root' }, '', '#root');
-      history.pushState({ view: 'home' }, '', '#home');
+    const savedBackup = localStorage.getItem(STORAGE_KEY);
+    
+    if (savedBackup) {
+      try {
+        catalogData = JSON.parse(savedBackup);
+        hasUnsavedChanges = true;
+        setTimeout(() => showToast("⚡ Session restaurée : modifications non exportées !"), 500);
+      } catch (e) {
+        catalogData = data;
+      }
+    } else {
+      catalogData = data;
     }
 
-    // Interception du bouton Retour
-    window.addEventListener('popstate', (event) => {
-      const state = event.state;
-      const hash = location.hash;
-
-      // Si l'utilisateur recule jusqu'à la racine fictive (#root) ou l'accueil (#home)
-      if (!state || state.view === 'root' || state.view === 'home' || hash === '#root' || hash === '#home') {
+    const hash = window.location.hash;
+    if (hash.startsWith('#minidiscs')) {
+      const urlParams = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
+      const genre = urlParams.get('genre');
+      const type = urlParams.get('type');
+      renderMDList({ genre, type }, false);
+    } else if (hash.startsWith('#md-')) {
+      const mdIndex = parseInt(hash.replace('#md-', ''), 10);
+      if (!isNaN(mdIndex) && catalogData[mdIndex]) {
+        openMD(mdIndex, false);
+      } else {
         renderDashboard(false);
-        // Si on a atteint le fond de la pile (#root), on ré-injecte l'accueil pour ne jamais laisser l'historique vide
-        if (hash === '#root' || (state && state.view === 'root')) {
-          history.pushState({ view: 'home' }, '', '#home');
-        }
-        return;
       }
-
-      if (state.view === 'minidiscs') {
-        renderMDList({ genre: state.genre, type: state.type }, false);
-      } else if (state.view === 'md') {
-        openMD(state.index, false);
-      } else if (state.view === 'album') {
-        openAlbum(state.mdIndex, state.albumIndex, false);
-      }
-    });
-
-    // Premier rendu
-    renderDashboard(false);
+    } else {
+      renderDashboard(false);
+    }
   })
-  .catch(error => {
-    console.error('Erreur lors du chargement des données :', error);
+  .catch(err => {
+    const savedBackup = localStorage.getItem(STORAGE_KEY);
+    if (savedBackup) {
+      try {
+        catalogData = JSON.parse(savedBackup);
+        hasUnsavedChanges = true;
+        showToast("⚡ Données chargées depuis la sauvegarde locale !");
+        renderDashboard(false);
+        return;
+      } catch (e) {}
+    }
+
+    catalogData = [];
+    app.innerHTML = `
+      <div style="text-align:center; padding: 40px; color: var(--text-sub);">
+        <p style="color: #e63946; font-weight: bold; font-size: 1.1rem;">⚠️ Erreur de chargement de data.json</p>
+      </div>
+    `;
+    console.error(err);
   });
 
 /* ==========================================
