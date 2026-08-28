@@ -1962,28 +1962,21 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Rock",
+      "blues"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Compilations",
+      "Ost"
     ],
-    "md_cover": "images/md_39.jpg",
+    "md_cover": "images/md_43.jpg",
     "albums": [
       {
         "title": "1962-1966",
         "artist": "The Beatles",
+        "year": "",
         "cover": "images/beatles_1962_1966.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "01. Love Me Do",
           "02. Please Please Me",
@@ -2008,61 +2001,73 @@
           "21. Michelle",
           "22. In My Life",
           "23. Girl",
-          "25. Eleanor Rigby",
-          "26. Yellow Submarine"
+          "24. Eleanor Rigby",
+          "25. Yellow Submarine"
+        ],
+        "genre": [
+          "Rock"
+        ],
+        "type": [
+          "Compilation",
+          "Album"
         ]
       },
       {
         "title": "The Blues Brothers",
         "artist": "The Blues Brothers",
+        "year": "1980",
         "cover": "images/blues_brothers.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
-          "27. She Caught The Katy",
-          "28. Peter Gunn Theme",
-          "29. Gimme Some Lovin'",
-          "30. Shake a Tail Feather",
-          "31. Everybody Needs Somebody to Love",
-          "32. The Old Landmark",
-          "33. Think",
-          "34. Theme from Rawhide",
-          "35. Minnie the Moocher",
-          "36. Sweet Home Chicago",
-          "37. JailHouse Rock"
+          "26. She Caught The Katy",
+          "27. Peter Gunn Theme",
+          "28. Gimme Some Lovin'",
+          "29. Shake a Tail Feather",
+          "30. Everybody Needs Somebody to Love",
+          "31. The Old Landmark",
+          "32. Think",
+          "33. Theme from Rawhide",
+          "34. Minnie the Moocher",
+          "35. Sweet Home Chicago",
+          "36. JailHouse Rock"
+        ],
+        "genre": [
+          "Rock",
+          "Blues"
+        ],
+        "type": [
+          "Ost"
         ]
       },
       {
-        "title": "Stiff Upper Lip",
-        "artist": "AC/DC",
-        "cover": "images/acdc_stiff_upper_lip.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
+        "title": "Jazz & Blues Collection vol.2",
+        "artist": "Jonh Lee Hooker",
+        "year": "1995",
+        "cover": "images/john_lee_hooker.jpg",
         "tracks": [
-          "38. Stiff Upper Lip",
-          "39. Meltdown",
-          "40. House of Jazz",
-          "41. Hold Me Back",
-          "42. Safe in New York City",
-          "43. Can't Stand Still",
-          "44. Can't Stop Rock 'n' Roll",
-          "45. Satellite Blues",
-          "46. Damned",
-          "47. Come and Get It",
-          "48. All Screwed Up",
-          "49. Give It Up"
+          "37. Dimples",
+          "38. Mambo Chillun",
+          "39. I'm So Excited",
+          "40. Time Is Marchin'",
+          "41. Wheel And Deal",
+          "42. Crawlin' Black Spider",
+          "43. I'm So Worried Baby",
+          "44. Stop Talking",
+          "45. The Road Is So Rough",
+          "46. I See You When You're Weak",
+          "47. Crawlin' Kingsnake",
+          "48. Solid Sender",
+          "49. It Serves Me Right To Suffer",
+          "50. What Do You Say",
+          "51. I Love You Honey",
+          "52. Thelma",
+          "53. No Shoes",
+          "54. She Shot Me Down"
+        ],
+        "genre": [
+          "Blues"
+        ],
+        "type": [
+          "Compilation"
         ]
       }
     ]
