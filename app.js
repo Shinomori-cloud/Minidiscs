@@ -523,16 +523,31 @@ function renderMDList(filters = {}, pushState = true) {
     shuffledCatalog.forEach(({ md, originalIndex }) => {
       const allGenres = getMDAllGenres(md);
       const borderColor = getBorderColor(allGenres);
-      const rawTitle = (md.albums && md.albums.length > 0) 
-        ? md.albums.map(a => a.title).join(' / ') 
-        : (md.title || 'MiniDisc sans titre');
+      
+      // Génération de la liste des albums avec uniquement titre et artiste
+      let albumsContent = '';
+      if (md.albums && md.albums.length > 0) {
+        albumsContent = md.albums.map(album => `
+          <div class="md-album-item">
+            <div class="md-album-title">${album.title || ''}</div>
+            <div class="md-album-artist">${album.artist || ''}</div>
+          </div>
+        `).join('');
+      } else {
+        albumsContent = `
+          <div class="md-album-item">
+            <div class="md-album-title">${md.title || 'MiniDisc sans titre'}</div>
+            <div class="md-album-artist">${md.artist || ''}</div>
+          </div>
+        `;
+      }
 
       html += `
         <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openMD(${originalIndex})">
           <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
           <div class="item-details">
             <div class="item-tag" style="color: ${borderColor};">${allGenres.join(' / ')}</div>
-            <div class="item-title">${formatAlbumTitles(rawTitle)}</div>
+            <div class="md-albums-list">${albumsContent}</div>
           </div>
         </div>
       `;
