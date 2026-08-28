@@ -843,3 +843,31 @@ body:has(.featured-container.hidden) main#app {
 .hidden {
   display: none !important;
 }
+
+/* ==========================================
+   STYLE DES ALBUMS ET ARTISTES (LISTE MINIDISCS)
+   ========================================== */
+
+/* Espace entre chaque bloc album d'un même MiniDisc */
+.md-album-item {
+  margin-bottom: 5px;
+}
+
+.md-album-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Titre de l'album (police réduite) */
+.md-album-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1px; /* Espace très serré avec l'artiste */
+}
+
+/* Artiste sous l'album (police plus petite et discrète) */
+.md-album-artist {
+  font-size: 0.75rem;
+  color: var(--text-sub, #666);
+  line-height: 1.1;
+}
