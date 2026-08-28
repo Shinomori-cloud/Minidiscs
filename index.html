@@ -11,16 +11,6 @@
 </head>
 <body>
 
-  <!-- BARRE DE RECHERCHE FIXE EN HAUT -->
-  <div id="search-bar" class="search-bar top-search closed">
-    <input 
-      type="search" 
-      id="search-input" 
-      placeholder="Rechercher (artiste, titre, piste...)" 
-      oninput="onSearchInput(this.value)"
-    >
-  </div>
-
   <!-- HEADER FIXE RETRO 90S -->
   <header>
     <button id="back-btn" class="back-btn hidden">&larr;</button>
@@ -114,9 +104,21 @@
 
   <script src="app.js"></script>
 
-  <!-- BOUTON FLOTTANT FIXE (EN BAS) -->
-  <button id="search-fab-btn" class="search-fab-btn hidden" onclick="toggleSearch()" title="Rechercher">
+  <!-- BOUTON FLOTTANT & BARRE DE RECHERCHE -->
+<div id="search-fab-container" class="search-fab-container hidden">
+  <!-- Champ déployable -->
+  <div id="search-bar" class="search-bar closed">
+    <input 
+      type="search" 
+      id="search-input" 
+      placeholder="Rechercher (artiste, titre, piste...)" 
+      oninput="onSearchInput(this.value)"
+    >
+  </div>
+  <!-- Bouton déclencheur -->
+  <button id="search-fab-btn" class="search-fab-btn" onclick="toggleSearch()" title="Rechercher">
     🔍
   </button>
+</div>
 </body>
 </html>
