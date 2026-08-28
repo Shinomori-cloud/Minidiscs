@@ -698,7 +698,10 @@
     ]
   },
   {
-    "genre": "Rap / Reggae",
+    "genre": [
+      "Rap", 
+      "Reggae"
+    ], 
     "md_cover": "images/md_09.jpg",
     "albums": [
       {
@@ -723,7 +726,9 @@
           "15. Fu-Gee-La (Sly & Robbie mix)",
           "16. Mista Mista",
           "17. Fu-Gee-La (Refugee Camp global mix featuring John Forté)"
-        ]
+        ], 
+        "genre": [
+          "Rap" 
       },
       {
         "title": "Legend, Best of",
@@ -749,7 +754,10 @@
           "34. Jamming",
           "35. Stir It Up",
           "36. Survival"
-        ]
+        ], 
+        "genre": [
+          "Reggae"
+        ] 
       }
     ]
   },
