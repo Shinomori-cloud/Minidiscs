@@ -867,7 +867,7 @@ body:has(.featured-container.hidden) main#app {
 
 /* Artiste sous l'album (police plus petite et discrète) */
 .md-album-artist {
-  font-size: 0.70rem;
+  font-size: 0.60rem;
   color: var(--text-sub, #666);
   line-height: 0,9;
 }
