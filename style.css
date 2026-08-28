@@ -68,6 +68,37 @@ body:has(.featured-container.hidden)::before {
 }
 
 /* ==========================================
+   BARRE DE RECHERCHE DÉPLOYABLE EN HAUT
+   ========================================== */
+.top-search {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 568px;
+  z-index: 1050;
+  transition: all 0.3s ease;
+}
+
+.top-search.closed {
+  display: none;
+}
+
+.top-search input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 2px solid #000;
+  background: #ffffff;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 3px 3px 0px #000;
+  outline: none;
+}
+
+/* ==========================================
    HEADER & TITRE FIXES
    ========================================== */
 header {
@@ -778,19 +809,13 @@ body:has(.featured-container.hidden) main#app {
 }
 
 /* ==========================================
-   BOUTON FLOTTANT & BARRE DE RECHERCHE (AJOUT)
+   BOUTON FLOTTANT FIXE (BAS DROITE)
    ========================================== */
-.search-fab-container {
+.search-fab-btn {
   position: fixed;
   bottom: 24px;
   right: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
   z-index: 1500;
-}
-
-.search-fab-btn {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -810,38 +835,6 @@ body:has(.featured-container.hidden) main#app {
 .search-fab-btn:active {
   transform: translate(2px, 2px);
   box-shadow: 0px 0px 0px #000;
-}
-
-.search-bar {
-  overflow: hidden;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
-  white-space: nowrap;
-}
-
-.search-bar.closed {
-  width: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.search-bar.open {
-  width: calc(100vw - 100px);
-  max-width: 340px;
-  opacity: 1;
-  margin-right: 10px;
-}
-
-.search-bar input {
-  width: 100%;
-  padding: 10px 16px;
-  border-radius: 25px;
-  border: 2px solid #000;
-  background: #ffffff;
-  color: var(--text-main);
-  font-size: 0.9rem;
-  font-weight: 600;
-  box-shadow: 3px 3px 0px #000;
-  outline: none;
 }
 
 /* ==========================================
