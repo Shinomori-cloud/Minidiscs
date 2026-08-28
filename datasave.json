@@ -1855,53 +1855,73 @@
     ]
   },
   {
-    "genre": [
-      "Metal"
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
     ],
-    "type": [
-      "Live"
+    "genres": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
     ],
-    "md_cover": "images/md_38.jpg",
+    "md_cover": "images/md_37.jpg",
     "title": "S&M",
     "artist": "Metallica",
-    "tracks": [
-      "01. The Ecstasy of Gold",
-      "02. The Call of Ktulu",
-      "03. Master of Puppets",
-      "04. Of Wolf and Man",
-      "05. The Thing That Should Not Be",
-      "06. Fuel",
-      "07. The Memory Remains",
-      "08. No Leaf Clover",
-      "09. Hero of the Day",
-      "10. Devil's Dance",
-      "11. Bleeding Me",
-      "12. Nothing Else Matters",
-      "13. Until It Sleeps",
-      "14. For Whom the Bell Tolls",
-      "15. Human",
-      "16. Wherever I May Roam",
-      "17. Outlaw Torn",
-      "18. Sad but True",
-      "19. One",
-      "20. Enter Sandman",
-      "21. Battery"
+    "cover": "images/metallica_sm.jpg",
+    "types": [
+        "A MODIFIER 1",
+        "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "tracks": [
+          "01. The Ecstasy of Gold",
+          "02. The Call of Ktulu",
+          "03. Master of Puppets",
+          "04. Of Wolf and Man",
+          "05. The Thing That Should Not Be",
+          "06. Fuel",
+          "07. The Memory Remains",
+          "08. No Leaf Clover",
+          "09. Hero of the Day",
+          "10. Devil's Dance",
+          "11. Bleeding Me",
+          "12. Nothing Else Matters",
+          "13. Until It Sleeps",
+          "14. For Whom the Bell Tolls",
+          "15. Human",
+          "16. Wherever I May Roam",
+          "17. Outlaw Torn",
+          "18. Sad but True",
+          "19. One",
+          "20. Enter Sandman",
+          "21. Battery"
     ]
   },
   {
-    "genre": [
-      "Alternative Rock"
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
     ],
-    "type": [
-      "Albums"
+    "genres": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
     ],
-    "md_cover": "images/md_39.jpg",
+    "md_cover": "images/md_38.jpg",
     "albums": [
       {
         "title": "Nevermind",
         "artist": "Nirvana",
-        "year": "",
         "cover": "images/nirvana_nevermind.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
         "tracks": [
           "01. Smells Like Teen Spirit",
           "02. In Bloom",
@@ -1921,8 +1941,15 @@
       {
         "title": "Placebo",
         "artist": "Placebo",
-        "year": "",
         "cover": "images/placebo_placebo.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
         "tracks": [
           "14. Come Home",
           "15. Teenage Angst",
@@ -1940,8 +1967,15 @@
       {
         "title": "Cocoon Crash",
         "artist": "K's Choice",
-        "year": "",
         "cover": "images/ks_choice_cocoon_crash.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
         "tracks": [
           "25. Believe",
           "26. In Your Room",
@@ -2068,19 +2102,28 @@
     ]
   },
   {
-    "genre": [
-      "Metal"
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
     ],
-    "type": [
-      "Album"
+    "genres": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
     ],
     "md_cover": "images/md_40.jpg",
     "albums": [
       {
         "title": "Slipknot",
         "artist": "Slipknot",
-        "year": "",
         "cover": "images/slipknot.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
         "tracks": [
           "01. 742617000027",
           "02. Sic",
@@ -2102,8 +2145,15 @@
       {
         "title": "Toxicity",
         "artist": "System of a Down",
-        "year": "",
         "cover": "images/soad_toxicity.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
         "tracks": [
           "16. Prison Song",
           "17. Needles",
@@ -2125,8 +2175,15 @@
       {
         "title": "White Pony",
         "artist": "Deftones",
-        "year": "",
         "cover": "images/deftones_white_pony.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
         "tracks": [
           "31. Back to School (Mini Maggit)",
           "32. Feiticeira",
@@ -2150,40 +2207,111 @@
       "A MODIFIER 2"
     ],
     "genres": [
+      "Rock 80's"
+    ],
+    "md_cover": "images/md_41.jpg",
+    "albums": [
+      {
+        "title": "XX: 1977-1997",
+        "artist": "Toto",
+        "cover": "images/toto_xx.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "tracks": [
+          "01. Last Night",
+          "02. In a Word",
+          "03. Just Can't Get to You",
+          "04. Africa",
+          "05. Hold the Line",
+          "06. Rosanna",
+          "07. I'll Be Over You",
+          "08. Georgy Porgy",
+          "09. Tale of a Man",
+          "10. On the Run",
+          "11. Dave's Gone Skiing"
+        ]
+      },
+      {
+        "title": "Best of Rockers 'N' Ballads",
+        "artist": "Scorpions",
+        "cover": "images/scorpions_best_of.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "tracks": [
+          "12. Rock You Like a Hurricane",
+          "13. I Can't Explain",
+          "14. Still Loving You",
+          "15. Big City Nights",
+          "16. Lovedrive",
+          "17. Holiday",
+          "18. Wind of Change",
+          "19. Rhythm of Love",
+          "20. No One Like You",
+          "21. Is There Anybody There?",
+          "22. Send Me an Angel"
+        ]
+      }
+    ]
+  },
+  {
+    "types": [
       "A MODIFIER 1",
       "A MODIFIER 2"
+    ],
+    "genres": [
+      "Live"
     ],
     "md_cover": "images/md_36.jpg",
     "title": "Woodstock",
     "artist": "Various Artists",
     "cover": "images/woodstock.jpg",
-    "tracks": [
-      "01. John B Sebastian*– I Had A Dream",
-      "02. Canned Heat– Going Up The Country",
-      "03. Richie Havens– Freedom",
-      "04. Country Joe And The Fish– Rock & Soul Music",
-      "05. Arlo Guthrie– Coming Into Los Angeles",
-      "06. Sha-Na-Na*– At The Hop",
-      "07. Country Joe McDonald– The 'Fish' Cheer",
-      "08. Joan Baez– Drug Store Truck Drivin' Man",
-      "09. Joan Baez– Joe Hill",
-      "10. Crosby, Stills & Nash– Suite: Judy Blue Eyes",
-      "11. Crosby, Stills, Nash & Young– Sea Of Madness",
-      "12. Crosby, Stills, Nash & Young– Wooden Ships",
-      "13. The Who– We're Not Gonna Take It",
-      "14. Joe Cocker– With A Little Help From My Friends",
-      "15. No Artist– Rainstorm, Crowd Sounds, Announcements And General Hysteria",
-      "16. Santana– Soul Sacrifice",
-      "17. Ten Years After– I'm Going Home",
-      "18. Jefferson Airplane– Volunteers",
-      "19. Max Yazgur– Intervention",
-      "20. Sly & The Family Stone– Medley: Dance To The Music I Music Lover",
-      "21. Sly & The Family Stone– Higher",
-      "22. Sly & The Family Stone– I Want To Take You Higher",
-      "23. John B Sebastian– Rainbows All Over Your Blues",
-      "24. The Butterfield Blues Band*– Love March",
-      "25. Jimi Hendrix– Star Spangled Banner",
-      "26. Jimi Hendrix– Purple Haze & Instrumental Solo"
+    "types": [
+       "A MODIFIER 1",
+       "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "tracks": [
+          "01. John B Sebastian*– I Had A Dream",
+          "02. Canned Heat– Going Up The Country",
+          "03. Richie Havens– Freedom",
+          "04. Country Joe And The Fish– Rock & Soul Music",
+          "05. Arlo Guthrie– Coming Into Los Angeles",
+          "06. Sha-Na-Na*– At The Hop",
+          "07. Country Joe McDonald– The 'Fish' Cheer",
+          "08. Joan Baez– Drug Store Truck Drivin' Man",
+          "09. Joan Baez– Joe Hill",
+          "10. Crosby, Stills & Nash– Suite: Judy Blue Eyes",
+          "11. Crosby, Stills, Nash & Young– Sea Of Madness",
+          "12. Crosby, Stills, Nash & Young– Wooden Ships",
+          "13. The Who– We're Not Gonna Take It",
+          "14. Joe Cocker– With A Little Help From My Friends",
+          "15. No Artist– Rainstorm, Crowd Sounds, Announcements And General Hysteria",
+          "16. Santana– Soul Sacrifice",
+          "17. Ten Years After– I'm Going Home",
+          "18. Jefferson Airplane– Volunteers",
+          "19. Max Yazgur– Intervention",
+          "20. Sly & The Family Stone– Medley: Dance To The Music I Music Lover",
+          "21. Sly & The Family Stone– Higher",
+          "22. Sly & The Family Stone– I Want To Take You Higher",
+          "23. John B Sebastian– Rainbows All Over Your Blues",
+          "24. The Butterfield Blues Band*– Love March",
+          "25. Jimi Hendrix– Star Spangled Banner",
+          "26. Jimi Hendrix– Purple Haze & Instrumental Solo"
     ]
   },
   {
@@ -2263,21 +2391,30 @@
     ]
   },
   {
-    "genre": [
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
+    ],
+    "genres": [
+      "OST",
       "Alternative Rock",
       "Pop Rock"
     ],
-    "type": [
-      "Ost",
-      "Compilations"
-    ],
-    "md_cover": "images/md_41.jpg",
+    "md_cover": "images/md_faculty_empire.jpg",
     "albums": [
       {
         "title": "The Faculty",
         "artist": "Various",
         "year": "1999",
         "cover": "images/ost_the_faculty.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "OST",
+          "Alternative Rock"
+        ],
         "tracks": [
           "01. Another Brick In The Wall (Part 2) (Class of '99, Layne Staley, Tom Morello, Stephen P...)",
           "02. The Kids Aren't Alright (The Offspring)",
@@ -2298,6 +2435,15 @@
         "artist": "Various",
         "year": "1997",
         "cover": "images/ost_empire_records.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "OST",
+          "Alternative Rock",
+          "Pop Rock"
+        ],
         "tracks": [
           "13. Til I Hear It From You (Gin Blossoms)",
           "14. Video Killed The Radio Star (The Buggles)",
@@ -2329,40 +2475,47 @@
       "A MODIFIER 2"
     ],
     "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+      "Metal"
     ],
     "md_cover": "images/md_21.jpg",
     "title": "Best of the Beast",
     "artist": "Iron Maiden",
     "cover": "images/iron_maiden_best_of_the_beast.jpg",
-    "tracks": [
-      "01. Children Of The Damned",
-      "02. The Prisoner",
-      "03. Flight Of Icarus",
-      "04. Die With Your Boots On",
-      "05. The Trooper",
-      "06. 2 Minutes to Midnight",
-      "07. Powerslave",
-      "08. Sea of Madness",
-      "09. Heaven Can Wait",
-      "10. Moonchild",
-      "11. Infinite Dreams",
-      "12. Can I Play with Madness",
-      "13. The Evil That Men Do",
-      "14. Seventh Son of a Seventh Son",
-      "15. The Clairvoyant",
-      "16. Only the Good Die Young",
-      "17. Holy Smoke",
-      "18. From Here To Eternity",
-      "19. Afraid To Shoot Strangers",
-      "20. Fear Of The Dark",
-      "21. Transylvania",
-      "22. The Prophecy",
-      "23. Dance of Death",
-      "24. Killers",
-      "25. Sanctuary",
-      "26. The Writing on the Wall"
+    "types": [
+       "A MODIFIER 1",
+       "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "tracks": [
+          "01. Children Of The Damned",
+          "02. The Prisoner",
+          "03. Flight Of Icarus",
+          "04. Die With Your Boots On",
+          "05. The Trooper",
+          "06. 2 Minutes to Midnight",
+          "07. Powerslave",
+          "08. Sea of Madness",
+          "09. Heaven Can Wait",
+          "10. Moonchild",
+          "11. Infinite Dreams",
+          "12. Can I Play with Madness",
+          "13. The Evil That Men Do",
+          "14. Seventh Son of a Seventh Son",
+          "15. The Clairvoyant",
+          "16. Only the Good Die Young",
+          "17. Holy Smoke",
+          "18. From Here To Eternity",
+          "19. Afraid To Shoot Strangers",
+          "20. Fear Of The Dark",
+          "21. Transylvania",
+          "22. The Prophecy",
+          "23. Dance of Death",
+          "24. Killers",
+          "25. Sanctuary",
+          "26. The Writing on the Wall"
     ]
   },
   {
@@ -2371,39 +2524,48 @@
       "A MODIFIER 2"
     ],
     "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+      "Rock",
+      "Folk",
+      "Live"
     ],
     "md_cover": "images/md_20.jpg",
     "title": "Live from Mars",
     "artist": "Ben Harper",
     "cover": "images/ben_harper_live_from_mars.jpg",
-    "tracks": [
-      "01. Glory & Consequence",
-      "02. Excuse Me Mr.",
-      "03. Alone",
-      "04. Sexual Healing",
-      "05. Woman In You",
-      "06. Ground On Down",
-      "07. Steal My Kisses",
-      "08. Burn One Down",
-      "09. Mama's Got A Girlfriend Now",
-      "10. Welcome To The Cruel World",
-      "11. Forgiven",
-      "12. Medley: Faded/Whole Lotta Love",
-      "13. Waiting On An Angel",
-      "14. Roses From My Friends",
-      "15. Power Of The Gospel",
-      "16. Pleasure And Pain",
-      "17. Please Bleed",
-      "18. The Drugs Don't Work",
-      "19. In The Lord's Arms",
-      "20. Not Fire, Not Ice",
-      "21. Beloved One",
-      "22. Number Three",
-      "23. Walk Away",
-      "24. Another Lonely Day",
-      "25. Medley: Like A King/I'll Rise"
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
+        ],
+        "genres": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "tracks": [
+          "01. Glory & Consequence",
+          "02. Excuse Me Mr.",
+          "03. Alone",
+          "04. Sexual Healing",
+          "05. Woman In You",
+          "06. Ground On Down",
+          "07. Steal My Kisses",
+          "08. Burn One Down",
+          "09. Mama's Got A Girlfriend Now",
+          "10. Welcome To The Cruel World",
+          "11. Forgiven",
+          "12. Medley: Faded/Whole Lotta Love",
+          "13. Waiting On An Angel",
+          "14. Roses From My Friends",
+          "15. Power Of The Gospel",
+          "16. Pleasure And Pain",
+          "17. Please Bleed",
+          "18. The Drugs Don't Work",
+          "19. In The Lord's Arms",
+          "20. Not Fire, Not Ice",
+          "21. Beloved One",
+          "22. Number Three",
+          "23. Walk Away",
+          "24. Another Lonely Day",
+          "25. Medley: Like A King/I'll Rise"
     ]
   },
   {
@@ -2491,44 +2653,52 @@
     "title": "Greatest Film Songs",
     "artist": "Various",
     "cover": "images/greatest_film_songs.jpg",
-    "tracks": [
-      "01. Back to the Future - The power of love",
-      "02. Beverly Hills Cop - The heat is on",
-      "03. Lethal Weapon 3 - It's probably me",
-      "04. Ghostbusters - Main theme",
-      "05. Rocky IV - Living in America",
-      "06. Forrest Gump - Suite",
-      "07. Rambo - It's long road",
-      "08. Indiana Jones - Opening titles",
-      "09. Top Gun - Take me breath away",
-      "10. Rain Man - Leaving Wallbrook, on the road",
-      "11. Jurassic Park - Welcome to Jurassic Park",
-      "12. Home Alone - The house",
-      "13. Bagdad Cafe - Calling you",
-      "14. Ghost - Unchained melody",
-      "15. Gremlins - The gift",
-      "16. Total Recall - The dream",
-      "17. Lion King - Can you feel the love tonight",
-      "18. Mission - The mission",
-      "19. Who Framed Roger Rabbit - Why don't you do right?",
-      "20. Once Upon the Time in the West - One upon a time in the west",
-      "21. Robocop - Rock shop",
-      "22. Home Alone - Somewhere in my memory",
-      "23. Terminator 2 - Main title",
-      "24. Leon - Two ways out",
-      "25. Leon - Shape of my heart",
-      "26. Braveheart - Main theme",
-      "27. Bad Boys - Theme from Cops",
-      "28. Love Story - Main theme",
-      "29. The Godfather - The godfather waltz",
-      "30. The Blues Brothers - Think",
-      "31. Speed - Main theme",
-      "32. Men in Black - Main theme",
-      "33. Titanic - The portrait",
-      "34. Saving Private Ryan - ... Revisiting Normandy",
-      "35. American Beauty - American Beauty",
-      "36. Armageddon - I don't want to miss a thing",
-      "37. Requiem for a Dream - Main Theme"
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
+        ],
+        "genres": [
+          "OST",
+          "Variété"
+        ],
+        "tracks": [
+          "01. Back to the Future - The power of love",
+          "02. Beverly Hills Cop - The heat is on",
+          "03. Lethal Weapon 3 - It's probably me",
+          "04. Ghostbusters - Main theme",
+          "05. Rocky IV - Living in America",
+          "06. Forrest Gump - Suite",
+          "07. Rambo - It's long road",
+          "08. Indiana Jones - Opening titles",
+          "09. Top Gun - Take me breath away",
+          "10. Rain Man - Leaving Wallbrook, on the road",
+          "11. Jurassic Park - Welcome to Jurassic Park",
+          "12. Home Alone - The house",
+          "13. Bagdad Cafe - Calling you",
+          "14. Ghost - Unchained melody",
+          "15. Gremlins - The gift",
+          "16. Total Recall - The dream",
+          "17. Lion King - Can you feel the love tonight",
+          "18. Mission - The mission",
+          "19. Who Framed Roger Rabbit - Why don't you do right?",
+          "20. Once Upon the Time in the West - One upon a time in the west",
+          "21. Robocop - Rock shop",
+          "22. Home Alone - Somewhere in my memory",
+          "23. Terminator 2 - Main title",
+          "24. Leon - Two ways out",
+          "25. Leon - Shape of my heart",
+          "26. Braveheart - Main theme",
+          "27. Bad Boys - Theme from Cops",
+          "28. Love Story - Main theme",
+          "29. The Godfather - The godfather waltz",
+          "30. The Blues Brothers - Think",
+          "31. Speed - Main theme",
+          "32. Men in Black - Main theme",
+          "33. Titanic - The portrait",
+          "34. Saving Private Ryan - ... Revisiting Normandy",
+          "35. American Beauty - American Beauty",
+          "36. Armageddon - I don't want to miss a thing",
+          "37. Requiem for a Dream - Main Theme"
     ]
   },
   {
@@ -2625,20 +2795,28 @@
     ]
   },
   {
-    "genre": [
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
+    ],
+    "genres": [
       "Metal",
       "Pop Rock"
     ],
-    "type": [
-      "Compilations"
-    ],
-    "md_cover": "images/md_37.jpg",
+    "md_cover": "images/md_toto_scorpions.jpg",
     "albums": [
       {
         "title": "XX: 1977-1997",
         "artist": "Toto",
         "year": "1997",
         "cover": "images/toto_xx.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "Pop Rock"
+        ],
         "tracks": [
           "01. Goin' Home",
           "02. Tale of a Man",
@@ -2659,6 +2837,13 @@
         "artist": "Scorpions",
         "year": "1989",
         "cover": "images/scorpions_best_of.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "Metal"
+        ],
         "tracks": [
           "13. Rock you like a hurricane",
           "14. I can't explain",
@@ -2680,19 +2865,27 @@
     ]
   },
   {
-    "genre": [
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
+    ],
+    "genres": [
       "Rap"
     ],
-    "type": [
-      "Albums"
-    ],
-    "md_cover": "images/md_42.jpg",
+    "md_cover": "images/md_stomy_gangshow.jpg",
     "albums": [
       {
         "title": "Quelques balles de plus pour... le calibre qu'il te faut",
         "artist": "Stomy Bugsy",
         "year": "1998",
         "cover": "images/stomy_bugsy_calibre.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "Rap"
+        ],
         "tracks": [
           "01. Quand Bugsy et son gang dégomment (feat. Nèg'Marrons, Ärsenik & Hamed Daye)",
           "02. J'prie Dieu",
@@ -2715,6 +2908,13 @@
         "artist": "Gang Show Lapin",
         "year": "1999",
         "cover": "images/gang_show_mixomatose.jpg",
+        "types": [
+          "A MODIFIER 1",
+          "A MODIFIER 2"
+        ],
+        "genres": [
+          "Rap"
+        ],
         "tracks": [
           "15. Intro",
           "16. Qui veut quoi?",
@@ -2747,27 +2947,42 @@
     "title": "Les Débats de Gérard : Les OVNI, les Routiers et la CB, les Grèves",
     "artist": "La Dream Teaz",
     "cover": "images/debats_gerard_25.jpg",
-    "tracks": [
-      "01. Les OVNI",
-      "02. Les Routiers et la CB",
-      "03. Les grèves"
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
+    ],
+        "genres": [
+          "Humour"
+        ],
+        "tracks": [
+          "01. Les OVNI",
+          "02. Les Routiers et la CB",
+          "03. Les grèves"
     ]
   },
   {
-    "genre": [
-      "Humour"
+    "types": [
+      "A MODIFIER 1",
+      "A MODIFIER 2"
     ],
-    "type": [
-      "Compilations"
+    "genres": [
+      "Humour"
     ],
     "md_cover": "images/md_17.jpg",
     "title": "Les Débats de Gérard : Les 35 heures, l'Internet",
     "artist": "Gérard de Suresnes",
-    "tracks": [
-      "01. Love Thème from Paradise",
-      "02. Les 35 heures",
-      "03. Reunion",
-      "04. L'Internet"
+    "cover": "images/debats_gerard_17.jpg",
+    "types": [
+       "A MODIFIER 1",
+       "A MODIFIER 2"
+    ],
+    "genres": [
+       "Humour"
+        ],
+        "tracks": [
+          "01. Les 35 heures",
+          "02. L'Internet"
     ]
   }
 ]
+  
