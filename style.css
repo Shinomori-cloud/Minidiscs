@@ -446,7 +446,7 @@ body:has(.featured-container.hidden) main#app {
   text-align: center;
 }
 
-/* GRILLE DE BOUTONS TYPES (AJOUTÉ POUR FIXER L'AFFICHAGE) */
+/* GRILLE DE BOUTONS TYPES */
 .types-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -539,11 +539,11 @@ body:has(.featured-container.hidden) main#app {
   box-shadow: 0px 0px 0px #000;
 }
 
-/* BOUTONS D'ACTION (ÉDITION & SUPPRESSION SUR FICHE ET CARTES) */
-.action-buttons {
+/* BOUTONS D'ACTION (ÉDITION & SUPPRESSION) */
+.action-buttons, .md-admin-controls {
   display: flex;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .btn-edit, .btn-delete {
@@ -633,7 +633,7 @@ body:has(.featured-container.hidden) main#app {
   margin-bottom: 15px;
 }
 
-.modal-header h2 {
+.modal-header h2, .modal-header h3 {
   margin: 0;
   font-family: 'Righteous', cursive;
   font-size: 1.1rem;
