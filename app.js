@@ -487,7 +487,7 @@ function renderMDList(filters = {}, pushState = true) {
 
   updateSearchVisibility(true);
 
-  headerTitle.textContent = genre ? genre.toUpperCase() : (type ? type.toUpperCase() : "COLLECTION");
+  headerTitle.textContent = "MINIDISCS";
 
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
@@ -567,7 +567,7 @@ function openMD(index, pushState = true) {
   `;
 
   if (!md.albums || md.albums.length === 0) {
-    headerTitle.textContent = "PISTES";
+    headerTitle.textContent = "TITRES";
     if (pushState) history.pushState({ view: 'tracklist', mdIndex: index, isDirectTracks: true }, '', `#md-${index}`);
 
     let tracksHTML = '';
@@ -600,7 +600,7 @@ function openMD(index, pushState = true) {
     return;
   }
 
-  headerTitle.textContent = allMdGenres.join(' / ') || "ALBUMS";
+  headerTitle.textContent = "ALBUMS";
   if (pushState) history.pushState({ view: 'albums', mdIndex: index }, '', `#md-${index}`);
 
   let html = `<div class="list-container">${adminControls}`;
@@ -642,7 +642,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   const albumGenres = getAlbumGenres(album, md);
   const albumColor = getBorderColor(albumGenres);
 
-  headerTitle.textContent = "PISTES";
+  headerTitle.textContent = "TITRES";
   if (pushState) history.pushState({ view: 'tracklist', mdIndex, albumIndex }, '', `#md-${mdIndex}-album-${albumIndex}`);
 
   let tracksHTML = '';
