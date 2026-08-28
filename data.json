@@ -2008,8 +2008,8 @@
           "Rock"
         ],
         "type": [
-          "Compilation",
-          "Album"
+          "Compilations",
+          "Albums"
         ]
       },
       {
@@ -2067,7 +2067,7 @@
           "Blues"
         ],
         "type": [
-          "Compilation"
+          "Compilations"
         ]
       }
     ]
