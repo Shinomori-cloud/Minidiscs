@@ -47,29 +47,80 @@ function clearLocalBackup() {
 /* ==========================================
    GESTION DU BOUTON ET DE LA BARRE DE RECHERCHE
    ========================================== */
-if (searchBtn) {
-  searchBtn.addEventListener('click', () => {
-    if (searchInput) {
-      currentSearchQuery = searchInput.value.trim().toLowerCase();
+function toggleSearch() {
+  const topSearch = document.getElementById('top-search');
+  const searchInput = document.getElementById('top-search-input');
+  const fabBtn = document.getElementById('search-fab-btn');
+
+  if (!topSearch) return;
+
+  const isClosed = topSearch.classList.contains('closed');
+
+  if (!isClosed) {
+    topSearch.classList.add('closed');
+    if (fabBtn) fabBtn.textContent = '🔍';
+    if (currentSearchQuery !== '') {
+      currentSearchQuery = '';
+      if (searchInput) searchInput.value = '';
       renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
     }
-  });
+  } else {
+    topSearch.classList.remove('closed');
+    if (fabBtn) fabBtn.textContent = '✕';
+    if (searchInput) searchInput.focus();
+  }
 }
 
-if (searchInput) {
-  // Recherche en direct pendant la frappe
-  searchInput.addEventListener('input', (e) => {
-    currentSearchQuery = e.target.value.trim().toLowerCase();
-    renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
-  });
+function mdMatchesSearch(md, query) {
+  if (!query) return true;
+  const q = query.toLowerCase().trim();
 
-  // Déclenchement sur la touche Entrée
-  searchInput.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') {
-      currentSearchQuery = searchInput.value.trim().toLowerCase();
-      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
+  if (md.title && md.title.toLowerCase().includes(q)) return true;
+  if (md.artist && md.artist.toLowerCase().includes(q)) return true;
+
+  const genres = getMDAllGenres(md);
+  if (genres.some(g => g.toLowerCase().includes(q))) return true;
+
+  const types = getMDAllTypes(md);
+  if (types.some(t => t.toLowerCase().includes(q))) return true;
+
+  if (md.tracks && md.tracks.some(t => t.toLowerCase().includes(q))) return true;
+
+  if (md.albums && md.albums.length > 0) {
+    for (const album of md.albums) {
+      if (album.title && album.title.toLowerCase().includes(q)) return true;
+      if (album.artist && album.artist.toLowerCase().includes(q)) return true;
+      if (album.year && String(album.year).includes(q)) return true;
+      if (album.tracks && album.tracks.some(t => t.toLowerCase().includes(q))) return true;
     }
-  });
+  }
+
+  return false;
+}
+
+function onSearchInput(value) {
+  currentSearchQuery = value;
+  renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
+}
+
+function updateSearchVisibility(show) {
+  const fabBtn = document.getElementById('search-fab-btn');
+  const topSearch = document.getElementById('top-search');
+  const searchInput = document.getElementById('top-search-input');
+
+  if (show) {
+    if (fabBtn) fabBtn.classList.remove('hidden');
+  } else {
+    if (fabBtn) {
+      fabBtn.classList.add('hidden');
+      fabBtn.textContent = '🔍';
+    }
+    if (topSearch) {
+      topSearch.classList.add('closed');
+    }
+    currentSearchQuery = '';
+    if (searchInput) searchInput.value = '';
+  }
 }
 
 /* ==========================================
