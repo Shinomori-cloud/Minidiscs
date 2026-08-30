@@ -103,7 +103,7 @@ body:has(.featured-container.hidden)::before {
    ========================================== */
 header {
   position: fixed;
-  top: 50px;
+  top:40px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
@@ -168,7 +168,7 @@ body:has(.featured-container.hidden) .header-subtitle {
 
 /* Titre imposant sur la page d'accueil */
 body:has(.dashboard-container) .title-90s {
-  font-size: 3rem;
+  font-size: 3,5rem;
   margin: 4px 0;
 }
 
@@ -194,7 +194,7 @@ body:has(.dashboard-container) .title-90s {
    ========================================== */
 .featured-container {
   position: fixed;
-  top: 190px;
+  top: 170px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
