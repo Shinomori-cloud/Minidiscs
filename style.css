@@ -39,7 +39,7 @@ body::before {
   top: 0;
   left: 0;
   width: 100%;
-  height: 390px;
+  height: 350px;
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: no-repeat;
   background-size: cover;
@@ -168,7 +168,7 @@ body:has(.featured-container.hidden) .header-subtitle {
 
 /* Titre imposant sur la page d'accueil */
 body:has(.dashboard-container) .title-90s {
-  font-size: 3,5rem;
+  font-size: 4,5rem;
   margin: 4px 0;
 }
 
@@ -194,7 +194,7 @@ body:has(.dashboard-container) .title-90s {
    ========================================== */
 .featured-container {
   position: fixed;
-  top: 170px;
+  top: 140px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
