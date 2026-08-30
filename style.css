@@ -152,7 +152,7 @@ body:has(.featured-container.hidden) .header-subtitle {
 
 .title-90s {
   font-family: 'Righteous', cursive;
-  font-size: 3rem;
+  font-size: 2rem;
   text-transform: uppercase;
   
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 50%, #00f0ff 100%);
@@ -168,7 +168,7 @@ body:has(.featured-container.hidden) .header-subtitle {
 
 /* Titre imposant sur la page d'accueil */
 body:has(.dashboard-container) .title-90s {
-  font-size: 3.6rem;
+  font-size: 3rem;
   margin: 4px 0;
 }
 
