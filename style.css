@@ -150,6 +150,23 @@ body:has(.dashboard-container) header {
   margin: 0 !important;
 }
 
+/* Masqué par défaut partout */
+.header-subtitle {
+  display: none !important;
+}
+
+/* Affiché uniquement sur la page d'accueil */
+body:has(.featured-container:not(.hidden)) .header-subtitle {
+  display: block !important;
+  font-family: 'Righteous', cursive;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: #7b2cbf;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
 .title-90s {
   font-family: 'Righteous', cursive;
   font-size: 2rem;
