@@ -1081,6 +1081,12 @@ function injectPlannerHeaderBadge() {
   const header = document.querySelector('header') || document.querySelector('.header');
   if (!header) return;
 
+   // Centrage du titre principal
+  if (typeof headerTitle !== 'undefined' && headerTitle) {
+    headerTitle.style.textAlign = 'center';
+    headerTitle.style.flex = '1';
+  }
+
   let badge = document.getElementById('header-planner-badge');
   if (!badge) {
     badge = document.createElement('div');
@@ -1089,7 +1095,7 @@ function injectPlannerHeaderBadge() {
     // Position fixe sous le header global, avec son propre fond et son ombre
     badge.style.cssText = `
       position: fixed;
-      top: 120px;
+      top: 135px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 999;
