@@ -44,61 +44,52 @@
   </main>
 
   <!-- MODALE FORMULAIRE ADMIN (AJOUT ET ÉDITION) -->
-<div id="admin-modal" class="modal hidden">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main, #333);">＋ Ajouter un MiniDisc</h3>
-      <button class="close-btn" onclick="closeAdminModal()">&times;</button>
-    </div>
-
-    <form id="md-form">
-      <div class="form-group">
-        <label>Genre(s)</label>
-        <input type="text" id="md-genre" placeholder="ex: ROCK, SYNTHWAVE (séparés par virgule)" required>
+  <div id="admin-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main, #333);">＋ Ajouter un MiniDisc</h3>
+        <button class="close-btn" type="button" onclick="closeAdminModal()">&times;</button>
       </div>
 
-      <div class="form-group">
-        <label>Type(s) de MiniDisc</label>
-        <input type="text" id="md-type-tags" placeholder="ex: ALBUM, LIVE, COMPILATION (séparés par virgule)">
-      </div>
-
-      <div class="form-group">
-        <label>URL / Chemin Pochette MiniDisc</label>
-        <input type="text" id="md-cover" value="images/" placeholder="images/">
-      </div>
-
-      <div class="form-group">
-        <label>Structure du MiniDisc :</label>
-        <div class="radio-group">
-          <label><input type="radio" name="md-type" value="compil" checked onchange="toggleAdminType()"> Compilation</label>
-          <label><input type="radio" name="md-type" value="albums" onchange="toggleAdminType()"> Série d'albums</label>
-        </div>
-      </div>
-
-      <!-- VUE COMPILATION -->
-      <div id="section-compil">
+      <form id="md-form">
         <div class="form-group">
-          <label>Titre de la compilation</label>
-          <input type="text" id="compil-title" placeholder="ex: Best of 90s">
+          <label>Genre(s)</label>
+          <input type="text" id="md-genre" placeholder="ex: ROCK, SYNTHWAVE (séparés par virgule)" required>
         </div>
-        <div class="form-group">
-          <label>Artiste(s)</label>
-          <input type="text" id="compil-artist" placeholder="ex: Artistes Divers">
-        </div>
-        <div class="form-group">
-          <label>Pistes (une par ligne, sans numéro)</label>
-          <textarea id="compil-tracks" placeholder="Piste A&#10;Piste B"></textarea>
-        </div>
-      </div>
 
-      <!-- SECTION BOUTONS D'ACTION (SANS TÉLÉCHARGER JSON) -->
-      <div class="form-actions" style="display: flex; gap: 8px; margin-top: 15px;">
-        <button type="submit" class="btn-primary" style="flex: 1; margin-bottom: 0;">Enregistrer</button>
-        <button type="button" class="btn-secondary" onclick="closeAdminModal()">Annuler</button>
-      </div>
-    </form>
-  </div>
-</div>
+        <div class="form-group">
+          <label>Type(s) de MiniDisc</label>
+          <input type="text" id="md-type-tags" placeholder="ex: ALBUM, LIVE, COMPILATION (séparés par virgule)">
+        </div>
+
+        <div class="form-group">
+          <label>URL / Chemin Pochette MiniDisc</label>
+          <input type="text" id="md-cover" value="images/" placeholder="images/">
+        </div>
+
+        <div class="form-group">
+          <label>Structure du MiniDisc :</label>
+          <div class="radio-group">
+            <label><input type="radio" name="md-type" value="compil" checked onchange="toggleAdminType()"> Compilation</label>
+            <label><input type="radio" name="md-type" value="albums" onchange="toggleAdminType()"> Série d'albums</label>
+          </div>
+        </div>
+
+        <!-- VUE COMPILATION -->
+        <div id="section-compil">
+          <div class="form-group">
+            <label>Titre de la compilation</label>
+            <input type="text" id="compil-title" placeholder="ex: Best of 90s">
+          </div>
+          <div class="form-group">
+            <label>Artiste(s)</label>
+            <input type="text" id="compil-artist" placeholder="ex: Artistes Divers">
+          </div>
+          <div class="form-group">
+            <label>Pistes (une par ligne, sans numéro)</label>
+            <textarea id="compil-tracks" placeholder="Piste A&#10;Piste B"></textarea>
+          </div>
+        </div>
 
         <!-- VUE SÉRIE D'ALBUMS -->
         <div id="section-albums" class="hidden">
@@ -106,15 +97,12 @@
           <button type="button" class="btn-sub" onclick="addAdminAlbumBlock()">+ Ajouter un album</button>
         </div>
 
-        <div class="modal-actions" style="margin-top: 15px; display: flex; gap: 10px;">
-          <button type="button" class="btn-primary-modal" onclick="submitNewMD()" style="flex: 1;">Enregistrer</button>
-          <button type="button" class="btn-sub" onclick="closeAdminModal()" style="padding: 8px 12px;">Annuler</button>
+        <!-- BOUTONS D'ACTION DU FORMULAIRE -->
+        <div class="form-actions" style="display: flex; gap: 8px; margin-top: 15px;">
+          <button type="submit" class="btn-primary" style="flex: 1; margin-bottom: 0;">Enregistrer</button>
+          <button type="button" class="btn-secondary" onclick="closeAdminModal()">Annuler</button>
         </div>
       </form>
-
-      <div class="export-zone" style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px;">
-        <button class="btn-export" onclick="downloadUpdatedJSON()">💾 Télécharger data.json</button>
-      </div>
     </div>
   </div>
 
