@@ -1072,7 +1072,6 @@ function updatePlannerHeader() {
 }
 
 function clearPlannerHeaderInfo() {
-  // Retire l'encart du header quand on quitte la vue
   const badge = document.getElementById('header-planner-badge');
   if (badge) badge.remove();
 }
@@ -1085,14 +1084,37 @@ function injectPlannerHeaderBadge() {
   if (!badge) {
     badge = document.createElement('div');
     badge.id = 'header-planner-badge';
-    badge.className = 'planner-header-info'; // Utilise la classe configurée dans style.css
+    
+    // Position fixe dédiée sous le premier header, fond propre + flou
+    badge.style.cssText = `
+      position: fixed;
+      top: 115px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 2px solid #000000;
+      border-radius: 16px;
+      padding: 8px 16px;
+      box-shadow: 4px 4px 0px #000000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: calc(100% - 32px);
+      max-width: 568px;
+      box-sizing: border-box;
+    `;
     
     badge.innerHTML = `
       <span style="font-size: 0.85rem; font-weight: bold; color: #000000;">Durée sélectionnée :</span>
       <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
     `;
 
-    header.appendChild(badge);
+    // On l'insère DEHORS et APRÈS la balise header
+    header.after(badge);
   }
 }
 
@@ -1102,7 +1124,7 @@ function renderCompilPlanner(pushState = true) {
   if (typeof backBtn !== 'undefined' && backBtn) backBtn.classList.remove('hidden');
   if (typeof headerTitle !== 'undefined' && headerTitle) headerTitle.textContent = "PLANIFICATEUR";
 
-  // Injection du deuxième encart directement dans le header
+  // Injection du deuxième bloc sous le header principal
   injectPlannerHeaderBadge();
 
   if (typeof featuredContainer !== 'undefined' && featuredContainer) {
@@ -1139,7 +1161,7 @@ function renderCompilPlanner(pushState = true) {
   }
 
   app.innerHTML = `
-    <div style="padding-bottom: 90px; padding-top: 145px;">
+    <div style="padding-bottom: 90px; padding-top: 175px;">
       
       <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
