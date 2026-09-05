@@ -485,7 +485,7 @@ body:has(.featured-container.hidden) main#app {
 .dashboard-card {
   background-color: var(--card-bg);
   border-radius: 16px;
-  padding: 4px 12px;
+  padding: 6px 12px;
   border: 2px solid #000;
   box-shadow: 4px 4px 0px #000;
 }
@@ -560,7 +560,7 @@ body:has(.featured-container.hidden) main#app {
   justify-content: space-between;
   align-items: center;
   background: transparent;
-  padding: 2px 2px 2px 2px;
+  padding: 2px 5px 2px 5px;
   border: none;
   border-bottom: 0px solid rgba(0, 0, 0, 0.08);
   border-radius: 0;
