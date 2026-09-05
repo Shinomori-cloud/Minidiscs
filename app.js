@@ -847,7 +847,9 @@ function removeAdminAlbumBlock(button) {
   }
 }
 
-function submitNewMD() {
+function submitNewMD(e) {
+  if (e) e.preventDefault(); // Annule le rechargement natif de la page
+
   if (catalogData === null) return;
 
   const rawGenreInput = document.getElementById('md-genre').value.trim();
@@ -932,6 +934,9 @@ function submitNewMD() {
   closeAdminModal();
   renderDashboard(false);
 }
+
+// Écouteur d'événement sur la soumission du formulaire
+document.getElementById('md-form').addEventListener('submit', submitNewMD);
 
 function downloadUpdatedJSON() {
   if (!catalogData || catalogData.length === 0) {
