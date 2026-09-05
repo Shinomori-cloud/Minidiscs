@@ -492,9 +492,9 @@ function renderDashboard(pushState = true) {
         </button>
       </div>
 
-      <!-- NOUVELLE RANGÉE D'ACTIONS EN DESSOUS DE L'ENCART -->
+     <!-- NOUVELLE RANGÉE D'ACTIONS EN DESSOUS DE L'ENCART -->
       <div class="dashboard-actions-row">
-        <button class="action-btn-wide" onclick="alert('Fonctionnalité à venir !')">
+        <button class="action-btn-wide" onclick="renderCompilPlanner()">
           Créer une compilation
         </button>
         <button class="action-btn-wide" onclick="openAdminModal()">
@@ -961,4 +961,196 @@ function downloadUpdatedJSON() {
   clearLocalBackup();
   showToast("✅ Téléchargement réussi ! Sauvegarde réinitialisée.");
   renderDashboard(false);
+}
+
+/* ==========================================
+   PLANIFICATEUR DE COMPILATION & IDÉES
+   ========================================== */
+let selectedIdeaIndices = new Set();
+
+// Structure de stockage des idées dans le catalogue global
+function getIdeaList() {
+  if (!catalogData) return [];
+  // On stocke les idées dans une propriété globale attachée si absente
+  if (!window.ideaAlbums) {
+    window.ideaAlbums = [];
+  }
+  return window.ideaAlbums;
+}
+
+// Convertit du texte "hh:mm:ss" ou "mm:ss" en secondes totales
+function parseTimeToSeconds(timeStr) {
+  if (!timeStr) return 0;
+  const parts = timeStr.toString().trim().split(':').map(Number);
+  if (parts.some(isNaN)) return 0;
+
+  if (parts.length === 3) {
+    return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  } else if (parts.length === 2) {
+    return parts[0] * 60 + parts[1];
+  } else if (parts.length === 1) {
+    return parts[0] * 60; // si renseigné en minutes simples
+  }
+  return 0;
+}
+
+// Formatage des secondes en "Xh Ym Zs" ou "Ym Zs"
+function formatSecondsToDisplay(totalSec) {
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+
+  if (h > 0) {
+    return `${h}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
+  }
+  return `${m}m ${String(s).padStart(2, '0')}s`;
+}
+
+// Affichage de la page du planificateur
+function renderCompilPlanner(pushState = true) {
+  currentMD = null;
+  currentAlbum = null;
+  backBtn.classList.remove('hidden');
+  headerTitle.textContent = "PLANIFICATEUR";
+
+  if (featuredContainer) featuredContainer.classList.add('hidden');
+
+  if (pushState && window.location.hash !== '#planner') {
+    history.pushState({ view: 'planner' }, '', '#planner');
+  }
+
+  const ideas = getIdeaList();
+  
+  // Calcul de la durée totale sélectionnée
+  let totalSeconds = 0;
+  selectedIdeaIndices.forEach(idx => {
+    if (ideas[idx]) {
+      totalSeconds += parseTimeToSeconds(ideas[idx].duration);
+    }
+  });
+
+  const formattedTime = formatSecondsToDisplay(totalSeconds);
+  const isOver80Min = totalSeconds > 80 * 60;
+  const timeClass = isOver80Min ? 'compil-time-warning' : 'compil-time-ok';
+
+  let cardsHTML = '';
+  if (ideas.length === 0) {
+    cardsHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 30px; color: var(--text-sub);">Aucun album dans votre liste d'idées. Ajoutez-en avec le bouton ci-dessus !</p>`;
+  } else {
+    ideas.forEach((item, index) => {
+      const isSelected = selectedIdeaIndices.has(index);
+      cardsHTML += `
+        <div class="idea-card ${isSelected ? 'selected' : ''}" onclick="toggleIdeaSelection(${index})">
+          <img src="${item.cover || 'images/'}" class="idea-cover" alt="cover" onerror="this.src='images/default.jpg'">
+          <div class="idea-title" title="${item.title}">${item.title}</div>
+          <div class="idea-artist" title="${item.artist}">${item.artist}</div>
+          <div class="idea-duration">⏱️ ${item.duration}</div>
+        </div>
+      `;
+    });
+  }
+
+  app.innerHTML = `
+    <div style="padding: 10px 0;">
+      <!-- ENCART FIXE CALCULATEUR DE DURÉE -->
+      <div class="compil-banner">
+        <div class="compil-banner-header">
+          <span>Durée sélectionnée :</span>
+          <span class="compil-time-display ${timeClass}">${formattedTime} / 80m</span>
+        </div>
+        <div class="compil-actions">
+          <button class="btn-primary" style="flex:1; margin:0;" onclick="openIdeaModal()">＋ Ajouter un album</button>
+          <button class="btn-secondary" style="margin:0;" onclick="convertSelectedToMD()" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''}>
+            💾 Convertir en MiniDisc (${selectedIdeaIndices.size})
+          </button>
+          <button class="btn-sub" style="margin:0;" onclick="clearIdeaSelection()">Réinitialiser</button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+        <h3 style="margin: 0;">Albums disponibles (${ideas.length})</h3>
+      </div>
+
+      <div class="ideas-grid">
+        ${cardsHTML}
+      </div>
+    </div>
+  `;
+}
+
+// Basculer la sélection d'une carte
+function toggleIdeaSelection(index) {
+  if (selectedIdeaIndices.has(index)) {
+    selectedIdeaIndices.delete(index);
+  } else {
+    selectedIdeaIndices.add(index);
+  }
+  renderCompilPlanner(false);
+}
+
+function clearIdeaSelection() {
+  selectedIdeaIndices.clear();
+  renderCompilPlanner(false);
+}
+
+// Modale Ajout d'album dans la liste des idées
+function openIdeaModal() {
+  document.getElementById('idea-form').reset();
+  document.getElementById('idea-cover').value = "images/";
+  document.getElementById('idea-modal').classList.remove('hidden');
+}
+
+function closeIdeaModal() {
+  document.getElementById('idea-modal').classList.add('hidden');
+}
+
+function saveIdeaAlbum(e) {
+  e.preventDefault();
+  const title = document.getElementById('idea-title').value.trim();
+  const artist = document.getElementById('idea-artist').value.trim();
+  const genre = document.getElementById('idea-genre').value.trim();
+  const duration = document.getElementById('idea-duration').value.trim();
+  const cover = document.getElementById('idea-cover').value.trim();
+
+  const newIdea = { title, artist, genre, duration, cover };
+  
+  if (!window.ideaAlbums) window.ideaAlbums = [];
+  window.ideaAlbums.push(newIdea);
+
+  saveLocalBackup();
+  closeIdeaModal();
+  showToast("💡 Album ajouté aux idées !");
+  renderCompilPlanner(false);
+}
+
+// Convertir les albums sélectionnés directement en nouveau MiniDisc
+function convertSelectedToMD() {
+  if (selectedIdeaIndices.size === 0) return;
+
+  const ideas = getIdeaList();
+  const selectedAlbums = Array.from(selectedIdeaIndices).map(i => ideas[i]);
+
+  // Préparer un nouveau MiniDisc type "Série d'albums"
+  const newMD = {
+    genre: selectedAlbums[0].genre ? [selectedAlbums[0].genre] : ['DIVERS'],
+    type: ['ALBUM'],
+    md_cover: selectedAlbums[0].cover || 'images/',
+    albums: selectedAlbums.map(a => ({
+      title: a.title,
+      artist: a.artist,
+      genre: a.genre ? [a.genre] : [],
+      cover: a.cover,
+      tracks: [] // Les pistes pourront être complétées plus tard
+    }))
+  };
+
+  catalogData.push(newMD);
+
+  // Supprimer les albums convertis de la liste des idées
+  window.ideaAlbums = ideas.filter((_, idx) => !selectedIdeaIndices.has(idx));
+  selectedIdeaIndices.clear();
+
+  saveLocalBackup();
+  showToast("🎉 Albums convertis en MiniDisc avec succès !");
+  renderDashboard(true);
 }
