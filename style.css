@@ -268,22 +268,28 @@ body:has(.dashboard-container) .featured-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 8px;
-  padding: 0 2px;
-  /* Génère une ombre portante large et diffuse sur tout le bloc du titre */
-  filter: drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.95));
+  margin-bottom: 10px;
+  padding: 4px 14px;
+  
+  /* Cartouche sombre dédié uniquement au titre */
+  background: rgba(24, 21, 40, 0.9);
+  border: 1.5px solid #ff007f;
+  border-radius: 8px;
+  box-shadow: 2px 2px 0px #000;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .featured-title {
   font-family: 'Righteous', cursive;
-  font-size: 0.85rem;
-  letter-spacing: 2px;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
   color: #ffb703;
   text-transform: uppercase;
   text-align: center;
-  /* Sans contour ni text-shadow, uniquement la couleur d'origine */
+  margin: 0;
 }
-
 .featured-grid {
   display: flex;
   justify-content: center;
