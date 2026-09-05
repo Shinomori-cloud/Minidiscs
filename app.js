@@ -1013,7 +1013,6 @@ function getIdeaList() {
   return window.ideaAlbums;
 }
 
-// Support de "HH:MM:SS", "MM:SS" ou minutes simples
 function parseTimeToSeconds(timeStr) {
   if (!timeStr) return 0;
   const parts = timeStr.toString().trim().split(':').map(Number);
@@ -1040,7 +1039,7 @@ function formatSecondsToDisplay(totalSec) {
   return `${m}m ${String(s).padStart(2, '0')}s`;
 }
 
-// Mise à jour instantanée du DOM sans clignotement
+// Mise à jour ultra-rapide du bandeau uniquement
 function updatePlannerHeader() {
   const ideas = getIdeaList();
   let totalSeconds = 0;
@@ -1056,11 +1055,7 @@ function updatePlannerHeader() {
   const displayEl = document.querySelector('.compil-time-display');
   if (displayEl) {
     displayEl.textContent = `${formattedTime} / 148m`;
-    if (isOverLimit) {
-      displayEl.style.color = '#e63946'; // Rouge si dépassement
-    } else {
-      displayEl.style.color = '#06d6a0'; // Vert si OK
-    }
+    displayEl.style.color = isOverLimit ? '#e63946' : '#06d6a0';
   }
 
   const convertBtn = document.querySelector('.compil-actions .btn-secondary');
@@ -1102,8 +1097,8 @@ function renderCompilPlanner(pushState = true) {
     ideas.forEach((item, index) => {
       const isSelected = selectedIdeaIndices.has(index);
       cardsHTML += `
-        <div class="idea-card ${isSelected ? 'selected' : ''}" onclick="toggleIdeaSelection(event, ${index})">
-          <button type="button" class="idea-delete-btn" onclick="deleteIdeaAlbum(event, ${index})" title="Supprimer cet album">🗑️</button>
+        <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
+          <button type="button" class="idea-delete-btn" data-delete="${index}" title="Supprimer cet album">🗑️</button>
           <img src="${item.cover || 'images/'}" class="idea-cover" alt="cover" onerror="this.src='images/default.jpg'">
           <div class="idea-title" title="${item.title}">${item.title}</div>
           <div class="idea-artist" title="${item.artist}">${item.artist}</div>
@@ -1133,15 +1128,43 @@ function renderCompilPlanner(pushState = true) {
         <h3 class="planner-text-white" style="margin: 0;">Albums disponibles (${ideas.length})</h3>
       </div>
 
-      <div class="ideas-grid">
+      <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
       </div>
     </div>
   `;
+
+  // Gestionnaire de clics unique sur la grille (évite tout rechargement / clignotement)
+  const gridContainer = document.getElementById('ideas-grid-container');
+  if (gridContainer) {
+    gridContainer.addEventListener('click', (e) => {
+      // Si clic sur le bouton de suppression
+      const deleteBtn = e.target.closest('[data-delete]');
+      if (deleteBtn) {
+        e.stopPropagation();
+        const index = parseInt(deleteBtn.getAttribute('data-delete'), 10);
+        deleteIdeaAlbum(index);
+        return;
+      }
+
+      // Si clic sur la carte
+      const card = e.target.closest('.idea-card');
+      if (card) {
+        const index = parseInt(card.getAttribute('data-index'), 10);
+        if (selectedIdeaIndices.has(index)) {
+          selectedIdeaIndices.delete(index);
+          card.classList.remove('selected');
+        } else {
+          selectedIdeaIndices.add(index);
+          card.classList.add('selected');
+        }
+        updatePlannerHeader();
+      }
+    });
+  }
 }
 
-function deleteIdeaAlbum(event, index) {
-  event.stopPropagation();
+function deleteIdeaAlbum(index) {
   const ideas = getIdeaList();
   if (!ideas[index]) return;
 
@@ -1159,19 +1182,6 @@ function deleteIdeaAlbum(event, index) {
     showToast("🗑️ Album supprimé des idées");
     renderCompilPlanner(false);
   }
-}
-
-// Bascule instantanée de la classe .selected sur l'élément cliqué sans re-rendre la page
-function toggleIdeaSelection(event, index) {
-  const cardElement = event.currentTarget;
-  if (selectedIdeaIndices.has(index)) {
-    selectedIdeaIndices.delete(index);
-    cardElement.classList.remove('selected');
-  } else {
-    selectedIdeaIndices.add(index);
-    cardElement.classList.add('selected');
-  }
-  updatePlannerHeader();
 }
 
 function clearIdeaSelection() {
