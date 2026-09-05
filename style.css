@@ -21,7 +21,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text-main);
   padding: 16px;
-  max-width: 225px;
+  max-width: 600px;
   margin: 0 auto;
 
   background-image: url('/Minidiscs/images/pattern.jpg');
