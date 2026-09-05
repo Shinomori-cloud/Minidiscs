@@ -449,9 +449,9 @@ body:has(.featured-container.hidden) main#app {
   align-items: baseline;
   justify-content: center;
   gap: 8px;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
   border-bottom: 1px solid var(--border-color);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .stat-number {
@@ -474,16 +474,16 @@ body:has(.featured-container.hidden) main#app {
   font-size: 0.65rem;
   letter-spacing: 1.5px;
   color: var(--text-sub);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   text-align: center;
 }
 
-/* GRILLE DE BOUTONS TYPES */
-.types-grid {
+/* GRILLE DE BOUTONS TYPES & GENRES */
+.types-grid, .genres-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
 .type-btn {
@@ -505,13 +505,6 @@ body:has(.featured-container.hidden) main#app {
 .type-btn:active {
   transform: translate(1px, 1px);
   box-shadow: 0px 0px 0px #000;
-}
-
-.genres-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-  margin-bottom: 12px;
 }
 
 .genre-badge {
@@ -563,7 +556,6 @@ body:has(.featured-container.hidden) main#app {
   box-shadow: 2px 2px 0px #000;
   transition: transform 0.1s ease;
   touch-action: manipulation;
-  margin-bottom: 10px;
 }
 
 .btn-primary:active {
@@ -571,7 +563,53 @@ body:has(.featured-container.hidden) main#app {
   box-shadow: 0px 0px 0px #000;
 }
 
-/* BOUTONS D'ACTION (ÉDITION & SUPPRESSION) */
+/* ==========================================
+   RANGÉE D'ACTIONS ACCUEIL (3 BOUTONS)
+   ========================================== */
+.dashboard-actions-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.action-btn-wide {
+  flex: 2; /* Deux fois plus large que le bouton JSON */
+  background-color: #ffffff;
+  color: var(--text-main);
+  border: 2px solid #000;
+  padding: 8px 6px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+  text-align: center;
+  transition: transform 0.1s ease;
+}
+
+.action-btn-json {
+  flex: 1; /* Demi-largeur */
+  border: 2px solid #000;
+  padding: 8px 4px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+  text-align: center;
+  transition: transform 0.1s ease, background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.action-btn-wide:active, .action-btn-json:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+/* ==========================================
+   BOUTONS D'ACTION (ÉDITION & SUPPRESSION)
+   ========================================== */
 .action-buttons, .md-admin-controls {
   display: flex;
   gap: 8px;
@@ -600,32 +638,6 @@ body:has(.featured-container.hidden) main#app {
 }
 
 .btn-edit:active, .btn-delete:active {
-  transform: translate(1px, 1px);
-  box-shadow: 0px 0px 0px #000;
-}
-
-/* BOUTON D'AJOUT ADMIN (Pied de carte Dashboard) */
-.dashboard-footer {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 8px;
-  border-top: 1px dashed var(--border-color);
-}
-
-.btn-add-md {
-  background-color: #f1f5f9;
-  color: #7b2cbf;
-  border: 1.5px solid #000;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-weight: 800;
-  font-size: 0.78rem;
-  cursor: pointer;
-  box-shadow: 1.5px 1.5px 0px #000;
-  transition: transform 0.1s ease;
-}
-
-.btn-add-md:active {
   transform: translate(1px, 1px);
   box-shadow: 0px 0px 0px #000;
 }
@@ -751,32 +763,13 @@ body:has(.featured-container.hidden) main#app {
   margin-bottom: 12px;
 }
 
-.btn-primary-modal {
-  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
-  color: #ffffff;
+.btn-secondary {
+  background: #f1f5f9;
+  color: var(--text-main);
   border: 2px solid #000;
-  padding: 12px;
-  border-radius: 8px;
-  width: 100%;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 2px 2px 0px #000;
-}
-
-.export-zone {
-  margin-top: 15px;
-  border-top: 2px solid var(--border-color);
-  padding-top: 12px;
-}
-
-.btn-export {
-  background: var(--export-color);
-  color: #000000;
-  border: 2px solid #000;
-  padding: 12px;
-  border-radius: 8px;
-  width: 100%;
-  font-weight: 800;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 700;
   cursor: pointer;
   box-shadow: 2px 2px 0px #000;
 }
