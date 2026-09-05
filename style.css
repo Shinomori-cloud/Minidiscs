@@ -256,7 +256,7 @@ body:has(.dashboard-container) .title-90s {
 
 /* Redescend la sélection uniquement sur l'accueil */
 body:has(.dashboard-container) .featured-container {
-  top: 200px;
+  top: 140px;
 }
 
 .featured-header {
