@@ -1062,3 +1062,13 @@ header {
 .planner-header-info.hidden {
   display: none !important;
 }
+
+/* Nouvelle disposition intégrée pour la Sélection du moment */
+.featured-container-inline {
+  margin-top: 16px;
+  background: linear-gradient(135deg, #181528 0%, #0d0b18 100%);
+  border: 1.5px solid #ff007f;
+  border-radius: 12px;
+  padding: 10px 12px 12px 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
