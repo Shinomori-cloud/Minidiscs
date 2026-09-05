@@ -522,8 +522,9 @@ function renderDashboard(pushState = true) {
       <!-- 1. BLOC TOP : COMPTEUR & RÉPARTITION PAR TYPE -->
       <div class="dashboard-card">
         <div class="dashboard-stat-main" style="padding: 4px 0 8px 0;">
+         <span class="stat-label" style="font-size: 0.75rem;">Collections de</span>
          <span class="stat-number" style="font-size: 1.2rem; line-height: 1;">${totalMD}</span>
-         <span class="stat-label" style="font-size: 0.75rem;">MiniDiscs dans la collection</span>
+         <span class="stat-label" style="font-size: 0.75rem;">MiniDiscs</span>
         </div>
         <div class="genres-grid">${typeBadgesHTML}</div>
       </div>
