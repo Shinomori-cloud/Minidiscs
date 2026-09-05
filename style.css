@@ -206,19 +206,22 @@ body:has(.dashboard-container) .title-90s {
 
 /* ENCART DU PLANIFICATEUR DANS LE HEADER */
 .planner-header-info {
-  background: #111;
-  color: #fff;
-  border: 2px solid #000;
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 0.85rem;
-  font-family: 'Righteous', cursive;
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  border-radius: 20px !important;
+  padding: 8px 16px !important;
+  font-size: 0.9rem !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
-  gap: 8px;
-  box-shadow: 2px 2px 0px #000;
-  margin-top: 2px;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  box-shadow: 3px 3px 0px #000 !important;
+  margin-top: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .planner-header-info.hidden {
