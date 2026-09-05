@@ -1042,6 +1042,32 @@ function formatSecondsToDisplay(totalSec) {
   return `${m}m ${String(s).padStart(2, '0')}s`;
 }
 
+// Met à jour la durée et les boutons sans recharger la page
+function updatePlannerHeader() {
+  const ideas = getIdeaList();
+  let totalSeconds = 0;
+  selectedIdeaIndices.forEach(idx => {
+    if (ideas[idx]) {
+      totalSeconds += parseTimeToSeconds(ideas[idx].duration);
+    }
+  });
+
+  const formattedTime = formatSecondsToDisplay(totalSeconds);
+  const isOverLimit = totalSeconds > (148 * 60);
+  
+  const displayEl = document.querySelector('.compil-time-display');
+  if (displayEl) {
+    displayEl.textContent = `${formattedTime} / 148m`;
+    displayEl.className = `compil-time-display ${isOverLimit ? 'compil-time-warning' : 'compil-time-ok'}`;
+  }
+
+  const convertBtn = document.querySelector('.compil-actions .btn-secondary');
+  if (convertBtn) {
+    convertBtn.disabled = selectedIdeaIndices.size === 0;
+    convertBtn.textContent = `💾 Convertir (${selectedIdeaIndices.size})`;
+  }
+}
+
 // Affichage de la page du planificateur
 function renderCompilPlanner(pushState = true) {
   currentMD = null;
@@ -1057,7 +1083,6 @@ function renderCompilPlanner(pushState = true) {
 
   const ideas = getIdeaList();
   
-  // Calcul de la durée totale sélectionnée
   let totalSeconds = 0;
   selectedIdeaIndices.forEach(idx => {
     if (ideas[idx]) {
@@ -1066,8 +1091,7 @@ function renderCompilPlanner(pushState = true) {
   });
 
   const formattedTime = formatSecondsToDisplay(totalSeconds);
-  // Limite fixée à 148 minutes (74 min x 2 en LP2)
-  const isOverLimit = totalSeconds > 148 * 60;
+  const isOverLimit = totalSeconds > (148 * 60);
   const timeClass = isOverLimit ? 'compil-time-warning' : 'compil-time-ok';
 
   let cardsHTML = '';
@@ -1077,7 +1101,7 @@ function renderCompilPlanner(pushState = true) {
     ideas.forEach((item, index) => {
       const isSelected = selectedIdeaIndices.has(index);
       cardsHTML += `
-        <div class="idea-card ${isSelected ? 'selected' : ''}" onclick="toggleIdeaSelection(${index})">
+        <div class="idea-card ${isSelected ? 'selected' : ''}" onclick="toggleIdeaSelection(${index}, this)">
           <button type="button" class="idea-delete-btn" onclick="deleteIdeaAlbum(event, ${index})" title="Supprimer cet album">🗑️</button>
           <img src="${item.cover || 'images/'}" class="idea-cover" alt="cover" onerror="this.src='images/default.jpg'">
           <div class="idea-title" title="${item.title}">${item.title}</div>
@@ -1090,7 +1114,6 @@ function renderCompilPlanner(pushState = true) {
 
   app.innerHTML = `
     <div>
-      <!-- ENCART FIXE CALCULATEUR DE DURÉE -->
       <div class="compil-banner">
         <div class="compil-banner-header">
           <span style="color:#222;">Durée sélectionnée :</span>
@@ -1125,7 +1148,6 @@ function deleteIdeaAlbum(event, index) {
   if (confirm(`Supprimer "${ideas[index].title}" de vos idées ?`)) {
     ideas.splice(index, 1);
     
-    // Mise à jour des index sélectionnés après suppression
     const updatedIndices = new Set();
     selectedIdeaIndices.forEach(i => {
       if (i > index) updatedIndices.add(i - 1);
@@ -1139,14 +1161,16 @@ function deleteIdeaAlbum(event, index) {
   }
 }
 
-// Basculer la sélection d'une carte
-function toggleIdeaSelection(index) {
+// Basculer la sélection d'une carte instantanément sans réafficher toute la page
+function toggleIdeaSelection(index, element) {
   if (selectedIdeaIndices.has(index)) {
     selectedIdeaIndices.delete(index);
+    element.classList.remove('selected');
   } else {
     selectedIdeaIndices.add(index);
+    element.classList.add('selected');
   }
-  renderCompilPlanner(false);
+  updatePlannerHeader();
 }
 
 function clearIdeaSelection() {
@@ -1206,7 +1230,6 @@ function convertSelectedToMD() {
 
   catalogData.push(newMD);
 
-  // Retirer les albums convertis du tableau d'idées
   window.ideaAlbums = ideas.filter((_, idx) => !selectedIdeaIndices.has(idx));
   selectedIdeaIndices.clear();
 
