@@ -1085,12 +1085,35 @@ function injectPlannerHeaderBadge() {
   if (!badge) {
     badge = document.createElement('div');
     badge.id = 'header-planner-badge';
-    badge.style.cssText = 'margin-top: 10px; background: #ffffff; border: 2px solid #000; border-radius: 30px; padding: 8px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3), 4px 4px 0px #000; display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 420px; width: 100%; margin-left: auto; margin-right: auto;';
-    badge.innerHTML = `
-      <span style="font-size: 0.9rem; font-weight: bold; color: #000;">Durée sélectionnée :</span>
-      <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.15rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
+    
+    // Position fixe sous le header global, avec son propre fond et son ombre
+    badge.style.cssText = `
+      position: fixed;
+      top: 85px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      background: #ffffff;
+      border: 3px solid #000000;
+      border-radius: 20px;
+      padding: 10px 20px;
+      box-shadow: 4px 4px 0px #000000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: calc(100% - 30px);
+      max-width: 500px;
+      box-sizing: border-box;
     `;
-    header.appendChild(badge);
+    
+    badge.innerHTML = `
+      <span style="font-size: 0.9rem; font-weight: bold; color: #000000;">Durée sélectionnée :</span>
+      <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.1rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
+    `;
+
+    // On l'insère DEHORS et APRÈS la balise header
+    header.after(badge);
   }
 }
 
