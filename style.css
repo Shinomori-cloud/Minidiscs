@@ -65,15 +65,15 @@ body:has(.dashboard-container)::before {
 /* CACHE SPÉCIFIQUE POUR LE PLANIFICATEUR (Couvre les 2 encarts) */
 body:has(#header-planner-badge)::before {
   height: 230px !important;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 210px, transparent 230px) !important;
-  mask-image: linear-gradient(to bottom, black 0px, black 210px, transparent 230px) !important;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 200px, transparent 230px) !important;
+  mask-image: linear-gradient(to bottom, black 0px, black 200px, transparent 230px) !important;
 }
 
 /* RÉDUCTION DU CACHE SUR LES AUTRES PAGES SECONDAIRES */
 body:has(.featured-container.hidden):not(:has(#header-planner-badge))::before {
-  height: 160px;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 150px, transparent 160px);
-  mask-image: linear-gradient(to bottom, black 0px, black 150px, transparent 160px);
+  height: 170px;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 150px, transparent 170px);
+  mask-image: linear-gradient(to bottom, black 0px, black 150px, transparent 170px);
 }
 /* ==========================================
    BARRE DE RECHERCHE DÉPLOYABLE EN HAUT
