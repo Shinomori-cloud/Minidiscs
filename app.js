@@ -563,11 +563,14 @@ function renderDashboard(pushState = true) {
     </div>
   `;
 
-  // Injection du contenu de la sélection du moment dans son nouveau conteneur
-  if (typeof renderFeaturedInElement === 'function') {
-    renderFeaturedInElement('featured-grid-inline');
-  } else if (typeof renderFeatured === 'function') {
+ // Génère la sélection dans son conteneur d'origine puis déplace le contenu
+  if (typeof renderFeatured === 'function') {
     renderFeatured();
+    const oldGrid = document.querySelector('.featured-grid:not(#featured-grid-inline)') || document.getElementById('featured-grid');
+    const newGrid = document.getElementById('featured-grid-inline');
+    if (oldGrid && newGrid) {
+      newGrid.innerHTML = oldGrid.innerHTML;
+    }
   }
 
   window.scrollTo(0, 0);
