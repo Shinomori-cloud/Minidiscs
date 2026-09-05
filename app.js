@@ -454,9 +454,9 @@ function renderDashboard(pushState = true) {
     return;
   }
 
+  // Masque le conteneur absolu externe s'il existe pour privilégier l'injection directe
   if (typeof featuredContainer !== 'undefined' && featuredContainer) {
-    featuredContainer.classList.remove('hidden');
-    renderFeatured();
+    featuredContainer.classList.add('hidden');
   }
 
   if (pushState && window.location.hash !== '#dashboard') {
@@ -493,31 +493,62 @@ function renderDashboard(pushState = true) {
     `;
   });
 
+  // Récupération dynamique du HTML pour la Sélection du Moment
+  let featuredHTML = '';
+  if (typeof getFeaturedHTML === 'function') {
+    featuredHTML = getFeaturedHTML();
+  } else {
+    // Structure de secours si la fonction dédiée n'existe pas encore
+    featuredHTML = `
+      <div class="featured-container-inline">
+        <div class="featured-header">
+          <div class="featured-title">SÉLECTION DU MOMENT</div>
+        </div>
+        <div class="featured-grid" id="featured-grid-inline">
+          <!-- Les vignettes de la sélection -->
+        </div>
+      </div>
+    `;
+  }
+
   // État du bouton JSON (Vert si à jour, Rouge/Orange si modif en attente)
   const jsonBtnStyle = (typeof hasUnsavedChanges !== 'undefined' && hasUnsavedChanges) 
     ? 'background-color: #e63946; color: #fff;' 
     : 'background-color: #06d6a0; color: #000;';
 
   app.innerHTML = `
-    <div class="dashboard-container">
+    <div class="dashboard-container" style="padding-top: 130px; padding-bottom: 90px;">
+      
+      <!-- 1. BLOC TOP : COMPTEUR & RÉPARTITION PAR TYPE -->
       <div class="dashboard-card">
         <div class="dashboard-stat-main">
           <span class="stat-number">${totalMD}</span>
           <span class="stat-label">MiniDiscs dans la collection</span>
         </div>
-        
-        <div class="dashboard-section-title">RÉPARTITION PAR TYPE</div>
+        <div class="dashboard-section-title" style="margin-top: 10px;">RÉPARTITION PAR TYPE</div>
         <div class="genres-grid">${typeBadgesHTML}</div>
-
-        <div class="dashboard-section-title" style="margin-top: 10px;">RÉPARTITION PAR GENRE</div>
-        <div class="genres-grid">${genreBadgesHTML}</div>
-
-        <button class="btn-primary" style="margin-top: 8px; margin-bottom: 0;" onclick="renderMDList({})">
-          VOIR TOUS LES MINIDISCS &rarr;
-        </button>
       </div>
 
-     <!-- NOUVELLE RANGÉE D'ACTIONS EN DESSOUS DE L'ENCART -->
+      <!-- 2. BLOC MILIEU : SÉLECTION DU MOMENT -->
+      <div class="featured-container-inline">
+        <div class="featured-header">
+          <div class="featured-title">SÉLECTION DU MOMENT</div>
+        </div>
+        <div class="featured-grid" id="featured-grid-inline"></div>
+      </div>
+
+      <!-- 3. BLOC BAS : RÉPARTITION PAR GENRE -->
+      <div class="dashboard-card" style="margin-top: 16px;">
+        <div class="dashboard-section-title">RÉPARTITION PAR GENRE</div>
+        <div class="genres-grid">${genreBadgesHTML}</div>
+      </div>
+
+      <!-- 4. BOUTON PRINCIPAL -->
+      <button class="btn-primary" style="margin-top: 16px; margin-bottom: 20px; width: 100%;" onclick="renderMDList({})">
+        VOIR TOUS LES MINIDISCS &rarr;
+      </button>
+
+      <!-- 5. BARRE D'ACTIONS -->
       <div class="dashboard-actions-row">
         <button class="action-btn-wide" onclick="renderCompilPlanner()">
           Créer une compilation
@@ -531,6 +562,14 @@ function renderDashboard(pushState = true) {
       </div>
     </div>
   `;
+
+  // Injection du contenu de la sélection du moment dans son nouveau conteneur
+  if (typeof renderFeaturedInElement === 'function') {
+    renderFeaturedInElement('featured-grid-inline');
+  } else if (typeof renderFeatured === 'function') {
+    renderFeatured();
+  }
+
   window.scrollTo(0, 0);
 }
 
