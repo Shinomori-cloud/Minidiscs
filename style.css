@@ -594,7 +594,7 @@ body:has(.featured-container.hidden) main#app {
    ========================================== */
 .dashboard-actions-row {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   margin-top: 6px;
   width: 100%;
 }
