@@ -1160,7 +1160,7 @@ function renderCompilPlanner(pushState = true) {
   }
 
   app.innerHTML = `
-    <div style="padding-bottom: 90px; padding-top: 300px;">
+    <div style="padding-bottom: 90px; padding-top: 160px;">
       
       <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
