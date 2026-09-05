@@ -11,7 +11,6 @@
 </head>
 <body>
 
-  <!-- BARRE DE RECHERCHE DÉPLOYABLE EN HAUT -->
   <div id="search-bar" class="search-bar top-search closed">
     <input 
       type="search" 
@@ -21,16 +20,15 @@
     >
   </div>
 
-  <!-- HEADER FIXE RETRO 90S -->
   <header>
     <button id="back-btn" class="back-btn hidden">&larr;</button>
     <div class="header-title-container">
       <div class="header-subtitle">COLLECTION</div>
       <div id="header-title" class="title-90s">MINIDISCS</div>
     </div>
+    <div id="planner-header-info" class="planner-header-info hidden"></div>
   </header>
 
-  <!-- SELECTION DU MOMENT (ACCUEIL) -->
   <div id="featured-container" class="featured-container">
     <div class="featured-header">
       <span class="featured-title">SÉLECTION DU MOMENT</span>
@@ -38,12 +36,9 @@
     <div id="featured-grid" class="featured-grid"></div>
   </div>
 
-  <!-- APPLICATION PRINCIPALE -->
   <main id="app">
-    <!-- Le contenu est généré dynamiquement par app.js -->
-  </main>
+    </main>
 
-  <!-- MODALE FORMULAIRE ADMIN (AJOUT ET ÉDITION) -->
   <div id="admin-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
@@ -75,7 +70,6 @@
           </div>
         </div>
 
-        <!-- VUE COMPILATION -->
         <div id="section-compil">
           <div class="form-group">
             <label>Titre de la compilation</label>
@@ -91,71 +85,4 @@
           </div>
         </div>
 
-        <!-- VUE SÉRIE D'ALBUMS -->
-        <div id="section-albums" class="hidden">
-          <div id="albums-container"></div>
-          <button type="button" class="btn-sub" onclick="addAdminAlbumBlock()">+ Ajouter un album</button>
-        </div>
-
-        <!-- BOUTONS D'ACTION DU FORMULAIRE -->
-        <div class="form-actions" style="display: flex; gap: 8px; margin-top: 15px;">
-          <button type="submit" class="btn-primary" style="flex: 1; margin-bottom: 0;">Enregistrer</button>
-          <button type="button" class="btn-secondary" onclick="closeAdminModal()">Annuler</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODALE NOUVEL ALBUM IDÉE / À VENIR -->
-  <div id="idea-modal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main, #333);">＋ Ajouter un album à l'idée de compil</h3>
-        <button class="close-btn" type="button" onclick="closeIdeaModal()">&times;</button>
-      </div>
-
-      <form id="idea-form" onsubmit="saveIdeaAlbum(event)">
-        <div class="form-group">
-          <label>Titre de l'album</label>
-          <input type="text" id="idea-title" placeholder="ex: Discovery" required>
-        </div>
-
-        <div class="form-group">
-          <label>Artiste</label>
-          <input type="text" id="idea-artist" placeholder="ex: Daft Punk" required>
-        </div>
-
-        <div class="form-group">
-          <label>Genre(s)</label>
-          <input type="text" id="idea-genre" placeholder="ex: ELECTRONIC, HOUSE">
-        </div>
-
-        <div class="form-group">
-          <label>Durée (ex: 45:30 ou 1:02:15)</label>
-          <input type="text" id="idea-duration" placeholder="mm:ss ou hh:mm:ss" required>
-        </div>
-
-        <div class="form-group">
-          <label>Pochette Album</label>
-          <input type="text" id="idea-cover" value="images/" placeholder="images/">
-        </div>
-
-        <div class="form-actions" style="display: flex; gap: 8px; margin-top: 15px;">
-          <button type="submit" class="btn-primary" style="flex: 1; margin-bottom: 0;">Enregistrer</button>
-          <button type="button" class="btn-secondary" onclick="closeIdeaModal()">Annuler</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  
-  <!-- POP-UP TOAST -->
-  <div id="toast" class="toast hidden"></div>
-
-  <script src="app.js"></script>
-
-  <!-- BOUTON FLOTTANT FIXE (EN BAS À DROITE) -->
-  <button id="search-fab-btn" class="search-fab-btn hidden" onclick="toggleSearch()" title="Rechercher">
-    🔍
-  </button>
-</body>
-</html>
+        <div id="section-albums" class="
