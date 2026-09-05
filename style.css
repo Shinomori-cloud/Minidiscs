@@ -256,7 +256,7 @@ body:has(.dashboard-container) .title-90s {
 
 /* Redescend la sélection uniquement sur l'accueil */
 body:has(.dashboard-container) .featured-container {
-  top: 160px;
+  top: 200px;
 }
 
 .featured-header {
@@ -595,7 +595,7 @@ body:has(.featured-container.hidden) main#app {
 .dashboard-actions-row {
   display: flex;
   gap: 10px;
-  margin-top: 25px;
+  margin-top: 10px;
   width: 100%;
 }
 
