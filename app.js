@@ -1088,7 +1088,7 @@ function injectPlannerHeaderBadge() {
     // Position fixe dédiée sous le premier header, fond propre + flou
     badge.style.cssText = `
       position: fixed;
-      top: 200px;
+      top: 150px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 999;
