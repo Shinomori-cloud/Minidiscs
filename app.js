@@ -469,7 +469,7 @@ function renderDashboard(pushState = true) {
   });
 
   // État du bouton JSON (Vert si à jour, Rouge/Orange si modif en attente)
-  const jsonBtnStyle = hasUnsavedChanges 
+  const jsonBtnStyle = (typeof hasUnsavedChanges !== 'undefined' && hasUnsavedChanges) 
     ? 'background-color: #e63946; color: #fff;' 
     : 'background-color: #06d6a0; color: #000;';
 
@@ -500,7 +500,7 @@ function renderDashboard(pushState = true) {
         <button class="action-btn-wide" onclick="openAdminModal()">
           ＋ Ajouter un MD
         </button>
-        <button class="action-btn-json" style="${jsonBtnStyle}" onclick="downloadJSON()" title="Télécharger data.json">
+        <button class="action-btn-json" style="${jsonBtnStyle}" onclick="event.preventDefault(); downloadUpdatedJSON();" title="Télécharger data.json">
           💾 JSON
         </button>
       </div>
