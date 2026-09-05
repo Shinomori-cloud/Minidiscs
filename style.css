@@ -284,7 +284,7 @@ body:has(.dashboard-container) .featured-container {
 
 .featured-item {
   flex: 0 1 auto;
-  height: 150px;
+  height: 160px;
   border-radius: 6px;
   overflow: hidden;
   border: 1.5px solid #000;
@@ -593,7 +593,7 @@ body:has(.featured-container.hidden) main#app {
    ========================================== */
 .dashboard-actions-row {
   display: flex;
-  gap: 6px;
+  gap: 16px;
   margin-top: 10px;
   width: 100%;
 }
