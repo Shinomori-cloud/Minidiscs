@@ -507,7 +507,7 @@ body:has(.featured-container.hidden) main#app {
 .types-grid, .genres-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
+  gap: 25px;
   margin-bottom: 8px;
 }
 
@@ -593,7 +593,7 @@ body:has(.featured-container.hidden) main#app {
    ========================================== */
 .dashboard-actions-row {
   display: flex;
-  gap: 16px;
+  gap: 25px;
   margin-top: 10px;
   width: 100%;
 }
