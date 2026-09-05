@@ -955,16 +955,33 @@ function submitNewMD(e) {
   renderDashboard(false);
 }
 
+// Sauvegarde temporaire dans le localStorage (mis à jour)
+function saveLocalBackup() {
+  const payload = {
+    minidiscs: catalogData || [],
+    ideaAlbums: window.ideaAlbums || []
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  hasUnsavedChanges = true;
+}
+
 // Écouteur d'événement sur la soumission du formulaire
 document.getElementById('md-form').addEventListener('submit', submitNewMD);
 
+// Téléchargement du fichier data.json structuré
 function downloadUpdatedJSON() {
-  if (!catalogData || catalogData.length === 0) {
+  if ((!catalogData || catalogData.length === 0) && (!window.ideaAlbums || window.ideaAlbums.length === 0)) {
     showToast("⚠️ Le catalogue est vide !");
     return;
   }
 
-  const jsonString = JSON.stringify(catalogData, null, 2);
+  // Structure complète avec les deux clés
+  const exportPayload = {
+    minidiscs: catalogData || [],
+    ideaAlbums: window.ideaAlbums || []
+  };
+
+  const jsonString = JSON.stringify(exportPayload, null, 2);
   const blob = new Blob([jsonString], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   
