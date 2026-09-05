@@ -1115,11 +1115,11 @@ function renderCompilPlanner(pushState = true) {
   }
 
   app.innerHTML = `
-    <div style="padding-bottom: 90px; padding-top: 10px;">
+    <div style="padding-bottom: 90px; padding-top: 65px;">
       
-      <!-- ENCART CALCULATEUR FIXE ET PLUS LARGE -->
-      <div style="position: sticky; top: 10px; z-index: 100; display: flex; justify-content: center; margin-bottom: 20px;">
-        <div style="background: #ffffff; border: 2px solid #000; border-radius: 30px; padding: 10px 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3), 4px 4px 0px #000; display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 360px; width: 100%;">
+      <!-- ENCART CALCULATEUR FIXE EN HAUT (POSITION FIXED) -->
+      <div style="position: fixed; top: 60px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 999;">
+        <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border: 2px solid #000; border-radius: 30px; padding: 10px 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3), 4px 4px 0px #000; display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 400px; width: 100%; pointer-events: auto;">
           <span style="font-size: 0.9rem; font-weight: 600; color: #222;">Durée sélectionnée :</span>
           <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.15rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
         </div>
