@@ -248,7 +248,7 @@ body:has(.dashboard-container) .title-90s {
   max-width: 568px;
   z-index: 900;
   margin-top: 45px;
-  margin-bottom: 45px;
+  margin-bottom: 40px;
 
   /* Suppression de l'encart et du fond */
   background: transparent !important;
@@ -263,6 +263,8 @@ body:has(.dashboard-container) .title-90s {
 /* Redescend la sélection uniquement sur l'accueil */
 body:has(.dashboard-container) .featured-container {
   top: auto;
+  margin-top: 40px !important;    /* Éloigne la sélection de l'encart TYPES du haut */
+  margin-bottom: 40px !important; /* Éloigne la sélection de l'encart GENRES du bas */
 }
 
 .featured-header {
