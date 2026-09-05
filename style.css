@@ -99,11 +99,11 @@ body:has(.featured-container.hidden)::before {
 }
 
 /* ==========================================
-   HEADER & TITRE FIXES
+   HEADER FIXE (ABBAISSÉ POUR LA CAMÉRA)
    ========================================== */
 header {
   position: fixed !important;
-  top: 15px !important; /* Calé sous la caméra/encoche */
+  top: 45px !important; /* Dégage la caméra frontale */
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: calc(100% - 32px) !important;
@@ -114,10 +114,9 @@ header {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 6px !important;
   
   padding: 10px 14px !important;
-  background-color: #ffffff !important; /* Fond opaque */
+  background-color: #ffffff !important;
   border-radius: 16px !important;
   border: 2px solid #000 !important;
   box-shadow: 4px 4px 0px #000 !important;
@@ -143,41 +142,25 @@ body:has(.dashboard-container) header {
   margin: 0 !important;
 }
 
-.header-subtitle {
-  font-family: 'Righteous', cursive;
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-  color: #7b2cbf;
-  text-transform: uppercase;
-  margin-bottom: 2px;
-  text-align: center;
-}
-
-body:has(.featured-container.hidden) .header-subtitle {
-  display: none !important;
-}
-
 .title-90s {
   font-family: 'Righteous', cursive;
   font-size: 2rem;
   text-transform: uppercase;
   text-align: center;
-  
-  /* Seul le texte a le dégradé, le fond du bloc reste blanc */
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 50%, #00f0ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  
   filter: drop-shadow(2px 2px 0px #000);
-  
   letter-spacing: 1px;
   transform: rotate(-1.5deg);
   margin: 2px 0 !important;
+  margin-left: 32px !important;
 }
 
 body:has(.dashboard-container) .title-90s {
   font-size: 3rem;
   margin: 4px 0 !important;
+  margin-left: 0 !important;
 }
 
 .back-btn {
@@ -196,22 +179,16 @@ body:has(.dashboard-container) .title-90s {
   z-index: 1010;
 }
 
-.back-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0px #000;
-}
-
 /* ==========================================
-   DEUXIÈME ENCART (PLANIFICATEUR)
+   ENCART CALCULATEUR (FIXE & SÉPARÉ JUSTE EN DESSOUS)
    ========================================== */
 .planner-header-info {
   position: fixed !important;
-  top: 85px !important; /* Espacement ajusté juste sous le premier bloc */
+  top: 125px !important; /* Calé pile sous le premier header */
   left: 50% !important;
   transform: translateX(-50%) !important;
   z-index: 999 !important;
   
-  background: #ffffff !important; /* Blanc opaque strict */
   background-color: #ffffff !important;
   color: #000 !important;
   border: 2px solid #000 !important;
