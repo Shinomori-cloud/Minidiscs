@@ -285,7 +285,7 @@ body:has(.dashboard-container) .featured-container {
 
 .featured-item {
   flex: 0 1 auto;
-  height: 160px;
+  height: 155px;
   border-radius: 6px;
   overflow: hidden;
   border: 1.5px solid #000;
