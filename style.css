@@ -865,3 +865,124 @@ body:has(.featured-container.hidden) main#app {
   color: var(--text-sub, #666);
   line-height: 0,9;
 }
+
+/* ==========================================
+   PLANIFICATEUR DE COMPILATION / CALCULATEUR
+   ========================================== */
+.compil-banner {
+  position: sticky;
+  top: 60px; /* Ajuster selon la hauteur du header fixe */
+  z-index: 100;
+  background: var(--bg-card, #ffffff);
+  border: 2px solid var(--accent, #ff007f);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 10px 0 20px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.compil-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.compil-time-display {
+  font-family: 'Righteous', cursive, sans-serif;
+  font-size: 1.4rem;
+  color: var(--text-main, #222);
+}
+
+.compil-time-ok {
+  color: #06d6a0 !important; /* Vert sous 80 min */
+}
+
+.compil-time-warning {
+  color: #ef476f !important; /* Rouge si > 80 min */
+}
+
+.compil-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Grille des idées d'albums */
+.ideas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.idea-card {
+  background: var(--bg-card, #fff);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s, border-color 0.2s;
+  user-select: none;
+}
+
+.idea-card:hover {
+  transform: translateY(-2px);
+}
+
+.idea-card.selected {
+  border-color: #06d6a0;
+  background-color: rgba(6, 214, 160, 0.08);
+}
+
+.idea-card.selected::after {
+  content: "✓";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #06d6a0;
+  color: #000;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.idea-cover {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #eee;
+}
+
+.idea-title {
+  font-weight: bold;
+  font-size: 0.85rem;
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.idea-artist {
+  font-size: 0.75rem;
+  color: var(--text-sub, #666);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.idea-duration {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: var(--accent, #ff007f);
+  margin-top: 4px;
+}
