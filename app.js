@@ -1039,6 +1039,7 @@ function formatSecondsToDisplay(totalSec) {
   return `${m}m ${String(s).padStart(2, '0')}s`;
 }
 
+// Mise à jour rapide du bandeau du haut et des boutons du bas
 function updatePlannerHeader() {
   const ideas = getIdeaList();
   let totalSeconds = 0;
@@ -1053,7 +1054,7 @@ function updatePlannerHeader() {
   
   const displayEl = document.querySelector('.compil-time-display');
   if (displayEl) {
-    displayEl.textContent = `${formattedTime} / 148m`;
+    displayEl.textContent = `${formattedTime} / 2h 28m`;
     displayEl.style.color = isOverLimit ? '#e63946' : '#06d6a0';
   }
 
@@ -1093,7 +1094,7 @@ function renderCompilPlanner(pushState = true) {
 
   let cardsHTML = '';
   if (ideas.length === 0) {
-    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album dans votre liste d'idées. Ajoutez-en avec le bouton ci-dessus !</p>`;
+    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album dans votre liste d'idées. Ajoutez-en avec le bouton ci-dessous !</p>`;
   } else {
     ideas.forEach((item, index) => {
       const isSelected = selectedIdeaIndices.has(index);
@@ -1115,27 +1116,30 @@ function renderCompilPlanner(pushState = true) {
   }
 
   app.innerHTML = `
-    <div>
-      <div class="compil-banner">
-        <div class="compil-banner-header">
-          <span style="color:#222;">Durée sélectionnée :</span>
-          <span class="compil-time-display" style="color: ${timeColor}; font-weight: bold;">${formattedTime} / 148m</span>
-        </div>
-        <div class="compil-actions">
-          <button class="btn-primary" onclick="openIdeaModal()">＋ Ajouter</button>
-          <button class="btn-secondary" onclick="convertSelectedToMD()" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''}>
-            💾 Convertir (${selectedIdeaIndices.size})
-          </button>
-          <button class="btn-sub" onclick="clearIdeaSelection()">Réinitialiser</button>
+    <div style="padding-bottom: 80px;">
+      <div class="compil-banner" style="display:flex; justify-content:center; align-items:center; padding: 12px 20px;">
+        <div class="compil-banner-header" style="font-size: 1.1rem; display:flex; align-items:center; gap: 10px;">
+          <span style="color:#222; font-weight:600;">Durée sélectionnée :</span>
+          <span class="compil-time-display" style="color: ${timeColor}; font-weight: bold; font-size: 1.2rem;">${formattedTime} / 2h 28m</span>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 10px;">
         <h3 class="planner-text-white" style="margin: 0;">Albums disponibles (${ideas.length})</h3>
       </div>
 
       <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
+      </div>
+
+      <div class="compil-actions-bottom" style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(8px); padding: 12px 20px; display: flex; justify-content: center; gap: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100;">
+        <div class="compil-actions" style="display:flex; gap:12px; max-width: 600px; width:100%; justify-content: center;">
+          <button class="btn-primary" onclick="openIdeaModal()" style="flex:1;">＋ Ajouter</button>
+          <button class="btn-secondary" onclick="convertSelectedToMD()" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="flex:1;">
+            💾 Convertir (${selectedIdeaIndices.size})
+          </button>
+          <button class="btn-sub" onclick="clearIdeaSelection()" style="flex:1;">Réinitialiser</button>
+        </div>
       </div>
     </div>
   `;
@@ -1165,87 +1169,4 @@ function renderCompilPlanner(pushState = true) {
       }
     });
   }
-}
-
-function deleteIdeaAlbum(index) {
-  const ideas = getIdeaList();
-  if (!ideas[index]) return;
-
-  if (confirm(`Supprimer "${ideas[index].title}" de vos idées ?`)) {
-    ideas.splice(index, 1);
-    
-    const updatedIndices = new Set();
-    selectedIdeaIndices.forEach(i => {
-      if (i > index) updatedIndices.add(i - 1);
-      else if (i < index) updatedIndices.add(i);
-    });
-    selectedIdeaIndices = updatedIndices;
-
-    saveLocalBackup();
-    showToast("🗑️ Album supprimé des idées");
-    renderCompilPlanner(false);
-  }
-}
-
-function clearIdeaSelection() {
-  selectedIdeaIndices.clear();
-  renderCompilPlanner(false);
-}
-
-function openIdeaModal() {
-  document.getElementById('idea-form').reset();
-  document.getElementById('idea-cover').value = "images/";
-  document.getElementById('idea-modal').classList.remove('hidden');
-}
-
-function closeIdeaModal() {
-  document.getElementById('idea-modal').classList.add('hidden');
-}
-
-function saveIdeaAlbum(e) {
-  e.preventDefault();
-  const title = document.getElementById('idea-title').value.trim();
-  const artist = document.getElementById('idea-artist').value.trim();
-  const genre = document.getElementById('idea-genre').value.trim();
-  const duration = document.getElementById('idea-duration').value.trim();
-  const cover = document.getElementById('idea-cover').value.trim();
-
-  const newIdea = { title, artist, genre, duration, cover };
-  
-  if (!window.ideaAlbums) window.ideaAlbums = [];
-  window.ideaAlbums.push(newIdea);
-
-  saveLocalBackup();
-  closeIdeaModal();
-  showToast("💡 Album ajouté aux idées !");
-  renderCompilPlanner(false);
-}
-
-function convertSelectedToMD() {
-  if (selectedIdeaIndices.size === 0) return;
-
-  const ideas = getIdeaList();
-  const selectedAlbums = Array.from(selectedIdeaIndices).map(i => ideas[i]);
-
-  const newMD = {
-    genre: selectedAlbums[0].genre ? [selectedAlbums[0].genre] : ['DIVERS'],
-    type: ['ALBUM'],
-    md_cover: selectedAlbums[0].cover || 'images/',
-    albums: selectedAlbums.map(a => ({
-      title: a.title,
-      artist: a.artist,
-      genre: a.genre ? [a.genre] : [],
-      cover: a.cover,
-      tracks: []
-    }))
-  };
-
-  catalogData.push(newMD);
-
-  window.ideaAlbums = ideas.filter((_, idx) => !selectedIdeaIndices.has(idx));
-  selectedIdeaIndices.clear();
-
-  saveLocalBackup();
-  showToast("🎉 Albums convertis en MiniDisc avec succès !");
-  renderDashboard(true);
 }
