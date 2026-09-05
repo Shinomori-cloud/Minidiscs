@@ -103,7 +103,7 @@ body:has(.featured-container.hidden)::before {
    ========================================== */
 header {
   position: fixed !important;
-  top: 30px !important;
+  top: 15px !important; /* Calé sous la caméra/encoche */
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: calc(100% - 32px) !important;
@@ -117,8 +117,7 @@ header {
   gap: 6px !important;
   
   padding: 10px 14px !important;
-  background-color: #ffffff !important; /* Opaque strict */
-  
+  background-color: #ffffff !important; /* Fond opaque */
   border-radius: 16px !important;
   border: 2px solid #000 !important;
   box-shadow: 4px 4px 0px #000 !important;
@@ -164,6 +163,7 @@ body:has(.featured-container.hidden) .header-subtitle {
   text-transform: uppercase;
   text-align: center;
   
+  /* Seul le texte a le dégradé, le fond du bloc reste blanc */
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 50%, #00f0ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -202,16 +202,17 @@ body:has(.dashboard-container) .title-90s {
 }
 
 /* ==========================================
-   DEUXIÈME ENCART (SÉPARÉ ET OPAQUE)
+   DEUXIÈME ENCART (PLANIFICATEUR)
    ========================================== */
 .planner-header-info {
   position: fixed !important;
-  top: 105px !important; /* Décalé de 12px sous le premier bloc */
+  top: 85px !important; /* Espacement ajusté juste sous le premier bloc */
   left: 50% !important;
   transform: translateX(-50%) !important;
   z-index: 999 !important;
   
-  background-color: #ffffff !important; /* Opaque strict */
+  background: #ffffff !important; /* Blanc opaque strict */
+  background-color: #ffffff !important;
   color: #000 !important;
   border: 2px solid #000 !important;
   border-radius: 16px !important;
