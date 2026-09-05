@@ -517,7 +517,7 @@ function renderDashboard(pushState = true) {
     : 'background-color: #06d6a0; color: #000;';
 
   app.innerHTML = `
-    <div class="dashboard-container" style="padding-top: 130px; padding-bottom: 90px;">
+    <div class="dashboard-container" style="padding-top: 20px; padding-bottom: 90px;">
       
       <!-- 1. BLOC TOP : COMPTEUR & RÉPARTITION PAR TYPE -->
       <div class="dashboard-card">
