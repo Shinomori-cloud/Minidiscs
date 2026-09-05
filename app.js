@@ -1081,45 +1081,18 @@ function injectPlannerHeaderBadge() {
   const header = document.querySelector('header') || document.querySelector('.header');
   if (!header) return;
 
-   // Centrage du titre principal
-  if (typeof headerTitle !== 'undefined' && headerTitle) {
-    headerTitle.style.textAlign = 'center';
-    headerTitle.style.flex = '1';
-  }
-
   let badge = document.getElementById('header-planner-badge');
   if (!badge) {
     badge = document.createElement('div');
     badge.id = 'header-planner-badge';
-    
-    // Position fixe sous le header global, avec son propre fond et son ombre
-    badge.style.cssText = `
-      position: fixed;
-      top: 135px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 999;
-      background: #ffffff;
-      border: 3px solid #000000;
-      border-radius: 20px;
-      padding: 10px 20px;
-      box-shadow: 4px 4px 0px #000000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      width: calc(100% - 30px);
-      max-width: 500px;
-      box-sizing: border-box;
-    `;
+    badge.className = 'planner-header-info'; // Utilise la classe configurée dans style.css
     
     badge.innerHTML = `
-      <span style="font-size: 0.9rem; font-weight: bold; color: #000000;">Durée sélectionnée :</span>
-      <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.1rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
+      <span style="font-size: 0.85rem; font-weight: bold; color: #000000;">Durée sélectionnée :</span>
+      <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
     `;
 
-    // On l'insère DEHORS et APRÈS la balise header
-    header.after(badge);
+    header.appendChild(badge);
   }
 }
 
@@ -1129,7 +1102,7 @@ function renderCompilPlanner(pushState = true) {
   if (typeof backBtn !== 'undefined' && backBtn) backBtn.classList.remove('hidden');
   if (typeof headerTitle !== 'undefined' && headerTitle) headerTitle.textContent = "PLANIFICATEUR";
 
-  // Injection du deuxième encart directement dans le header fixe
+  // Injection du deuxième encart directement dans le header
   injectPlannerHeaderBadge();
 
   if (typeof featuredContainer !== 'undefined' && featuredContainer) {
@@ -1166,7 +1139,7 @@ function renderCompilPlanner(pushState = true) {
   }
 
   app.innerHTML = `
-    <div style="padding-bottom: 90px; padding-top: 70px;">
+    <div style="padding-bottom: 90px; padding-top: 145px;">
       
       <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
@@ -1304,7 +1277,7 @@ function convertSelectedToMD() {
   window.ideaAlbums = ideas.filter((_, idx) => !selectedIdeaIndices.has(idx));
   selectedIdeaIndices.clear();
 
-  // On nettoie l'encart du header avant d'afficher le dashboard
+  // Nettoyage de l'encart du header avant de charger le dashboard
   clearPlannerHeaderInfo();
   saveLocalBackup();
   showToast("🎉 Albums convertis en MiniDisc avec succès !");
