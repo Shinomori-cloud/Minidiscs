@@ -272,7 +272,7 @@ body:has(.dashboard-container) .featured-container {
   padding: 4px 14px;
   
   /* Cartouche sombre dédié uniquement au titre */
-  background: rgba(24, 21, 40, 0.9);
+  background: #ffffff;
   border: 1.5px solid #ff007f;
   border-radius: 8px;
   box-shadow: 2px 2px 0px #000;
@@ -304,7 +304,7 @@ body:has(.dashboard-container) .featured-container {
   border: 1.5px solid #000;
   cursor: pointer;
   
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.75), 0 10px 10px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0 14px 22px rgba(0, 0, 0, 0.75), 0 10px 10px rgba(0, 0, 0, 0.5) !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   background: #000;
 }
