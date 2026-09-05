@@ -103,26 +103,21 @@ body:has(.featured-container.hidden)::before {
    ========================================== */
 header {
   position: fixed !important;
-  top: 40px !important;
+  top: 30px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: calc(100% - 32px) !important;
   max-width: 568px !important;
   z-index: 1000 !important;
   
-  /* Force l'empilement vertical et le centrage strict */
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 6px !important;
   
-  padding: 12px 14px !important;
-  
-  /* Transparence + flou au scroll */
-  background-color: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
+  padding: 10px 14px !important;
+  background-color: #ffffff !important; /* Opaque strict */
   
   border-radius: 16px !important;
   border: 2px solid #000 !important;
@@ -134,7 +129,6 @@ body:has(.featured-container.hidden) header {
   padding: 10px 14px !important;
 }
 
-/* Redescend le header uniquement sur l'accueil */
 body:has(.dashboard-container) header {
   top: 65px !important;
   padding: 14px !important;
@@ -181,17 +175,15 @@ body:has(.featured-container.hidden) .header-subtitle {
   margin: 2px 0 !important;
 }
 
-/* Titre imposant sur la page d'accueil */
 body:has(.dashboard-container) .title-90s {
   font-size: 3rem;
   margin: 4px 0 !important;
 }
 
-/* Extraction totale du bouton retour du flux d'alignement */
 .back-btn {
   position: absolute !important;
   left: 12px !important;
-  top: 12px !important;
+  top: 10px !important;
   background: #ff007f;
   border: 2px solid #000;
   font-size: 1.2rem;
@@ -210,20 +202,16 @@ body:has(.dashboard-container) .title-90s {
 }
 
 /* ==========================================
-   DEUXIÈME BLOC INDÉPENDANT (SÉPARÉ DU HEADER)
+   DEUXIÈME ENCART (SÉPARÉ ET OPAQUE)
    ========================================== */
 .planner-header-info {
   position: fixed !important;
-  top: 112px !important; /* Positionné juste en dessous du header */
+  top: 105px !important; /* Décalé de 12px sous le premier bloc */
   left: 50% !important;
   transform: translateX(-50%) !important;
   z-index: 999 !important;
   
-  /* Transparence + flou au scroll */
-  background: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-  
+  background-color: #ffffff !important; /* Opaque strict */
   color: #000 !important;
   border: 2px solid #000 !important;
   border-radius: 16px !important;
