@@ -261,7 +261,7 @@ body:has(.dashboard-container) .featured-container {
 
 .featured-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 6px;
   padding: 0 2px;
@@ -274,6 +274,7 @@ body:has(.dashboard-container) .featured-container {
   color: #ffb703;
   text-transform: uppercase;
   text-shadow: 0 0 6px rgba(255, 183, 3, 0.4);
+  text-align: center;
 }
 
 .featured-grid {
