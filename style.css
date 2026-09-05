@@ -560,7 +560,7 @@ body:has(.featured-container.hidden) main#app {
   justify-content: space-between;
   align-items: center;
   background: transparent;
-  padding: 5px 2px 2px 2px;
+  padding: 0px 2px 0px 2px;
   border: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 0;
