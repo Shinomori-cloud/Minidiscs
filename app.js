@@ -1039,7 +1039,6 @@ function formatSecondsToDisplay(totalSec) {
   return `${m}m ${String(s).padStart(2, '0')}s`;
 }
 
-// Mise à jour ultra-rapide du bandeau uniquement
 function updatePlannerHeader() {
   const ideas = getIdeaList();
   let totalSeconds = 0;
@@ -1068,10 +1067,12 @@ function updatePlannerHeader() {
 function renderCompilPlanner(pushState = true) {
   currentMD = null;
   currentAlbum = null;
-  backBtn.classList.remove('hidden');
-  headerTitle.textContent = "PLANIFICATEUR";
+  if (typeof backBtn !== 'undefined' && backBtn) backBtn.classList.remove('hidden');
+  if (typeof headerTitle !== 'undefined' && headerTitle) headerTitle.textContent = "PLANIFICATEUR";
 
-  if (featuredContainer) featuredContainer.classList.add('hidden');
+  if (typeof featuredContainer !== 'undefined' && featuredContainer) {
+    featuredContainer.classList.add('hidden');
+  }
 
   if (pushState && window.location.hash !== '#planner') {
     history.pushState({ view: 'planner' }, '', '#planner');
@@ -1096,10 +1097,15 @@ function renderCompilPlanner(pushState = true) {
   } else {
     ideas.forEach((item, index) => {
       const isSelected = selectedIdeaIndices.has(index);
+      const coverSrc = (item.cover && item.cover !== 'images/') ? item.cover : '';
+
       cardsHTML += `
         <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
           <button type="button" class="idea-delete-btn" data-delete="${index}" title="Supprimer cet album">🗑️</button>
-          <img src="${item.cover || 'images/'}" class="idea-cover" alt="cover" onerror="this.src='images/default.jpg'">
+          ${coverSrc 
+            ? `<img src="${coverSrc}" class="idea-cover" alt="cover">` 
+            : `<div class="idea-cover" style="background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;">Pas d'image</div>`
+          }
           <div class="idea-title" title="${item.title}">${item.title}</div>
           <div class="idea-artist" title="${item.artist}">${item.artist}</div>
           <div class="idea-duration">⏱️ ${item.duration}</div>
@@ -1134,11 +1140,9 @@ function renderCompilPlanner(pushState = true) {
     </div>
   `;
 
-  // Gestionnaire de clics unique sur la grille (évite tout rechargement / clignotement)
   const gridContainer = document.getElementById('ideas-grid-container');
   if (gridContainer) {
     gridContainer.addEventListener('click', (e) => {
-      // Si clic sur le bouton de suppression
       const deleteBtn = e.target.closest('[data-delete]');
       if (deleteBtn) {
         e.stopPropagation();
@@ -1147,7 +1151,6 @@ function renderCompilPlanner(pushState = true) {
         return;
       }
 
-      // Si clic sur la carte
       const card = e.target.closest('.idea-card');
       if (card) {
         const index = parseInt(card.getAttribute('data-index'), 10);
