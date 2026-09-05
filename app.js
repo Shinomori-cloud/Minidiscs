@@ -1116,7 +1116,7 @@ function renderCompilPlanner(pushState = true) {
 
   app.innerHTML = `
     <div style="padding-bottom: 90px;">
-      <div class="compil-banner" style="display:flex; justify-content:center; align-items:center; padding: 12px 20px;">
+      <div class="compil-banner" style="position: sticky; top: 0; z-index: 900; display:flex; justify-content:center; align-items:center; padding: 12px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
         <div class="compil-banner-header" style="font-size: 1.1rem; display:flex; align-items:center; gap: 10px;">
           <span style="color:#222; font-weight:600;">Durée sélectionnée :</span>
           <span class="compil-time-display" style="color: ${timeColor}; font-weight: bold; font-size: 1.2rem;">${formattedTime} / 2h 28m</span>
@@ -1170,7 +1170,7 @@ function renderCompilPlanner(pushState = true) {
     });
   }
 
-  // Écouteurs explicites pour les boutons du bas
+  // Écouteurs pour les boutons
   const addBtn = document.getElementById('planner-btn-add');
   if (addBtn) addBtn.addEventListener('click', openIdeaModal);
 
