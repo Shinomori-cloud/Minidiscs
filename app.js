@@ -435,6 +435,11 @@ function renderFeatured() {
 
 /* 1. DASHBOARD */
 function renderDashboard(pushState = true) {
+  // Masque l'encart du planificateur s'il était affiché
+  if (typeof clearPlannerHeaderInfo === 'function') {
+    clearPlannerHeaderInfo();
+  }
+
   currentMD = null;
   currentAlbum = null;
   currentGenreFilter = null;
