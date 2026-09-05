@@ -1044,7 +1044,6 @@ function formatSecondsToDisplay(totalSec) {
   return `${m}m ${String(s).padStart(2, '0')}s`;
 }
 
-/* Mise à jour de l'encart séparé situé dans la page */
 function updatePlannerHeader() {
   const durationTextEl = document.getElementById('planner-duration-text');
   
@@ -1118,10 +1117,11 @@ function renderCompilPlanner(pushState = true) {
   app.innerHTML = `
     <div style="padding-bottom: 90px; padding-top: 10px;">
       
-      <!-- ENCART CALCULATEUR DÉDIÉ SÉPARÉ (PILULE CENTRÉE) -->
-      <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-        <div style="background: #ffffff; border: 2px solid #000; border-radius: 25px; padding: 8px 20px; box-shadow: 4px 4px 0px #000; display: inline-flex; align-items: center; gap: 8px;">
-          <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.1rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
+      <!-- ENCART CALCULATEUR FIXE ET PLUS LARGE -->
+      <div style="position: sticky; top: 10px; z-index: 100; display: flex; justify-content: center; margin-bottom: 20px;">
+        <div style="background: #ffffff; border: 2px solid #000; border-radius: 30px; padding: 10px 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3), 4px 4px 0px #000; display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 360px; width: 100%;">
+          <span style="font-size: 0.9rem; font-weight: 600; color: #222;">Durée sélectionnée :</span>
+          <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.15rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
         </div>
       </div>
 
