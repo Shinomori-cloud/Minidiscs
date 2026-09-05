@@ -155,8 +155,8 @@ body:has(.dashboard-container) header {
   display: none !important;
 }
 
-/* Affiché uniquement sur la page d'accueil */
-body:has(.featured-container:not(.hidden)) .header-subtitle {
+/* Affiché uniquement quand on est sur la page d'accueil (Dashboard) */
+body:has(.dashboard-container) .header-subtitle {
   display: block !important;
   font-family: 'Righteous', cursive;
   font-size: 0.75rem;
