@@ -103,7 +103,7 @@ body:has(.featured-container.hidden)::before {
    ========================================== */
 header {
   position: fixed;
-  top:40px;
+  top: 40px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
@@ -111,8 +111,9 @@ header {
   z-index: 1000;
   
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   padding: 12px 14px;
   background-color: #ffffff;
   border-radius: 16px;
@@ -172,7 +173,11 @@ body:has(.dashboard-container) .title-90s {
   margin: 4px 0;
 }
 
+/* Positionnement absolu du bouton retour pour ne pas décaler le titre */
 .back-btn {
+  position: absolute;
+  left: 12px;
+  top: 12px;
   background: #ff007f;
   border: 2px solid #000;
   font-size: 1.2rem;
@@ -182,11 +187,33 @@ body:has(.dashboard-container) .title-90s {
   padding: 6px 12px;
   border-radius: 8px;
   box-shadow: 2px 2px 0px #000;
+  z-index: 10;
 }
 
 .back-btn:active {
   transform: translate(2px, 2px);
   box-shadow: 0px 0px 0px #000;
+}
+
+/* ENCART DU PLANIFICATEUR DANS LE HEADER */
+.planner-header-info {
+  background: #111;
+  color: #fff;
+  border: 2px solid #000;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-family: 'Righteous', cursive;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 2px 2px 0px #000;
+  margin-top: 2px;
+}
+
+.planner-header-info.hidden {
+  display: none !important;
 }
 
 /* ==========================================
