@@ -1085,7 +1085,7 @@ function injectPlannerHeaderBadge() {
     badge = document.createElement('div');
     badge.id = 'header-planner-badge';
     
-    // Position fixe dédiée sous le premier header, fond propre + flou
+    // Position fixe sous le premier header, fond 100% opaque sans transparence
     badge.style.cssText = `
       position: fixed;
       top: 150px;
@@ -1093,8 +1093,6 @@ function injectPlannerHeaderBadge() {
       transform: translateX(-50%);
       z-index: 999;
       background: #ffffff;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
       border: 2px solid #000000;
       border-radius: 16px;
       padding: 8px 16px;
@@ -1161,7 +1159,7 @@ function renderCompilPlanner(pushState = true) {
   }
 
   app.innerHTML = `
-    <div style="padding-bottom: 90px; padding-top: 180px;">
+    <div style="padding-bottom: 90px; padding-top: 215px;">
       
       <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
