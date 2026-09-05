@@ -1072,7 +1072,26 @@ function updatePlannerHeader() {
 }
 
 function clearPlannerHeaderInfo() {
-  // Fonction conservée pour la compatibilité
+  // Retire l'encart du header quand on quitte la vue
+  const badge = document.getElementById('header-planner-badge');
+  if (badge) badge.remove();
+}
+
+function injectPlannerHeaderBadge() {
+  const header = document.querySelector('header') || document.querySelector('.header');
+  if (!header) return;
+
+  let badge = document.getElementById('header-planner-badge');
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.id = 'header-planner-badge';
+    badge.style.cssText = 'margin-top: 10px; background: #ffffff; border: 2px solid #000; border-radius: 30px; padding: 8px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3), 4px 4px 0px #000; display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 420px; width: 100%; margin-left: auto; margin-right: auto;';
+    badge.innerHTML = `
+      <span style="font-size: 0.9rem; font-weight: bold; color: #000;">Durée sélectionnée :</span>
+      <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.15rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
+    `;
+    header.appendChild(badge);
+  }
 }
 
 function renderCompilPlanner(pushState = true) {
@@ -1080,6 +1099,9 @@ function renderCompilPlanner(pushState = true) {
   currentAlbum = null;
   if (typeof backBtn !== 'undefined' && backBtn) backBtn.classList.remove('hidden');
   if (typeof headerTitle !== 'undefined' && headerTitle) headerTitle.textContent = "PLANIFICATEUR";
+
+  // Injection du deuxième encart directement dans le header fixe
+  injectPlannerHeaderBadge();
 
   if (typeof featuredContainer !== 'undefined' && featuredContainer) {
     featuredContainer.classList.add('hidden');
@@ -1115,16 +1137,8 @@ function renderCompilPlanner(pushState = true) {
   }
 
   app.innerHTML = `
-    <div style="padding-bottom: 90px; padding-top: 100px;">
+    <div style="padding-bottom: 90px; padding-top: 20px;">
       
-      <!-- ENCART CALCULATEUR CENTRÉ ET FIXE AU SCROLL (STICKY) -->
-      <div style="position: sticky; top: 110px; z-index: 900; display: flex; justify-content: center; margin-bottom: 20px; padding: 0 10px;">
-        <div style="background: #ffffff; border: 2px solid #000; border-radius: 30px; padding: 10px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3), 4px 4px 0px #000; display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 420px; width: 100%;">
-          <span style="font-size: 0.9rem; font-weight: bold; color: #000;">Durée sélectionnée :</span>
-          <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.15rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
-        </div>
-      </div>
-
       <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
       </div>
@@ -1261,6 +1275,8 @@ function convertSelectedToMD() {
   window.ideaAlbums = ideas.filter((_, idx) => !selectedIdeaIndices.has(idx));
   selectedIdeaIndices.clear();
 
+  // On nettoie l'encart du header avant d'afficher le dashboard
+  clearPlannerHeaderInfo();
   saveLocalBackup();
   showToast("🎉 Albums convertis en MiniDisc avec succès !");
   renderDashboard(true);
