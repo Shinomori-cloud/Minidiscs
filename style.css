@@ -507,7 +507,7 @@ body:has(.featured-container.hidden) main#app {
 .types-grid, .genres-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 25px;
+  gap: 16px;
   margin-bottom: 8px;
 }
 
