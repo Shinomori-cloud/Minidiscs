@@ -1096,8 +1096,8 @@ header {
   display: none !important;
 }
 
-/* Empêche le premier encart de passer sous le header lors du défilement */
+/* Calage parfait du dashboard sous le header */
 .dashboard-container {
-  padding-top: 110px !important; /* Ajuste cette valeur si tu veux plus ou moins d'espace */
-  margin-top: 0 !important;      /* Supprime la marge négative qui le faisait remonter */
+  padding-top: 10px !important;
+  margin-top: 0 !important;
 }
