@@ -298,6 +298,21 @@ backBtn.addEventListener('click', () => {
   }
 });
 
+// Fonction utilitaire pour parser et séparer minidiscs et ideaAlbums
+function processLoadedData(data) {
+  if (data && typeof data === 'object' && !Array.isArray(data) && data.minidiscs) {
+    catalogData = data.minidiscs || [];
+    window.ideaAlbums = data.ideaAlbums || [];
+  } else if (Array.isArray(data)) {
+    // Rétrocompatibilité avec l'ancien format
+    catalogData = data;
+    if (!window.ideaAlbums) window.ideaAlbums = [];
+  } else {
+    catalogData = [];
+    if (!window.ideaAlbums) window.ideaAlbums = [];
+  }
+}
+
 fetch('data.json')
   .then(response => {
     if (!response.ok) throw new Error("Erreur de réseau lors du chargement du fichier JSON.");
@@ -308,18 +323,21 @@ fetch('data.json')
     
     if (savedBackup) {
       try {
-        catalogData = JSON.parse(savedBackup);
+        const parsedBackup = JSON.parse(savedBackup);
+        processLoadedData(parsedBackup);
         hasUnsavedChanges = true;
         setTimeout(() => showToast("⚡ Session restaurée : modifications non exportées !"), 500);
       } catch (e) {
-        catalogData = data;
+        processLoadedData(data);
       }
     } else {
-      catalogData = data;
+      processLoadedData(data);
     }
 
     const hash = window.location.hash;
-    if (hash.startsWith('#minidiscs')) {
+    if (hash.startsWith('#planner')) {
+      renderCompilPlanner(false);
+    } else if (hash.startsWith('#minidiscs')) {
       const urlParams = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
       const genre = urlParams.get('genre');
       const type = urlParams.get('type');
@@ -339,7 +357,8 @@ fetch('data.json')
     const savedBackup = localStorage.getItem(STORAGE_KEY);
     if (savedBackup) {
       try {
-        catalogData = JSON.parse(savedBackup);
+        const parsedBackup = JSON.parse(savedBackup);
+        processLoadedData(parsedBackup);
         hasUnsavedChanges = true;
         showToast("⚡ Données chargées depuis la sauvegarde locale !");
         renderDashboard(false);
@@ -348,6 +367,7 @@ fetch('data.json')
     }
 
     catalogData = [];
+    window.ideaAlbums = [];
     app.innerHTML = `
       <div style="text-align:center; padding: 40px; color: var(--text-sub);">
         <p style="color: #e63946; font-weight: bold; font-size: 1.1rem;">⚠️ Erreur de chargement de data.json</p>
