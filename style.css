@@ -473,9 +473,13 @@ body:has(.featured-container.hidden) main#app {
    TABLEAU DE BORD (ACCUEIL COMPACT)
    ========================================== */
 .dashboard-container {
-  display: flex;
-  flex-direction: column;
-  margin-top: 200px;
+  position: fixed !important;
+  top: 150px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: calc(100% - 32px) !important;
+  max-width: 568px !important;
+  z-index: 1000 !important;
 }
 
 .dashboard-card {
