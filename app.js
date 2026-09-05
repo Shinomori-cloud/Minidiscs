@@ -539,7 +539,7 @@ function renderDashboard(pushState = true) {
 
       <!-- 3. BLOC BAS : RÉPARTITION PAR GENRE -->
       <div class="dashboard-card" style="margin-top: 16px;">
-        <div class="dashboard-section-title">RÉPARTITION PAR GENRE</div>
+        <div class="dashboard-section-title">GENRES</div>
         <div class="genres-grid">${genreBadgesHTML}</div>
       </div>
 
