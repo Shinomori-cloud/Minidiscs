@@ -520,7 +520,7 @@ function renderDashboard(pushState = true) {
     <div class="dashboard-container" style="padding-top: 20px; padding-bottom: 90px;">
       
       <!-- 1. BLOC TOP : COMPTEUR & RÉPARTITION PAR TYPE -->
-      <div class="dashboard-card">
+      <div class="dashboard-card" style="margin-bottom: 24px;">
         <div class="dashboard-stat-main" style="padding: 4px 0 8px 0;">
          <span class="stat-label" style="font-size: 0.75rem;">Collections de</span>
          <span class="stat-number" style="font-size: 1.2rem; line-height: 1;">${totalMD}</span>
