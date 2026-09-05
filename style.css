@@ -64,16 +64,16 @@ body:has(.dashboard-container)::before {
 
 /* CACHE SPÉCIFIQUE POUR LE PLANIFICATEUR (Couvre les 2 encarts) */
 body:has(#header-planner-badge)::before {
-  height: 200px !important;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 175px, transparent 195px) !important;
-  mask-image: linear-gradient(to bottom, black 0px, black 175px, transparent 195px) !important;
+  height: 300px !important;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 280px, transparent 300px) !important;
+  mask-image: linear-gradient(to bottom, black 0px, black 280px, transparent 300px) !important;
 }
 
 /* RÉDUCTION DU CACHE SUR LES AUTRES PAGES SECONDAIRES */
 body:has(.featured-container.hidden):not(:has(#header-planner-badge))::before {
   height: 160px;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
-  mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 150px, transparent 160px);
+  mask-image: linear-gradient(to bottom, black 0px, black 150px, transparent 160px);
 }
 /* ==========================================
    BARRE DE RECHERCHE DÉPLOYABLE EN HAUT
@@ -192,7 +192,7 @@ body:has(.dashboard-container) .title-90s {
    ========================================== */
 .planner-header-info {
   position: fixed !important;
-  top: 118px !important; /* Positionné juste sous le header principal */
+  top: 200px !important; /* Positionné juste sous le header principal */
   left: 50% !important;
   transform: translateX(-50%) !important;
   z-index: 999 !important;
