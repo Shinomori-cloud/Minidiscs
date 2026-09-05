@@ -530,7 +530,8 @@ body:has(.featured-container.hidden) main#app {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2px 14px;
-  margin-bottom: 8px;
+  margin-top: 4px;     /* Rapproche la grille du titre du dessus */
+  margin-bottom: 2px;  /* Réduit l'espace vide tout en bas */
 }
 
 .type-btn {
@@ -554,13 +555,12 @@ body:has(.featured-container.hidden) main#app {
   box-shadow: 0px 0px 0px #000;
 }
 
-/* Version épurée : suppression des encarts et bordures lourdes */
 .genre-badge {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: transparent;
-  padding: 5px 2px;
+  padding: 4px 2px;    /* Légèrement tassé en hauteur */
   border: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 0;
@@ -574,18 +574,16 @@ body:has(.featured-container.hidden) main#app {
 }
 
 .genre-name {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 4px;
-  letter-spacing: 0.3px;
 }
 
 .genre-count {
-  font-family: 'Righteous', cursive;
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-main);
 }
