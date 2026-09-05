@@ -11,6 +11,7 @@
 </head>
 <body>
 
+  <!-- BARRE DE RECHERCHE DÉPLOYABLE EN HAUT -->
   <div id="search-bar" class="search-bar top-search closed">
     <input 
       type="search" 
@@ -20,15 +21,16 @@
     >
   </div>
 
+  <!-- HEADER FIXE RETRO 90S -->
   <header>
     <button id="back-btn" class="back-btn hidden">&larr;</button>
     <div class="header-title-container">
       <div class="header-subtitle">COLLECTION</div>
       <div id="header-title" class="title-90s">MINIDISCS</div>
     </div>
-    <div id="planner-header-info" class="planner-header-info hidden"></div>
   </header>
 
+  <!-- SELECTION DU MOMENT (ACCUEIL) -->
   <div id="featured-container" class="featured-container">
     <div class="featured-header">
       <span class="featured-title">SÉLECTION DU MOMENT</span>
@@ -36,9 +38,11 @@
     <div id="featured-grid" class="featured-grid"></div>
   </div>
 
+  <!-- APPLICATION PRINCIPALE -->
   <main id="app">
-    </main>
+  </main>
 
+  <!-- MODALE FORMULAIRE ADMIN (AJOUT ET ÉDITION) -->
   <div id="admin-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
@@ -70,6 +74,7 @@
           </div>
         </div>
 
+        <!-- VUE COMPILATION -->
         <div id="section-compil">
           <div class="form-group">
             <label>Titre de la compilation</label>
@@ -85,11 +90,13 @@
           </div>
         </div>
 
+        <!-- VUE SÉRIE D'ALBUMS -->
         <div id="section-albums" class="hidden">
           <div id="albums-container"></div>
           <button type="button" class="btn-sub" onclick="addAdminAlbumBlock()">+ Ajouter un album</button>
         </div>
 
+        <!-- BOUTONS D'ACTION DU FORMULAIRE -->
         <div class="form-actions" style="display: flex; gap: 8px; margin-top: 15px;">
           <button type="submit" class="btn-primary" style="flex: 1; margin-bottom: 0;">Enregistrer</button>
           <button type="button" class="btn-secondary" onclick="closeAdminModal()">Annuler</button>
@@ -98,6 +105,7 @@
     </div>
   </div>
 
+  <!-- MODALE NOUVEL ALBUM IDÉE / À VENIR -->
   <div id="idea-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
@@ -139,10 +147,12 @@
     </div>
   </div>
   
+  <!-- POP-UP TOAST -->
   <div id="toast" class="toast hidden"></div>
 
   <script src="app.js"></script>
 
+  <!-- BOUTON FLOTTANT FIXE (EN BAS À DROITE) -->
   <button id="search-fab-btn" class="search-fab-btn hidden" onclick="toggleSearch()" title="Rechercher">
     🔍
   </button>
