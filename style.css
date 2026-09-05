@@ -118,7 +118,12 @@ header {
   gap: 6px !important;
   
   padding: 12px 14px !important;
-  background-color: #ffffff !important;
+  
+  /* Transparence + flou au scroll */
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  
   border-radius: 16px !important;
   border: 2px solid #000 !important;
   box-shadow: 4px 4px 0px #000 !important;
@@ -204,23 +209,34 @@ body:has(.dashboard-container) .title-90s {
   box-shadow: 0px 0px 0px #000;
 }
 
-/* ENCART DU PLANIFICATEUR DANS LE HEADER */
+/* ==========================================
+   DEUXIÈME BLOC INDÉPENDANT (SÉPARÉ DU HEADER)
+   ========================================== */
 .planner-header-info {
-  background: rgba(255, 255, 255, 0.9) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
+  position: fixed !important;
+  top: 112px !important; /* Positionné juste en dessous du header */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 999 !important;
+  
+  /* Transparence + flou au scroll */
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  
   color: #000 !important;
   border: 2px solid #000 !important;
-  border-radius: 20px !important;
+  border-radius: 16px !important;
   padding: 8px 16px !important;
   font-size: 0.9rem !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
   gap: 12px !important;
-  box-shadow: 3px 3px 0px #000 !important;
-  margin-top: 8px !important;
-  width: 100% !important;
+  box-shadow: 4px 4px 0px #000 !important;
+  
+  width: calc(100% - 32px) !important;
+  max-width: 568px !important;
   box-sizing: border-box !important;
 }
 
