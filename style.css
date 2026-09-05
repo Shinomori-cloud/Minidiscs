@@ -1095,3 +1095,9 @@ header {
 #featured-container, .featured-container:not(.featured-container-inline) {
   display: none !important;
 }
+
+/* Empêche le premier encart de passer sous le header lors du défilement */
+.dashboard-container {
+  padding-top: 110px !important; /* Ajuste cette valeur si tu veux plus ou moins d'espace */
+  margin-top: 0 !important;      /* Supprime la marge négative qui le faisait remonter */
+}
