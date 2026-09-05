@@ -1044,10 +1044,10 @@ function formatSecondsToDisplay(totalSec) {
   return `${m}m ${String(s).padStart(2, '0')}s`;
 }
 
+/* Mise à jour de l'encart séparé situé dans la page */
 function updatePlannerHeader() {
-  const plannerInfoEl = document.getElementById('planner-header-info');
-  if (!plannerInfoEl) return;
-
+  const durationTextEl = document.getElementById('planner-duration-text');
+  
   const ideas = getIdeaList();
   let totalSeconds = 0;
   selectedIdeaIndices.forEach(idx => {
@@ -1060,10 +1060,10 @@ function updatePlannerHeader() {
   const isOverLimit = totalSeconds > (148 * 60);
   const timeColor = isOverLimit ? '#e63946' : '#06d6a0';
 
-  plannerInfoEl.innerHTML = `
-    <span>Durée sélectionnée :</span>
-    <strong style="color: ${timeColor}; font-size: 1.05rem;">${formattedTime} / 2h 28m</strong>
-  `;
+  if (durationTextEl) {
+    durationTextEl.style.color = timeColor;
+    durationTextEl.textContent = `${formattedTime} / 2h 28m`;
+  }
 
   const convertBtn = document.getElementById('planner-btn-convert');
   if (convertBtn) {
@@ -1073,11 +1073,7 @@ function updatePlannerHeader() {
 }
 
 function clearPlannerHeaderInfo() {
-  const plannerInfoEl = document.getElementById('planner-header-info');
-  if (plannerInfoEl) {
-    plannerInfoEl.classList.add('hidden');
-    plannerInfoEl.innerHTML = '';
-  }
+  // Fonction conservée pour la compatibilité
 }
 
 function renderCompilPlanner(pushState = true) {
@@ -1088,13 +1084,6 @@ function renderCompilPlanner(pushState = true) {
 
   if (typeof featuredContainer !== 'undefined' && featuredContainer) {
     featuredContainer.classList.add('hidden');
-  }
-
-  // Activation et affichage de l'encart dans le header principal
-  const plannerInfoEl = document.getElementById('planner-header-info');
-  if (plannerInfoEl) {
-    plannerInfoEl.classList.remove('hidden');
-    updatePlannerHeader();
   }
 
   if (pushState && window.location.hash !== '#planner') {
@@ -1128,8 +1117,12 @@ function renderCompilPlanner(pushState = true) {
 
   app.innerHTML = `
     <div style="padding-bottom: 90px; padding-top: 10px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3 class="planner-text-white" style="margin: 0; font-size: 1.1rem;">Albums disponibles (${ideas.length})</h3>
+      
+      <!-- ENCART CALCULATEUR DÉDIÉ SÉPARÉ (PILULE CENTRÉE) -->
+      <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+        <div style="background: #ffffff; border: 2px solid #000; border-radius: 25px; padding: 8px 20px; box-shadow: 4px 4px 0px #000; display: inline-flex; align-items: center; gap: 8px;">
+          <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.1rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
+        </div>
       </div>
 
       <div class="ideas-grid" id="ideas-grid-container">
@@ -1148,6 +1141,9 @@ function renderCompilPlanner(pushState = true) {
       </div>
     </div>
   `;
+
+  // Calcul initial du temps au chargement
+  updatePlannerHeader();
 
   // Écouteurs pour la sélection/suppression sur la grille
   const gridContainer = document.getElementById('ideas-grid-container');
@@ -1266,7 +1262,6 @@ function convertSelectedToMD() {
   selectedIdeaIndices.clear();
 
   saveLocalBackup();
-  clearPlannerHeaderInfo();
   showToast("🎉 Albums convertis en MiniDisc avec succès !");
   renderDashboard(true);
 }
