@@ -607,36 +607,37 @@ body:has(.featured-container.hidden) main#app {
 }
 
 /* ==========================================
-   RANGÉE D'ACTIONS ACCUEIL (3 BOUTONS)
+   RANGÉE D'ACTIONS ACCUEIL (STYLE CAPSULE)
    ========================================== */
 .dashboard-actions-row {
   display: flex;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 8px;
   width: 100%;
 }
 
 .action-btn-wide {
-  flex: 2; /* Deux fois plus large que le bouton JSON */
+  flex: 2;
   background-color: #ffffff;
   color: var(--text-main);
   border: 2px solid #000;
   padding: 8px 6px;
-  border-radius: 10px;
-  font-size: 0.75rem;
+  border-radius: 20px; /* Passage en forme capsule */
+  font-size: 0.72rem;
   font-weight: 800;
   cursor: pointer;
   box-shadow: 2px 2px 0px #000;
   text-align: center;
   transition: transform 0.1s ease;
+  white-space: nowrap;
 }
 
 .action-btn-json {
-  flex: 1; /* Demi-largeur */
+  flex: 1;
   border: 2px solid #000;
   padding: 8px 4px;
-  border-radius: 10px;
-  font-size: 0.75rem;
+  border-radius: 20px; /* Passage en forme capsule */
+  font-size: 0.72rem;
   font-weight: 800;
   cursor: pointer;
   box-shadow: 2px 2px 0px #000;
