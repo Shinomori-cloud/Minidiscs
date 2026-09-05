@@ -971,7 +971,6 @@ let selectedIdeaIndices = new Set();
 // Structure de stockage des idées dans le catalogue global
 function getIdeaList() {
   if (!catalogData) return [];
-  // On stocke les idées dans une propriété globale attachée si absente
   if (!window.ideaAlbums) {
     window.ideaAlbums = [];
   }
@@ -989,7 +988,7 @@ function parseTimeToSeconds(timeStr) {
   } else if (parts.length === 2) {
     return parts[0] * 60 + parts[1];
   } else if (parts.length === 1) {
-    return parts[0] * 60; // si renseigné en minutes simples
+    return parts[0] * 60;
   }
   return 0;
 }
@@ -1030,17 +1029,19 @@ function renderCompilPlanner(pushState = true) {
   });
 
   const formattedTime = formatSecondsToDisplay(totalSeconds);
-  const isOver80Min = totalSeconds > 80 * 60;
-  const timeClass = isOver80Min ? 'compil-time-warning' : 'compil-time-ok';
+  // Limite fixée à 148 minutes (74 min x 2 en LP2)
+  const isOverLimit = totalSeconds > 148 * 60;
+  const timeClass = isOverLimit ? 'compil-time-warning' : 'compil-time-ok';
 
   let cardsHTML = '';
   if (ideas.length === 0) {
-    cardsHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 30px; color: var(--text-sub);">Aucun album dans votre liste d'idées. Ajoutez-en avec le bouton ci-dessus !</p>`;
+    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album dans votre liste d'idées. Ajoutez-en avec le bouton ci-dessus !</p>`;
   } else {
     ideas.forEach((item, index) => {
       const isSelected = selectedIdeaIndices.has(index);
       cardsHTML += `
         <div class="idea-card ${isSelected ? 'selected' : ''}" onclick="toggleIdeaSelection(${index})">
+          <button type="button" class="idea-delete-btn" onclick="deleteIdeaAlbum(event, ${index})" title="Supprimer cet album">🗑️</button>
           <img src="${item.cover || 'images/'}" class="idea-cover" alt="cover" onerror="this.src='images/default.jpg'">
           <div class="idea-title" title="${item.title}">${item.title}</div>
           <div class="idea-artist" title="${item.artist}">${item.artist}</div>
@@ -1051,24 +1052,24 @@ function renderCompilPlanner(pushState = true) {
   }
 
   app.innerHTML = `
-    <div style="padding: 10px 0;">
+    <div>
       <!-- ENCART FIXE CALCULATEUR DE DURÉE -->
       <div class="compil-banner">
         <div class="compil-banner-header">
-          <span>Durée sélectionnée :</span>
-          <span class="compil-time-display ${timeClass}">${formattedTime} / 80m</span>
+          <span style="color:#222;">Durée sélectionnée :</span>
+          <span class="compil-time-display ${timeClass}">${formattedTime} / 148m</span>
         </div>
         <div class="compil-actions">
-          <button class="btn-primary" style="flex:1; margin:0;" onclick="openIdeaModal()">＋ Ajouter un album</button>
-          <button class="btn-secondary" style="margin:0;" onclick="convertSelectedToMD()" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''}>
-            💾 Convertir en MiniDisc (${selectedIdeaIndices.size})
+          <button class="btn-primary" onclick="openIdeaModal()">＋ Ajouter</button>
+          <button class="btn-secondary" onclick="convertSelectedToMD()" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''}>
+            💾 Convertir (${selectedIdeaIndices.size})
           </button>
-          <button class="btn-sub" style="margin:0;" onclick="clearIdeaSelection()">Réinitialiser</button>
+          <button class="btn-sub" onclick="clearIdeaSelection()">Réinitialiser</button>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
-        <h3 style="margin: 0;">Albums disponibles (${ideas.length})</h3>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+        <h3 class="planner-text-white" style="margin: 0;">Albums disponibles (${ideas.length})</h3>
       </div>
 
       <div class="ideas-grid">
@@ -1076,6 +1077,29 @@ function renderCompilPlanner(pushState = true) {
       </div>
     </div>
   `;
+}
+
+// Supprimer un album de la liste des idées
+function deleteIdeaAlbum(event, index) {
+  event.stopPropagation();
+  const ideas = getIdeaList();
+  if (!ideas[index]) return;
+
+  if (confirm(`Supprimer "${ideas[index].title}" de vos idées ?`)) {
+    ideas.splice(index, 1);
+    
+    // Mise à jour des index sélectionnés après suppression
+    const updatedIndices = new Set();
+    selectedIdeaIndices.forEach(i => {
+      if (i > index) updatedIndices.add(i - 1);
+      else if (i < index) updatedIndices.add(i);
+    });
+    selectedIdeaIndices = updatedIndices;
+
+    saveLocalBackup();
+    showToast("🗑️ Album supprimé des idées");
+    renderCompilPlanner(false);
+  }
 }
 
 // Basculer la sélection d'une carte
@@ -1130,7 +1154,6 @@ function convertSelectedToMD() {
   const ideas = getIdeaList();
   const selectedAlbums = Array.from(selectedIdeaIndices).map(i => ideas[i]);
 
-  // Préparer un nouveau MiniDisc type "Série d'albums"
   const newMD = {
     genre: selectedAlbums[0].genre ? [selectedAlbums[0].genre] : ['DIVERS'],
     type: ['ALBUM'],
@@ -1140,13 +1163,13 @@ function convertSelectedToMD() {
       artist: a.artist,
       genre: a.genre ? [a.genre] : [],
       cover: a.cover,
-      tracks: [] // Les pistes pourront être complétées plus tard
+      tracks: []
     }))
   };
 
   catalogData.push(newMD);
 
-  // Supprimer les albums convertis de la liste des idées
+  // Retirer les albums convertis du tableau d'idées
   window.ideaAlbums = ideas.filter((_, idx) => !selectedIdeaIndices.has(idx));
   selectedIdeaIndices.clear();
 
