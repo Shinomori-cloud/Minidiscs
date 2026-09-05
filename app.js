@@ -1005,7 +1005,6 @@ function downloadUpdatedJSON() {
    ========================================== */
 let selectedIdeaIndices = new Set();
 
-// Structure de stockage des idées dans le catalogue global
 function getIdeaList() {
   if (!catalogData) return [];
   if (!window.ideaAlbums) {
@@ -1014,7 +1013,7 @@ function getIdeaList() {
   return window.ideaAlbums;
 }
 
-// Convertit du texte "hh:mm:ss" ou "mm:ss" en secondes totales
+// Support de "HH:MM:SS", "MM:SS" ou minutes simples
 function parseTimeToSeconds(timeStr) {
   if (!timeStr) return 0;
   const parts = timeStr.toString().trim().split(':').map(Number);
@@ -1030,7 +1029,6 @@ function parseTimeToSeconds(timeStr) {
   return 0;
 }
 
-// Formatage des secondes en "Xh Ym Zs" ou "Ym Zs"
 function formatSecondsToDisplay(totalSec) {
   const h = Math.floor(totalSec / 3600);
   const m = Math.floor((totalSec % 3600) / 60);
@@ -1042,7 +1040,7 @@ function formatSecondsToDisplay(totalSec) {
   return `${m}m ${String(s).padStart(2, '0')}s`;
 }
 
-// Met à jour la durée et les boutons sans recharger la page
+// Mise à jour instantanée du DOM sans clignotement
 function updatePlannerHeader() {
   const ideas = getIdeaList();
   let totalSeconds = 0;
@@ -1058,7 +1056,11 @@ function updatePlannerHeader() {
   const displayEl = document.querySelector('.compil-time-display');
   if (displayEl) {
     displayEl.textContent = `${formattedTime} / 148m`;
-    displayEl.className = `compil-time-display ${isOverLimit ? 'compil-time-warning' : 'compil-time-ok'}`;
+    if (isOverLimit) {
+      displayEl.style.color = '#e63946'; // Rouge si dépassement
+    } else {
+      displayEl.style.color = '#06d6a0'; // Vert si OK
+    }
   }
 
   const convertBtn = document.querySelector('.compil-actions .btn-secondary');
@@ -1068,7 +1070,6 @@ function updatePlannerHeader() {
   }
 }
 
-// Affichage de la page du planificateur
 function renderCompilPlanner(pushState = true) {
   currentMD = null;
   currentAlbum = null;
@@ -1092,7 +1093,7 @@ function renderCompilPlanner(pushState = true) {
 
   const formattedTime = formatSecondsToDisplay(totalSeconds);
   const isOverLimit = totalSeconds > (148 * 60);
-  const timeClass = isOverLimit ? 'compil-time-warning' : 'compil-time-ok';
+  const timeColor = isOverLimit ? '#e63946' : '#06d6a0';
 
   let cardsHTML = '';
   if (ideas.length === 0) {
@@ -1101,7 +1102,7 @@ function renderCompilPlanner(pushState = true) {
     ideas.forEach((item, index) => {
       const isSelected = selectedIdeaIndices.has(index);
       cardsHTML += `
-        <div class="idea-card ${isSelected ? 'selected' : ''}" onclick="toggleIdeaSelection(${index}, this)">
+        <div class="idea-card ${isSelected ? 'selected' : ''}" onclick="toggleIdeaSelection(event, ${index})">
           <button type="button" class="idea-delete-btn" onclick="deleteIdeaAlbum(event, ${index})" title="Supprimer cet album">🗑️</button>
           <img src="${item.cover || 'images/'}" class="idea-cover" alt="cover" onerror="this.src='images/default.jpg'">
           <div class="idea-title" title="${item.title}">${item.title}</div>
@@ -1117,7 +1118,7 @@ function renderCompilPlanner(pushState = true) {
       <div class="compil-banner">
         <div class="compil-banner-header">
           <span style="color:#222;">Durée sélectionnée :</span>
-          <span class="compil-time-display ${timeClass}">${formattedTime} / 148m</span>
+          <span class="compil-time-display" style="color: ${timeColor}; font-weight: bold;">${formattedTime} / 148m</span>
         </div>
         <div class="compil-actions">
           <button class="btn-primary" onclick="openIdeaModal()">＋ Ajouter</button>
@@ -1139,7 +1140,6 @@ function renderCompilPlanner(pushState = true) {
   `;
 }
 
-// Supprimer un album de la liste des idées
 function deleteIdeaAlbum(event, index) {
   event.stopPropagation();
   const ideas = getIdeaList();
@@ -1161,14 +1161,15 @@ function deleteIdeaAlbum(event, index) {
   }
 }
 
-// Basculer la sélection d'une carte instantanément sans réafficher toute la page
-function toggleIdeaSelection(index, element) {
+// Bascule instantanée de la classe .selected sur l'élément cliqué sans re-rendre la page
+function toggleIdeaSelection(event, index) {
+  const cardElement = event.currentTarget;
   if (selectedIdeaIndices.has(index)) {
     selectedIdeaIndices.delete(index);
-    element.classList.remove('selected');
+    cardElement.classList.remove('selected');
   } else {
     selectedIdeaIndices.add(index);
-    element.classList.add('selected');
+    cardElement.classList.add('selected');
   }
   updatePlannerHeader();
 }
@@ -1178,7 +1179,6 @@ function clearIdeaSelection() {
   renderCompilPlanner(false);
 }
 
-// Modale Ajout d'album dans la liste des idées
 function openIdeaModal() {
   document.getElementById('idea-form').reset();
   document.getElementById('idea-cover').value = "images/";
@@ -1208,7 +1208,6 @@ function saveIdeaAlbum(e) {
   renderCompilPlanner(false);
 }
 
-// Convertir les albums sélectionnés directement en nouveau MiniDisc
 function convertSelectedToMD() {
   if (selectedIdeaIndices.size === 0) return;
 
