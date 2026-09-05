@@ -1089,7 +1089,7 @@ function injectPlannerHeaderBadge() {
     // Position fixe sous le header global, avec son propre fond et son ombre
     badge.style.cssText = `
       position: fixed;
-      top: 85px;
+      top: 120px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 999;
@@ -1160,7 +1160,7 @@ function renderCompilPlanner(pushState = true) {
   }
 
   app.innerHTML = `
-    <div style="padding-bottom: 90px; padding-top: 160px;">
+    <div style="padding-bottom: 90px; padding-top: 190px;">
       
       <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
