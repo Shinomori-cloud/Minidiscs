@@ -64,9 +64,9 @@ body:has(.dashboard-container)::before {
 
 /* CACHE SPÉCIFIQUE POUR LE PLANIFICATEUR (Couvre les 2 encarts) */
 body:has(#header-planner-badge)::before {
-  height: 200px !important;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 175px, transparent 200px) !important;
-  mask-image: linear-gradient(to bottom, black 0px, black 175px, transparent 200px) !important;
+  height: 230px !important;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 210px, transparent 230px) !important;
+  mask-image: linear-gradient(to bottom, black 0px, black 210px, transparent 230px) !important;
 }
 
 /* RÉDUCTION DU CACHE SUR LES AUTRES PAGES SECONDAIRES */
@@ -944,7 +944,7 @@ body:has(.featured-container.hidden) main#app {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 10px;
-  margin-top: -100px;
+  margin-top: -130px;
 }
 
 .idea-card {
