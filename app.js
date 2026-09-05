@@ -444,8 +444,8 @@ function renderDashboard(pushState = true) {
   currentAlbum = null;
   currentGenreFilter = null;
   currentTypeFilter = null;
-  backBtn.classList.add('hidden');
-  headerTitle.textContent = "MINIDISCS";
+  if (typeof backBtn !== 'undefined' && backBtn) backBtn.classList.add('hidden');
+  if (typeof headerTitle !== 'undefined' && headerTitle) headerTitle.textContent = "MINIDISCS";
 
   updateSearchVisibility(false);
 
@@ -454,7 +454,7 @@ function renderDashboard(pushState = true) {
     return;
   }
 
-  if (featuredContainer) {
+  if (typeof featuredContainer !== 'undefined' && featuredContainer) {
     featuredContainer.classList.remove('hidden');
     renderFeatured();
   }
