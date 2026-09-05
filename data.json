@@ -168,28 +168,19 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Rap"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Albums"
     ],
     "md_cover": "images/md_26.jpg",
     "albums": [
       {
         "title": "Premières consultations",
         "artist": "Doc Gynéco",
+        "year": "1996",
         "cover": "images/doc_gyneco_premieres_consultations.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "01. Viens voir le docteur",
           "02. Dans ma rue",
@@ -206,20 +197,19 @@
           "13. Tel père tel fils (Papa was a Rolling Stone)",
           "14. Première consultation",
           "15. Ma salope à moi"
+        ],
+        "genre": [
+          "Rap"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
         "title": "Liaisons dangereuses",
         "artist": "Doc Gynéco",
+        "year": "1998",
         "cover": "images/doc_gyneco_liaisons_dangereuses.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "16. Dans ma ruche",
           "17. Viens faire un tour dans les cités",
@@ -239,6 +229,12 @@
           "31. L'or et la soie",
           "32. Paranoïa",
           "33. C'est beau la vie"
+        ],
+        "genre": [
+          "Rap"
+        ],
+        "type": [
+          "Albums"
         ]
       }
     ]
@@ -478,28 +474,19 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Metal"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Albums"
     ],
     "md_cover": "images/md_32.jpg",
     "albums": [
       {
         "title": "Follow the Leader",
         "artist": "Korn",
+        "year": "1998",
         "cover": "images/korn_follow_the_leader.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "01. It's On!",
           "02. Freak on a Leash",
@@ -515,20 +502,19 @@
           "12. Cameltosis",
           "13. My Gift to You",
           "14. Earache My Eye"
+        ],
+        "genre": [
+          "Metal"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
         "title": "Primitive",
         "artist": "Soulfly",
+        "year": "2000",
         "cover": "images/soulfly_primitive.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "15. Back to the Primitive",
           "16. Pain",
@@ -542,6 +528,12 @@
           "24. Soulfly II",
           "25. In Memory of...",
           "26. Flyhigh"
+        ],
+        "genre": [
+          "Metal"
+        ],
+        "type": [
+          "Albums"
         ]
       }
     ]
@@ -619,28 +611,22 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Variété",
+      "Talks",
+      "Humour"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Albums",
+      "Compilations"
     ],
     "md_cover": "images/md_02.jpg",
     "albums": [
       {
         "title": "Boulversifiant",
         "artist": "Les Inconnus",
+        "year": "1991",
         "cover": "images/les_inconnus_boulversifiant.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "01. Rap-Tout",
           "02. La Mano Verda (Negra Bouch'Beat - c'est toi que je t'aime)",
@@ -655,20 +641,20 @@
           "11. Auteuil Neuilly Passy (Rap BCBG) (instrumental)",
           "12. Vice et Versa",
           "13. Chanson hard rock (poésie)"
+        ],
+        "genre": [
+          "Variété",
+          "Humour"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
         "title": "Sketchs",
         "artist": "Les Inconnus",
+        "year": "1991",
         "cover": "images/",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "14. Télémagouille",
           "15. La Z.U.P.",
@@ -682,6 +668,13 @@
           "23. La quête",
           "24. Les gosses",
           "25. Les Téléphones"
+        ],
+        "genre": [
+          "Talks",
+          "Humour"
+        ],
+        "type": [
+          "Compilations"
         ]
       }
     ]
@@ -783,28 +776,20 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Rap"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Albums",
+      "Ost"
     ],
     "md_cover": "images/md_04.jpg",
     "albums": [
       {
         "title": "Taxi",
         "artist": "Divers",
+        "year": "1999",
         "cover": "images/ost_taxi.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "01. Maudits Soient Les Yeux Fermés (Chiens de Paille)",
           "02. Scooter (IAM)",
@@ -825,20 +810,19 @@
           "17. Thème de Lilly III (IAM)",
           "18. Lyrix Files (Akhenathon)",
           "19. What Makes You A Man (Deni Hines)"
+        ],
+        "genre": [
+          "Rap"
+        ],
+        "type": [
+          "Ost"
         ]
       },
       {
         "title": "Où je vis",
         "artist": "Shurik'n",
+        "year": "1998",
         "cover": "images/shurik_n_ou_je_vis.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "20. Samouraï",
           "21. Où je vis",
@@ -856,33 +840,30 @@
           "33. Y'a Pas De Choix (feat. 3eme Oeil)",
           "34. Manisfeste (feat. Akhenaton)",
           "35. J'lève mon verre"
+        ],
+        "genre": [
+          "Rap"
+        ],
+        "type": [
+          "Albums"
         ]
       }
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Rap"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Albums"
     ],
     "md_cover": "images/md_05.jpg",
     "albums": [
       {
         "title": "L'école du micro d'argent",
         "artist": "IAM",
+        "year": "1997",
         "cover": "images/iam_ecole_micro_argent.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "01. L'école du micro d'argent",
           "02. Dangereux",
@@ -900,20 +881,19 @@
           "14. Un cri court dans la nuit (feat. Nuttea)",
           "15. Independanza",
           "16. Demain, c'est loin"
+        ],
+        "genre": [
+          "Rap"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
         "title": "Suprême NTM",
         "artist": "Suprême NTM",
+        "year": "1998",
         "cover": "images/supreme_ntm.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "17. Intro",
           "18. Back dans les bacs",
@@ -930,6 +910,12 @@
           "29. On est encore là, Pt.2",
           "30. Harcore sur le Beat",
           "31. Outro"
+        ],
+        "genre": [
+          "Rap"
+        ],
+        "type": [
+          "Albums"
         ]
       }
     ]
@@ -1029,28 +1015,21 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Rap",
+      "Reggae"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Albums",
+      "Compilations"
     ],
     "md_cover": "images/md_09.jpg",
     "albums": [
       {
         "title": "The Score",
         "artist": "Fugees",
+        "year": "1996",
         "cover": "images/fugees_the_score.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "01. Red Intro",
           "02. How Many Mics",
@@ -1069,20 +1048,19 @@
           "15. Fu-Gee-La (Sly & Robbie mix)",
           "16. Mista Mista",
           "17. Fu-Gee-La (Refugee Camp global mix featuring John Forté)"
+        ],
+        "genre": [
+          "Rap"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
         "title": "Legend, Best of",
         "artist": "Bob Marley",
+        "year": "",
         "cover": "images/bob_marley_legend.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "18. So Much Trouble In The World",
           "19. Coming In From The Cold",
@@ -1103,6 +1081,12 @@
           "34. Jamming",
           "35. Stir It Up",
           "36. Survival"
+        ],
+        "genre": [
+          "Reggae"
+        ],
+        "type": [
+          "Compilations"
         ]
       }
     ]
@@ -1202,28 +1186,23 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Pop Rock",
+      "Alternative Rock",
+      "Variété",
+      "Orchestral"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Ost",
+      "Compilations"
     ],
     "md_cover": "images/md_11.jpg",
     "albums": [
       {
         "title": "Romeo + Juliet Volume 1",
         "artist": "Divers",
+        "year": "1996",
         "cover": "images/ost_romeo_juliet_vol1.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "01. #1 Crush (Garbage)",
           "02. Local God (Everclear)",
@@ -1238,20 +1217,22 @@
           "11. Talk Show Host (Radiohead)",
           "12. Little Star (Stina Nordenstam)",
           "13. You and Me Song (The Wannadies)"
+        ],
+        "genre": [
+          "Pop Rock",
+          "Alternative Rock",
+          "Variété"
+        ],
+        "type": [
+          "Ost",
+          "Compilations"
         ]
       },
       {
         "title": "Romeo + Juliet Volume 2",
         "artist": "Divers",
+        "year": "1996",
         "cover": "images/ost_romeo_juliet_vol2.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "14. Prologue",
           "15. O Verona",
@@ -1278,6 +1259,12 @@
           "36. Liebestod",
           "37. Epilogue",
           "38. Exit Music (for a Film) (Radiohead)"
+        ],
+        "genre": [
+          "Orchestral"
+        ],
+        "type": [
+          "Ost"
         ]
       }
     ]
@@ -1473,28 +1460,20 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Alternative Rock",
+      "Pop Rock"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Albums"
     ],
     "md_cover": "images/md_14.jpg",
     "albums": [
       {
         "title": "Origin of Symmetry",
         "artist": "Muse",
+        "year": "2001",
         "cover": "images/muse_origin_of_symmetry.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "01. New Born",
           "02. Bliss",
@@ -1508,20 +1487,19 @@
           "10. Feeling Good",
           "11. Megalomania",
           "12. Futurism"
+        ],
+        "genre": [
+          "Alternative Rock"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
         "title": "The Bends",
         "artist": "Radiohead",
+        "year": "1995",
         "cover": "images/radiohead_the_bends.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "13. Planet Telex",
           "14. The Bends",
@@ -1535,20 +1513,19 @@
           "22. Black Star",
           "23. Sulk",
           "24. Street Spirit (Fade Out)"
+        ],
+        "genre": [
+          "Alternative Rock"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
         "title": "The Man Who",
         "artist": "Travis",
+        "year": "1999",
         "cover": "images/travis_the_man_who.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
         "tracks": [
           "25. Writing to Reach You",
           "26. The Fear",
@@ -1561,6 +1538,12 @@
           "33. She's So Strange",
           "34. Slide Show",
           "35. Blue Flashing Light (Hidden track)"
+        ],
+        "genre": [
+          "Pop Rock"
+        ],
+        "type": [
+          "Albums"
         ]
       }
     ]
@@ -1900,7 +1883,7 @@
       {
         "title": "Nevermind",
         "artist": "Nirvana",
-        "year": "",
+        "year": "1991",
         "cover": "images/nirvana_nevermind.jpg",
         "tracks": [
           "01. Smells Like Teen Spirit",
@@ -1916,12 +1899,18 @@
           "11. On a Plain",
           "12. Something in the Way",
           "13. Endless, Nameless (Hidden Track)"
+        ],
+        "genre": [
+          "Alternative Rock"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
         "title": "Placebo",
         "artist": "Placebo",
-        "year": "",
+        "year": "1996",
         "cover": "images/placebo_placebo.jpg",
         "tracks": [
           "14. Come Home",
@@ -1935,12 +1924,18 @@
           "22. Lady of the Flowers",
           "23. Swallow",
           "24. H.K. Farewell (Hidden Track)"
+        ],
+        "genre": [
+          "Alternative Rock"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
         "title": "Cocoon Crash",
         "artist": "K's Choice",
-        "year": "",
+        "year": "1998",
         "cover": "images/ks_choice_cocoon_crash.jpg",
         "tracks": [
           "25. Believe",
@@ -1957,6 +1952,12 @@
           "36. Quiet Little Place",
           "37. God in My Bed",
           "38. Winners"
+        ],
+        "genre": [
+          "Alternative Rock"
+        ],
+        "type": [
+          "Albums"
         ]
       }
     ]
@@ -2077,14 +2078,14 @@
       "Metal"
     ],
     "type": [
-      "Album"
+      "Albums"
     ],
     "md_cover": "images/md_40.jpg",
     "albums": [
       {
         "title": "Slipknot",
         "artist": "Slipknot",
-        "year": "",
+        "year": "1999",
         "cover": "images/slipknot.jpg",
         "tracks": [
           "01. 742617000027",
@@ -2102,12 +2103,18 @@
           "13. Only One",
           "14. Scissors",
           "15. Eeyore"
+        ],
+        "genre": [
+          "Metal"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
         "title": "Toxicity",
         "artist": "System of a Down",
-        "year": "",
+        "year": "2001",
         "cover": "images/soad_toxicity.jpg",
         "tracks": [
           "16. Prison Song",
@@ -2125,12 +2132,18 @@
           "28. Psycho",
           "29. Aerials",
           "30. Der Voghormia"
+        ],
+        "genre": [
+          "Metal"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
         "title": "White Pony",
         "artist": "Deftones",
-        "year": "",
+        "year": "2000",
         "cover": "images/deftones_white_pony.jpg",
         "tracks": [
           "31. Back to School (Mini Maggit)",
@@ -2145,23 +2158,28 @@
           "40. Passenger",
           "41. Change (In the House of Flies)",
           "42. Pink Maggit"
+        ],
+        "genre": [
+          "Metal"
+        ],
+        "type": [
+          "Albums"
         ]
       }
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Rock",
+      "Folk"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Live",
+      "Compilations"
     ],
     "md_cover": "images/md_36.jpg",
     "title": "Woodstock",
     "artist": "Various Artists",
-    "cover": "images/woodstock.jpg",
     "tracks": [
       "01. John B Sebastian*– I Had A Dream",
       "02. Canned Heat– Going Up The Country",
@@ -2326,18 +2344,15 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Metal"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Compilations"
     ],
     "md_cover": "images/md_21.jpg",
     "title": "Best of the Beast",
     "artist": "Iron Maiden",
-    "cover": "images/iron_maiden_best_of_the_beast.jpg",
     "tracks": [
       "01. Children Of The Damned",
       "02. The Prisoner",
@@ -2368,18 +2383,16 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Rock",
+      "Folk"
     ],
-    "genres": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "type": [
+      "Live"
     ],
     "md_cover": "images/md_20.jpg",
     "title": "Live from Mars",
     "artist": "Ben Harper",
-    "cover": "images/ben_harper_live_from_mars.jpg",
     "tracks": [
       "01. Glory & Consequence",
       "02. Excuse Me Mr.",
@@ -2409,13 +2422,11 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
-    ],
-    "genres": [
-      "Français",
+    "genre": [
       "Variété"
+    ],
+    "type": [
+      "Compilations"
     ],
     "md_cover": "images/md_06.jpg",
     "albums": [
@@ -2424,14 +2435,6 @@
         "artist": "Renaud",
         "year": "1995",
         "cover": "images/renaud_85_95.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "Français",
-          "Variété"
-        ],
         "tracks": [
           "01. Miss Maggie",
           "02. La Pêche À La Ligne",
@@ -2448,6 +2451,12 @@
           "13. Welcome Gorby",
           "14. Tout In Haut De Ch’Terril",
           "15. C’est Quand Qu’On Va Où ?"
+        ],
+        "genre": [
+          "Variété"
+        ],
+        "type": [
+          "Compilations"
         ]
       },
       {
@@ -2455,14 +2464,6 @@
         "artist": "France Gall",
         "year": "1995",
         "cover": "images/france_gall_bestof.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "Français",
-          "Variété"
-        ],
         "tracks": [
           "16. Ella, elle l'a",
           "17. Évidemment",
@@ -2476,23 +2477,28 @@
           "25. Diego libre dans sa tête",
           "26. Musique",
           "27. Viens je t'emmène"
+        ],
+        "genre": [
+          "Variété"
+        ],
+        "type": [
+          "Compilations"
         ]
       }
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Variété",
+      "Orchestral"
     ],
-    "genres": [
-      "OST",
-      "Variété"
+    "type": [
+      "Compilations",
+      "Ost"
     ],
     "md_cover": "images/md_27.jpg",
     "title": "Greatest Film Songs",
     "artist": "Various",
-    "cover": "images/greatest_film_songs.jpg",
     "tracks": [
       "01. Back to the Future - The power of love",
       "02. Beverly Hills Cop - The heat is on",
@@ -2534,13 +2540,13 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
-    ],
-    "genres": [
+    "genre": [
       "Rock",
       "Folk"
+    ],
+    "type": [
+      "Albums",
+      "Compilations"
     ],
     "md_cover": "images/md_29.jpg",
     "albums": [
@@ -2549,14 +2555,6 @@
         "artist": "Bruce Springsteen",
         "year": "1995",
         "cover": "images/bruce_springsteen_best.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "Rock",
-          "Folk"
-        ],
         "tracks": [
           "01. Atlantic City",
           "02. Badlands",
@@ -2570,6 +2568,13 @@
           "10. Something in the Night",
           "11. Jungleland",
           "12. Point Blank"
+        ],
+        "genre": [
+          "Rock",
+          "Folk"
+        ],
+        "type": [
+          "Compilations"
         ]
       },
       {
@@ -2577,14 +2582,6 @@
         "artist": "Neil Young",
         "year": "1972",
         "cover": "images/neil_young_harvest.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "Rock",
-          "Folk"
-        ],
         "tracks": [
           "13. Out on the Weekend",
           "14. Harvest",
@@ -2596,6 +2593,13 @@
           "20. Alabama",
           "21. The Needle and the Damage Done",
           "22. Words (Between the Lines of Age)"
+        ],
+        "genre": [
+          "Rock",
+          "Folk"
+        ],
+        "type": [
+          "Albums"
         ]
       },
       {
@@ -2603,14 +2607,6 @@
         "artist": "Bob Dylan",
         "year": "1967",
         "cover": "images/bob_dylan_greatest_hits.jpg",
-        "types": [
-          "A MODIFIER 1",
-          "A MODIFIER 2"
-        ],
-        "genres": [
-          "Rock",
-          "Folk"
-        ],
         "tracks": [
           "23. Rainy Day Women #12 & 35",
           "24. Blowin' in the Wind",
@@ -2622,6 +2618,12 @@
           "30. I Want You",
           "31. Positively 4th Street",
           "32. Just like a Woman"
+        ],
+        "genre": [
+          "Folk"
+        ],
+        "type": [
+          "Compilations"
         ]
       }
     ]
@@ -2738,17 +2740,16 @@
     ]
   },
   {
-    "types": [
-      "A MODIFIER 1",
-      "A MODIFIER 2"
+    "genre": [
+      "Humour",
+      "Talks"
     ],
-    "genres": [
-      "Humour"
+    "type": [
+      "Compilations"
     ],
     "md_cover": "images/md_25.jpg",
     "title": "Les Débats de Gérard : Les OVNI, les Routiers et la CB, les Grèves",
     "artist": "La Dream Teaz",
-    "cover": "images/debats_gerard_25.jpg",
     "tracks": [
       "01. Les OVNI",
       "02. Les Routiers et la CB",
@@ -2757,7 +2758,8 @@
   },
   {
     "genre": [
-      "Humour"
+      "Humour",
+      "Talks"
     ],
     "type": [
       "Compilations"
