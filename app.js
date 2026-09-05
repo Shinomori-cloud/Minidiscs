@@ -544,7 +544,7 @@ function renderDashboard(pushState = true) {
       </div>
 
       <!-- 4. BOUTON PRINCIPAL -->
-      <button class="btn-primary" style="margin-top: 16px; margin-bottom: 10px; width: 100%;" onclick="renderMDList({})">
+      <button class="btn-primary" style="margin-top: 16px; margin-bottom: 8px; width: 100%;" onclick="renderMDList({})">
         VOIR TOUS LES MINIDISCS &rarr;
       </button>
 
