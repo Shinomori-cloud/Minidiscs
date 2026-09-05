@@ -247,8 +247,8 @@ body:has(.dashboard-container) .title-90s {
   width: 100%;
   max-width: 568px;
   z-index: 900;
-  margin-top: 35px;
-  margin-bottom: 35px;
+  margin-top: 45px;
+  margin-bottom: 45px;
 
   /* Suppression de l'encart et du fond */
   background: transparent !important;
@@ -475,7 +475,7 @@ body:has(.featured-container.hidden) main#app {
    ========================================== */
 .dashboard-container {
   position: fixed !important;
-  top: 170px !important;
+  top: 190px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: calc(100% - 32px) !important;
