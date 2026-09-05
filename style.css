@@ -278,8 +278,15 @@ body:has(.dashboard-container) .featured-container {
   letter-spacing: 1.5px;
   color: #ffb703;
   text-transform: uppercase;
-  text-shadow: 0 0 6px rgba(255, 183, 3, 0.6), 1px 1px 2px #000;
   text-align: center;
+  /* Ombre fortement accentuée pour détacher le titre */
+  text-shadow: 
+    0 0 10px rgba(255, 183, 3, 0.8),
+    2px 2px 0px #000,
+    -1px -1px 0px #000,
+    1px -1px 0px #000,
+    -1px 1px 0px #000,
+    0px 4px 8px rgba(0, 0, 0, 0.9);
 }
 
 .featured-grid {
@@ -290,14 +297,14 @@ body:has(.dashboard-container) .featured-container {
 
 .featured-item {
   flex: 0 1 auto;
-  height: 155px; /* Retour au format rectangulaire vertical d'origine */
+  height: 155px; /* Format rectangulaire vertical */
   border-radius: 6px;
   overflow: hidden;
   border: 1.5px solid #000;
   cursor: pointer;
   
-  /* Ombre projetée avec rayon de flou important pour détacher la vignette */
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45) !important;
+  /* Ombre portée encore plus dense et diffusée */
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.75), 0 10px 10px rgba(0, 0, 0, 0.5) !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   background: #000;
 }
@@ -305,7 +312,7 @@ body:has(.dashboard-container) .featured-container {
 .featured-item:hover,
 .featured-item:active {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.85), 0 14px 14px rgba(0, 0, 0, 0.6) !important;
 }
 
 .featured-thumb {
