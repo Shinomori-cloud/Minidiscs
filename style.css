@@ -593,8 +593,8 @@ body:has(.featured-container.hidden) main#app {
    ========================================== */
 .dashboard-actions-row {
   display: flex;
-  gap: 40px;
-  margin-top: 10px;
+  gap: 10px;
+  margin-top: 20px;
   width: 100%;
 }
 
