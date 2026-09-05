@@ -64,9 +64,9 @@ body:has(.dashboard-container)::before {
 
 /* CACHE SPÉCIFIQUE POUR LE PLANIFICATEUR (Couvre les 2 encarts) */
 body:has(#header-planner-badge)::before {
-  height: 300px !important;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 280px, transparent 300px) !important;
-  mask-image: linear-gradient(to bottom, black 0px, black 280px, transparent 300px) !important;
+  height: 200px !important;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 175px, transparent 200px) !important;
+  mask-image: linear-gradient(to bottom, black 0px, black 175px, transparent 200px) !important;
 }
 
 /* RÉDUCTION DU CACHE SUR LES AUTRES PAGES SECONDAIRES */
