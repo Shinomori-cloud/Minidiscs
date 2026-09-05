@@ -1040,6 +1040,9 @@ function formatSecondsToDisplay(totalSec) {
 }
 
 function updatePlannerHeader() {
+  const plannerInfoEl = document.getElementById('planner-header-info');
+  if (!plannerInfoEl) return;
+
   const ideas = getIdeaList();
   let totalSeconds = 0;
   selectedIdeaIndices.forEach(idx => {
@@ -1050,17 +1053,25 @@ function updatePlannerHeader() {
 
   const formattedTime = formatSecondsToDisplay(totalSeconds);
   const isOverLimit = totalSeconds > (148 * 60);
-  
-  const displayEl = document.querySelector('.compil-time-display');
-  if (displayEl) {
-    displayEl.textContent = `${formattedTime} / 2h 28m`;
-    displayEl.style.color = isOverLimit ? '#e63946' : '#06d6a0';
-  }
+  const timeColor = isOverLimit ? '#e63946' : '#06d6a0';
+
+  plannerInfoEl.innerHTML = `
+    <span>Durée sélectionnée :</span>
+    <strong style="color: ${timeColor}; font-size: 1.05rem;">${formattedTime} / 2h 28m</strong>
+  `;
 
   const convertBtn = document.getElementById('planner-btn-convert');
   if (convertBtn) {
     convertBtn.disabled = selectedIdeaIndices.size === 0;
     convertBtn.textContent = `💾 Convertir (${selectedIdeaIndices.size})`;
+  }
+}
+
+function clearPlannerHeaderInfo() {
+  const plannerInfoEl = document.getElementById('planner-header-info');
+  if (plannerInfoEl) {
+    plannerInfoEl.classList.add('hidden');
+    plannerInfoEl.innerHTML = '';
   }
 }
 
@@ -1074,22 +1085,18 @@ function renderCompilPlanner(pushState = true) {
     featuredContainer.classList.add('hidden');
   }
 
+  // Activation et affichage de l'encart dans le header principal
+  const plannerInfoEl = document.getElementById('planner-header-info');
+  if (plannerInfoEl) {
+    plannerInfoEl.classList.remove('hidden');
+    updatePlannerHeader();
+  }
+
   if (pushState && window.location.hash !== '#planner') {
     history.pushState({ view: 'planner' }, '', '#planner');
   }
 
   const ideas = getIdeaList();
-  
-  let totalSeconds = 0;
-  selectedIdeaIndices.forEach(idx => {
-    if (ideas[idx]) {
-      totalSeconds += parseTimeToSeconds(ideas[idx].duration);
-    }
-  });
-
-  const formattedTime = formatSecondsToDisplay(totalSeconds);
-  const isOverLimit = totalSeconds > (148 * 60);
-  const timeColor = isOverLimit ? '#e63946' : '#06d6a0';
 
   let cardsHTML = '';
   if (ideas.length === 0) {
@@ -1115,22 +1122,16 @@ function renderCompilPlanner(pushState = true) {
   }
 
   app.innerHTML = `
-    <div style="padding-bottom: 90px;">
-      <div class="compil-banner" style="position: sticky; top: 0; z-index: 900; display:flex; justify-content:center; align-items:center; padding: 12px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-        <div class="compil-banner-header" style="font-size: 1.1rem; display:flex; align-items:center; gap: 10px;">
-          <span style="color:#222; font-weight:600;">Durée sélectionnée :</span>
-          <span class="compil-time-display" style="color: ${timeColor}; font-weight: bold; font-size: 1.2rem;">${formattedTime} / 2h 28m</span>
-        </div>
-      </div>
-
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 10px;">
-        <h3 class="planner-text-white" style="margin: 0;">Albums disponibles (${ideas.length})</h3>
+    <div style="padding-bottom: 90px; padding-top: 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 class="planner-text-white" style="margin: 0; font-size: 1.1rem;">Albums disponibles (${ideas.length})</h3>
       </div>
 
       <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
       </div>
 
+      <!-- BARRE D'ACTIONS EN BAS -->
       <div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
         <div class="compil-actions" style="display:flex; gap:10px; max-width: 500px; width:100%; justify-content: center; background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(10px); padding: 10px 15px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); pointer-events: auto;">
           <button type="button" class="btn-primary" id="planner-btn-add" style="flex:1; border-radius:20px;">＋ Ajouter</button>
@@ -1143,7 +1144,7 @@ function renderCompilPlanner(pushState = true) {
     </div>
   `;
 
-  // Gestionnaire pour la sélection/suppression sur la grille d'idées
+  // Écouteurs pour la sélection/suppression sur la grille
   const gridContainer = document.getElementById('ideas-grid-container');
   if (gridContainer) {
     gridContainer.addEventListener('click', (e) => {
@@ -1170,7 +1171,7 @@ function renderCompilPlanner(pushState = true) {
     });
   }
 
-  // Écouteurs pour les boutons
+  // Écouteurs des boutons du bas
   const addBtn = document.getElementById('planner-btn-add');
   if (addBtn) addBtn.addEventListener('click', openIdeaModal);
 
@@ -1260,6 +1261,7 @@ function convertSelectedToMD() {
   selectedIdeaIndices.clear();
 
   saveLocalBackup();
+  clearPlannerHeaderInfo();
   showToast("🎉 Albums convertis en MiniDisc avec succès !");
   renderDashboard(true);
 }
