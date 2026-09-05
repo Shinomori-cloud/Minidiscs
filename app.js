@@ -468,10 +468,14 @@ function renderDashboard(pushState = true) {
     `;
   });
 
+  // État du bouton JSON (Vert si à jour, Rouge/Orange si modif en attente)
+  const jsonBtnStyle = hasUnsavedChanges 
+    ? 'background-color: #e63946; color: #fff;' 
+    : 'background-color: #06d6a0; color: #000;';
+
   app.innerHTML = `
     <div class="dashboard-container">
       <div class="dashboard-card">
-        ${hasUnsavedChanges ? `<div style="background: #ffb703; color: #000; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; text-align: center;">⚠️ Vous avez des modifications non exportées en JSON.</div>` : ''}
         <div class="dashboard-stat-main">
           <span class="stat-number">${totalMD}</span>
           <span class="stat-label">MiniDiscs dans la collection</span>
@@ -480,16 +484,25 @@ function renderDashboard(pushState = true) {
         <div class="dashboard-section-title">RÉPARTITION PAR TYPE</div>
         <div class="genres-grid">${typeBadgesHTML}</div>
 
-        <div class="dashboard-section-title" style="margin-top: 14px;">RÉPARTITION PAR GENRE</div>
+        <div class="dashboard-section-title" style="margin-top: 10px;">RÉPARTITION PAR GENRE</div>
         <div class="genres-grid">${genreBadgesHTML}</div>
 
-        <button class="btn-primary" style="margin-top: 10px;" onclick="renderMDList({})">
+        <button class="btn-primary" style="margin-top: 8px; margin-bottom: 0;" onclick="renderMDList({})">
           VOIR TOUS LES MINIDISCS &rarr;
         </button>
+      </div>
 
-        <div class="dashboard-footer">
-          <button class="btn-add-md" onclick="openAdminModal()">＋ Ajouter un MD</button>
-        </div>
+      <!-- NOUVELLE RANGÉE D'ACTIONS EN DESSOUS DE L'ENCART -->
+      <div class="dashboard-actions-row">
+        <button class="action-btn-wide" onclick="alert('Fonctionnalité à venir !')">
+          Créer une compilation
+        </button>
+        <button class="action-btn-wide" onclick="openAdminModal()">
+          ＋ Ajouter un MD
+        </button>
+        <button class="action-btn-json" style="${jsonBtnStyle}" onclick="downloadJSON()" title="Télécharger data.json">
+          💾 JSON
+        </button>
       </div>
     </div>
   `;
