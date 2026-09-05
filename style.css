@@ -247,7 +247,7 @@ body:has(.dashboard-container) .title-90s {
   width: 100%;
   max-width: 568px;
   z-index: 900;
-  margin-top: 14px;
+  margin-top: 18px;
 
   /* Suppression de l'encart et du fond */
   background: transparent !important;
@@ -268,7 +268,7 @@ body:has(.dashboard-container) .featured-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
   padding: 4px 14px;
   
   /* Cartouche sombre dédié uniquement au titre */
@@ -531,7 +531,7 @@ body:has(.featured-container.hidden) main#app {
   grid-template-columns: repeat(2, 1fr);
   gap: 2px 14px;
   margin-top: 4px;     /* Rapproche la grille du titre du dessus */
-  margin-bottom: 2px;  /* Réduit l'espace vide tout en bas */
+  margin-bottom: 0px;  /* Réduit l'espace vide tout en bas */
 }
 
 .type-btn {
