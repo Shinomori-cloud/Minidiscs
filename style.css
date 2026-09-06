@@ -288,11 +288,32 @@ body:has(.dashboard-container) .featured-container {
   font-family: 'Righteous', cursive;
   font-size: 0.75rem;
   letter-spacing: 1.5px;
-  color: #ffa303;
   text-transform: uppercase;
   text-align: center;
   margin: 0;
+
+  /* Dégradé fluide inspiré du titre MINIDISCS */
+  background: linear-gradient(90deg, #ff007f, #9b51e0, #00d2ff, #ff007f);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+
+  /* Animation continue du dégradé */
+  animation: shineGradient 4s linear infinite;
 }
+
+/* Animation de défilement des couleurs */
+@keyframes shineGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
+}
+
 .featured-grid {
   display: flex;
   justify-content: center;
