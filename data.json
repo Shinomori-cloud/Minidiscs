@@ -2808,25 +2808,25 @@
       "cover": "images/u2bestof.jpg"
     },
     {
-      "title": "Innuendo",
-      "artist": "Queen",
-      "genre": "Rock, Experimental",
-      "duration": "53:48",
-      "cover": "images/"
-    },
-    {
       "title": "From the Muddy Bank of the Wishkah",
       "artist": "Nirvana",
       "genre": "Alternative Rock, Grunge",
       "duration": "54:01",
-      "cover": "images/wishkah.jpg"
+      "cover": "images/wishka.jpg"
+    },
+    {
+      "title": "Innuendo",
+      "artist": "Queen",
+      "genre": "Rock, Experimental",
+      "duration": "53:48",
+      "cover": "images/innuendo.jpg"
     },
     {
       "title": "Busta Flex",
       "artist": "Busta Flex",
       "genre": "Rap",
-      "duration": "55:00",
-      "cover": "images/Busta flex.jpg"
+      "duration": "52:21",
+      "cover": "images/bustaflex.jpg"
     },
     {
       "title": "Le combat continue",
@@ -2834,6 +2834,62 @@
       "genre": "Rap",
       "duration": "1:15:53",
       "cover": "images/idealj.jpg"
+    },
+    {
+      "title": "Starmania",
+      "artist": "Michel Berger",
+      "genre": "Français, Rock, Variété",
+      "duration": "1:12:00",
+      "cover": "images/starmania.jpg"
+    },
+    {
+      "title": "Le 5eme Element",
+      "artist": "Eric Serra",
+      "genre": "Orchestral",
+      "duration": "1:06:04",
+      "cover": "images/cinqelement.jpg"
+    },
+    {
+      "title": "Number #1's",
+      "artist": "Mariah Carey",
+      "genre": "Variété",
+      "duration": "1:13:13",
+      "cover": "images/mariahcarey.jpg"
+    },
+    {
+      "title": "Black Market Music",
+      "artist": "Placebo",
+      "genre": "Alternative Rock, Pop Rock",
+      "duration": "52:40",
+      "cover": "images/Black_market_music.jpg"
+    },
+    {
+      "title": "Load",
+      "artist": "Metallica",
+      "genre": "Métal, Alternative Rock",
+      "duration": "1:18:59",
+      "cover": "images/load.jpg"
+    },
+    {
+      "title": "Panique Celtique",
+      "artist": "Manau",
+      "genre": "Rap, français",
+      "duration": "44:51",
+      "cover": "images/manau.jpg"
+    },
+    {
+      "title": "Stiff Upper Lip",
+      "artist": "ACDC",
+      "genre": "Punk Rock, Rock",
+      "duration": "46:57",
+      "cover": "images/stiffupperlip.jpg"
+    },
+    {
+      "title": "Sah Hill",
+      "artist": "Kheops",
+      "genre": "Rap",
+      "duration": "1:18:31",
+      "cover": "images/sadhill.jpg"
     }
   ]
 }
