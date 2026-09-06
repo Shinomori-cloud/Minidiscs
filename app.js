@@ -21,47 +21,43 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   GESTION DU BOUTON RETOUR (HERMIT / ANDROID 16)
+   GESTION DU BOUTON RETOUR SIMPLIFIÉE
    ========================================== */
 
-// Initialisation au chargement : on crée une profondeur d'historique minimale
-// pour éviter qu'Hermit ne ferme l'appli au tout premier geste "Retour"
-(function initAndroidHistory() {
-  if (!window.location.hash || window.location.hash === '') {
-    history.replaceState({ view: 'home' }, '', '#home');
-    history.pushState({ view: 'home' }, '', '#home');
-  }
-})();
-
+// On pousse un état à chaque fois que l'application change de vue
 window.addEventListener('popstate', (event) => {
   const state = event.state;
-  const hash = window.location.hash;
 
-  // 1. Si l'état ou le hash indique la vue Planificateur
-  if ((state && state.view === 'planner') || hash === '#planner') {
+  // Si on remonte jusqu'à l'état initial (Accueil)
+  if (!state || state.view === 'home') {
     if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
+    renderDashboard(false);
+    return;
+  }
+
+  // Si l'historique indique qu'on était sur la liste des MD
+  if (state.view === 'md-list') {
+    if (typeof renderMDList === 'function') {
+      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
+    }
+    return;
+  }
+
+  // Si l'historique indique qu'on était sur un Minidisc
+  if (state.view === 'album' && state.mdIndex !== undefined) {
+    if (typeof openMD === 'function') openMD(state.mdIndex, false);
+    else if (typeof renderMDDetail === 'function') renderMDDetail(state.mdIndex, false);
+    return;
+  }
+
+  // Si l'historique indique le Planificateur
+  if (state.view === 'planner') {
     renderCompilPlanner(false);
     return;
   }
 
-  // 2. Si l'état ou le hash indique un Album / Minidisc précis
-  if ((state && state.view === 'album') || hash.startsWith('#md-')) {
-    const mdIndex = state?.mdIndex ?? parseInt(hash.replace('#md-', ''), 10);
-    if (!isNaN(mdIndex)) {
-      if (typeof openMD === 'function') openMD(mdIndex, false);
-      else if (typeof renderMDDetail === 'function') renderMDDetail(mdIndex, false);
-      return;
-    }
-  }
-
-  // 3. Si on est sur l'Accueil / Dashboard (ou état indéterminé)
-  if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
+  // Par défaut : retour au Dashboard
   renderDashboard(false);
-
-  // Maintient un verrou discret sur l'accueil pour ne pas que le 2ème retour ferme l'app
-  if (!state || state.view === 'home' || hash === '#home') {
-    history.replaceState({ view: 'home' }, '', '#home');
-  }
 });
 
 /* ==========================================
