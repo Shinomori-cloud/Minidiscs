@@ -548,7 +548,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .md-thumb {
   width: 99px;
-  height: 136px;
+  height: 146px;
   object-fit: cover;
   border-radius: 10px;
   flex-shrink: 0;
@@ -583,7 +583,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .item-title {
   font-weight: 400;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   line-height: 1.35;
   color: var(--text-main);
 }
@@ -610,7 +610,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .md-album-title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 650;
   line-height: 1;
   margin-bottom: 0.9px;
@@ -641,10 +641,10 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .album-cover-large {
-  width: 130px !important;
-  height: 130px !important;
-  max-width: 130px !important;
-  max-height: 130px !important;
+  width: 140px !important;
+  height: 140px !important;
+  max-width: 140px !important;
+  max-height: 140px !important;
   object-fit: cover;
   border-radius: 10px;
   border: 2px solid #000000;
