@@ -21,39 +21,34 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   GESTION DU BOUTON RETOUR & ARBORESCENCE (VERROU)
+   GESTION DU BOUTON RETOUR PHYSIQUE
    ========================================== */
 
-// 1. Verrouille l'état initial dès que le script charge
-(function lockInitialState() {
-  // Remplace l'état actuel par 'home' et pousse un second état identique
-  history.replaceState({ view: 'home' }, '', '#home');
-  history.pushState({ view: 'home' }, '', '#home');
-})();
+if (!window.location.hash) {
+  window.location.hash = '#home';
+}
 
-// 2. Écouteur de navigation
-window.addEventListener('popstate', (event) => {
-  const state = event.state;
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash;
 
-  // Si on atteint la racine ou un état nul, on reste sur le Dashboard et on re-verrouille
-  if (!state || state.view === 'home') {
-    renderDashboard(false);
-    history.pushState({ view: 'home' }, '', '#home');
-    return;
-  }
-
-  // Navigation hiérarchique selon la vue
-  if (state.view === 'album') {
-    openMD(state.mdIndex, false);
-  } else if (state.view === 'tracklist' || state.view === 'albums') {
-    renderDashboard(false);
-  } else if (state.view === 'planner') {
+  if (hash === '#planner') {
+    if (typeof renderCompilPlanner === 'function') renderCompilPlanner(false);
+  } else if (hash.startsWith('#md-')) {
+    const index = parseInt(hash.replace('#md-', ''), 10);
+    if (!isNaN(index)) {
+      if (typeof openMD === 'function') openMD(index, false);
+      else if (typeof renderMDDetail === 'function') renderMDDetail(index, false);
+    }
+  } else if (hash === '#md-list') {
     if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-    renderDashboard(false);
+    if (typeof renderMDList === 'function') {
+      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
+    }
   } else {
-    renderDashboard(false);
+    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
+    if (typeof renderDashboard === 'function') renderDashboard(false);
   }
-}); 
+});
 
 /* ==========================================
    PROTECTION ANTI-FERMETURE ET STOCKAGE LOCAL
@@ -528,6 +523,20 @@ function renderDashboard(pushState = true) {
 function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
   const { genre = null, type = null } = filters;
+
+  // 1. Enregistrement unique de l'historique dans le Hash
+  if (pushState) {
+    let urlHash = '#md-list';
+    const params = [];
+    if (genre) params.push(`genre=${encodeURIComponent(genre)}`);
+    if (type) params.push(`type=${encodeURIComponent(type)}`);
+    if (params.length > 0) urlHash += '?' + params.join('&');
+
+    if (window.location.hash !== urlHash) {
+      window.location.hash = urlHash;
+      return; // Le déclencheur hashchange prend la main proprement
+    }
+  }
   
   currentMD = null;
   currentAlbum = null;
@@ -538,15 +547,6 @@ function renderMDList(filters = {}, pushState = true) {
   updateSearchVisibility(true);
   if (headerTitle) headerTitle.textContent = "MINIDISCS";
   if (featuredContainer) featuredContainer.classList.add('hidden');
-
-  if (pushState) {
-    let urlHash = '#minidiscs';
-    const params = [];
-    if (genre) params.push(`genre=${encodeURIComponent(genre)}`);
-    if (type) params.push(`type=${encodeURIComponent(type)}`);
-    if (params.length > 0) urlHash += '?' + params.join('&');
-    history.pushState({ view: 'minidiscs', genre, type }, '', urlHash);
-  }
 
   let filteredCatalog = catalogData.map((md, originalIndex) => ({ md, originalIndex }));
   
@@ -607,6 +607,10 @@ function renderMDList(filters = {}, pushState = true) {
 
 /* 3. VUE D'UN MINIDISC */
 function openMD(index, pushState = true) {
+  if (pushState && window.location.hash !== `#md-${index}`) {
+    window.location.hash = `#md-${index}`;
+    return;
+  }
   if (!catalogData || !catalogData[index]) return;
 
   currentMD = index;
@@ -1131,6 +1135,10 @@ function injectPlannerHeaderBadge() {
 }
 
 function renderCompilPlanner(pushState = true) {
+  if (pushState && window.location.hash !== '#planner') {
+    window.location.hash = '#planner';
+    return;
+  }
    
   currentMD = null;
   currentAlbum = null;
