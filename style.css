@@ -247,8 +247,8 @@ body:has(.dashboard-container) .title-90s {
   width: 100%;
   max-width: 568px;
   z-index: 900;
-  margin-top: 0px;
-  margin-bottom: 0px;
+  margin-top: -20px;
+  margin-bottom: 25px;
 
   /* Fond et bordure par défaut désactivés */
   background: transparent !important;
