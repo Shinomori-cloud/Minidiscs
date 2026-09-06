@@ -62,11 +62,11 @@ body:has(.dashboard-container)::before {
   mask-image: linear-gradient(to bottom, black 0px, black 350px, transparent 380px);
 }
 
-/* Cache pour le Planificateur */
+/* Cache ajusté pour le Planificateur */
 body:has(#header-planner-badge)::before {
-  height: 230px !important;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 200px, transparent 230px) !important;
-  mask-image: linear-gradient(to bottom, black 0px, black 200px, transparent 230px) !important;
+  height: 220px !important;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 170px, transparent 210px) !important;
+  mask-image: linear-gradient(to bottom, black 0px, black 170px, transparent 210px) !important;
 }
 
 /* Cache pour les pages secondaires */
@@ -508,7 +508,12 @@ body:has(.dashboard-container) main#app {
   margin-top: 435px;
 }
 
-body:has(.featured-container.hidden) main#app {
+/* Espacement adapté au planificateur pour passer sous le badge */
+body:has(#header-planner-badge) main#app {
+  margin-top: 130px !important;
+}
+
+body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   margin-top: 150px;
 }
 
@@ -768,7 +773,7 @@ body:has(.featured-container.hidden) main#app {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 12px;
-  margin-top: -130px;
+  margin-top: 0; /* Alignement corrigé */
 }
 
 .idea-card {
