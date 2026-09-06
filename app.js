@@ -21,10 +21,10 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   GESTION DU BOUTON RETOUR (PAS À PAS)
+   GESTION NAVIGATION & BOUTON RETOUR
    ========================================== */
 
-// Ancrage initial de l'application
+// Ancrage initial de l'application au premier chargement
 if (!history.state) {
   history.replaceState({ view: 'home' }, '', '#home');
 }
@@ -32,14 +32,14 @@ if (!history.state) {
 window.addEventListener('popstate', (event) => {
   const state = event.state;
 
-  // 1. Retour à l'accueil si on atteint la racine de l'historique
+  // Si on remonte jusqu'à la racine
   if (!state || state.view === 'home') {
     if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
     renderDashboard(false);
     return;
   }
 
-  // 2. Si l'étape précédente était la liste des Minidiscs
+  // 1. Si la page précédente était la liste des Minidiscs
   if (state.view === 'md-list') {
     if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
     if (typeof renderMDList === 'function') {
@@ -48,7 +48,7 @@ window.addEventListener('popstate', (event) => {
     return;
   }
 
-  // 3. Si l'étape précédente était la fiche d'un Minidisc / Album
+  // 2. Si la page précédente était un Minidisc précis
   if (state.view === 'album' && state.mdIndex !== undefined) {
     if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
     if (typeof openMD === 'function') {
@@ -59,13 +59,13 @@ window.addEventListener('popstate', (event) => {
     return;
   }
 
-  // 4. Si l'étape précédente était le Planificateur
+  // 3. Si la page précédente était le Planificateur
   if (state.view === 'planner') {
     renderCompilPlanner(false);
     return;
   }
 
-  // Repli par défaut
+  // Repli de sécurité
   renderDashboard(false);
 });
 
