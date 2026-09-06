@@ -1255,7 +1255,7 @@ header {
 .featured-container {
   position: relative;
   z-index: 1;
-  padding: 28px 14px 14px 14px; /* Un peu de padding en haut pour compenser le titre */
+  padding: 14px 14px 14px 14px; /* Un peu de padding en haut pour compenser le titre */
   border-radius: 16px;
   background: #ffffff; /* Fond blanc comme les autres cartes */
   
