@@ -1005,8 +1005,8 @@ body:has(.featured-container.hidden) main#app {
 /* Bouton supprimer sur la carte */
 .idea-delete-btn {
   position: absolute;
-  top: 6px;
-  left: 6px;
+  bottom: 6px;
+  right: 6px;
   background: #e63946;
   color: #fff;
   border: none;
