@@ -477,7 +477,7 @@ body:has(.featured-container.hidden) main#app {
    ========================================== */
 .dashboard-container {
   position: fixed !important;
-  top: 180px !important;
+  top: 165px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: calc(100% - 32px) !important;
