@@ -136,7 +136,7 @@ body:has(.featured-container.hidden) header {
 }
 
 body:has(.dashboard-container) header {
-  top: 65px !important;
+  top: 50px !important;
   padding: 14px !important;
 }
 
