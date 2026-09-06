@@ -483,46 +483,23 @@ body:has(.featured-container.hidden) main#app {
 }
 
 /* ==========================================
-   MISE EN PAGE DE LA LISTE DES TITRES
+   LISTE DES TITRES (STYLE D'ORIGINE ÉPURÉ)
    ========================================== */
 
-/* Nettoyage du conteneur de liste */
-.track-list,
 .track-container ul,
-.track-container ol {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 16px 0 0 0 !important;
-  border: 1.5px solid #000000;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #ffffff;
+.track-container ol,
+.track-list {
+  list-style-type: none !important;
+  padding-left: 0 !important;
+  margin-top: 16px !important;
 }
 
-/* Style de chaque ligne de titre */
-.track-list li,
-.track-container ul li,
-.track-container ol li {
-  padding: 10px 14px;
+.track-container li,
+.track-list li {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #000000;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  display: flex;
-  align-items: center;
-}
-
-.track-list li:last-child,
-.track-container ul li:last-child,
-.track-container ol li:last-child {
-  border-bottom: none;
-}
-
-/* Effet zébré une ligne sur deux (style J-Card / Cassette) */
-.track-list li:nth-child(even),
-.track-container ul li:nth-child(even),
-.track-container ol li:nth-child(even) {
-  background-color: #f4f4f6;
+  color: var(--text-main);
+  padding: 4px 0;
 }
 
 /* ==========================================
