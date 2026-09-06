@@ -1246,7 +1246,7 @@ header {
 .featured-container .section-title {
   position: relative;
   z-index: 2;
-  margin-bottom: -18px !important; /* Fait chevaucher le titre sur le haut de la boîte */
+  margin-bottom: -10px !important; /* Fait chevaucher le titre sur le haut de la boîte */
   display: inline-block;
 }
 
