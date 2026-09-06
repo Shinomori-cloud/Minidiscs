@@ -622,7 +622,7 @@ function renderMDList(filters = {}, pushState = true) {
 /* 3. VUE D'UN MINIDISC */
 function openMD(index, pushState = true) {
   if (!catalogData || !catalogData[index]) return;
-  if (pushState) {
+  if (pushState && window.location.hash !== `#md-${index}`) {
     history.pushState({ view: 'album', mdIndex: index }, '', `#md-${index}`);
   }
 
