@@ -690,9 +690,9 @@ function openMD(index, pushState = true) {
   const borderColor = getBorderColor(allMdGenres);
 
   const adminControls = `
-    <div class="md-admin-controls" style="margin-bottom: 15px; display: flex; gap: 10px;">
-      <button class="btn-primary btn-edit" style="padding: 6px 12px; font-size: 0.85rem;" onclick="event.stopPropagation(); openAdminModal(${index})">✏️ Modifier</button>
-      <button class="btn-primary btn-delete" style="padding: 6px 12px; font-size: 0.85rem;" onclick="event.stopPropagation(); deleteMD(${index})">🗑️ Supprimer</button>
+    <div class="md-admin-controls">
+      <button class="btn-edit" onclick="event.stopPropagation(); openAdminModal(${index})">✏️ Modifier</button>
+      <button class="btn-delete" onclick="event.stopPropagation(); deleteMD(${index})">🗑️ Supprimer</button>
     </div>
   `;
 
