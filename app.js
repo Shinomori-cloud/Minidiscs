@@ -21,41 +21,48 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   GESTION DU BOUTON RETOUR (VERROU ANTI-FERMETURE HERMIT)
+   GESTION DU BOUTON RETOUR (HERMIT / ANDROID 16)
    ========================================== */
 
-// 1. On injecte un état "tampon" pour empêcher Android de fermer l'app
-function ensureHistoryTrap() {
-  if (history.state?.trap !== true) {
-    history.pushState({ trap: true, view: history.state?.view || 'home' }, '');
+// Initialisation au chargement : on crée une profondeur d'historique minimale
+// pour éviter qu'Hermit ne ferme l'appli au tout premier geste "Retour"
+(function initAndroidHistory() {
+  if (!window.location.hash || window.location.hash === '') {
+    history.replaceState({ view: 'home' }, '', '#home');
+    history.pushState({ view: 'home' }, '', '#home');
   }
-}
+})();
 
-// Initialisation au chargement
-history.replaceState({ view: 'home' }, '', '#home');
-ensureHistoryTrap();
-
-// 2. Interception du bouton Retour Android / Hermit
 window.addEventListener('popstate', (event) => {
   const state = event.state;
   const hash = window.location.hash;
 
-  // Si on est sur une vue secondaire (Planificateur ou Album), on revient à l'accueil
-  if (hash === '#planner' || hash.startsWith('#md-')) {
-    // Nettoyage de l'URL et retour visuel au Dashboard
-    history.replaceState({ view: 'home' }, '', '#home');
-    ensureHistoryTrap();
-    
+  // 1. Si l'état ou le hash indique la vue Planificateur
+  if ((state && state.view === 'planner') || hash === '#planner') {
     if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-    renderDashboard(false);
+    renderCompilPlanner(false);
     return;
   }
 
-  // Si l'utilisateur est DÉJÀ sur l'accueil (#home) et réappuie sur Retour :
-  // On ré-injecte immédiatement le piège pour que l'application reste OUVERTE
-  ensureHistoryTrap();
+  // 2. Si l'état ou le hash indique un Album / Minidisc précis
+  if ((state && state.view === 'album') || hash.startsWith('#md-')) {
+    const mdIndex = state?.mdIndex ?? parseInt(hash.replace('#md-', ''), 10);
+    if (!isNaN(mdIndex)) {
+      if (typeof openMD === 'function') openMD(mdIndex, false);
+      else if (typeof renderMDDetail === 'function') renderMDDetail(mdIndex, false);
+      return;
+    }
+  }
+
+  // 3. Si on est sur l'Accueil / Dashboard (ou état indéterminé)
+  if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
   renderDashboard(false);
-})
+
+  // Maintient un verrou discret sur l'accueil pour ne pas que le 2ème retour ferme l'app
+  if (!state || state.view === 'home' || hash === '#home') {
+    history.replaceState({ view: 'home' }, '', '#home');
+  }
+});
 
 /* ==========================================
    PROTECTION ANTI-FERMETURE ET STOCKAGE LOCAL
