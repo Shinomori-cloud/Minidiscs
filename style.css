@@ -272,7 +272,7 @@ body:has(.dashboard-container) .featured-container {
   justify-content: center;
   align-items: center;
   margin-bottom: 14px;
-  padding: 4px 14px;
+  padding: 4px 28px;
   
   /* Cartouche sombre dédié uniquement au titre */
   background: #ffffff;
