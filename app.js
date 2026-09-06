@@ -1104,13 +1104,15 @@ function updatePlannerHeader() {
   const selectedListEl = document.getElementById('planner-selected-list');
   
   const ideas = getIdeaList();
+  const maxSeconds = 148 * 60; // 2h 28m en secondes (8880s)
   let totalSeconds = 0;
   let selectedHTML = '';
 
   selectedIdeaIndices.forEach(idx => {
     if (ideas[idx]) {
       const item = ideas[idx];
-      totalSeconds += parseTimeToSeconds(item.duration);
+      const itemSec = parseTimeToSeconds(item.duration);
+      totalSeconds += itemSec;
 
       selectedHTML += `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 8px;">
@@ -1135,7 +1137,7 @@ function updatePlannerHeader() {
   }
 
   const formattedTime = formatSecondsToDisplay(totalSeconds);
-  const isOverLimit = totalSeconds > (148 * 60);
+  const isOverLimit = totalSeconds > maxSeconds;
   const timeColor = isOverLimit ? '#e63946' : '#06d6a0';
 
   if (durationTextEl) {
@@ -1148,6 +1150,26 @@ function updatePlannerHeader() {
     convertBtn.disabled = selectedIdeaIndices.size === 0;
     convertBtn.textContent = `💾 Convertir (${selectedIdeaIndices.size})`;
   }
+
+  // Grisage/verrouillage des cartes trop longues pour le temps restant
+  const remainingSeconds = maxSeconds - totalSeconds;
+  const allCards = document.querySelectorAll('.idea-card');
+
+  allCards.forEach(card => {
+    const index = parseInt(card.getAttribute('data-index'), 10);
+    const item = ideas[index];
+    
+    if (!item) return;
+
+    const isSelected = selectedIdeaIndices.has(index);
+    const itemSec = parseTimeToSeconds(item.duration);
+
+    if (!isSelected && itemSec > remainingSeconds) {
+      card.classList.add('disabled-card');
+    } else {
+      card.classList.remove('disabled-card');
+    }
+  });
 }
 
 function clearPlannerHeaderInfo() {
@@ -1241,7 +1263,7 @@ function renderCompilPlanner(pushState = true) {
       `;
     });
   }
-
+   
   app.innerHTML = `
     <div style="padding-bottom: 90px; padding-top: 215px;">
       
