@@ -21,51 +21,48 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   GESTION NAVIGATION & BOUTON RETOUR
+   GESTION DU BOUTON RETOUR (COMPATIBILITÉ HERMIT)
    ========================================== */
 
-// Ancrage initial de l'application au premier chargement
-if (!history.state) {
-  history.replaceState({ view: 'home' }, '', '#home');
+// Forcer l'ancrage initial au chargement
+if (!window.location.hash) {
+  window.location.hash = '#home';
 }
 
 window.addEventListener('popstate', (event) => {
-  const state = event.state;
+  const hash = window.location.hash;
 
-  // Si on remonte jusqu'à la racine
-  if (!state || state.view === 'home') {
-    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-    renderDashboard(false);
-    return;
-  }
-
-  // 1. Si la page précédente était la liste des Minidiscs
-  if (state.view === 'md-list') {
-    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-    if (typeof renderMDList === 'function') {
-      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
-    }
-    return;
-  }
-
-  // 2. Si la page précédente était un Minidisc précis
-  if (state.view === 'album' && state.mdIndex !== undefined) {
-    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-    if (typeof openMD === 'function') {
-      openMD(state.mdIndex, false);
-    } else if (typeof renderMDDetail === 'function') {
-      renderMDDetail(state.mdIndex, false);
-    }
-    return;
-  }
-
-  // 3. Si la page précédente était le Planificateur
-  if (state.view === 'planner') {
+  // 1. Si l'URL actuelle est le planificateur
+  if (hash === '#planner') {
     renderCompilPlanner(false);
     return;
   }
 
-  // Repli de sécurité
+  // 2. Si l'URL actuelle est une fiche Minidisc
+  if (hash.startsWith('#md-') && !hash.includes('list')) {
+    const index = parseInt(hash.replace('#md-', ''), 10);
+    if (!isNaN(index)) {
+      if (typeof openMD === 'function') openMD(index, false);
+      else if (typeof renderMDDetail === 'function') renderMDDetail(index, false);
+      return;
+    }
+  }
+
+  // 3. Si l'URL actuelle est la liste des Minidiscs
+  if (hash === '#md-list') {
+    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
+    if (typeof renderMDList === 'function') {
+      const filters = {
+        genre: typeof currentGenreFilter !== 'undefined' ? currentGenreFilter : null,
+        type: typeof currentTypeFilter !== 'undefined' ? currentTypeFilter : null
+      };
+      renderMDList(filters, false);
+    }
+    return;
+  }
+
+  // 4. Racine (#home ou vide) : Accueil
+  if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
   renderDashboard(false);
 });
 
