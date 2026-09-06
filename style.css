@@ -718,7 +718,8 @@ body:has(.featured-container.hidden) main#app {
 .action-buttons, .md-admin-controls {
   display: flex;
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 8px;
+  margin-bottom: 16px;
 }
 
 .btn-edit, .btn-delete {
