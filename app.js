@@ -570,9 +570,7 @@ function openMD(index, pushState = true) {
   if (!catalogData || !catalogData[index]) return;
 
   if (pushState) {
-    if (window.location.hash !== `#md-${index}`) {
-      window.location.hash = `#md-${index}`;
-    }
+    history.pushState({ view: 'album', mdIndex: index }, '', `#md-${index}`);
   }
 
   currentMD = catalogData[index];
@@ -594,7 +592,6 @@ function openMD(index, pushState = true) {
 
   if (!md.albums || md.albums.length === 0) {
     if (headerTitle) headerTitle.textContent = "TITRES";
-    if (pushState) history.pushState({ view: 'tracklist', mdIndex: index, isDirectTracks: true }, '', `#md-${index}`);
 
     let tracksHTML = '';
     if (md.tracks && md.tracks.length > 0) {
@@ -627,7 +624,6 @@ function openMD(index, pushState = true) {
   }
 
   if (headerTitle) headerTitle.textContent = "ALBUMS";
-  if (pushState) history.pushState({ view: 'albums', mdIndex: index }, '', `#md-${index}`);
 
   let html = `<div class="list-container">${adminControls}`;
   md.albums.forEach((album, aIndex) => {
