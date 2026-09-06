@@ -1,5 +1,5 @@
 /* ==========================================
-   VARIABLES & DESIGN DE BASE
+   1. VARIABLES & DESIGN DE BASE
    ========================================== */
 :root {
   --bg-color: #f8fafc;
@@ -33,7 +33,7 @@ body {
 }
 
 /* ==========================================
-   CACHE DE SCROLL (Ajusté pour le Planificateur)
+   2. CACHE DE SCROLL DYNAMIQUE
    ========================================== */
 body::before {
   content: "";
@@ -55,63 +55,33 @@ body::before {
   mask-image: linear-gradient(to bottom, black 0px, black 160px, transparent 185px);
 }
 
-/* AGRANDISSEMENT DU CACHE SPÉCIFIQUE AU DASHBOARD */
+/* Cache pour le Dashboard (Page d'accueil) */
 body:has(.dashboard-container)::before {
   height: 380px;
   -webkit-mask-image: linear-gradient(to bottom, black 0px, black 350px, transparent 380px);
   mask-image: linear-gradient(to bottom, black 0px, black 350px, transparent 380px);
 }
 
-/* CACHE SPÉCIFIQUE POUR LE PLANIFICATEUR (Couvre les 2 encarts) */
+/* Cache pour le Planificateur */
 body:has(#header-planner-badge)::before {
   height: 230px !important;
   -webkit-mask-image: linear-gradient(to bottom, black 0px, black 200px, transparent 230px) !important;
   mask-image: linear-gradient(to bottom, black 0px, black 200px, transparent 230px) !important;
 }
 
-/* RÉDUCTION DU CACHE SUR LES AUTRES PAGES SECONDAIRES */
+/* Cache pour les pages secondaires */
 body:has(.featured-container.hidden):not(:has(#header-planner-badge))::before {
   height: 170px;
   -webkit-mask-image: linear-gradient(to bottom, black 0px, black 120px, transparent 160px);
   mask-image: linear-gradient(to bottom, black 0px, black 120px, transparent 160px);
 }
-/* ==========================================
-   BARRE DE RECHERCHE DÉPLOYABLE EN HAUT
-   ========================================== */
-.top-search {
-  position: fixed;
-  top: 120px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 32px);
-  max-width: 568px;
-  z-index: 1050;
-  transition: all 0.3s ease;
-}
-
-.top-search.closed {
-  display: none;
-}
-
-.top-search input {
-  width: 100%;
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 2px solid #000;
-  background: #ffffff;
-  color: var(--text-main);
-  font-size: 0.9rem;
-  font-weight: 600;
-  box-shadow: 3px 3px 0px #000;
-  outline: none;
-}
 
 /* ==========================================
-   HEADER FIXE (1er Encart)
+   3. HEADER FIXE & RECHERCHE
    ========================================== */
 header {
   position: fixed !important;
-  top: 45px !important; /* Libère la caméra frontale */
+  top: 45px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: calc(100% - 32px) !important;
@@ -150,12 +120,10 @@ body:has(.dashboard-container) header {
   margin: 0 !important;
 }
 
-/* Masqué par défaut partout */
 .header-subtitle {
   display: none !important;
 }
 
-/* Affiché uniquement quand on est sur la page d'accueil (Dashboard) */
 body:has(.dashboard-container) .header-subtitle {
   display: block !important;
   font-family: 'Righteous', cursive;
@@ -204,360 +172,37 @@ body:has(.dashboard-container) .title-90s {
   z-index: 1010;
 }
 
-/* ==========================================
-   ENCART CALCULATEUR (2ème Encart Fixe)
-   ========================================== */
-.planner-header-info {
-  position: fixed !important;
-  top: 200px !important; /* Positionné juste sous le header principal */
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  z-index: 999 !important;
-  
-  background-color: #ffffff !important;
-  color: #000 !important;
-  border: 2px solid #000 !important;
-  border-radius: 16px !important;
-  padding: 8px 16px !important;
-  font-size: 0.9rem !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 12px !important;
-  box-shadow: 4px 4px 0px #000 !important;
-  
-  width: calc(100% - 32px) !important;
-  max-width: 568px !important;
-  box-sizing: border-box !important;
-}
-
-.planner-header-info.hidden {
-  display: none !important;
-}
-
-/* ==========================================
-   SÉLECTION DU MOMENT (ACCUEIL SEULEMENT)
-   ========================================== */
-.featured-container,
-.featured-container-inline {
-  position: relative;
-  top: auto;
-  left: auto;
-  transform: none;
-  width: 100%;
+/* Barre de recherche déployable */
+.top-search {
+  position: fixed;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
   max-width: 568px;
-  z-index: 900;
-  margin-top: -20px;
-  margin-bottom: 25px;
-
-  /* Fond et bordure par défaut désactivés */
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: none !important;
-  border-radius: 0 !important;
-  padding: 18px 12px 14px 12px;
-  box-shadow: none !important;
+  z-index: 1050;
+  transition: all 0.3s ease;
 }
 
-/* Pseudo-élément pour la vraie bordure animée */
-.featured-container::before,
-.featured-container-inline::before {
-  content: "";
-  position: absolute;
-  top: 28px; /* Fait remonter le haut du cadre pile à la moitié de l'encart titre */
-  left: 12px;
-  right: 10px;
-  bottom: -6px;
-  border-radius: 16px;
-  padding: 3px; /* Épaisseur de la bordure */
-  
-  /* Dégradé fluide identique au titre */
-  background: linear-gradient(90deg, #ff007f, #9b51e0, #00d2ff, #ff007f);
-  background-size: 300% 100%;
-  animation: shineGradient 4s linear infinite;
-
-  /* Masque l'intérieur pour ne laisser apparaître que le contour 3px */
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  
-  pointer-events: none;
-  z-index: 1;
+.top-search.closed {
+  display: none;
 }
 
-/* Redescend la sélection uniquement sur l'accueil */
-body:has(.dashboard-container) .featured-container {
-  top: auto;
-  margin-top: 1px !important;    /* Éloigne la sélection de l'encart TYPES du haut */
-  margin-bottom: 20px !important; /* Éloigne la sélection de l'encart GENRES du bas */
-}
-
-.featured-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 6px 16px;
-  
-  position: relative;
-  z-index: 2; /* Reste au-dessus du cadre */
-  margin: 0 auto 14px auto;
-
+.top-search input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 2px solid #000;
   background: #ffffff;
-  border: 1.5px solid #ff007f;
-  border-radius: 8px;
-  box-shadow: 2px 2px 0px #000;
-  width: 87%;
-  max-width: 504px;
-  box-sizing: border-box;
-}
-
-.featured-title {
-  font-family: 'Righteous', cursive;
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  text-align: center;
-  margin: 0;
-
-  /* Dégradé fluide inspiré du titre MINIDISCS */
-  background: linear-gradient(90deg, #ff007f, #9b51e0, #00d2ff, #ff007f);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-
-  /* Animation continue du dégradé */
-  animation: shineGradient 4s linear infinite;
-}
-
-/* Animation de défilement des couleurs partagée */
-@keyframes shineGradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 300% 50%;
-  }
-}
-
-.featured-grid {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.featured-item {
-  flex: 0 1 auto;
-  height: 160px;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1.5px solid #000;
-  cursor: pointer;
-  
-  /* Ombre nette style 90s */
-  box-shadow: 4px 4px 0px #000000 !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  background: #000;
-}
-
-.featured-item:hover,
-.featured-item:active {
-  transform: translateY(-2px);
-  box-shadow: 6px 6px 0px #000000 !important;
-}
-
-.featured-thumb {
-  width: auto;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-
-/* ==========================================
-   MAIN APP & MARGES PAR VUE
-   ========================================== */
-main#app {
-  margin-top: 395px;
-  position: relative;
-  z-index: 1;
-}
-
-/* Marge ajustée pour la page d'accueil */
-body:has(.dashboard-container) main#app {
-  margin-top: 435px;
-}
-
-/* Marge pour les pages où la sélection est masquée */
-body:has(.featured-container.hidden) main#app {
-  margin-top: 150px;
-}
-
-/* ==========================================
-   LISTES & CARTES DE CONTENU
-   ========================================== */
-.list-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.list-item {
-  display: flex;
-  align-items: center;
-  gap: 16px; /* Espacement élargi entre la pochettte et le texte */
-  background-color: var(--card-bg);
-  padding: 14px 16px;
-  border-radius: 16px;
-  margin-bottom: 14px;
-  cursor: pointer;
-  
-  border: 2px solid #000000;
-  border-left-width: 6px;
-  box-shadow: 4px 4px 0px #000000;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.list-item:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px #000000;
-}
-
-.md-thumb {
-  width: 99px;
-  height: 136px;
-  object-fit: cover;
-  border-radius: 10px;
-  flex-shrink: 0;
-  border: 1.5px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
-}
-
-.album-thumb {
-  width: 130px;
-  height: 130px;
-  object-fit: cover;
-  border-radius: 10px;
-  flex-shrink: 0;
-  border: 1.5px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
-}
-
-.item-details {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  overflow: hidden;
-  padding-left: 4px; /* Marge de sécurité pour décaler le texte */
-}
-
-.item-tag {
-  font-size: 0.58rem;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.item-title {
-  font-weight: 400;
-  font-size: 0.95rem;
-  line-height: 1.35;
   color: var(--text-main);
-}
-
-.title-line {
-  margin-bottom: 4px;
-}
-
-.title-line:last-child {
-  margin-bottom: 0;
-}
-
-.item-sub {
-  font-size: 0.88rem;
-  color: var(--text-sub);
-}
-
-/* Fix pour l'image géante de la vue TITRES */
-.track-container {
-  background: #ffffff;
-  border: 2px solid #000000;
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 4px 4px 0px #000000;
-  margin-top: 10px;
-}
-
-.album-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.album-cover-large {
-  width: 120px !important;
-  height: 120px !important;
-  max-width: 120px !important;
-  max-height: 120px !important;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 2px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
-  flex-shrink: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 3px 3px 0px #000;
+  outline: none;
 }
 
 /* ==========================================
-   LISTE DES TITRES (DESIGN EXACT D'ORIGINE)
-   ========================================== */
-
-/* Ligne séparatrice sous l'en-tête album */
-.album-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #f0f0f0; /* Ligne sous l'album */
-}
-
-/* Conteneur de liste */
-.track-container ul,
-.track-container ol,
-.track-list {
-  list-style-type: none !important;
-  padding-left: 0 !important;
-  margin-top: 10px !important;
-}
-
-/* Alignement des lignes de titres */
-.track-container li,
-.track-list li {
-  font-size: 0.92rem;
-  color: var(--text-main);
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
-  display: flex;
-  align-items: center;
-}
-
-.track-container li:last-child,
-.track-list li:last-child {
-  border-bottom: none;
-}
-
-/* Espacement entre le numéro et le titre */
-.track-container li strong,
-.track-container li span:first-child,
-.track-list li strong {
-  margin-right: 8px; /* Espace après le numéro */
-  font-weight: 800;
-}
-
-/* ==========================================
-   TABLEAU DE BORD (ACCUEIL COMPACT)
+   4. TABLEAU DE BORD (ACCUEIL)
    ========================================== */
 .dashboard-container {
   position: fixed !important;
@@ -612,13 +257,12 @@ body:has(.featured-container.hidden) main#app {
   text-align: center;
 }
 
-/* GRILLE DE BOUTONS TYPES & GENRES */
 .types-grid, .genres-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2px 14px;
-  margin-top: 4px;     /* Rapproche la grille du titre du dessus */
-  margin-bottom: 0px;  /* Réduit l'espace vide tout en bas */
+  margin-top: 4px;
+  margin-bottom: 0px;
 }
 
 .type-btn {
@@ -647,7 +291,7 @@ body:has(.featured-container.hidden) main#app {
   justify-content: space-between;
   align-items: center;
   background: transparent;
-  padding: 4px 2px;    /* Légèrement tassé en hauteur */
+  padding: 4px 2px;
   border: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 0;
@@ -675,6 +319,571 @@ body:has(.featured-container.hidden) main#app {
   color: var(--text-main);
 }
 
+.dashboard-actions-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.action-btn-wide {
+  flex: 2;
+  background-color: #ffffff;
+  color: var(--text-main);
+  border: 2px solid #000;
+  padding: 8px 6px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+  text-align: center;
+  transition: transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.action-btn-json {
+  flex: 1;
+  border: 2px solid #000;
+  padding: 8px 4px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+  text-align: center;
+  transition: transform 0.1s ease, background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.action-btn-wide:active, .action-btn-json:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+/* ==========================================
+   5. SÉLECTION DU MOMENT
+   ========================================== */
+.featured-container,
+.featured-container-inline {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  width: 100%;
+  max-width: 568px;
+  z-index: 900;
+  margin-top: -20px;
+  margin-bottom: 25px;
+
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 18px 12px 14px 12px;
+  box-shadow: none !important;
+}
+
+/* Contour dégradé animé via masque */
+.featured-container::before,
+.featured-container-inline::before {
+  content: "";
+  position: absolute;
+  top: 28px;
+  left: 12px;
+  right: 10px;
+  bottom: -6px;
+  border-radius: 16px;
+  padding: 3px;
+  
+  background: linear-gradient(90deg, #ff007f, #9b51e0, #00d2ff, #ff007f);
+  background-size: 300% 100%;
+  animation: shineGradient 4s linear infinite;
+
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  
+  pointer-events: none;
+  z-index: 1;
+}
+
+body:has(.dashboard-container) .featured-container {
+  top: auto;
+  margin-top: 1px !important;
+  margin-bottom: 20px !important;
+}
+
+.featured-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 16px;
+  
+  position: relative;
+  z-index: 2;
+  margin: 0 auto 14px auto;
+
+  background: #ffffff;
+  border: 1.5px solid #ff007f;
+  border-radius: 8px;
+  box-shadow: 2px 2px 0px #000;
+  width: 87%;
+  max-width: 504px;
+  box-sizing: border-box;
+}
+
+.featured-title {
+  font-family: 'Righteous', cursive;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0;
+
+  background: linear-gradient(90deg, #ff007f, #9b51e0, #00d2ff, #ff007f);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+
+  animation: shineGradient 4s linear infinite;
+}
+
+@keyframes shineGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
+}
+
+.featured-grid {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.featured-item {
+  flex: 0 1 auto;
+  height: 160px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1.5px solid #000;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px #000000 !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #000;
+}
+
+.featured-item:hover,
+.featured-item:active {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px #000000 !important;
+}
+
+.featured-thumb {
+  width: auto;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ==========================================
+   6. CONTENEUR PRINCIPAL (MAIN APP)
+   ========================================== */
+main#app {
+  margin-top: 395px;
+  position: relative;
+  z-index: 1;
+}
+
+body:has(.dashboard-container) main#app {
+  margin-top: 435px;
+}
+
+body:has(.featured-container.hidden) main#app {
+  margin-top: 150px;
+}
+
+/* ==========================================
+   7. LISTES & CARTES DE CONTENU
+   ========================================== */
+.list-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: var(--card-bg);
+  padding: 14px 16px;
+  border-radius: 16px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  
+  border: 2px solid #000000;
+  border-left-width: 6px;
+  box-shadow: 4px 4px 0px #000000;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.list-item:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #000000;
+}
+
+.md-thumb {
+  width: 99px;
+  height: 136px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+  border: 1.5px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+}
+
+.album-thumb {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+  border: 1.5px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+}
+
+.item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+  padding-left: 4px;
+}
+
+.item-tag {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.item-title {
+  font-weight: 400;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: var(--text-main);
+}
+
+.title-line {
+  margin-bottom: 4px;
+}
+
+.title-line:last-child {
+  margin-bottom: 0;
+}
+
+.item-sub {
+  font-size: 0.88rem;
+  color: var(--text-sub);
+}
+
+.md-album-item {
+  margin-bottom: 8px;
+}
+
+.md-album-item:last-child {
+  margin-bottom: 0;
+}
+
+.md-album-title {
+  font-size: 1.4rem;
+  font-weight: 650;
+  line-height: 1;
+  margin-bottom: 0.9px;
+}
+
+.md-album-artist {
+  font-size: 0.70rem;
+  color: var(--text-sub, #666);
+  line-height: 0.9;
+}
+
+/* Vue Titres / Pistes */
+.track-container {
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 4px 4px 0px #000000;
+  margin-top: 10px;
+}
+
+.album-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.album-cover-large {
+  width: 120px !important;
+  height: 120px !important;
+  max-width: 120px !important;
+  max-height: 120px !important;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  flex-shrink: 0;
+}
+
+.track-container ul,
+.track-container ol,
+.track-list {
+  list-style-type: none !important;
+  padding-left: 0 !important;
+  margin-top: 10px !important;
+}
+
+.track-container li,
+.track-list li {
+  font-size: 0.92rem;
+  color: var(--text-main);
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+}
+
+.track-container li:last-child,
+.track-list li:last-child {
+  border-bottom: none;
+}
+
+.track-container li strong,
+.track-container li span:first-child,
+.track-list li strong {
+  margin-right: 8px;
+  font-weight: 800;
+}
+
+/* ==========================================
+   8. PLANIFICATEUR DE COMPILATION
+   ========================================== */
+.planner-header-info {
+  position: fixed !important;
+  top: 200px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 999 !important;
+  
+  background-color: #ffb703 !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  border-radius: 20px !important;
+  padding: 8px 16px !important;
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  box-shadow: 4px 4px 0px #000 !important;
+  
+  width: calc(100% - 32px) !important;
+  max-width: 568px !important;
+  box-sizing: border-box !important;
+}
+
+.planner-header-info.hidden {
+  display: none !important;
+}
+
+.compil-banner {
+  position: sticky;
+  top: 10px;
+  z-index: 100;
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 5px 0 15px 0;
+  box-shadow: 4px 4px 0px #000000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.compil-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #000000;
+}
+
+.compil-time-display {
+  font-family: 'Righteous', cursive, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #000000;
+}
+
+.compil-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.compil-actions button {
+  padding: 6px 12px !important;
+  font-size: 0.8rem !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  background-color: #ffffff;
+  color: #000000;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.compil-actions button:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px #000000 !important;
+}
+
+.ideas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  margin-top: -130px;
+}
+
+.idea-card {
+  background: #ffffff !important;
+  border: 2px solid #000000 !important;
+  border-radius: 12px;
+  padding: 8px;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 3px 3px 0px #000000;
+  user-select: none;
+  color: #000000;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.idea-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+.idea-card.selected {
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
+  outline: 3px solid #06d6a0;
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.idea-card.selected::after {
+  content: "✓";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #06d6a0;
+  color: #000000;
+  font-weight: 900;
+  border: 1.5px solid #000000;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  box-shadow: 1px 1px 0px #000000;
+}
+
+.idea-delete-btn {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: #ff007f;
+  color: #ffffff;
+  border: 1.5px solid #000000;
+  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: 1.5px 1.5px 0px #000000;
+}
+
+.idea-cover {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1.5px solid #000000;
+  background: #eee;
+}
+
+.idea-title {
+  font-weight: 800;
+  font-size: 0.8rem;
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #000000;
+}
+
+.idea-artist {
+  font-size: 0.75rem;
+  color: #444444;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.idea-duration {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #ff007f;
+  margin-top: 2px;
+}
+
+.idea-card.disabled-card {
+  opacity: 0.4 !important;
+  filter: grayscale(100%) !important;
+  border-color: #888888 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+.idea-card.disabled-card .idea-delete-btn {
+  pointer-events: auto !important;
+}
+
+/* ==========================================
+   9. BOUTONS D'ACTION & MODALES ADMIN
+   ========================================== */
 .btn-primary {
   width: 100%;
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
@@ -695,54 +904,6 @@ body:has(.featured-container.hidden) main#app {
   box-shadow: 0px 0px 0px #000;
 }
 
-/* ==========================================
-   RANGÉE D'ACTIONS ACCUEIL (STYLE CAPSULE)
-   ========================================== */
-.dashboard-actions-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-  width: 100%;
-}
-
-.action-btn-wide {
-  flex: 2;
-  background-color: #ffffff;
-  color: var(--text-main);
-  border: 2px solid #000;
-  padding: 8px 6px;
-  border-radius: 20px; /* Passage en forme capsule */
-  font-size: 0.72rem;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 2px 2px 0px #000;
-  text-align: center;
-  transition: transform 0.1s ease;
-  white-space: nowrap;
-}
-
-.action-btn-json {
-  flex: 1;
-  border: 2px solid #000;
-  padding: 8px 4px;
-  border-radius: 20px; /* Passage en forme capsule */
-  font-size: 0.72rem;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 2px 2px 0px #000;
-  text-align: center;
-  transition: transform 0.1s ease, background-color 0.2s ease;
-  white-space: nowrap;
-}
-
-.action-btn-wide:active, .action-btn-json:active {
-  transform: translate(1px, 1px);
-  box-shadow: 0px 0px 0px #000;
-}
-
-/* ==========================================
-   BOUTONS D'ACTION (ÉDITION & SUPPRESSION)
-   ========================================== */
 .action-buttons, .md-admin-controls {
   display: flex;
   gap: 12px;
@@ -766,16 +927,14 @@ body:has(.featured-container.hidden) main#app {
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
-/* Bouton Modifier : Fond Blanc Pur / Texte Noir */
 .btn-edit {
   background-color: #ffffff !important;
   color: #000000 !important;
 }
 
-/* Bouton Supprimer : Aplat Rose Vif (#ff007f) / Texte Rouge */
 .btn-delete {
   background-color: #ffffff !important;
-  color: #e64059 !important; /* Rouge très foncé pour être parfaitement lisible sur le rose */
+  color: #e64059 !important;
 }
 
 .btn-edit:active, .btn-delete:active {
@@ -783,9 +942,7 @@ body:has(.featured-container.hidden) main#app {
   box-shadow: 1px 1px 0px #000000 !important;
 }
 
-/* ==========================================
-   STYLES MODALE DE SAISIE ADMIN
-   ========================================== */
+/* Modales */
 .modal {
   position: fixed;
   top: 0;
@@ -916,7 +1073,7 @@ body:has(.featured-container.hidden) main#app {
 }
 
 /* ==========================================
-   POP-UP TOAST
+   10. TOAST & FAB
    ========================================== */
 .toast {
   position: fixed;
@@ -943,9 +1100,6 @@ body:has(.featured-container.hidden) main#app {
   transform: translate(-50%, 20px);
 }
 
-/* ==========================================
-   BOUTON FLOTTANT FIXE (BAS DROITE)
-   ========================================== */
 .search-fab-btn {
   position: fixed;
   bottom: 24px;
@@ -972,300 +1126,6 @@ body:has(.featured-container.hidden) main#app {
   box-shadow: 0px 0px 0px #000;
 }
 
-/* ==========================================
-   UTILITAIRES DE MASQUAGE
-   ========================================== */
 .hidden {
   display: none !important;
-}
-
-/* ==========================================
-   STYLE DES ALBUMS ET ARTISTES (LISTE MINIDISCS)
-   ========================================== */
-
-/* Espace entre chaque bloc album d'un même MiniDisc */
-.md-album-item {
-  margin-bottom: 8px;
-}
-
-.md-album-item:last-child {
-  margin-bottom: 0;
-}
-
-/* Titre de l'album (police réduite) */
-.md-album-title {
-  font-size: 1,4rem;
-  font-weight: 650;
-  line-height: 1;
-  margin-bottom: 0,9px; /* Espace très serré avec l'artiste */
-}
-
-/* Artiste sous l'album (police plus petite et discrète) */
-.md-album-artist {
-  font-size: 0.70rem;
-  color: var(--text-sub, #666);
-  line-height: 0,9;
-}
-
-/* ==========================================
-   PLANIFICATEUR DE COMPILATION (NEUBRUTALIST)
-   ========================================== */
-
-/* Bannière résumé supérieure (Sticky) */
-.compil-banner {
-  position: sticky;
-  top: 10px;
-  z-index: 100;
-  background: #ffffff;
-  border: 2px solid #000000;
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin: 5px 0 15px 0;
-  box-shadow: 4px 4px 0px #000000;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.compil-banner-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-  color: #000000;
-}
-
-.compil-time-display {
-  font-family: 'Righteous', cursive, sans-serif;
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: #000000;
-}
-
-.compil-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-/* Boutons d'actions */
-.compil-actions button {
-  padding: 6px 12px !important;
-  font-size: 0.8rem !important;
-  font-weight: 800 !important;
-  margin: 0 !important;
-  border-radius: 8px !important;
-  border: 2px solid #000000 !important;
-  box-shadow: 2px 2px 0px #000000 !important;
-  background-color: #ffffff;
-  color: #000000;
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-}
-
-.compil-actions button:active {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0px #000000 !important;
-}
-
-/* Grille d'albums avec compensation de hauteur */
-.ideas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 12px;
-  margin-top: -130px; /* Rétablissement de la marge négative pour caler la grille sous le bandeau */
-}
-
-.idea-card {
-  background: #ffffff !important;
-  border: 2px solid #000000 !important;
-  border-radius: 12px;
-  padding: 8px;
-  cursor: pointer;
-  position: relative;
-  box-shadow: 3px 3px 0px #000000;
-  user-select: none;
-  color: #000000;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.idea-card:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px #000000;
-}
-
-/* Carte sélectionnée */
-.idea-card.selected {
-  background-color: #ffffff !important;
-  border-color: #000000 !important;
-  outline: 3px solid #06d6a0;
-  box-shadow: 4px 4px 0px #000000;
-}
-
-.idea-card.selected::after {
-  content: "✓";
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background: #06d6a0;
-  color: #000000;
-  font-weight: 900;
-  border: 1.5px solid #000000;
-  border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  box-shadow: 1px 1px 0px #000000;
-}
-
-/* Bouton supprimer sur la carte */
-.idea-delete-btn {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
-  background: #ff007f;
-  color: #ffffff;
-  border: 1.5px solid #000000;
-  border-radius: 6px;
-  width: 24px;
-  height: 24px;
-  font-size: 0.75rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  box-shadow: 1.5px 1.5px 0px #000000;
-}
-
-.idea-cover {
-  width: 100%;
-  aspect-ratio: 1/1;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1.5px solid #000000;
-  background: #eee;
-}
-
-.idea-title {
-  font-weight: 800;
-  font-size: 0.8rem;
-  margin-top: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: #000000;
-}
-
-.idea-artist {
-  font-size: 0.75rem;
-  color: #444444;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.idea-duration {
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: #ff007f;
-  margin-top: 2px;
-}
-
-/* En-tête / Header */
-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: #ffffff;
-  border-bottom: 2px solid #000000;
-  padding: 10px 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.planner-header-info {
-  background: #ffb703;
-  border: 2px solid #000000;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: #000000;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 2px 2px 0px #000000;
-}
-
-.planner-header-info.hidden {
-  display: none !important;
-}
-
-/* Sélection du moment */
-.featured-container-inline {
-  margin-top: -20px;
-  background: #ffffff;
-  border: 2px solid #000000;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 4px 4px 0px #000000;
-}
-
-/* Masque l'ancien conteneur fixe de sélection */
-#featured-container, .featured-container:not(.featured-container-inline) {
-  display: none !important;
-}
-
-/* Cartes désactivées (dépassement de durée 2h28) */
-.idea-card.disabled-card {
-  opacity: 0.4 !important;
-  filter: grayscale(100%) !important;
-  border-color: #888888 !important;
-  box-shadow: none !important;
-  cursor: not-allowed !important;
-  pointer-events: none !important;
-}
-
-.idea-card.disabled-card .idea-delete-btn {
-  pointer-events: auto !important;
-}
-
-/* ==========================================
-   ENCADRÉ DYNAMIQUE "SÉLECTION DU MOMENT"
-   ========================================== */
-
-/* 1. Assure que le titre passe au-dessus du bord haut */
-.featured-title-badge, 
-#featured-container h3, 
-.featured-container .section-title {
-  position: relative;
-  z-index: 2;
-  margin-bottom: -18px !important; /* Fait chevaucher le titre sur le haut de la boîte */
-  display: inline-block;
-}
-
-/* 2. Le conteneur englobant avec bordure dynamique */
-#featured-container, 
-.featured-container {
-  position: relative;
-  z-index: 1;
-  padding: 28px 14px 14px 14px; /* Un peu de padding en haut pour compenser le titre */
-  border-radius: 16px;
-  background: #ffffff; /* Fond blanc comme les autres cartes */
-  
-  /* Astuce pour la bordure dégradée dynamique Neubrutalist */
-  border: 3px solid transparent;
-  background-image: linear-gradient(#ffffff, #ffffff), 
-                    linear-gradient(135deg, #00f2fe 0%, #4facfe 30%, #ff007f 70%, #ffb703 100%);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  
-  /* Ombre portée nette noire */
-  box-shadow: 4px 4px 0px #000000;
 }
