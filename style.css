@@ -380,7 +380,7 @@ body:has(.featured-container.hidden) main#app {
 .list-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 16px; /* Espacement élargi entre la pochettte et le texte */
   background-color: var(--card-bg);
   padding: 14px 16px;
   border-radius: 16px;
@@ -389,7 +389,6 @@ body:has(.featured-container.hidden) main#app {
   
   border: 2px solid #000000;
   border-left-width: 6px;
-  /* Ombre nette au lieu du flou */
   box-shadow: 4px 4px 0px #000000;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -406,7 +405,6 @@ body:has(.featured-container.hidden) main#app {
   border-radius: 10px;
   flex-shrink: 0;
   border: 1.5px solid #000000;
-  /* Ombre nette style MiniDisc */
   box-shadow: 3px 3px 0px #000000;
 }
 
@@ -417,7 +415,6 @@ body:has(.featured-container.hidden) main#app {
   border-radius: 10px;
   flex-shrink: 0;
   border: 1.5px solid #000000;
-  /* Ombre nette style MiniDisc */
   box-shadow: 3px 3px 0px #000000;
 }
 
@@ -426,6 +423,7 @@ body:has(.featured-container.hidden) main#app {
   flex-direction: column;
   gap: 6px;
   overflow: hidden;
+  padding-left: 4px; /* Marge de sécurité pour décaler le texte */
 }
 
 .item-tag {
@@ -453,6 +451,35 @@ body:has(.featured-container.hidden) main#app {
 .item-sub {
   font-size: 0.88rem;
   color: var(--text-sub);
+}
+
+/* Fix pour l'image géante de la vue TITRES */
+.track-container {
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 4px 4px 0px #000000;
+  margin-top: 10px;
+}
+
+.album-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.album-cover-large {
+  width: 120px !important;
+  height: 120px !important;
+  max-width: 120px !important;
+  max-height: 120px !important;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  flex-shrink: 0;
 }
 
 /* ==========================================
