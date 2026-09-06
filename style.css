@@ -244,20 +244,20 @@ body:has(.dashboard-container) .title-90s {
   top: auto;
   left: auto;
   transform: none;
-  width: 100%;
-  max-width: 568px;
+  width: 87%;
+  max-width: 504px;
   z-index: 900;
-  margin-top: 35px;
-  margin-bottom: 35px;
+  margin: 35px auto;
 
-  /* Suppression de l'encart et du fond */
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: none !important;
-  border-radius: 0 !important;
-  padding: 0 !important;
-  box-shadow: none !important;
+  /* Fond blanc et bordure dégradée dynamique */
+  border-radius: 16px;
+  padding: 28px 12px 14px 12px;
+  border: 3px solid transparent !important;
+  background-image: linear-gradient(#ffffff, #ffffff), 
+                    linear-gradient(90deg, #ff007f, #9b51e0, #00d2ff, #ff007f) !important;
+  background-origin: border-box !important;
+  background-clip: padding-box, border-box !important;
+  box-shadow: 4px 4px 0px #000000 !important;
 }
 
 /* Redescend la sélection uniquement sur l'accueil */
@@ -271,19 +271,20 @@ body:has(.dashboard-container) .featured-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 14px;
   padding: 6px 16px;
   
-  /* Ajusté exactement à la largeur des 3 pochettes */
+  /* Titre superposé qui masque le haut de la bordure */
+  position: relative;
+  z-index: 2;
+  margin: -42px auto 14px auto;
+  
   background: #ffffff;
   border: 1.5px solid #ff007f;
   border-radius: 8px;
   box-shadow: 2px 2px 0px #000;
-  width: 87%;
-  max-width: 504px; /* Même largeur maximale que le groupe des 3 vignettes */
+  width: 80%;
+  max-width: 400px;
   box-sizing: border-box;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .featured-title {
