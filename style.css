@@ -980,18 +980,20 @@ body:has(.featured-container.hidden) main#app {
 }
 
 /* ==========================================
-   PLANIFICATEUR DE COMPILATION (CORRECTIONS)
+   PLANIFICATEUR DE COMPILATION (NEUBRUTALIST)
    ========================================== */
+
+/* Bannière résumé supérieure */
 .compil-banner {
   position: sticky;
-  top: 10px; /* Remonté au plus près du haut */
+  top: 10px;
   z-index: 100;
-  background: var(--bg-card, #ffffff);
-  border: 2px solid var(--accent, #ff007f);
+  background: #ffffff;
+  border: 2px solid #000000;
   border-radius: 12px;
-  padding: 8px 12px;
+  padding: 10px 14px;
   margin: 5px 0 15px 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 4px 4px 0px #000000;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1002,51 +1004,74 @@ body:has(.featured-container.hidden) main#app {
   justify-content: space-between;
   align-items: center;
   font-size: 0.9rem;
+  color: #000000;
 }
 
 .compil-time-display {
   font-family: 'Righteous', cursive, sans-serif;
   font-size: 1.2rem;
+  font-weight: 800;
+  color: #000000;
 }
 
 .compil-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
-/* Boutons plus compacts */
+/* Boutons d'actions */
 .compil-actions button {
-  padding: 6px 10px !important;
+  padding: 6px 12px !important;
   font-size: 0.8rem !important;
+  font-weight: 800 !important;
   margin: 0 !important;
-  border-radius: 6px !important;
+  border-radius: 8px !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
+  background-color: #ffffff;
+  color: #000000;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
-/* Grille et Cartes d'albums */
+.compil-actions button:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px #000000 !important;
+}
+
+/* Grille et cartes d'albums */
 .ideas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 10px;
-  margin-top: -130px;
+  gap: 12px;
+  margin-top: 10px;
 }
 
 .idea-card {
-  background: #ffffff !important; /* Fond blanc permanent pour éviter la transparence */
-  border: 2px solid transparent;
-  border-radius: 8px;
+  background: #ffffff !important;
+  border: 2px solid #000000 !important;
+  border-radius: 12px;
   padding: 8px;
   cursor: pointer;
   position: relative;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 3px 3px 0px #000000;
   user-select: none;
-  color: #222222;
+  color: #000000;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+.idea-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+/* Carte sélectionnée */
 .idea-card.selected {
-  border-color: #06d6a0;
-  background-color: #ffffff !important; /* Maintient le fond blanc fixe au clic */
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
   outline: 3px solid #06d6a0;
+  box-shadow: 4px 4px 0px #000000;
 }
 
 .idea-card.selected::after {
@@ -1055,15 +1080,17 @@ body:has(.featured-container.hidden) main#app {
   top: 6px;
   right: 6px;
   background: #06d6a0;
-  color: #000;
-  font-weight: bold;
+  color: #000000;
+  font-weight: 900;
+  border: 1.5px solid #000000;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
+  box-shadow: 1px 1px 0px #000000;
 }
 
 /* Bouton supprimer sur la carte */
@@ -1071,41 +1098,43 @@ body:has(.featured-container.hidden) main#app {
   position: absolute;
   bottom: 6px;
   right: 6px;
-  background: #e63946;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  width: 22px;
-  height: 22px;
+  background: #ff007f;
+  color: #ffffff;
+  border: 1.5px solid #000000;
+  border-radius: 6px;
+  width: 24px;
+  height: 24px;
   font-size: 0.75rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2;
+  box-shadow: 1.5px 1.5px 0px #000000;
 }
 
 .idea-cover {
   width: 100%;
   aspect-ratio: 1/1;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 8px;
+  border: 1.5px solid #000000;
   background: #eee;
 }
 
 .idea-title {
-  font-weight: bold;
+  font-weight: 800;
   font-size: 0.8rem;
-  margin-top: 4px;
+  margin-top: 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #111;
+  color: #000000;
 }
 
 .idea-artist {
   font-size: 0.75rem;
-  color: #555;
+  color: #444444;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1113,20 +1142,18 @@ body:has(.featured-container.hidden) main#app {
 
 .idea-duration {
   font-size: 0.75rem;
-  font-weight: bold;
-  color: var(--accent, #ff007f);
+  font-weight: 800;
+  color: #ff007f;
   margin-top: 2px;
 }
 
-/* Intégration de l'encart dans le header fixe avec effet de flou */
+/* En-tête / Header */
 header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(18, 18, 18, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border-bottom: 2px solid #000000;
   padding: 10px 15px;
   display: flex;
   flex-direction: column;
@@ -1135,45 +1162,48 @@ header {
 }
 
 .planner-header-info {
-  background: rgba(255, 255, 255, 0.1);
+  background: #ffb703;
+  border: 2px solid #000000;
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 0.95rem;
-  color: #fff;
+  font-weight: 800;
+  color: #000000;
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 2px 0px #000000;
 }
 
 .planner-header-info.hidden {
   display: none !important;
 }
 
-/* Nouvelle disposition intégrée pour la Sélection du moment */
+/* Sélection du moment */
 .featured-container-inline {
   margin-top: 16px;
-  background: linear-gradient(135deg, #181528 0%, #0d0b18 100%);
-  border: 1.5px solid #ff007f;
+  background: #ffffff;
+  border: 2px solid #000000;
   border-radius: 12px;
-  padding: 10px 12px 12px 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  padding: 12px;
+  box-shadow: 4px 4px 0px #000000;
 }
 
-/* Masque l'ancien conteneur fixe de sélection pour ne garder que la version intégrée */
+/* Masque l'ancien conteneur fixe de sélection */
 #featured-container, .featured-container:not(.featured-container-inline) {
   display: none !important;
 }
 
-/* Style pour bloquer et griser les albums incompatibles avec la durée */
+/* Cartes désactivées (dépassement de durée 2h28) */
 .idea-card.disabled-card {
-  opacity: 0.35 !important;
+  opacity: 0.4 !important;
   filter: grayscale(100%) !important;
+  border-color: #888888 !important;
+  box-shadow: none !important;
   cursor: not-allowed !important;
   pointer-events: none !important;
 }
 
-/* Conserve la possibilité de cliquer sur la corbeille si besoin */
 .idea-card.disabled-card .idea-delete-btn {
   pointer-events: auto !important;
 }
