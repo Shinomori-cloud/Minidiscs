@@ -602,6 +602,10 @@ function renderMDList(filters = {}, pushState = true) {
 /* 3. VUE D'UN MINIDISC */
 function openMD(index, pushState = true) {
   if (!catalogData || !catalogData[index]) return;
+  
+   if (pushState) {
+    history.pushState({ view: 'album', mdIndex: index }, '', `#md-${index}`);
+   }
 
   currentMD = index;
   currentAlbum = null;
@@ -1130,6 +1134,9 @@ function renderCompilPlanner(pushState = true) {
   if (backBtn) backBtn.classList.remove('hidden');
   if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
 
+  if (pushState && window.location.hash !== '#planner') {
+    history.pushState({ view: 'planner' }, '', '#planner');
+  }
   injectPlannerHeaderBadge();
 
   if (featuredContainer) featuredContainer.classList.add('hidden');
