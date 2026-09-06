@@ -399,7 +399,7 @@ body:has(.featured-container.hidden) main#app {
 }
 
 .item-tag {
-  font-size: 0.75rem;
+  font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.5px;
   text-transform: uppercase;
