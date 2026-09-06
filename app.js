@@ -570,13 +570,14 @@ function openMD(index, pushState = true) {
   if (!catalogData || !catalogData[index]) return;
 
   if (pushState) {
-    window.location.hash = `#md-${index}`;
+    if (window.location.hash !== `#md-${index}`) {
+      window.location.hash = `#md-${index}`;
+    }
   }
 
   currentMD = catalogData[index];
   currentAlbum = null;
   if (backBtn) backBtn.classList.remove('hidden');
-
   updateSearchVisibility(false);
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
