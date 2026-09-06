@@ -541,6 +541,9 @@ function renderDashboard(pushState = true) {
 /* 2. LISTE DES MINIDISCS */
 function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
+  if (pushState) {
+    history.pushState({ view: 'md-list' }, '', '#md-list');
+  }
   const { genre = null, type = null } = filters;
   
   currentMD = null;
@@ -622,10 +625,9 @@ function renderMDList(filters = {}, pushState = true) {
 /* 3. VUE D'UN MINIDISC */
 function openMD(index, pushState = true) {
   if (!catalogData || !catalogData[index]) return;
-  
-   if (pushState) {
+  if (pushState) {
     history.pushState({ view: 'album', mdIndex: index }, '', `#md-${index}`);
-   }
+  }
 
   currentMD = index;
   currentAlbum = null;
@@ -1149,6 +1151,10 @@ function injectPlannerHeaderBadge() {
 }
 
 function renderCompilPlanner(pushState = true) {
+  if (pushState) {
+    history.pushState({ view: 'planner' }, '', '#planner');
+  }
+   
   currentMD = null;
   currentAlbum = null;
   if (backBtn) backBtn.classList.remove('hidden');
