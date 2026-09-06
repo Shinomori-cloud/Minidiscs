@@ -1125,3 +1125,16 @@ header {
 #featured-container, .featured-container:not(.featured-container-inline) {
   display: none !important;
 }
+
+/* Style pour bloquer et griser les albums incompatibles avec la durée */
+.idea-card.disabled-card {
+  opacity: 0.35 !important;
+  filter: grayscale(100%) !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+/* Conserve la possibilité de cliquer sur la corbeille si besoin */
+.idea-card.disabled-card .idea-delete-btn {
+  pointer-events: auto !important;
+}
