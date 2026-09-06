@@ -1175,19 +1175,21 @@ function renderCompilPlanner(pushState = true) {
     history.pushState({ view: 'planner' }, '', '#planner');
   }
 
-  const ideas = getIdeaList();
+  const rawIdeas = getIdeaList();
+  // Application du mélange 24h en conservant l'index d'origine de chaque album
+  const ideas = dailyShuffle(rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex })), '-planner');
 
   let cardsHTML = '';
   if (ideas.length === 0) {
     cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album dans votre liste d'idées. Ajoutez-en avec le bouton ci-dessous !</p>`;
   } else {
-    ideas.forEach((item, index) => {
+    ideas.forEach((item) => {
+      const index = item.originalIndex;
       const isSelected = selectedIdeaIndices.has(index);
       const coverSrc = (item.cover && item.cover !== 'images/') ? item.cover : '';
 
       cardsHTML += `
         <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
-          <button type="button" class="idea-delete-btn" data-delete="${index}" title="Supprimer cet album">🗑️</button>
           ${coverSrc 
             ? `<img src="${coverSrc}" class="idea-cover" alt="cover">` 
             : `<div class="idea-cover" style="background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;">Pas d'image</div>`
@@ -1195,6 +1197,7 @@ function renderCompilPlanner(pushState = true) {
           <div class="idea-title" title="${item.title}">${item.title}</div>
           <div class="idea-artist" title="${item.artist}">${item.artist}</div>
           <div class="idea-duration">⏱️ ${item.duration}</div>
+          <button type="button" class="idea-delete-btn" data-delete="${index}" title="Supprimer cet album">🗑️</button>
         </div>
       `;
     });
