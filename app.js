@@ -1101,14 +1101,38 @@ function formatSecondsToDisplay(totalSec) {
 
 function updatePlannerHeader() {
   const durationTextEl = document.getElementById('planner-duration-text');
+  const selectedListEl = document.getElementById('planner-selected-list');
   
   const ideas = getIdeaList();
   let totalSeconds = 0;
+  let selectedHTML = '';
+
   selectedIdeaIndices.forEach(idx => {
     if (ideas[idx]) {
-      totalSeconds += parseTimeToSeconds(ideas[idx].duration);
+      const item = ideas[idx];
+      totalSeconds += parseTimeToSeconds(item.duration);
+
+      selectedHTML += `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 8px;">
+          <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #000; font-weight: 600;">
+            🎵 <span style="color: #666;">${item.artist}</span> - ${item.title}
+          </div>
+          <div style="font-weight: 700; color: #000; white-space: nowrap;">⏱️ ${item.duration}</div>
+        </div>
+      `;
     }
   });
+
+  // Mise à jour de la liste dynamique
+  if (selectedListEl) {
+    if (selectedIdeaIndices.size > 0) {
+      selectedListEl.innerHTML = selectedHTML;
+      selectedListEl.style.display = 'block';
+    } else {
+      selectedListEl.innerHTML = '';
+      selectedListEl.style.display = 'none';
+    }
+  }
 
   const formattedTime = formatSecondsToDisplay(totalSeconds);
   const isOverLimit = totalSeconds > (148 * 60);
@@ -1140,7 +1164,6 @@ function injectPlannerHeaderBadge() {
     badge = document.createElement('div');
     badge.id = 'header-planner-badge';
     
-    // Position fixe sous le premier header, fond 100% opaque sans transparence
     badge.style.cssText = `
       position: fixed;
       top: 150px;
@@ -1150,23 +1173,26 @@ function injectPlannerHeaderBadge() {
       background: #ffffff;
       border: 2px solid #000000;
       border-radius: 16px;
-      padding: 8px 16px;
+      padding: 10px 16px;
       box-shadow: 4px 4px 0px #000000;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      flex-direction: column;
+      gap: 8px;
       width: calc(100% - 32px);
       max-width: 568px;
       box-sizing: border-box;
     `;
     
     badge.innerHTML = `
-      <span style="font-size: 0.85rem; font-weight: bold; color: #000000;">Durée sélectionnée :</span>
-      <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+        <span style="font-size: 0.85rem; font-weight: bold; color: #000000;">Durée sélectionnée :</span>
+        <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
+      </div>
+      <!-- Zone d'affichage dynamique des albums cochés -->
+      <div id="planner-selected-list" style="display: none; border-top: 1.5px dashed #ccc; padding-top: 6px; max-height: 100px; overflow-y: auto; font-size: 0.78rem;">
+      </div>
     `;
 
-    // On l'insère DEHORS et APRÈS la balise header
     header.after(badge);
   }
 }
