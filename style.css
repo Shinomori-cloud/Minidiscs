@@ -266,7 +266,7 @@ body:has(.dashboard-container) .title-90s {
   content: "";
   position: absolute;
   top: 28px; /* Fait remonter le haut du cadre pile à la moitié de l'encart titre */
-  left: 10px;
+  left: 12px;
   right: 10px;
   bottom: -6px;
   border-radius: 16px;
