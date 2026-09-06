@@ -23,20 +23,26 @@ const featuredContainer = document.getElementById('featured-container');
 /* ==========================================
    GESTION DU BOUTON RETOUR & ARBORESCENCE (VERROU)
    ========================================== */
+
+// 1. Verrouille l'état initial dès que le script charge
 (function lockInitialState() {
+  // Remplace l'état actuel par 'home' et pousse un second état identique
   history.replaceState({ view: 'home' }, '', '#home');
   history.pushState({ view: 'home' }, '', '#home');
 })();
 
+// 2. Écouteur de navigation
 window.addEventListener('popstate', (event) => {
   const state = event.state;
 
+  // Si on atteint la racine ou un état nul, on reste sur le Dashboard et on re-verrouille
   if (!state || state.view === 'home') {
     renderDashboard(false);
     history.pushState({ view: 'home' }, '', '#home');
     return;
   }
 
+  // Navigation hiérarchique selon la vue
   if (state.view === 'album') {
     openMD(state.mdIndex, false);
   } else if (state.view === 'tracklist' || state.view === 'albums') {
@@ -47,7 +53,7 @@ window.addEventListener('popstate', (event) => {
   } else {
     renderDashboard(false);
   }
-});
+}); 
 
 /* ==========================================
    PROTECTION ANTI-FERMETURE ET STOCKAGE LOCAL
