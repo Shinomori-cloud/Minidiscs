@@ -286,7 +286,8 @@ body:has(.dashboard-container) .featured-container {
 
 .featured-title {
   font-family: 'Righteous', cursive;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: 800;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   text-align: center;
@@ -302,6 +303,9 @@ body:has(.dashboard-container) .featured-container {
 
   /* Animation continue du dégradé */
   animation: shineGradient 4s linear infinite;
+
+  /* Ombre portée nette style Minidisc */
+  filter: drop-shadow(2px 2px 0px #000000);
 }
 
 /* Animation de défilement des couleurs */
