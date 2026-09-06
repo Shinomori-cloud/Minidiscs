@@ -687,7 +687,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
    ========================================== */
 .planner-header-info {
   position: fixed !important;
-  top: 200px !important;
+  top: 10px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   z-index: 999 !important;
@@ -773,7 +773,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 12px;
-  margin-top: -40; /* Alignement corrigé */
+  margin-top: -130; /* Alignement corrigé */
 }
 
 .idea-card {
