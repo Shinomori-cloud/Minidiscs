@@ -286,7 +286,7 @@ body:has(.dashboard-container) .featured-container {
 
 .featured-title {
   font-family: 'Righteous', cursive;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   text-align: center;
