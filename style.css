@@ -717,34 +717,41 @@ body:has(.featured-container.hidden) main#app {
    ========================================== */
 .action-buttons, .md-admin-controls {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   margin-top: 12px;
 }
 
 .btn-edit, .btn-delete {
-  border: 1.5px solid #000;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 0.8rem;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 2px solid #000000 !important;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.85rem;
   cursor: pointer;
-  box-shadow: 1.5px 1.5px 0px #000;
-  transition: transform 0.1s ease;
+  box-shadow: 3px 3px 0px #000000 !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
+/* Bouton Modifier (Fond Jaune Vif / Texte Noir) */
 .btn-edit {
   background-color: #ffb703 !important;
-  color: #ffffff !important; /* Force le texte en blanc */
+  color: #000000 !important;
 }
 
+/* Bouton Supprimer (Fond Rose/Rouge Vif / Texte Noir) */
 .btn-delete {
-  background-color: #e63946 !important; /* Fond blanc (ou met la couleur de fond souhaitée) */
-  color: #e63946 !important;            /* Force le texte en rouge */
+  background-color: #ff4d6d !important;
+  color: #000000 !important;
 }
 
 .btn-edit:active, .btn-delete:active {
-  transform: translate(1px, 1px);
-  box-shadow: 0px 0px 0px #000;
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000 !important;
 }
 
 /* ==========================================
