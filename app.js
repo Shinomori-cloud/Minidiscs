@@ -20,31 +20,23 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   GESTION DU BOUTON RETOUR & ARBORESCENCE
+   GESTION DU BOUTON RETOUR & ARBORESCENCE (VERROU)
    ========================================== */
 
-function initHistoryProtection() {
-  // On pousse plusieurs états d'avance pour créer un vrai verrou
-  for (let i = 0; i < 5; i++) {
-    history.pushState({ view: 'home', step: i }, '', '#home');
-  }
-}
+// 1. Verrouille l'état initial dès que le script charge
+(function lockInitialState() {
+  // Remplace l'état actuel par 'home' et pousse un second état identique
+  history.replaceState({ view: 'home' }, '', '#home');
+  history.pushState({ view: 'home' }, '', '#home');
+})();
 
-// Sécurité supplémentaire : au premier tap utilisateur, on s'assure que la pile est verrouillée
-window.addEventListener('touchstart', function lockHistoryOnTouch() {
-  if (window.history.length < 5) {
-    initHistoryProtection();
-  }
-  window.removeEventListener('touchstart', lockHistoryOnTouch);
-}, { once: true });
-
+// 2. Écouteur de navigation
 window.addEventListener('popstate', (event) => {
   const state = event.state;
 
-  // Si l'utilisateur atteint le bas de pile ou l'accueil
+  // Si on atteint la racine ou un état nul, on reste sur le Dashboard et on re-verrouille
   if (!state || state.view === 'home') {
     renderDashboard(false);
-    // On ré-injecte un état immédiat pour fermer la porte de sortie
     history.pushState({ view: 'home' }, '', '#home');
     return;
   }
