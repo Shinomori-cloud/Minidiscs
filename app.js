@@ -494,15 +494,8 @@ function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
   const { genre = null, type = null } = filters;
 
-  // Enregistrement propre dans l'historique d'Android
   if (pushState) {
-    let urlHash = '#md-list';
-    const params = [];
-    if (genre) params.push(`genre=${encodeURIComponent(genre)}`);
-    if (type) params.push(`type=${encodeURIComponent(type)}`);
-    if (params.length > 0) urlHash += '?' + params.join('&');
-    
-    history.pushState({ view: 'md-list', genre, type }, '', urlHash);
+    window.location.hash = '#md-list';
   }
   
   currentMD = null;
@@ -577,7 +570,7 @@ function openMD(index, pushState = true) {
   if (!catalogData || !catalogData[index]) return;
 
   if (pushState) {
-    history.pushState({ view: 'album', mdIndex: index }, '', `#md-${index}`);
+    window.location.hash = `#md-${index}`;
   }
 
   currentMD = catalogData[index];
@@ -1296,54 +1289,36 @@ function convertSelectedToMD() {
 }
 
 /* ==========================================
-   GESTION DU BOUTON RETOUR PHYSIQUE
+   GESTION DU BOUTON RETOUR (ANCRAGE HASH)
    ========================================== */
 
-if (!history.state) {
-  history.replaceState({ view: 'home' }, '', '#home');
-}
+window.addEventListener('popstate', () => {
+  const hash = window.location.hash;
 
-window.addEventListener('popstate', (event) => {
-  const state = event.state;
-
-  // 1. Retour à l'Accueil
-  if (!state || state.view === 'home') {
-    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-    renderDashboard(false);
-    return;
+  if (hash.startsWith('#md-') && !hash.includes('list')) {
+    const index = parseInt(hash.replace('#md-', ''), 10);
+    if (!isNaN(index) && typeof openMD === 'function') {
+      openMD(index, false);
+      return;
+    }
   }
 
-  // 2. Retour à la Liste des MD
-  if (state.view === 'md-list' || state.view === 'minidiscs') {
+  if (hash === '#md-list') {
     if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
     if (typeof renderMDList === 'function') {
-      const filters = {
-        genre: state.genre || (typeof currentGenreFilter !== 'undefined' ? currentGenreFilter : null),
-        type: state.type || (typeof currentTypeFilter !== 'undefined' ? currentTypeFilter : null)
-      };
-      renderMDList(filters, false);
+      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
+      return;
     }
-    return;
   }
 
-  // 3. Retour à la Fiche Minidisc
-  if (state.view === 'album' && state.mdIndex !== undefined) {
-    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-    if (typeof openMD === 'function') {
-      openMD(state.mdIndex, false);
-    } else if (typeof renderMDDetail === 'function') {
-      renderMDDetail(state.mdIndex, false);
-    }
-    return;
-  }
-
-  // 4. Retour au Planificateur
-  if (state.view === 'planner') {
+  if (hash === '#planner') {
     if (typeof renderCompilPlanner === 'function') {
       renderCompilPlanner(false);
+      return;
     }
-    return;
   }
 
-  renderDashboard(false);
+  // Si le hash est vide, #home ou inconnu -> Accueil
+  if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
+  if (typeof renderDashboard === 'function') renderDashboard(false);
 });
