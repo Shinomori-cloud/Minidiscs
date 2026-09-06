@@ -1181,6 +1181,7 @@ function renderCompilPlanner(pushState = true) {
         </div>
       </div>
     </div>
+
   `;
 
   updatePlannerHeader();
