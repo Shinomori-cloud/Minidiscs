@@ -11,6 +11,7 @@ let adminAlbumCount = 0;
 let editingMDIndex = null;
 let toastTimeout = null;
 let hasUnsavedChanges = false;
+let selectedIdeaIndices = new Set();
 
 const STORAGE_KEY = 'minidisc_catalog_backup';
 
@@ -22,26 +23,20 @@ const featuredContainer = document.getElementById('featured-container');
 /* ==========================================
    GESTION DU BOUTON RETOUR & ARBORESCENCE (VERROU)
    ========================================== */
-
-// 1. Verrouille l'état initial dès que le script charge
 (function lockInitialState() {
-  // Remplace l'état actuel par 'home' et pousse un second état identique
   history.replaceState({ view: 'home' }, '', '#home');
   history.pushState({ view: 'home' }, '', '#home');
 })();
 
-// 2. Écouteur de navigation
 window.addEventListener('popstate', (event) => {
   const state = event.state;
 
-  // Si on atteint la racine ou un état nul, on reste sur le Dashboard et on re-verrouille
   if (!state || state.view === 'home') {
     renderDashboard(false);
     history.pushState({ view: 'home' }, '', '#home');
     return;
   }
 
-  // Navigation hiérarchique selon la vue
   if (state.view === 'album') {
     openMD(state.mdIndex, false);
   } else if (state.view === 'tracklist' || state.view === 'albums') {
@@ -65,9 +60,12 @@ window.addEventListener('beforeunload', (e) => {
 });
 
 function saveLocalBackup() {
-  if (!catalogData) return;
+  const payload = {
+    minidiscs: catalogData || [],
+    ideaAlbums: window.ideaAlbums || []
+  };
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(catalogData));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     hasUnsavedChanges = true;
   } catch (err) {
     console.error("Erreur de sauvegarde locale:", err);
@@ -261,63 +259,32 @@ function dailyShuffle(array, extraSeedKey = '') {
 }
 
 /* ==========================================
-   GESTION STRICTE DE L'HISTORIQUE HERMIT
+   GESTION STRICTE DE L'HISTORIQUE
    ========================================== */
 if (!window.location.hash || window.location.hash === '#') {
   window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
 }
 
-window.addEventListener('popstate', (e) => {
-  if (!e.state || window.location.hash === '' || window.location.hash === '#dashboard') {
-    renderDashboard(false);
-    window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
-    return;
-  }
-
-  switch (e.state.view) {
-    case 'dashboard':
-      renderDashboard(false);
-      break;
-    case 'minidiscs':
-      renderMDList({ genre: e.state.genre || null, type: e.state.type || null }, false);
-      break;
-    case 'albums':
-    case 'tracklist':
-      if (e.state.mdIndex !== undefined) {
-        if (e.state.albumIndex !== undefined) {
-          openAlbum(e.state.mdIndex, e.state.albumIndex, false);
-        } else {
-          openMD(e.state.mdIndex, false);
-        }
-      } else {
-        renderMDList({}, false);
-      }
-      break;
-    default:
-      renderDashboard(false);
-  }
-});
-
 /* ==========================================
    INITIALISATION DATA & ÉCOUTEURS GLOBAUX
    ========================================== */
-backBtn.addEventListener('click', () => {
-  if (currentAlbum !== null) {
-    openMD(currentMD, true);
-  } else if (currentMD !== null) {
-    renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, true);
-  } else {
-    renderDashboard(true);
-  }
-});
+if (backBtn) {
+  backBtn.addEventListener('click', () => {
+    if (currentAlbum !== null) {
+      openMD(currentMD, true);
+    } else if (currentMD !== null) {
+      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, true);
+    } else {
+      renderDashboard(true);
+    }
+  });
+}
 
-// Fonction utilitaire pour parser et séparer minidiscs et ideaAlbums
 function processLoadedData(data) {
   if (data && typeof data === 'object' && !Array.isArray(data) && data.minidiscs) {
     catalogData = data.minidiscs || [];
     window.ideaAlbums = data.ideaAlbums || [];
   } else if (Array.isArray(data)) {
-    // Rétrocompatibilité avec l'ancien format
     catalogData = data;
     if (!window.ideaAlbums) window.ideaAlbums = [];
   } else {
@@ -414,11 +381,6 @@ function getBorderColor(genreData) {
   return color;
 }
 
-function formatAlbumTitles(rawTitle) {
-  if (!rawTitle) return '';
-  return rawTitle.split(' / ').map(t => `<div class="title-line">${t.trim()}</div>`).join('');
-}
-
 /* ==========================================
    SÉLECTION DU MOMENT (24H)
    ========================================== */
@@ -448,17 +410,14 @@ function renderFeatured() {
 
 /* 1. DASHBOARD */
 function renderDashboard(pushState = true) {
-  // Masque l'encart du planificateur s'il était affiché
-  if (typeof clearPlannerHeaderInfo === 'function') {
-    clearPlannerHeaderInfo();
-  }
+  if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
 
   currentMD = null;
   currentAlbum = null;
   currentGenreFilter = null;
   currentTypeFilter = null;
-  if (typeof backBtn !== 'undefined' && backBtn) backBtn.classList.add('hidden');
-  if (typeof headerTitle !== 'undefined' && headerTitle) headerTitle.textContent = "MINIDISCS";
+  if (backBtn) backBtn.classList.add('hidden');
+  if (headerTitle) headerTitle.textContent = "MINIDISCS";
 
   updateSearchVisibility(false);
 
@@ -467,10 +426,7 @@ function renderDashboard(pushState = true) {
     return;
   }
 
-  // Masque le conteneur absolu externe s'il existe pour privilégier l'injection directe
-  if (typeof featuredContainer !== 'undefined' && featuredContainer) {
-    featuredContainer.classList.add('hidden');
-  }
+  if (featuredContainer) featuredContainer.classList.add('hidden');
 
   if (pushState && window.location.hash !== '#dashboard') {
     history.pushState({ view: 'dashboard' }, '', '#dashboard');
@@ -506,33 +462,13 @@ function renderDashboard(pushState = true) {
     `;
   });
 
-  // Récupération dynamique du HTML pour la Sélection du Moment
-  let featuredHTML = '';
-  if (typeof getFeaturedHTML === 'function') {
-    featuredHTML = getFeaturedHTML();
-  } else {
-    // Structure de secours si la fonction dédiée n'existe pas encore
-    featuredHTML = `
-      <div class="featured-container-inline">
-        <div class="featured-header">
-          <div class="featured-title">SÉLECTION DU MOMENT</div>
-        </div>
-        <div class="featured-grid" id="featured-grid-inline">
-          <!-- Les vignettes de la sélection -->
-        </div>
-      </div>
-    `;
-  }
-
-  // État du bouton JSON (Vert si à jour, Rouge/Orange si modif en attente)
-  const jsonBtnStyle = (typeof hasUnsavedChanges !== 'undefined' && hasUnsavedChanges) 
+  const jsonBtnStyle = hasUnsavedChanges 
     ? 'background-color: #e63946; color: #fff;' 
     : 'background-color: #06d6a0; color: #000;';
 
   app.innerHTML = `
     <div class="dashboard-container" style="padding-top: 20px; padding-bottom: 90px;">
       
-      <!-- 1. BLOC TOP : COMPTEUR & RÉPARTITION PAR TYPE -->
       <div class="dashboard-card" style="margin-bottom: 36px;">
         <div class="dashboard-stat-main" style="padding: 4px 0 8px 0;">
          <span class="stat-label" style="font-size: 0.75rem;">Collections de</span>
@@ -542,7 +478,6 @@ function renderDashboard(pushState = true) {
         <div class="genres-grid">${typeBadgesHTML}</div>
       </div>
 
-      <!-- 2. BLOC MILIEU : SÉLECTION DU MOMENT -->
       <div class="featured-container-inline">
         <div class="featured-header">
           <div class="featured-title">SÉLECTION DU MOMENT</div>
@@ -550,18 +485,15 @@ function renderDashboard(pushState = true) {
         <div class="featured-grid" id="featured-grid-inline"></div>
       </div>
 
-      <!-- 3. BLOC BAS : RÉPARTITION PAR GENRE -->
       <div class="dashboard-card" style="margin-top: 16px;">
         <div class="dashboard-section-title">MINIDISCS PAR GENRES</div>
         <div class="genres-grid">${genreBadgesHTML}</div>
       </div>
 
-      <!-- 4. BOUTON PRINCIPAL -->
       <button class="btn-primary" style="margin-top: 16px; margin-bottom: 8px; width: 100%;" onclick="renderMDList({})">
         VOIR TOUS LES MINIDISCS &rarr;
       </button>
 
-      <!-- 5. BARRE D'ACTIONS -->
       <div class="dashboard-actions-row">
         <button class="action-btn-wide" onclick="renderCompilPlanner()">
           Créer une compilation
@@ -576,14 +508,11 @@ function renderDashboard(pushState = true) {
     </div>
   `;
 
- // Génère la sélection dans son conteneur d'origine puis déplace le contenu
-  if (typeof renderFeatured === 'function') {
-    renderFeatured();
-    const oldGrid = document.querySelector('.featured-grid:not(#featured-grid-inline)') || document.getElementById('featured-grid');
-    const newGrid = document.getElementById('featured-grid-inline');
-    if (oldGrid && newGrid) {
-      newGrid.innerHTML = oldGrid.innerHTML;
-    }
+  renderFeatured();
+  const oldGrid = document.querySelector('.featured-grid:not(#featured-grid-inline)') || document.getElementById('featured-grid');
+  const newGrid = document.getElementById('featured-grid-inline');
+  if (oldGrid && newGrid) {
+    newGrid.innerHTML = oldGrid.innerHTML;
   }
 
   window.scrollTo(0, 0);
@@ -598,12 +527,10 @@ function renderMDList(filters = {}, pushState = true) {
   currentAlbum = null;
   currentGenreFilter = genre;
   currentTypeFilter = type;
-  backBtn.classList.remove('hidden');
+  if (backBtn) backBtn.classList.remove('hidden');
 
   updateSearchVisibility(true);
-
-  headerTitle.textContent = "MINIDISCS";
-
+  if (headerTitle) headerTitle.textContent = "MINIDISCS";
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
   if (pushState) {
@@ -639,7 +566,6 @@ function renderMDList(filters = {}, pushState = true) {
       const allGenres = getMDAllGenres(md);
       const borderColor = getBorderColor(allGenres);
       
-      // Génération de la liste des albums avec uniquement titre et artiste
       let albumsContent = '';
       if (md.albums && md.albums.length > 0) {
         albumsContent = md.albums.map(album => `
@@ -679,10 +605,9 @@ function openMD(index, pushState = true) {
 
   currentMD = index;
   currentAlbum = null;
-  backBtn.classList.remove('hidden');
+  if (backBtn) backBtn.classList.remove('hidden');
 
   updateSearchVisibility(false);
-
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
   const md = catalogData[index];
@@ -697,7 +622,7 @@ function openMD(index, pushState = true) {
   `;
 
   if (!md.albums || md.albums.length === 0) {
-    headerTitle.textContent = "TITRES";
+    if (headerTitle) headerTitle.textContent = "TITRES";
     if (pushState) history.pushState({ view: 'tracklist', mdIndex: index, isDirectTracks: true }, '', `#md-${index}`);
 
     let tracksHTML = '';
@@ -730,7 +655,7 @@ function openMD(index, pushState = true) {
     return;
   }
 
-  headerTitle.textContent = "ALBUMS";
+  if (headerTitle) headerTitle.textContent = "ALBUMS";
   if (pushState) history.pushState({ view: 'albums', mdIndex: index }, '', `#md-${index}`);
 
   let html = `<div class="list-container">${adminControls}`;
@@ -761,10 +686,9 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
 
   currentMD = mdIndex;
   currentAlbum = albumIndex;
-  backBtn.classList.remove('hidden');
+  if (backBtn) backBtn.classList.remove('hidden');
 
   updateSearchVisibility(false);
-
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
   const md = catalogData[mdIndex];
@@ -772,7 +696,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   const albumGenres = getAlbumGenres(album, md);
   const albumColor = getBorderColor(albumGenres);
 
-  headerTitle.textContent = "TITRES";
+  if (headerTitle) headerTitle.textContent = "TITRES";
   if (pushState) history.pushState({ view: 'tracklist', mdIndex, albumIndex }, '', `#md-${mdIndex}-album-${albumIndex}`);
 
   let tracksHTML = '';
@@ -828,7 +752,7 @@ function openAdminModal(indexToEdit = null) {
   editingMDIndex = indexToEdit;
   const modalTitle = document.querySelector('#admin-modal h3');
   const albumsContainer = document.getElementById('albums-container');
-  albumsContainer.innerHTML = '';
+  if (albumsContainer) albumsContainer.innerHTML = '';
   adminAlbumCount = 0;
 
   if (editingMDIndex !== null) {
@@ -871,18 +795,21 @@ function openAdminModal(indexToEdit = null) {
 
   } else {
     if (modalTitle) modalTitle.textContent = "＋ Ajouter un MiniDisc";
-    document.getElementById('md-form').reset();
+    const form = document.getElementById('md-form');
+    if (form) form.reset();
     document.getElementById('md-cover').value = "images/";
     const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
     if (radioCompil) radioCompil.checked = true;
     toggleAdminType(false);
   }
 
-  document.getElementById('admin-modal').classList.remove('hidden');
+  const modal = document.getElementById('admin-modal');
+  if (modal) modal.classList.remove('hidden');
 }
 
 function closeAdminModal() {
-  document.getElementById('admin-modal').classList.add('hidden');
+  const modal = document.getElementById('admin-modal');
+  if (modal) modal.classList.add('hidden');
   editingMDIndex = null;
 }
 
@@ -890,10 +817,14 @@ function toggleAdminType(isInit = false) {
   const checkedRadio = document.querySelector('input[name="md-type"]:checked');
   const isCompil = checkedRadio ? checkedRadio.value === 'compil' : true;
   
-  document.getElementById('section-compil').classList.toggle('hidden', !isCompil);
-  document.getElementById('section-albums').classList.toggle('hidden', isCompil);
+  const secCompil = document.getElementById('section-compil');
+  const secAlbums = document.getElementById('section-albums');
 
-  if (!isCompil && !isInit && document.getElementById('albums-container').children.length === 0) {
+  if (secCompil) secCompil.classList.toggle('hidden', !isCompil);
+  if (secAlbums) secAlbums.classList.toggle('hidden', isCompil);
+
+  const albumsContainer = document.getElementById('albums-container');
+  if (!isCompil && !isInit && albumsContainer && albumsContainer.children.length === 0) {
     addAdminAlbumBlock();
   }
 }
@@ -901,6 +832,8 @@ function toggleAdminType(isInit = false) {
 function addAdminAlbumBlock() {
   adminAlbumCount++;
   const container = document.getElementById('albums-container');
+  if (!container) return;
+
   const div = document.createElement('div');
   div.className = 'album-block';
   div.style.cssText = "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px; position: relative;";
@@ -922,13 +855,11 @@ function addAdminAlbumBlock() {
 
 function removeAdminAlbumBlock(button) {
   const block = button.closest('.album-block');
-  if (block) {
-    block.remove();
-  }
+  if (block) block.remove();
 }
 
 function submitNewMD(e) {
-  if (e) e.preventDefault(); // Annule le rechargement natif de la page
+  if (e) e.preventDefault();
 
   if (catalogData === null) return;
 
@@ -1015,27 +946,15 @@ function submitNewMD(e) {
   renderDashboard(false);
 }
 
-// Sauvegarde temporaire dans le localStorage (mis à jour)
-function saveLocalBackup() {
-  const payload = {
-    minidiscs: catalogData || [],
-    ideaAlbums: window.ideaAlbums || []
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-  hasUnsavedChanges = true;
-}
+const mdForm = document.getElementById('md-form');
+if (mdForm) mdForm.addEventListener('submit', submitNewMD);
 
-// Écouteur d'événement sur la soumission du formulaire
-document.getElementById('md-form').addEventListener('submit', submitNewMD);
-
-// Téléchargement du fichier data.json structuré
 function downloadUpdatedJSON() {
   if ((!catalogData || catalogData.length === 0) && (!window.ideaAlbums || window.ideaAlbums.length === 0)) {
     showToast("⚠️ Le catalogue est vide !");
     return;
   }
 
-  // Structure complète avec les deux clés
   const exportPayload = {
     minidiscs: catalogData || [],
     ideaAlbums: window.ideaAlbums || []
@@ -1063,13 +982,9 @@ function downloadUpdatedJSON() {
 /* ==========================================
    PLANIFICATEUR DE COMPILATION & IDÉES
    ========================================== */
-let selectedIdeaIndices = new Set();
-
 function getIdeaList() {
   if (!catalogData) return [];
-  if (!window.ideaAlbums) {
-    window.ideaAlbums = [];
-  }
+  if (!window.ideaAlbums) window.ideaAlbums = [];
   return window.ideaAlbums;
 }
 
@@ -1104,15 +1019,14 @@ function updatePlannerHeader() {
   const selectedListEl = document.getElementById('planner-selected-list');
   
   const ideas = getIdeaList();
-  const maxSeconds = 148 * 60; // 2h 28m en secondes (8880s)
+  const maxSeconds = 148 * 60;
   let totalSeconds = 0;
   let selectedHTML = '';
 
   selectedIdeaIndices.forEach(idx => {
     if (ideas[idx]) {
       const item = ideas[idx];
-      const itemSec = parseTimeToSeconds(item.duration);
-      totalSeconds += itemSec;
+      totalSeconds += parseTimeToSeconds(item.duration);
 
       selectedHTML += `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 8px;">
@@ -1125,7 +1039,6 @@ function updatePlannerHeader() {
     }
   });
 
-  // Mise à jour de la liste dynamique
   if (selectedListEl) {
     if (selectedIdeaIndices.size > 0) {
       selectedListEl.innerHTML = selectedHTML;
@@ -1138,10 +1051,9 @@ function updatePlannerHeader() {
 
   const formattedTime = formatSecondsToDisplay(totalSeconds);
   const isOverLimit = totalSeconds > maxSeconds;
-  const timeColor = isOverLimit ? '#e63946' : '#06d6a0';
 
   if (durationTextEl) {
-    durationTextEl.style.color = timeColor;
+    durationTextEl.style.color = isOverLimit ? '#e63946' : '#06d6a0';
     durationTextEl.textContent = `${formattedTime} / 2h 28m`;
   }
 
@@ -1151,14 +1063,10 @@ function updatePlannerHeader() {
     convertBtn.textContent = `💾 Convertir en MD (${selectedIdeaIndices.size})`;
   }
 
-  // Grisage/verrouillage des cartes trop longues pour le temps restant
   const remainingSeconds = maxSeconds - totalSeconds;
-  const allCards = document.querySelectorAll('.idea-card');
-
-  allCards.forEach(card => {
+  document.querySelectorAll('.idea-card').forEach(card => {
     const index = parseInt(card.getAttribute('data-index'), 10);
     const item = ideas[index];
-    
     if (!item) return;
 
     const isSelected = selectedIdeaIndices.has(index);
@@ -1185,7 +1093,6 @@ function injectPlannerHeaderBadge() {
   if (!badge) {
     badge = document.createElement('div');
     badge.id = 'header-planner-badge';
-    
     badge.style.cssText = `
       position: fixed;
       top: 150px;
@@ -1210,9 +1117,7 @@ function injectPlannerHeaderBadge() {
         <span style="font-size: 0.85rem; font-weight: bold; color: #000000;">Durée sélectionnée :</span>
         <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
       </div>
-      <!-- Zone d'affichage dynamique des albums cochés -->
-      <div id="planner-selected-list" style="display: none; border-top: 1.5px dashed #ccc; padding-top: 6px; max-height: 100px; overflow-y: auto; font-size: 0.78rem;">
-      </div>
+      <div id="planner-selected-list" style="display: none; border-top: 1.5px dashed #ccc; padding-top: 6px; max-height: 100px; overflow-y: auto; font-size: 0.78rem;"></div>
     `;
 
     header.after(badge);
@@ -1222,22 +1127,18 @@ function injectPlannerHeaderBadge() {
 function renderCompilPlanner(pushState = true) {
   currentMD = null;
   currentAlbum = null;
-  if (typeof backBtn !== 'undefined' && backBtn) backBtn.classList.remove('hidden');
-  if (typeof headerTitle !== 'undefined' && headerTitle) headerTitle.textContent = "PLANIFICATEUR";
+  if (backBtn) backBtn.classList.remove('hidden');
+  if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
 
-  // Injection du deuxième bloc sous le header principal
   injectPlannerHeaderBadge();
 
-  if (typeof featuredContainer !== 'undefined' && featuredContainer) {
-    featuredContainer.classList.add('hidden');
-  }
+  if (featuredContainer) featuredContainer.classList.add('hidden');
 
   if (pushState && window.location.hash !== '#planner') {
     history.pushState({ view: 'planner' }, '', '#planner');
   }
 
   const rawIdeas = getIdeaList();
-  // Application du mélange 24h en conservant l'index d'origine de chaque album
   const ideas = dailyShuffle(rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex })), '-planner');
 
   let cardsHTML = '';
@@ -1266,12 +1167,10 @@ function renderCompilPlanner(pushState = true) {
    
   app.innerHTML = `
     <div style="padding-bottom: 90px; padding-top: 215px;">
-      
       <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
       </div>
 
-      <!-- BARRE D'ACTIONS EN BAS -->
       <div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
         <div class="compil-actions" style="display:flex; gap:10px; max-width: 500px; width:100%; justify-content: center; background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(10px); padding: 10px 15px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); pointer-events: auto;">
           <button type="button" class="btn-primary" id="planner-btn-add" style="flex:1; border-radius:20px;">＋ Ajouter un Album</button>
@@ -1284,10 +1183,8 @@ function renderCompilPlanner(pushState = true) {
     </div>
   `;
 
-  // Calcul initial du temps au chargement
   updatePlannerHeader();
 
-  // Écouteurs pour la sélection/suppression sur la grille
   const gridContainer = document.getElementById('ideas-grid-container');
   if (gridContainer) {
     gridContainer.addEventListener('click', (e) => {
@@ -1314,7 +1211,6 @@ function renderCompilPlanner(pushState = true) {
     });
   }
 
-  // Écouteurs des boutons du bas
   const addBtn = document.getElementById('planner-btn-add');
   if (addBtn) addBtn.addEventListener('click', openIdeaModal);
 
@@ -1351,13 +1247,17 @@ function clearIdeaSelection() {
 }
 
 function openIdeaModal() {
-  document.getElementById('idea-form').reset();
-  document.getElementById('idea-cover').value = "images/";
-  document.getElementById('idea-modal').classList.remove('hidden');
+  const form = document.getElementById('idea-form');
+  if (form) form.reset();
+  const coverInput = document.getElementById('idea-cover');
+  if (coverInput) coverInput.value = "images/";
+  const modal = document.getElementById('idea-modal');
+  if (modal) modal.classList.remove('hidden');
 }
 
 function closeIdeaModal() {
-  document.getElementById('idea-modal').classList.add('hidden');
+  const modal = document.getElementById('idea-modal');
+  if (modal) modal.classList.add('hidden');
 }
 
 function saveIdeaAlbum(e) {
@@ -1403,14 +1303,8 @@ function convertSelectedToMD() {
   window.ideaAlbums = ideas.filter((_, idx) => !selectedIdeaIndices.has(idx));
   selectedIdeaIndices.clear();
 
-  // Nettoyage de l'encart du header avant de charger le dashboard
   clearPlannerHeaderInfo();
   saveLocalBackup();
   showToast("🎉 Albums convertis en MiniDisc avec succès !");
   renderDashboard(true);
 }
-
-// À ajouter à la toute fin de ton fichier app.js
-document.addEventListener('DOMContentLoaded', () => {
-  initHistoryProtection();
-});
