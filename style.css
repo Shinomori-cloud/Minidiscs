@@ -483,7 +483,7 @@ body:has(.featured-container.hidden) main#app {
 }
 
 /* ==========================================
-   LISTE DES TITRES (STYLE D'ORIGINE ÉPURÉ)
+   LISTE DES TITRES (DESIGN D'ORIGINE)
    ========================================== */
 
 .track-container ul,
@@ -491,15 +491,22 @@ body:has(.featured-container.hidden) main#app {
 .track-list {
   list-style-type: none !important;
   padding-left: 0 !important;
-  margin-top: 16px !important;
+  margin-top: 20px !important;
 }
 
 .track-container li,
 .track-list li {
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.92rem;
   color: var(--text-main);
-  padding: 4px 0;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0; /* Ligne fine séparatrice */
+  display: flex;
+  align-items: center;
+}
+
+.track-container li:last-child,
+.track-list li:last-child {
+  border-bottom: none;
 }
 
 /* ==========================================
