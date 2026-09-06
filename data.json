@@ -544,7 +544,6 @@
     },
     {
       "genre": [
-        "Électro",
         "Alternative Rock",
         "Pop Rock",
         "Experimental"
@@ -575,7 +574,6 @@
             "12. Life in a Glasshouse"
           ],
           "genre": [
-            "Électro",
             "Alternative Rock",
             "Experimental"
           ],
@@ -608,7 +606,7 @@
             "29. Where Do I Begin (The Chemical Brothers)"
           ],
           "genre": [
-            "Électro",
+            "Experimental",
             "Pop Rock"
           ],
           "type": [
@@ -621,7 +619,8 @@
       "genre": [
         "Variété",
         "Talks",
-        "Humour"
+        "Humour",
+        "Français"
       ],
       "type": [
         "Albums",
@@ -934,7 +933,8 @@
         "Folk",
         "Pop Rock",
         "Acoustic",
-        "Experimental"
+        "Experimental",
+        "Français"
       ],
       "type": [
         "Albums"
@@ -1886,7 +1886,8 @@
     },
     {
       "genre": [
-        "Alternative Rock"
+        "Alternative Rock",
+        "Grunge"
       ],
       "type": [
         "Albums"
@@ -1914,7 +1915,8 @@
             "13. Endless, Nameless (Hidden Track)"
           ],
           "genre": [
-            "Alternative Rock"
+            "Alternative Rock",
+            "Grunge"
           ],
           "type": [
             "Albums"
@@ -2436,7 +2438,8 @@
     },
     {
       "genre": [
-        "Variété"
+        "Variété",
+        "Français"
       ],
       "type": [
         "Compilations"
@@ -2789,5 +2792,48 @@
       ]
     }
   ],
-  "ideaAlbums": []
+  "ideaAlbums": [
+    {
+      "title": "Musique de nuit Vol. 2",
+      "artist": "Divers",
+      "genre": "Ambient, Classique",
+      "duration": "1:11:13",
+      "cover": "images/musiquedenuit2.jpg"
+    },
+    {
+      "title": "The Best of 1980 - 1990",
+      "artist": "U2",
+      "genre": "Rock, Pop Rock",
+      "duration": "1:01:48",
+      "cover": "images/u2bestof.jpg"
+    },
+    {
+      "title": "Innuendo",
+      "artist": "Queen",
+      "genre": "Rock, Experimental",
+      "duration": "53:48",
+      "cover": "images/"
+    },
+    {
+      "title": "From the Muddy Bank of the Wishkah",
+      "artist": "Nirvana",
+      "genre": "Alternative Rock, Grunge",
+      "duration": "54:01",
+      "cover": "images/wishkah.jpg"
+    },
+    {
+      "title": "Busta Flex",
+      "artist": "Busta Flex",
+      "genre": "Rap",
+      "duration": "55:00",
+      "cover": "images/Busta flex.jpg"
+    },
+    {
+      "title": "Le combat continue",
+      "artist": "Idéal J",
+      "genre": "Rap",
+      "duration": "1:15:53",
+      "cover": "images/idealj.jpg"
+    }
+  ]
 }
