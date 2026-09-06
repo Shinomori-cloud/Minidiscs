@@ -1209,7 +1209,7 @@ header {
 
 /* Sélection du moment */
 .featured-container-inline {
-  margin-top: 16px;
+  margin-top: 0px;
   background: #ffffff;
   border: 2px solid #000000;
   border-radius: 12px;
