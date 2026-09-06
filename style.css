@@ -290,7 +290,7 @@ body:has(.dashboard-container) .title-90s {
 body:has(.dashboard-container) .featured-container {
   top: auto;
   margin-top: 40px !important;    /* Éloigne la sélection de l'encart TYPES du haut */
-  margin-bottom: 40px !important; /* Éloigne la sélection de l'encart GENRES du bas */
+  margin-bottom: 20px !important; /* Éloigne la sélection de l'encart GENRES du bas */
 }
 
 .featured-header {
@@ -1246,7 +1246,7 @@ header {
 .featured-container .section-title {
   position: relative;
   z-index: 2;
-  margin-bottom: -10px !important; /* Fait chevaucher le titre sur le haut de la boîte */
+  margin-bottom: -18px !important; /* Fait chevaucher le titre sur le haut de la boîte */
   display: inline-block;
 }
 
@@ -1255,7 +1255,7 @@ header {
 .featured-container {
   position: relative;
   z-index: 1;
-  padding: 14px 14px 14px 14px; /* Un peu de padding en haut pour compenser le titre */
+  padding: 28px 14px 14px 14px; /* Un peu de padding en haut pour compenser le titre */
   border-radius: 16px;
   background: #ffffff; /* Fond blanc comme les autres cartes */
   
