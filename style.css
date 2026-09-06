@@ -773,7 +773,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 12px;
-  margin-top: -130; /* Alignement corrigé */
+  margin-top: -130px; /* Alignement corrigé */
 }
 
 .idea-card {
