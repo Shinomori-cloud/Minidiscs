@@ -21,33 +21,41 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   GESTION DU BOUTON RETOUR & ARBORESCENCE (VERROU)
+   GESTION DU BOUTON RETOUR (VERROU ANTI-FERMETURE HERMIT)
    ========================================== */
-(function lockInitialState() {
-  history.replaceState({ view: 'home' }, '', '#home');
-  history.pushState({ view: 'home' }, '', '#home');
-})();
 
+// 1. On injecte un état "tampon" pour empêcher Android de fermer l'app
+function ensureHistoryTrap() {
+  if (history.state?.trap !== true) {
+    history.pushState({ trap: true, view: history.state?.view || 'home' }, '');
+  }
+}
+
+// Initialisation au chargement
+history.replaceState({ view: 'home' }, '', '#home');
+ensureHistoryTrap();
+
+// 2. Interception du bouton Retour Android / Hermit
 window.addEventListener('popstate', (event) => {
   const state = event.state;
+  const hash = window.location.hash;
 
-  if (!state || state.view === 'home') {
+  // Si on est sur une vue secondaire (Planificateur ou Album), on revient à l'accueil
+  if (hash === '#planner' || hash.startsWith('#md-')) {
+    // Nettoyage de l'URL et retour visuel au Dashboard
+    history.replaceState({ view: 'home' }, '', '#home');
+    ensureHistoryTrap();
+    
+    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
     renderDashboard(false);
-    history.pushState({ view: 'home' }, '', '#home');
     return;
   }
 
-  if (state.view === 'album') {
-    openMD(state.mdIndex, false);
-  } else if (state.view === 'tracklist' || state.view === 'albums') {
-    renderDashboard(false);
-  } else if (state.view === 'planner') {
-    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-    renderDashboard(false);
-  } else {
-    renderDashboard(false);
-  }
-});
+  // Si l'utilisateur est DÉJÀ sur l'accueil (#home) et réappuie sur Retour :
+  // On ré-injecte immédiatement le piège pour que l'application reste OUVERTE
+  ensureHistoryTrap();
+  renderDashboard(false);
+})
 
 /* ==========================================
    PROTECTION ANTI-FERMETURE ET STOCKAGE LOCAL
