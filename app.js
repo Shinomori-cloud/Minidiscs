@@ -21,49 +21,32 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   GESTION DU BOUTON RETOUR (COMPATIBILITÉ HERMIT)
+   GESTION DU BOUTON RETOUR & ARBORESCENCE (VERROU)
    ========================================== */
-
-// Forcer l'ancrage initial au chargement
-if (!window.location.hash) {
-  window.location.hash = '#home';
-}
+(function lockInitialState() {
+  history.replaceState({ view: 'home' }, '', '#home');
+  history.pushState({ view: 'home' }, '', '#home');
+})();
 
 window.addEventListener('popstate', (event) => {
-  const hash = window.location.hash;
+  const state = event.state;
 
-  // 1. Si l'URL actuelle est le planificateur
-  if (hash === '#planner') {
-    renderCompilPlanner(false);
+  if (!state || state.view === 'home') {
+    renderDashboard(false);
+    history.pushState({ view: 'home' }, '', '#home');
     return;
   }
 
-  // 2. Si l'URL actuelle est une fiche Minidisc
-  if (hash.startsWith('#md-') && !hash.includes('list')) {
-    const index = parseInt(hash.replace('#md-', ''), 10);
-    if (!isNaN(index)) {
-      if (typeof openMD === 'function') openMD(index, false);
-      else if (typeof renderMDDetail === 'function') renderMDDetail(index, false);
-      return;
-    }
-  }
-
-  // 3. Si l'URL actuelle est la liste des Minidiscs
-  if (hash === '#md-list') {
+  if (state.view === 'album') {
+    openMD(state.mdIndex, false);
+  } else if (state.view === 'tracklist' || state.view === 'albums') {
+    renderDashboard(false);
+  } else if (state.view === 'planner') {
     if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-    if (typeof renderMDList === 'function') {
-      const filters = {
-        genre: typeof currentGenreFilter !== 'undefined' ? currentGenreFilter : null,
-        type: typeof currentTypeFilter !== 'undefined' ? currentTypeFilter : null
-      };
-      renderMDList(filters, false);
-    }
-    return;
+    renderDashboard(false);
+  } else {
+    renderDashboard(false);
   }
-
-  // 4. Racine (#home ou vide) : Accueil
-  if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-  renderDashboard(false);
 });
 
 /* ==========================================
