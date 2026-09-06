@@ -739,7 +739,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .compil-time-display {
   font-family: 'Righteous', cursive, sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 800;
   color: #000000;
 }
@@ -773,7 +773,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 12px;
-  margin-top: 0; /* Alignement corrigé */
+  margin-top: -40; /* Alignement corrigé */
 }
 
 .idea-card {
@@ -859,7 +859,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .idea-artist {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #444444;
   white-space: nowrap;
   overflow: hidden;
@@ -867,7 +867,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .idea-duration {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 800;
   color: #ff007f;
   margin-top: 2px;
