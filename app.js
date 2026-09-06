@@ -1148,7 +1148,7 @@ function updatePlannerHeader() {
   const convertBtn = document.getElementById('planner-btn-convert');
   if (convertBtn) {
     convertBtn.disabled = selectedIdeaIndices.size === 0;
-    convertBtn.textContent = `💾 Convertir (${selectedIdeaIndices.size})`;
+    convertBtn.textContent = `💾 Convertir en MD (${selectedIdeaIndices.size})`;
   }
 
   // Grisage/verrouillage des cartes trop longues pour le temps restant
@@ -1274,11 +1274,11 @@ function renderCompilPlanner(pushState = true) {
       <!-- BARRE D'ACTIONS EN BAS -->
       <div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
         <div class="compil-actions" style="display:flex; gap:10px; max-width: 500px; width:100%; justify-content: center; background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(10px); padding: 10px 15px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); pointer-events: auto;">
-          <button type="button" class="btn-primary" id="planner-btn-add" style="flex:1; border-radius:20px;">＋ Ajouter</button>
+          <button type="button" class="btn-primary" id="planner-btn-add" style="flex:1; border-radius:20px;">＋ Ajouter un Album</button>
           <button type="button" class="btn-secondary" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="flex:1; border-radius:20px;">
-            💾 Convertir (${selectedIdeaIndices.size})
+            💾 Convertir en MD (${selectedIdeaIndices.size})
           </button>
-          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex:1; border-radius:20px;">Réinitialiser</button>
+          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex:1; border-radius:20px;">Réinitialiser la sélection</button>
         </div>
       </div>
     </div>
