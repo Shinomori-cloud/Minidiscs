@@ -737,16 +737,16 @@ body:has(.featured-container.hidden) main#app {
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
-/* Bouton Modifier (Fond Jaune Vif / Texte Noir) */
+/* Bouton Modifier : Fond Blanc Pur / Texte Noir */
 .btn-edit {
-  background-color: #ffb703 !important;
+  background-color: #ffffff !important;
   color: #000000 !important;
 }
 
-/* Bouton Supprimer (Fond Rose/Rouge Vif / Texte Noir) */
+/* Bouton Supprimer : Aplat Rose Vif (#ff007f) / Texte Rouge */
 .btn-delete {
-  background-color: #ff4d6d !important;
-  color: #000000 !important;
+  background-color: #ffffff !important;
+  color: #e64059 !important; /* Rouge très foncé pour être parfaitement lisible sur le rose */
 }
 
 .btn-edit:active, .btn-delete:active {
