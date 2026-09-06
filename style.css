@@ -1207,3 +1207,37 @@ header {
 .idea-card.disabled-card .idea-delete-btn {
   pointer-events: auto !important;
 }
+
+/* ==========================================
+   ENCADRÉ DYNAMIQUE "SÉLECTION DU MOMENT"
+   ========================================== */
+
+/* 1. Assure que le titre passe au-dessus du bord haut */
+.featured-title-badge, 
+#featured-container h3, 
+.featured-container .section-title {
+  position: relative;
+  z-index: 2;
+  margin-bottom: -18px !important; /* Fait chevaucher le titre sur le haut de la boîte */
+  display: inline-block;
+}
+
+/* 2. Le conteneur englobant avec bordure dynamique */
+#featured-container, 
+.featured-container {
+  position: relative;
+  z-index: 1;
+  padding: 28px 14px 14px 14px; /* Un peu de padding en haut pour compenser le titre */
+  border-radius: 16px;
+  background: #ffffff; /* Fond blanc comme les autres cartes */
+  
+  /* Astuce pour la bordure dégradée dynamique Neubrutalist */
+  border: 3px solid transparent;
+  background-image: linear-gradient(#ffffff, #ffffff), 
+                    linear-gradient(135deg, #00f2fe 0%, #4facfe 30%, #ff007f 70%, #ffb703 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  
+  /* Ombre portée nette noire */
+  box-shadow: 4px 4px 0px #000000;
+}
