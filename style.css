@@ -678,12 +678,12 @@ body:has(.featured-container.hidden) main#app {
 
 .btn-edit {
   background-color: #ffb703;
-  color: #000;
+  color: #ffffff;
 }
 
 .btn-delete {
   background-color: #e63946;
-  color: #fff;
+  color: #e63946;
 }
 
 .btn-edit:active, .btn-delete:active {
