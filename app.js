@@ -1368,3 +1368,8 @@ function convertSelectedToMD() {
   showToast("🎉 Albums convertis en MiniDisc avec succès !");
   renderDashboard(true);
 }
+
+// À ajouter à la toute fin de ton fichier app.js
+document.addEventListener('DOMContentLoaded', () => {
+  initHistoryProtection();
+});
