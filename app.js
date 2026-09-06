@@ -21,42 +21,51 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   GESTION DU BOUTON RETOUR SIMPLIFIÉE
+   GESTION DU BOUTON RETOUR (PAS À PAS)
    ========================================== */
 
-// On pousse un état à chaque fois que l'application change de vue
+// Ancrage initial de l'application
+if (!history.state) {
+  history.replaceState({ view: 'home' }, '', '#home');
+}
+
 window.addEventListener('popstate', (event) => {
   const state = event.state;
 
-  // Si on remonte jusqu'à l'état initial (Accueil)
+  // 1. Retour à l'accueil si on atteint la racine de l'historique
   if (!state || state.view === 'home') {
     if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
     renderDashboard(false);
     return;
   }
 
-  // Si l'historique indique qu'on était sur la liste des MD
+  // 2. Si l'étape précédente était la liste des Minidiscs
   if (state.view === 'md-list') {
+    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
     if (typeof renderMDList === 'function') {
       renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
     }
     return;
   }
 
-  // Si l'historique indique qu'on était sur un Minidisc
+  // 3. Si l'étape précédente était la fiche d'un Minidisc / Album
   if (state.view === 'album' && state.mdIndex !== undefined) {
-    if (typeof openMD === 'function') openMD(state.mdIndex, false);
-    else if (typeof renderMDDetail === 'function') renderMDDetail(state.mdIndex, false);
+    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
+    if (typeof openMD === 'function') {
+      openMD(state.mdIndex, false);
+    } else if (typeof renderMDDetail === 'function') {
+      renderMDDetail(state.mdIndex, false);
+    }
     return;
   }
 
-  // Si l'historique indique le Planificateur
+  // 4. Si l'étape précédente était le Planificateur
   if (state.view === 'planner') {
     renderCompilPlanner(false);
     return;
   }
 
-  // Par défaut : retour au Dashboard
+  // Repli par défaut
   renderDashboard(false);
 });
 
