@@ -289,7 +289,7 @@ body:has(.dashboard-container) .title-90s {
 /* Redescend la sélection uniquement sur l'accueil */
 body:has(.dashboard-container) .featured-container {
   top: auto;
-  margin-top: 20px !important;    /* Éloigne la sélection de l'encart TYPES du haut */
+  margin-top: 1px !important;    /* Éloigne la sélection de l'encart TYPES du haut */
   margin-bottom: 20px !important; /* Éloigne la sélection de l'encart GENRES du bas */
 }
 
