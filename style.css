@@ -272,14 +272,15 @@ body:has(.dashboard-container) .featured-container {
   justify-content: center;
   align-items: center;
   margin-bottom: 14px;
-  padding: 4px 28px;
+  padding: 8px 16px;
   
-  /* Cartouche sombre dédié uniquement au titre */
+  /* Cartouche ajusté à la largeur du bloc des pochettes */
   background: #ffffff;
   border: 1.5px solid #ff007f;
   border-radius: 8px;
   box-shadow: 2px 2px 0px #000;
-  width: fit-content;
+  width: 100%;
+  box-sizing: border-box;
   margin-left: auto;
   margin-right: auto;
 }
