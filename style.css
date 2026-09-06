@@ -610,7 +610,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .md-album-title {
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   font-weight: 650;
   line-height: 1;
   margin-bottom: 0.9px;
@@ -619,7 +619,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 .md-album-artist {
   font-size: 0.70rem;
   color: var(--text-sub, #666);
-  line-height: 0.9;
+  line-height: 1;
 }
 
 /* Vue Titres / Pistes */
@@ -641,10 +641,10 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .album-cover-large {
-  width: 120px !important;
-  height: 120px !important;
-  max-width: 120px !important;
-  max-height: 120px !important;
+  width: 130px !important;
+  height: 130px !important;
+  max-width: 130px !important;
+  max-height: 130px !important;
   object-fit: cover;
   border-radius: 10px;
   border: 2px solid #000000;
