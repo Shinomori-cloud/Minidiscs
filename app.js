@@ -23,40 +23,41 @@ const featuredContainer = document.getElementById('featured-container');
    GESTION DU BOUTON RETOUR & ARBORESCENCE
    ========================================== */
 
-// 1. Protection au démarrage : créer un tampon dans l'historique
 function initHistoryProtection() {
-  if (window.history.length <= 1) {
-    // On pousse deux états fictifs pour empêcher le bouton Retour de fermer l'application
-    history.pushState({ view: 'home' }, '', '#home');
-    history.pushState({ view: 'home' }, '', '#home');
+  // On pousse plusieurs états d'avance pour créer un vrai verrou
+  for (let i = 0; i < 5; i++) {
+    history.pushState({ view: 'home', step: i }, '', '#home');
   }
 }
 
-// 2. Gestionnaire de navigation hiérarchique
+// Sécurité supplémentaire : au premier tap utilisateur, on s'assure que la pile est verrouillée
+window.addEventListener('touchstart', function lockHistoryOnTouch() {
+  if (window.history.length < 5) {
+    initHistoryProtection();
+  }
+  window.removeEventListener('touchstart', lockHistoryOnTouch);
+}, { once: true });
+
 window.addEventListener('popstate', (event) => {
   const state = event.state;
 
-  // Si on retourne tout au début de la pile, on verrouille sur l'accueil
+  // Si l'utilisateur atteint le bas de pile ou l'accueil
   if (!state || state.view === 'home') {
     renderDashboard(false);
-    // On ré-injecte un état pour éviter que le prochain clic ne ferme l'app
+    // On ré-injecte un état immédiat pour fermer la porte de sortie
     history.pushState({ view: 'home' }, '', '#home');
     return;
   }
 
   // Navigation hiérarchique selon la vue
   if (state.view === 'album') {
-    // Si on était dans un album, le retour logique remonte à la vue du MiniDisc parent
     openMD(state.mdIndex, false);
   } else if (state.view === 'tracklist' || state.view === 'albums') {
-    // Si on était dans un MiniDisc, le retour logique remonte à l'accueil ou la liste
     renderDashboard(false);
   } else if (state.view === 'planner') {
-    // Depuis le planificateur, le retour remonte à l'accueil
-    clearPlannerHeaderInfo();
+    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
     renderDashboard(false);
   } else {
-    // Par défaut, retour au dashboard
     renderDashboard(false);
   }
 });
