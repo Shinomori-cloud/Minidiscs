@@ -72,8 +72,8 @@ body:has(#header-planner-badge)::before {
 /* RÉDUCTION DU CACHE SUR LES AUTRES PAGES SECONDAIRES */
 body:has(.featured-container.hidden):not(:has(#header-planner-badge))::before {
   height: 170px;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 140px, transparent 170px);
-  mask-image: linear-gradient(to bottom, black 0px, black 140px, transparent 170px);
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 120px, transparent 160px);
+  mask-image: linear-gradient(to bottom, black 0px, black 120px, transparent 160px);
 }
 /* ==========================================
    BARRE DE RECHERCHE DÉPLOYABLE EN HAUT
