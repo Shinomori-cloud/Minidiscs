@@ -265,10 +265,10 @@ body:has(.dashboard-container) .title-90s {
 .featured-container-inline::before {
   content: "";
   position: absolute;
-  top: 0px; /* Fait remonter le haut du cadre pile à la moitié de l'encart titre */
-  left: 10px;
-  right: 10px;
-  bottom: -10px;
+  top: 20px; /* Fait remonter le haut du cadre pile à la moitié de l'encart titre */
+  left: 8px;
+  right: 8px;
+  bottom: -8px;
   border-radius: 16px;
   padding: 3px; /* Épaisseur de la bordure */
   
