@@ -20,24 +20,44 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   GESTION DU BOUTON RETOUR (POPSTATE ISOLÉ)
+   GESTION DU BOUTON RETOUR & ARBORESCENCE
    ========================================== */
+
+// 1. Protection au démarrage : créer un tampon dans l'historique
+function initHistoryProtection() {
+  if (window.history.length <= 1) {
+    // On pousse deux états fictifs pour empêcher le bouton Retour de fermer l'application
+    history.pushState({ view: 'home' }, '', '#home');
+    history.pushState({ view: 'home' }, '', '#home');
+  }
+}
+
+// 2. Gestionnaire de navigation hiérarchique
 window.addEventListener('popstate', (event) => {
   const state = event.state;
 
-  // Si l'utilisateur revient à l'accueil ou qu'il n'y a plus d'historique web
+  // Si on retourne tout au début de la pile, on verrouille sur l'accueil
   if (!state || state.view === 'home') {
     renderDashboard(false);
+    // On ré-injecte un état pour éviter que le prochain clic ne ferme l'app
+    history.pushState({ view: 'home' }, '', '#home');
     return;
   }
 
-  // Si on est dans les sous-pages, on navigue en interne sans fermer l'app
-  if (state.view === 'minidiscs') {
-    renderMDList({ genre: state.genre, type: state.type }, false);
-  } else if (state.view === 'md') {
-    openMD(state.index, false);
-  } else if (state.view === 'album') {
-    openAlbum(state.mdIndex, state.albumIndex, false);
+  // Navigation hiérarchique selon la vue
+  if (state.view === 'album') {
+    // Si on était dans un album, le retour logique remonte à la vue du MiniDisc parent
+    openMD(state.mdIndex, false);
+  } else if (state.view === 'tracklist' || state.view === 'albums') {
+    // Si on était dans un MiniDisc, le retour logique remonte à l'accueil ou la liste
+    renderDashboard(false);
+  } else if (state.view === 'planner') {
+    // Depuis le planificateur, le retour remonte à l'accueil
+    clearPlannerHeaderInfo();
+    renderDashboard(false);
+  } else {
+    // Par défaut, retour au dashboard
+    renderDashboard(false);
   }
 });
 
