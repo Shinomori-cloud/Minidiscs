@@ -250,23 +250,40 @@ body:has(.dashboard-container) .title-90s {
   margin-top: 35px;
   margin-bottom: 35px;
 
-  /* Fond transparent conservé et padding interne pour la grille */
+  /* Fond et bordure par défaut désactivés */
   background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  border-radius: 16px;
-  padding: 24px 12px 14px 12px;
-
-  /* Bordure dynamique animée avec dégradé fluide */
-  border: 3px solid transparent !important;
-  background-image: linear-gradient(transparent, transparent), 
-                    linear-gradient(90deg, #ff007f, #9b51e0, #00d2ff, #ff007f) !important;
-  background-origin: border-box !important;
-  background-clip: padding-box, border-box !important;
-  background-size: 100% 100%, 300% 300% !important;
-  animation: shineBorder 4s linear infinite;
-
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 18px 12px 14px 12px;
   box-shadow: none !important;
+}
+
+/* Pseudo-élément pour la vraie bordure animée */
+.featured-container::before,
+.featured-container-inline::before {
+  content: "";
+  position: absolute;
+  top: -16px; /* Fait remonter le haut du cadre pile à la moitié de l'encart titre */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  padding: 3px; /* Épaisseur de la bordure */
+  
+  /* Dégradé fluide identique au titre */
+  background: linear-gradient(90deg, #ff007f, #9b51e0, #00d2ff, #ff007f);
+  background-size: 300% 100%;
+  animation: shineGradient 4s linear infinite;
+
+  /* Masque l'intérieur pour ne laisser apparaître que le contour 3px */
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Redescend la sélection uniquement sur l'accueil */
@@ -282,17 +299,16 @@ body:has(.dashboard-container) .featured-container {
   align-items: center;
   padding: 6px 16px;
   
-  /* Repositionnement à mi-hauteur sur le bord supérieur */
   position: relative;
-  z-index: 2;
-  margin: -42px auto 14px auto;
+  z-index: 2; /* Reste au-dessus du cadre */
+  margin: 0 auto 14px auto;
 
   background: #ffffff;
   border: 1.5px solid #ff007f;
   border-radius: 8px;
   box-shadow: 2px 2px 0px #000;
   width: 87%;
-  max-width: 504px; /* Même largeur maximale d'origine */
+  max-width: 504px;
   box-sizing: border-box;
 }
 
@@ -317,7 +333,7 @@ body:has(.dashboard-container) .featured-container {
   animation: shineGradient 4s linear infinite;
 }
 
-/* Animation de défilement des couleurs pour le titre et la bordure */
+/* Animation de défilement des couleurs partagée */
 @keyframes shineGradient {
   0% {
     background-position: 0% 50%;
@@ -327,16 +343,9 @@ body:has(.dashboard-container) .featured-container {
   }
 }
 
-@keyframes shineBorder {
-  0% {
-    background-position: 0% 0%, 0% 50%;
-  }
-  100% {
-    background-position: 0% 0%, 300% 50%;
-  }
-}
-
 .featured-grid {
+  position: relative;
+  z-index: 2;
   display: flex;
   justify-content: center;
   gap: 12px;
