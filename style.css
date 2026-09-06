@@ -279,7 +279,7 @@ body:has(.dashboard-container) .featured-container {
   border: 1.5px solid #ff007f;
   border-radius: 8px;
   box-shadow: 2px 2px 0px #000;
-  width: 100%;
+  width: 85%;
   max-width: 504px; /* Même largeur maximale que le groupe des 3 vignettes */
   box-sizing: border-box;
   margin-left: auto;
