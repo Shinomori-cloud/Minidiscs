@@ -678,8 +678,8 @@ function openMD(index, pushState = true) {
 
   const adminControls = `
     <div class="md-admin-controls" style="margin-bottom: 15px; display: flex; gap: 10px;">
-      <button class="btn-primary" style="background-color: #ffb703; color: #000; padding: 6px 12px; font-size: 0.85rem;" onclick="event.stopPropagation(); openAdminModal(${index})">✏️ Modifier</button>
-      <button class="btn-primary" style="background-color: #e63946; color: #fff; padding: 6px 12px; font-size: 0.85rem;" onclick="event.stopPropagation(); deleteMD(${index})">🗑️ Supprimer</button>
+      <button class="btn-edit" onclick="event.stopPropagation(); openAdminModal(${index})">✏️ Modifier</button>
+      <button class="btn-delete" onclick="event.stopPropagation(); deleteMD(${index})">🗑️ Supprimer</button>
     </div>
   `;
 
