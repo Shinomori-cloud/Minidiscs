@@ -244,20 +244,29 @@ body:has(.dashboard-container) .title-90s {
   top: auto;
   left: auto;
   transform: none;
-  width: 87%;
-  max-width: 504px;
+  width: 100%;
+  max-width: 568px;
   z-index: 900;
-  margin: 35px auto;
+  margin-top: 35px;
+  margin-bottom: 35px;
 
-  /* Fond blanc et bordure dégradée dynamique */
+  /* Fond transparent conservé et padding interne pour la grille */
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-radius: 16px;
-  padding: 28px 12px 14px 12px;
+  padding: 24px 12px 14px 12px;
+
+  /* Bordure dynamique animée avec dégradé fluide */
   border: 3px solid transparent !important;
-  background-image: linear-gradient(#ffffff, #ffffff), 
+  background-image: linear-gradient(transparent, transparent), 
                     linear-gradient(90deg, #ff007f, #9b51e0, #00d2ff, #ff007f) !important;
   background-origin: border-box !important;
   background-clip: padding-box, border-box !important;
-  box-shadow: 4px 4px 0px #000000 !important;
+  background-size: 100% 100%, 300% 300% !important;
+  animation: shineBorder 4s linear infinite;
+
+  box-shadow: none !important;
 }
 
 /* Redescend la sélection uniquement sur l'accueil */
@@ -273,17 +282,17 @@ body:has(.dashboard-container) .featured-container {
   align-items: center;
   padding: 6px 16px;
   
-  /* Titre superposé qui masque le haut de la bordure */
+  /* Repositionnement à mi-hauteur sur le bord supérieur */
   position: relative;
   z-index: 2;
   margin: -42px auto 14px auto;
-  
+
   background: #ffffff;
   border: 1.5px solid #ff007f;
   border-radius: 8px;
   box-shadow: 2px 2px 0px #000;
-  width: 80%;
-  max-width: 400px;
+  width: 87%;
+  max-width: 504px; /* Même largeur maximale d'origine */
   box-sizing: border-box;
 }
 
@@ -308,13 +317,22 @@ body:has(.dashboard-container) .featured-container {
   animation: shineGradient 4s linear infinite;
 }
 
-/* Animation de défilement des couleurs */
+/* Animation de défilement des couleurs pour le titre et la bordure */
 @keyframes shineGradient {
   0% {
     background-position: 0% 50%;
   }
   100% {
     background-position: 300% 50%;
+  }
+}
+
+@keyframes shineBorder {
+  0% {
+    background-position: 0% 0%, 0% 50%;
+  }
+  100% {
+    background-position: 0% 0%, 300% 50%;
   }
 }
 
