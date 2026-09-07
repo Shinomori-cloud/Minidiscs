@@ -682,39 +682,42 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   font-weight: 800;
 }
 
-/* Positionnement du badge sur les éléments d'album */
-.md-album-item {
-  position: relative;
-  padding-right: 90px; /* Espace pour ne pas que le titre chevauche le badge */
-}
-
-/* Style de la vignette "À enregistrer" */
+/* Style de base pour les badges roses à bords arrondis */
 .badge-to-record {
-  position: absolute;
-  right: 0;
-  bottom: 2px;
-  background-color: #ff007f; /* Rose fluo style retro/90s */
+  background-color: #ff007f; /* Rose fluo */
   color: #ffffff;
-  font-size: 0.65rem;
+  font-size: 0.70rem;
   font-weight: bold;
-  padding: 2px 6px;
-  border: 1px solid #000000;
-  border-radius: 4px;
-  box-shadow: 1px 1px 0px #000000;
+  padding: 3px 8px;
+  border-radius: 20px; /* Bords arrondis style pilule */
   white-space: nowrap;
   pointer-events: none;
 }
 
+/* Badge dans l'en-tête (Vue Titres & Vue MiniDisc unique) */
+.badge-to-record-header {
+  background-color: #ff007f;
+  color: #ffffff;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+/* Badge positionné en bas à droite sur les cartes de la liste principale */
 .badge-record-corner {
   position: absolute;
   bottom: 8px;
   right: 8px;
-  font-size: 0.70rem;
-  background-color: #e63946;
-  color: white;
-  padding: 3px 6px;
-  border-radius: 4px;
-  font-weight: bold;
+}
+
+/* Badge positionné sur la miniature d'album */
+.album-card-badge {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
 }
 
 /* ==========================================
