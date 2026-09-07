@@ -657,14 +657,13 @@ function openMD(index, pushState = true) {
     const albumColor = getBorderColor(albumGenres);
     
     const badgeAlbumHTML = album.toRecord 
-      ? `<span class="badge-to-record album-card-badge">💽 À enregistrer</span>` 
+      ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
       : '';
 
     html += `
-      <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px;" onclick="openAlbum(${index}, ${aIndex})">
-        <div class="album-cover-container" style="margin-right: 15px; position: relative; display: inline-block;">
+      <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px; position: relative;" onclick="openAlbum(${index}, ${aIndex})">
+        <div class="album-cover-container" style="margin-right: 15px; display: inline-block;">
           <img class="album-thumb" style="margin-right: 0;" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'24\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
-          ${badgeAlbumHTML}
         </div>
         <div class="item-details">
           <div class="item-tag" style="color: ${albumColor};">${albumGenres.join(' / ')}</div>
@@ -672,13 +671,13 @@ function openMD(index, pushState = true) {
           <div class="item-sub">${album.artist || 'Artiste inconnu'}</div>
           ${album.year ? `<div class="item-sub" style="font-size:0.78rem;">${album.year}</div>` : ''}
         </div>
+        ${badgeAlbumHTML}
       </div>
     `;
   });
   html += '</div>';
   app.innerHTML = html;
   window.scrollTo(0, 0);
-}
 
 /* 4. VUE TRACKLIST ALBUM SPÉCIFIQUE */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
