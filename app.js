@@ -664,21 +664,6 @@ function renderMDList(filters = {}, pushState = true) {
   window.scrollTo(0, 0);
 }
 
-function updatePlannerBadgeVisibility() {
-  const badge = document.getElementById('header-planner-badge');
-  if (!badge) return;
-
-  // S'affiche UNIQUEMENT si l'URL contient #md-list
-  if (window.location.hash === '#md-list') {
-    badge.style.display = 'flex';
-  } else {
-    badge.style.display = 'none';
-  }
-}
-
-// À appeler une seule fois au chargement et sur le changement de page
-window.addEventListener('hashchange', updatePlannerBadgeVisibility);
-
 /* 3. VUE D'UN MINIDISC */
 function openMD(index, pushState = true) {
   if (!catalogData || !catalogData[index]) return;
