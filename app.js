@@ -667,7 +667,7 @@ function openMD(index, pushState = true) {
 
     html += `
       <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px;" onclick="openAlbum(${index}, ${aIndex})">
-        <div class="album-cover-container" style="margin-right: 15px;">
+        <div class="album-cover-container" style="margin-right: 15px; position: relative; display: inline-block;">
           <img class="album-thumb" style="margin-right: 0;" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'24\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
           ${badgeAlbumHTML}
         </div>
