@@ -81,7 +81,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge))::before {
    ========================================== */
 header {
   position: fixed !important;
-  top: 45px !important;
+  top: 50px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: calc(100% - 32px) !important;
