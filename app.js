@@ -12,6 +12,7 @@ let editingMDIndex = null;
 let toastTimeout = null;
 let hasUnsavedChanges = false;
 let selectedIdeaIndices = new Set();
+let currentRecordFilter = 'all'; // 'all', 'toRecord', 'recorded'
 
 const STORAGE_KEY = 'minidisc_catalog_backup';
 
@@ -75,6 +76,37 @@ function toggleSearch() {
   }
 }
 
+// Change le filtre à chaque clic (Tous -> À enregistrer -> Enregistrés)
+function cycleRecordFilter() {
+  if (currentRecordFilter === 'all') {
+    currentRecordFilter = 'toRecord';
+  } else if (currentRecordFilter === 'toRecord') {
+    currentRecordFilter = 'recorded';
+  } else {
+    currentRecordFilter = 'all';
+  }
+  
+  updateFilterIcon();
+  renderMDList({ record: currentRecordFilter }, false);
+}
+
+// Met à jour l'icône du bouton selon le filtre actif
+function updateFilterIcon() {
+  const filterBtn = document.getElementById('filter-fab-btn');
+  if (!filterBtn) return;
+
+  if (currentRecordFilter === 'toRecord') {
+    filterBtn.textContent = '💽';
+    filterBtn.classList.add('active');
+  } else if (currentRecordFilter === 'recorded') {
+    filterBtn.textContent = '✅';
+    filterBtn.classList.add('active');
+  } else {
+    filterBtn.textContent = '🌐';
+    filterBtn.classList.remove('active');
+  }
+}
+
 function mdMatchesSearch(md, query) {
   if (!query) return true;
   const q = query.toLowerCase().trim();
@@ -108,20 +140,19 @@ function onSearchInput(value) {
 }
 
 function updateSearchVisibility(show) {
-  const fabBtn = document.getElementById('search-fab-btn');
+  const floatingActions = document.getElementById('floating-actions');
   const topSearch = document.getElementById('search-bar');
   const searchInput = document.getElementById('search-input');
+  const fabBtn = document.getElementById('search-fab-btn');
 
   if (show) {
-    if (fabBtn) fabBtn.classList.remove('hidden');
+    if (floatingActions) floatingActions.classList.remove('hidden');
+    updateFilterIcon();
   } else {
-    if (fabBtn) {
-      fabBtn.classList.add('hidden');
-      fabBtn.textContent = '🔍';
-    }
-    if (topSearch) {
-      topSearch.classList.add('closed');
-    }
+    if (floatingActions) floatingActions.classList.add('hidden');
+    if (fabBtn) fabBtn.textContent = '🔍';
+    if (topSearch) topSearch.classList.add('closed');
+    
     currentSearchQuery = '';
     if (searchInput) searchInput.value = '';
   }
