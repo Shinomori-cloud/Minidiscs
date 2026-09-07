@@ -1144,7 +1144,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: #ffffff;
+  background: #ff007f;
   border: 3px solid #000000;
   border-radius: 30px;
   padding: 4px 6px;
