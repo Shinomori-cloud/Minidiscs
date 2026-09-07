@@ -748,6 +748,9 @@ function openAdminModal(indexToEdit = null) {
       document.getElementById('compil-title').value = md.title || '';
       document.getElementById('compil-artist').value = md.artist || '';
       document.getElementById('compil-tracks').value = md.tracks ? md.tracks.map(t => t.replace(/^\d+\.\s*/, '')).join('\n') : '';
+      if (document.getElementById('compil-to-record')) {
+        document.getElementById('compil-to-record').checked = !!md.toRecord;
+      }
     } else {
       md.albums.forEach(album => {
         addAdminAlbumBlock();
@@ -772,6 +775,9 @@ function openAdminModal(indexToEdit = null) {
     document.getElementById('md-cover').value = "images/";
     const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
     if (radioCompil) radioCompil.checked = true;
+    if (document.getElementById('compil-to-record')) {
+      document.getElementById('compil-to-record').checked = false;
+    }
     toggleAdminType(false);
   }
 
@@ -871,6 +877,9 @@ function submitNewMD(e) {
     targetMD.tracks = rawTracks
       .filter(t => t.trim() !== '')
       .map(t => `${String(globalTrackCounter++).padStart(2, '0')}. ${t.trim()}`);
+
+    const compilCheckbox = document.getElementById('compil-to-record');
+    targetMD.toRecord = compilCheckbox ? compilCheckbox.checked : false;
   } else {
     targetMD.albums = [];
     const albumBlocks = document.querySelectorAll('.album-block');
@@ -924,9 +933,6 @@ function submitNewMD(e) {
   closeAdminModal();
   renderDashboard(false);
 }
-
-const mdForm = document.getElementById('md-form');
-if (mdForm) mdForm.addEventListener('submit', submitNewMD);
 
 function downloadUpdatedJSON() {
   if ((!catalogData || catalogData.length === 0) && (!window.ideaAlbums || window.ideaAlbums.length === 0)) {
