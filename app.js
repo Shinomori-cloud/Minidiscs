@@ -533,9 +533,6 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
-// Variable globale pour le filtre d'enregistrement ('all', 'toRecord', 'recorded')
-let currentRecordFilter = 'all';
-
 /* 2. LISTE DES MINIDISCS */
 function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
@@ -1314,7 +1311,6 @@ function renderCompilPlanner(pushState = true) {
         </div>
       </div>
     </div>
-
   `;
 
   updatePlannerHeader();
