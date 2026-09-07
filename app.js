@@ -612,6 +612,7 @@ function openMD(index, pushState = true) {
     </div>
   `;
 
+  // CAS 1 : MINIDISC SIMPLE / COMPILATION (SANS ALBUMS)
   if (!md.albums || md.albums.length === 0) {
     if (headerTitle) headerTitle.textContent = "TITRES";
 
@@ -627,7 +628,10 @@ function openMD(index, pushState = true) {
       tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
     }
 
-    const badgeCompilHTML = md.toRecord ? `<div class="badge-to-record-header">🎙️ À ENREGISTRER</div>` : '';
+    // Affichage conditionnel : uniquement si toRecord est vrai
+    const badgeCompilHTML = md.toRecord 
+      ? `<div class="badge-to-record-header" style="background-color: #e63946; color: white; display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-bottom: 6px;">🎙️ À ENREGISTRER</div>` 
+      : '';
 
     app.innerHTML = `
       <div class="track-container">
@@ -648,6 +652,7 @@ function openMD(index, pushState = true) {
     return;
   }
 
+  // CAS 2 : SÉRIE D'ALBUMS
   if (headerTitle) headerTitle.textContent = "ALBUMS";
 
   let html = `<div class="list-container">${adminControls}`;
@@ -655,8 +660,10 @@ function openMD(index, pushState = true) {
     const albumGenres = getAlbumGenres(album, md);
     const albumColor = getBorderColor(albumGenres);
     
-    // Le badge est placé dans un conteneur autour de la miniature
-    const badgeAlbumHTML = album.toRecord ? `<span class="badge-to-record album-card-badge">🎙️ À enregistrer</span>` : '';
+    // Badge affiché uniquement si l'album est à enregistrer
+    const badgeAlbumHTML = album.toRecord 
+      ? `<span class="badge-to-record album-card-badge">🎙️ À enregistrer</span>` 
+      : '';
 
     html += `
       <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px;" onclick="openAlbum(${index}, ${aIndex})">
