@@ -71,9 +71,9 @@ body:has(#header-planner-badge)::before {
 
 /* Cache pour les pages secondaires */
 body:has(.featured-container.hidden):not(:has(#header-planner-badge))::before {
-  height: 170px;
-  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 120px, transparent 160px);
-  mask-image: linear-gradient(to bottom, black 0px, black 120px, transparent 160px);
+  height: 160px;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
+  mask-image: linear-gradient(to bottom, black 0px, black 135px, transparent 160px);
 }
 
 /* ==========================================
@@ -81,7 +81,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge))::before {
    ========================================== */
 header {
   position: fixed !important;
-  top: 50px !important;
+  top: 55px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: calc(100% - 32px) !important;
@@ -532,6 +532,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   background-color: var(--card-bg);
   padding: 14px 16px;
   border-radius: 16px;
+  margin-top: -10px;
   margin-bottom: 14px;
   cursor: pointer;
   
@@ -629,7 +630,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   border-radius: 16px;
   padding: 16px;
   box-shadow: 4px 4px 0px #000000;
-  margin-top: 10px;
+  margin-top: 0px;
 }
 
 .album-header {
