@@ -601,15 +601,19 @@ function renderMDList(filters = {}, pushState = true) {
     nextRecordState = 'all';
   }
 
-  // Conteneur regroupant l'icône de filtre et le bouton de recherche
+  // Barre d'actions combinée : Filtre Statut + Bouton Recherche
+  const searchIcon = (currentSearchQuery !== '' || (document.getElementById('search-bar') && !document.getElementById('search-bar').classList.contains('closed'))) ? '✕' : '🔍';
+
   const floatingActionsHTML = `
-    <div class="floating-actions-bar">
+    <div class="floating-actions-bar" id="floating-actions">
       <button class="action-btn ${currentRecordFilter !== 'all' ? 'active' : ''}" 
               onclick="renderMDList({ record: '${nextRecordState}' }, false)" 
               title="Filtre : ${filterLabel}">
         <span class="action-icon">${filterIcon}</span>
       </button>
-      <!-- Conserve ici le bouton de recherche original s'il est déjà injecté ailleurs ou ajoute son HTML -->
+      <button class="action-btn" id="search-fab-btn" onclick="toggleSearch()" title="Recherche">
+        <span class="action-icon">${searchIcon}</span>
+      </button>
     </div>
   `;
 
