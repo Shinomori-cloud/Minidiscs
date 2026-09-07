@@ -206,7 +206,7 @@ body:has(.dashboard-container) .title-90s {
    ========================================== */
 .dashboard-container {
   position: fixed !important;
-  top: 165px !important;
+  top: 163px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: calc(100% - 32px) !important;
