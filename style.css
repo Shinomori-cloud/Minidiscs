@@ -1136,30 +1136,46 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   transform: translate(-50%, 20px);
 }
 
-.search-fab-btn {
+/* Vignette flottante combinée (Filtre + Recherche) */
+.floating-actions-bar {
   position: fixed;
-  bottom: 24px;
+  bottom: 20px;
   right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 30px;
+  padding: 4px 6px;
+  box-shadow: 3px 3px 0px #000000;
   z-index: 1500;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #ff007f;
-  color: #ffffff;
-  border: 2px solid #000;
-  font-size: 1.2rem;
-  box-shadow: 3px 3px 0px #000;
+  transition: opacity 0.2s ease;
+}
+
+/* Boutons à l'intérieur de la vignette */
+.floating-actions-bar .action-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  width: 38px;
+  height: 38px;
   cursor: pointer;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.1s ease;
-  flex-shrink: 0;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
-.search-fab-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0px #000;
+.floating-actions-bar .action-btn:active {
+  transform: scale(0.9);
+}
+
+/* Bouton actif (quand un filtre est sélectionné) */
+.floating-actions-bar .action-btn.active {
+  background-color: #ff007f;
+  color: #ffffff;
 }
 
 .hidden {
