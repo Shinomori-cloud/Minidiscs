@@ -373,7 +373,7 @@ body:has(.dashboard-container) .title-90s {
   width: 100%;
   max-width: 568px;
   z-index: 900;
-  margin-top: -20px;
+  margin-top: -25px;
   margin-bottom: 25px;
 
   background: transparent !important;
