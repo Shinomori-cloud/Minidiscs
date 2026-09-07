@@ -239,6 +239,8 @@ if (!window.location.hash || window.location.hash === '#') {
 /* ==========================================
    INITIALISATION DATA & ÉCOUTEURS GLOBAUX
    ========================================== */
+
+// Gestion du bouton Retour
 if (backBtn) {
   backBtn.addEventListener('click', () => {
     if (currentAlbum !== null) {
@@ -249,6 +251,17 @@ if (backBtn) {
       renderDashboard(true);
     }
   });
+}
+
+// Interception des soumissions de formulaires (évite le rechargement de page)
+const adminForm = document.getElementById('admin-form');
+if (adminForm) {
+  adminForm.addEventListener('submit', submitNewMD);
+}
+
+const ideaForm = document.getElementById('idea-form');
+if (ideaForm) {
+  ideaForm.addEventListener('submit', saveIdeaAlbum);
 }
 
 function processLoadedData(data) {
