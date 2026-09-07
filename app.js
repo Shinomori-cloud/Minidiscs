@@ -709,7 +709,10 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
   }
 
-  const badgeAlbumHTML = album.toRecord ? `<div class="badge-to-record-header">🎙️ À ENREGISTRER</div>` : '';
+  // Affichage uniquement si l'album est à enregistrer, sinon chaîne vide
+  const badgeAlbumHTML = album.toRecord 
+    ? `<div class="badge-to-record-header" style="background-color: #e63946; color: white; display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-bottom: 6px;">🎙️ À ENREGISTRER</div>` 
+    : '';
 
   app.innerHTML = `
     <div class="track-container">
