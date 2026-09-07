@@ -390,7 +390,7 @@ body:has(.dashboard-container) .title-90s {
 .featured-container-inline::before {
   content: "";
   position: absolute;
-  top: 30px;
+  top: 32px;
   left: 12px;
   right: 10px;
   bottom: -6px;
