@@ -502,10 +502,14 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
+// Variable globale pour le filtre d'enregistrement ('all', 'toRecord', 'recorded')
+let currentRecordFilter = 'all';
+
 /* 2. LISTE DES MINIDISCS */
 function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
-  const { genre = null, type = null } = filters;
+
+  const { genre = currentGenreFilter, type = currentTypeFilter, record = currentRecordFilter } = filters;
 
   if (pushState) {
     window.location.hash = '#md-list';
@@ -515,6 +519,8 @@ function renderMDList(filters = {}, pushState = true) {
   currentAlbum = null;
   currentGenreFilter = genre;
   currentTypeFilter = type;
+  currentRecordFilter = record;
+
   if (backBtn) backBtn.classList.remove('hidden');
 
   updateSearchVisibility(true);
@@ -530,6 +536,18 @@ function renderMDList(filters = {}, pushState = true) {
     filteredCatalog = filteredCatalog.filter(({ md }) => getMDAllTypes(md).includes(type.toUpperCase().trim()));
   }
 
+  // Application du filtre de statut
+  if (record === 'toRecord') {
+    filteredCatalog = filteredCatalog.filter(({ md }) => 
+      md.toRecord || (md.albums && md.albums.some(a => a.toRecord))
+    );
+  } else if (record === 'recorded') {
+    filteredCatalog = filteredCatalog.filter(({ md }) => {
+      const isToRecord = md.toRecord || (md.albums && md.albums.some(a => a.toRecord));
+      return !isToRecord;
+    });
+  }
+
   if (currentSearchQuery) {
     filteredCatalog = filteredCatalog.filter(({ md }) => mdMatchesSearch(md, currentSearchQuery));
   }
@@ -537,7 +555,35 @@ function renderMDList(filters = {}, pushState = true) {
   const seedSuffix = genre ? `-genre-${genre}` : (type ? `-type-${type}` : '-all');
   const shuffledCatalog = dailyShuffle(filteredCatalog, seedSuffix);
 
-  let html = '<div class="list-container">';
+  // Détermination de l'icône et du libellé selon l'état actuel
+  let filterIcon = '🌐';
+  let filterLabel = 'Tous';
+  let nextRecordState = 'toRecord';
+
+  if (currentRecordFilter === 'toRecord') {
+    filterIcon = '💽';
+    filterLabel = 'À enregistrer';
+    nextRecordState = 'recorded';
+  } else if (currentRecordFilter === 'recorded') {
+    filterIcon = '✅';
+    filterLabel = 'Enregistrés';
+    nextRecordState = 'all';
+  }
+
+  // Conteneur regroupant l'icône de filtre et le bouton de recherche
+  const floatingActionsHTML = `
+    <div class="floating-actions-bar">
+      <button class="action-btn ${currentRecordFilter !== 'all' ? 'active' : ''}" 
+              onclick="renderMDList({ record: '${nextRecordState}' }, false)" 
+              title="Filtre : ${filterLabel}">
+        <span class="action-icon">${filterIcon}</span>
+      </button>
+      <!-- Conserve ici le bouton de recherche original s'il est déjà injecté ailleurs ou ajoute son HTML -->
+    </div>
+  `;
+
+  let html = floatingActionsHTML + '<div class="list-container">';
+  
   if (shuffledCatalog.length === 0) {
     html += `<p style="text-align:center; padding: 40px; color: var(--text-sub);">Aucun MiniDisc trouvé.</p>`;
   } else {
@@ -567,9 +613,11 @@ function renderMDList(filters = {}, pushState = true) {
         ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
         : '';
 
+      const defaultCover = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='68'><rect width='100%' height='100%' fill='%23e5e7eb'/><text x='50%' y='50%' font-size='20' text-anchor='middle' dominant-baseline='central'>💽</text></svg>";
+
       html += `
         <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px; position: relative;" onclick="openMD(${originalIndex})">
-          <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+          <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='${defaultCover}'">
           <div class="item-details">
             <div class="item-tag" style="color: ${borderColor};">${allGenres.join(' / ')}</div>
             <div class="md-albums-list">${albumsContent}</div>
