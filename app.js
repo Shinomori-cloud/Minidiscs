@@ -601,9 +601,9 @@ function renderMDList(filters = {}, pushState = true) {
     nextRecordState = 'all';
   }
 
-  // Barre d'actions combinée : Filtre Statut + Bouton Recherche
-  const searchIcon = (currentSearchQuery !== '' || (document.getElementById('search-bar') && !document.getElementById('search-bar').classList.contains('closed'))) ? '✕' : '🔍';
+  const searchIcon = currentSearchQuery ? '✕' : '🔍';
 
+  // Conteneur regroupant l'icône de filtre et le bouton de recherche
   const floatingActionsHTML = `
     <div class="floating-actions-bar" id="floating-actions">
       <button class="action-btn ${currentRecordFilter !== 'all' ? 'active' : ''}" 
