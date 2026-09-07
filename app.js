@@ -678,6 +678,7 @@ function openMD(index, pushState = true) {
   html += '</div>';
   app.innerHTML = html;
   window.scrollTo(0, 0);
+}
 
 /* 4. VUE TRACKLIST ALBUM SPÉCIFIQUE */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
