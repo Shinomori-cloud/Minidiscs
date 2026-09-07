@@ -713,13 +713,6 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   right: 8px;
 }
 
-/* Badge positionné sur la miniature d'album */
-.album-card-badge {
-  position: absolute;
-  bottom: 4px;
-  left: 4px;
-}
-
 /* ==========================================
    8. PLANIFICATEUR DE COMPILATION
    ========================================== */
