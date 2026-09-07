@@ -353,7 +353,7 @@ function getBorderColor(genreData) {
 }
 
 /* ==========================================
-   SÉLECTION DU MOMENT (24H)
+   SÉLECTION DU JOUR (24H)
    ========================================== */
 function renderFeatured() {
   if (!catalogData || catalogData.length === 0) return;
@@ -451,7 +451,7 @@ function renderDashboard(pushState = true) {
 
       <div class="featured-container-inline">
         <div class="featured-header">
-          <div class="featured-title">SÉLECTION DU MOMENT</div>
+          <div class="featured-title">SÉLECTION DU JOUR</div>
         </div>
         <div class="featured-grid" id="featured-grid-inline"></div>
       </div>
