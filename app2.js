@@ -108,13 +108,16 @@ function onSearchInput(value) {
 }
 
 function updateSearchVisibility(show) {
+  const floatingActions = document.getElementById('floating-actions');
   const fabBtn = document.getElementById('search-fab-btn');
   const topSearch = document.getElementById('search-bar');
   const searchInput = document.getElementById('search-input');
 
   if (show) {
+    if (floatingActions) floatingActions.classList.remove('hidden');
     if (fabBtn) fabBtn.classList.remove('hidden');
   } else {
+    if (floatingActions) floatingActions.classList.add('hidden');
     if (fabBtn) {
       fabBtn.classList.add('hidden');
       fabBtn.textContent = '🔍';
