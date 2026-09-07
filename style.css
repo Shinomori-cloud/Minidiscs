@@ -705,6 +705,18 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   pointer-events: none;
 }
 
+.badge-record-corner {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 0.70rem;
+  background-color: #e63946;
+  color: white;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
 /* ==========================================
    8. PLANIFICATEUR DE COMPILATION
    ========================================== */
