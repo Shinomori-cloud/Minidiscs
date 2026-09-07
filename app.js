@@ -538,6 +538,7 @@ function renderMDList(filters = {}, pushState = true) {
           <div class="md-album-item">
             <div class="md-album-title">${album.title || ''}</div>
             <div class="md-album-artist">${album.artist || ''}</div>
+            ${album.toRecord ? '<span class="badge-to-record">🎙️ À enregistrer</span>' : ''}
           </div>
         `).join('');
       } else {
@@ -545,6 +546,7 @@ function renderMDList(filters = {}, pushState = true) {
           <div class="md-album-item">
             <div class="md-album-title">${md.title || 'MiniDisc sans titre'}</div>
             <div class="md-album-artist">${md.artist || ''}</div>
+            ${md.toRecord ? '<span class="badge-to-record">🎙️ À enregistrer</span>' : ''}
           </div>
         `;
       }
