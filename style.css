@@ -716,7 +716,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .compil-banner {
   position: sticky;
-  top: 130px;
+  top: 100px;
   z-index: 100;
   background: #ffffff;
   border: 2px solid #000000;
