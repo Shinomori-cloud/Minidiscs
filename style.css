@@ -706,7 +706,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   margin-bottom: 6px;
 }
 
-/* Badge positionné en bas à droite sur les cartes de la liste principale */
+/* Badge positionné en bas à droite sur les cartes de la liste MD et Albums */
 .badge-record-corner {
   position: absolute;
   bottom: 8px;
