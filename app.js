@@ -607,12 +607,15 @@ function openMD(index, pushState = true) {
       tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
     }
 
-   app.innerHTML = `
+    const badgeCompilHTML = md.toRecord ? `<div class="badge-to-record-header">🎙️ À ENREGISTRER</div>` : '';
+
+    app.innerHTML = `
       <div class="track-container">
         ${adminControls}
         <div class="album-header">
           <img class="album-cover-large" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
           <div>
+            ${badgeCompilHTML}
             <h2 style="font-size: 1.2rem; font-weight: 800;">${md.title || 'Compilation'}</h2>
             <p style="color: var(--text-sub); font-size: 0.95rem;">${md.artist || 'Artistes divers'}</p>
             <p style="color: ${borderColor}; font-size: 0.8rem; font-weight: 800;">${allMdGenres.join(' / ')}</p>
@@ -631,10 +634,16 @@ function openMD(index, pushState = true) {
   md.albums.forEach((album, aIndex) => {
     const albumGenres = getAlbumGenres(album, md);
     const albumColor = getBorderColor(albumGenres);
+    
+    // Le badge est placé dans un conteneur autour de la miniature
+    const badgeAlbumHTML = album.toRecord ? `<span class="badge-to-record album-card-badge">🎙️ À enregistrer</span>` : '';
 
     html += `
       <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px;" onclick="openAlbum(${index}, ${aIndex})">
-        <img class="album-thumb" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'24\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
+        <div class="album-cover-container" style="margin-right: 15px;">
+          <img class="album-thumb" style="margin-right: 0;" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'24\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
+          ${badgeAlbumHTML}
+        </div>
         <div class="item-details">
           <div class="item-tag" style="color: ${albumColor};">${albumGenres.join(' / ')}</div>
           <div class="item-title" style="font-weight: 700;">${album.title || 'Album sans titre'}</div>
