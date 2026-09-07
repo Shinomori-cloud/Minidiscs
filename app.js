@@ -750,6 +750,9 @@ function openAdminModal(indexToEdit = null) {
   adminAlbumCount = 0;
 
   if (editingMDIndex !== null) {
+    // ==========================================
+    // MODE ÉDITION
+    // ==========================================
     const md = catalogData[editingMDIndex];
     if (modalTitle) modalTitle.textContent = "✏️ Modifier le MiniDisc";
 
@@ -794,18 +797,36 @@ function openAdminModal(indexToEdit = null) {
     }
 
   } else {
+    // ==========================================
+    // MODE AJOUT (RÉINITIALISATION COMPLÈTE)
+    // ==========================================
     if (modalTitle) modalTitle.textContent = "＋ Ajouter un MiniDisc";
-    const form = document.getElementById('md-form');
+    
+    // Remise à zéro du formulaire HTML (admin-form)
+    const form = document.getElementById('admin-form');
     if (form) form.reset();
-    document.getElementById('md-cover').value = "images/";
-    const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
-    if (radioCompil) radioCompil.checked = true;
+
+    // Réinitialisation des champs spécifiques
+    if (document.getElementById('md-genre')) document.getElementById('md-genre').value = '';
+    if (document.getElementById('md-type-tags')) document.getElementById('md-type-tags').value = '';
+    if (document.getElementById('md-cover')) document.getElementById('md-cover').value = "images/";
+    
+    if (document.getElementById('compil-title')) document.getElementById('compil-title').value = '';
+    if (document.getElementById('compil-artist')) document.getElementById('compil-artist').value = '';
+    if (document.getElementById('compil-tracks')) document.getElementById('compil-tracks').value = '';
+    
     if (document.getElementById('compil-to-record')) {
       document.getElementById('compil-to-record').checked = false;
     }
+
+    // Cocher l'option compilation par défaut et basculer l'affichage
+    const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
+    if (radioCompil) radioCompil.checked = true;
+    
     toggleAdminType(false);
   }
 
+  // Affichage de la modale
   const modal = document.getElementById('admin-modal');
   if (modal) modal.classList.remove('hidden');
 }
