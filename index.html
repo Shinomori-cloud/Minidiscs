@@ -158,9 +158,9 @@
 
   <script src="app.js"></script>
 
-  <!-- BOUTON FLOTTANT FIXE (EN BAS À DROITE) -->
-  <button id="search-fab-btn" class="search-fab-btn hidden" onclick="toggleSearch()" title="Rechercher">
-    🔍
-  </button>
+  <!-- VIGNETTE FLOTTANTE COMBINÉE (FILTRE + RECHERCHE) -->
+  <div id="floating-actions" class="floating-actions-bar hidden">
+    <button id="filter-fab-btn" class="action-btn" onclick="cycleRecordFilter()" title="Filtrer la liste">🌐</button>
+    <button id="search-fab-btn" class="action-btn" onclick="toggleSearch()" title="Rechercher">🔍</button>
+  </div>
 </body>
-</html>
