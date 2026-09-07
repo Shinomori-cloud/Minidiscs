@@ -427,6 +427,9 @@ function renderFeatured() {
 
 /* 1. DASHBOARD */
 function renderDashboard(pushState = true) {
+  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+  if (fa) fa.style.display = 'none';
+   
   if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
 
   currentMD = null;
@@ -539,6 +542,10 @@ function renderDashboard(pushState = true) {
 function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
 
+  // 1. Afficher la barre d'actions UNIQUEMENT sur la liste
+  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+  if (fa) fa.style.display = 'flex';
+
   const { genre = currentGenreFilter, type = currentTypeFilter, record = currentRecordFilter } = filters;
 
   if (pushState) {
@@ -585,38 +592,8 @@ function renderMDList(filters = {}, pushState = true) {
   const seedSuffix = genre ? `-genre-${genre}` : (type ? `-type-${type}` : '-all');
   const shuffledCatalog = dailyShuffle(filteredCatalog, seedSuffix);
 
-  // Détermination de l'icône et du libellé selon l'état actuel
-  let filterIcon = '🌐';
-  let filterLabel = 'Tous';
-  let nextRecordState = 'toRecord';
-
-  if (currentRecordFilter === 'toRecord') {
-    filterIcon = '💽';
-    filterLabel = 'À enregistrer';
-    nextRecordState = 'recorded';
-  } else if (currentRecordFilter === 'recorded') {
-    filterIcon = '✅';
-    filterLabel = 'Enregistrés';
-    nextRecordState = 'all';
-  }
-
-  const searchIcon = currentSearchQuery ? '✕' : '🔍';
-
-  // Conteneur regroupant l'icône de filtre et le bouton de recherche
-  const floatingActionsHTML = `
-    <div class="floating-actions-bar" id="floating-actions">
-      <button class="action-btn ${currentRecordFilter !== 'all' ? 'active' : ''}" 
-              onclick="renderMDList({ record: '${nextRecordState}' }, false)" 
-              title="Filtre : ${filterLabel}">
-        <span class="action-icon">${filterIcon}</span>
-      </button>
-      <button class="action-btn" id="search-fab-btn" onclick="toggleSearch()" title="Recherche">
-        <span class="action-icon">${searchIcon}</span>
-      </button>
-    </div>
-  `;
-
-  let html = floatingActionsHTML + '<div class="list-container">';
+  // 2. Génération du HTML pur de la liste (sans reinjecter de barre flottante)
+  let html = '<div class="list-container">';
   
   if (shuffledCatalog.length === 0) {
     html += `<p style="text-align:center; padding: 40px; color: var(--text-sub);">Aucun MiniDisc trouvé.</p>`;
@@ -668,6 +645,9 @@ function renderMDList(filters = {}, pushState = true) {
 
 /* 3. VUE D'UN MINIDISC */
 function openMD(index, pushState = true) {
+  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+  if (fa) fa.style.display = 'none';
+   
   if (!catalogData || !catalogData[index]) return;
 
   if (pushState) {
@@ -764,6 +744,9 @@ function openMD(index, pushState = true) {
 
 /* 4. VUE TRACKLIST ALBUM SPÉCIFIQUE */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
+  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+  if (fa) fa.style.display = 'none';
+   
   if (!catalogData || !catalogData[mdIndex] || !catalogData[mdIndex].albums[albumIndex]) return;
 
   currentMD = mdIndex;
@@ -1249,6 +1232,9 @@ function injectPlannerHeaderBadge() {
 }
 
 function renderCompilPlanner(pushState = true) {
+   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+   if (fa) fa.style.display = 'none';
+   
   if (pushState && window.location.hash !== '#planner') {
     window.location.hash = '#planner';
     return;
