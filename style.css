@@ -81,7 +81,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge))::before {
    ========================================== */
 header {
   position: fixed !important;
-  top: 55px !important;
+  top: 60px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: calc(100% - 32px) !important;
@@ -175,7 +175,7 @@ body:has(.dashboard-container) .title-90s {
 /* Barre de recherche déployable */
 .top-search {
   position: fixed;
-  top: 120px;
+  top: 130px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
@@ -192,7 +192,7 @@ body:has(.dashboard-container) .title-90s {
   width: 100%;
   padding: 10px 16px;
   border-radius: 12px;
-  border: 2px solid #000;
+  border: 3px solid #000;
   background: #ffffff;
   color: var(--text-main);
   font-size: 0.9rem;
