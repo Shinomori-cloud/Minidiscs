@@ -547,11 +547,11 @@ function renderMDList(filters = {}, pushState = true) {
       
       let albumsContent = '';
       if (md.albums && md.albums.length > 0) {
+        // On n'affiche plus la mention "à enregistrer" sur chaque ligne ici
         albumsContent = md.albums.map(album => `
           <div class="md-album-item">
             <div class="md-album-title">${album.title || ''}</div>
             <div class="md-album-artist">${album.artist || ''}</div>
-            ${album.toRecord ? '<span class="badge-to-record">🎙️ À enregistrer</span>' : ''}
           </div>
         `).join('');
       } else {
@@ -559,18 +559,25 @@ function renderMDList(filters = {}, pushState = true) {
           <div class="md-album-item">
             <div class="md-album-title">${md.title || 'MiniDisc sans titre'}</div>
             <div class="md-album-artist">${md.artist || ''}</div>
-            ${md.toRecord ? '<span class="badge-to-record">🎙️ À enregistrer</span>' : ''}
           </div>
         `;
       }
 
+      // Vérifier si le MD complet a besoin d'être enregistré
+      const isToRecord = md.toRecord || (md.albums && md.albums.some(a => a.toRecord));
+      const recordBadgeHTML = isToRecord 
+        ? `<span class="badge-record-corner">🎙️ À enregistrer</span>` 
+        : '';
+
+      // Ajout de "position: relative" sur le list-item pour pouvoir placer le badge
       html += `
-        <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px;" onclick="openMD(${originalIndex})">
+        <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px; position: relative;" onclick="openMD(${originalIndex})">
           <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
           <div class="item-details">
             <div class="item-tag" style="color: ${borderColor};">${allGenres.join(' / ')}</div>
             <div class="md-albums-list">${albumsContent}</div>
           </div>
+          ${recordBadgeHTML}
         </div>
       `;
     });
