@@ -757,6 +757,9 @@ function openAdminModal(indexToEdit = null) {
         block.querySelector('.album-year').value = album.year || '';
         block.querySelector('.album-cover').value = album.cover || 'images/';
         block.querySelector('.album-tracks').value = album.tracks ? album.tracks.map(t => t.replace(/^\d+\.\s*/, '')).join('\n') : '';
+        if (block.querySelector('.album-to-record')) {
+          block.querySelector('.album-to-record').checked = !!album.toRecord;
+        }
       });
     }
 
@@ -816,6 +819,12 @@ function addAdminAlbumBlock() {
     <div class="form-group"><input type="text" class="album-year" placeholder="Année (ex: 1998)"></div>
     <div class="form-group"><input type="text" class="album-cover" value="images/" placeholder="URL Pochette Album"></div>
     <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne)"></textarea></div>
+    <div class="form-group" style="margin-top: 8px;">
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">
+        <input type="checkbox" class="album-to-record" style="width: 16px; height: 16px;">
+        🎙️ À enregistrer
+      </label>
+    </div>
   `;
   container.appendChild(div);
 }
@@ -890,7 +899,8 @@ function submitNewMD(e) {
         artist: block.querySelector('.album-artist').value.trim(),
         year: block.querySelector('.album-year').value.trim(),
         cover: block.querySelector('.album-cover').value.trim(),
-        tracks: formattedTracks
+        tracks: formattedTracks,
+        toRecord: block.querySelector('.album-to-record') ? block.querySelector('.album-to-record').checked : false
       };
 
       if (parsedAlbumGenres.length > 0) albumObj.genre = parsedAlbumGenres;
