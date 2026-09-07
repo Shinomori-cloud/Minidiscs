@@ -147,7 +147,9 @@ function updateSearchVisibility(show) {
 
   if (show) {
     if (floatingActions) floatingActions.classList.remove('hidden');
-    updateFilterIcon();
+    if (typeof updateFilterIcon === 'function') {
+      updateFilterIcon();
+    }
   } else {
     if (floatingActions) floatingActions.classList.add('hidden');
     if (fabBtn) fabBtn.textContent = '🔍';
