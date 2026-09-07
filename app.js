@@ -547,7 +547,6 @@ function renderMDList(filters = {}, pushState = true) {
       
       let albumsContent = '';
       if (md.albums && md.albums.length > 0) {
-        // On n'affiche plus la mention "à enregistrer" sur chaque ligne ici
         albumsContent = md.albums.map(album => `
           <div class="md-album-item">
             <div class="md-album-title">${album.title || ''}</div>
@@ -563,13 +562,11 @@ function renderMDList(filters = {}, pushState = true) {
         `;
       }
 
-      // Vérifier si le MD complet a besoin d'être enregistré
       const isToRecord = md.toRecord || (md.albums && md.albums.some(a => a.toRecord));
       const recordBadgeHTML = isToRecord 
-        ? `<span class="badge-record-corner">🎙️ À enregistrer</span>` 
+        ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
         : '';
 
-      // Ajout de "position: relative" sur le list-item pour pouvoir placer le badge
       html += `
         <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px; position: relative;" onclick="openMD(${originalIndex})">
           <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
@@ -628,9 +625,8 @@ function openMD(index, pushState = true) {
       tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
     }
 
-    // Affichage conditionnel : uniquement si toRecord est vrai
     const badgeCompilHTML = md.toRecord 
-      ? `<div class="badge-to-record-header" style="background-color: #e63946; color: white; display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-bottom: 6px;">🎙️ À ENREGISTRER</div>` 
+      ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
       : '';
 
     app.innerHTML = `
@@ -660,9 +656,8 @@ function openMD(index, pushState = true) {
     const albumGenres = getAlbumGenres(album, md);
     const albumColor = getBorderColor(albumGenres);
     
-    // Badge affiché uniquement si l'album est à enregistrer
     const badgeAlbumHTML = album.toRecord 
-      ? `<span class="badge-to-record album-card-badge">🎙️ À enregistrer</span>` 
+      ? `<span class="badge-to-record album-card-badge">💽 À enregistrer</span>` 
       : '';
 
     html += `
@@ -716,9 +711,8 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
   }
 
-  // Affichage uniquement si l'album est à enregistrer, sinon chaîne vide
   const badgeAlbumHTML = album.toRecord 
-    ? `<div class="badge-to-record-header" style="background-color: #e63946; color: white; display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-bottom: 6px;">🎙️ À ENREGISTRER</div>` 
+    ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
     : '';
 
   app.innerHTML = `
