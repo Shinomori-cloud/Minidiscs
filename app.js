@@ -689,11 +689,14 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
   }
 
+  const badgeAlbumHTML = album.toRecord ? `<div class="badge-to-record-header">🎙️ À ENREGISTRER</div>` : '';
+
   app.innerHTML = `
     <div class="track-container">
       <div class="album-header">
         <img class="album-cover-large" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
         <div>
+          ${badgeAlbumHTML}
           <h2 style="font-size: 1.2rem; font-weight: 800;">${album.title || 'Album sans titre'}</h2>
           <p style="color: var(--text-sub); font-size: 0.95rem;">${album.artist || 'Artiste inconnu'}</p>
           <p style="color: ${albumColor}; font-size: 0.8rem; font-weight: 800;">${albumGenres.join(' / ')}</p>
