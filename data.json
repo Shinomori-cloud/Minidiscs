@@ -33,6 +33,7 @@
             "14. Razor Boy (Billy Goodrum)",
             "15. Where He Can Hide (Tom Wolfe)"
           ],
+          "toRecord": true,
           "genre": [
             "Alternative Rock",
             "Pop Rock"
@@ -62,6 +63,7 @@
             "28. You Blew Me Off (Bare, Jr.)",
             "29. Bittersweet Symphony (The Verve)"
           ],
+          "toRecord": true,
           "genre": [
             "Alternative Rock",
             "Pop Rock"
@@ -347,6 +349,7 @@
             "15. Blank Page",
             "16. 17"
           ],
+          "toRecord": true,
           "genre": [
             "Alternative Rock",
             "Experimental"
@@ -373,6 +376,7 @@
             "26. Pick Up If You're There",
             "27. Delta Sun Bottleneck Stomp"
           ],
+          "toRecord": true,
           "genre": [
             "Pop Rock",
             "Experimental"
@@ -1408,6 +1412,7 @@
             "12. Burger Queen",
             "13. Evil Dildo"
           ],
+          "toRecord": true,
           "genre": [
             "Alternative Rock"
           ],
@@ -1434,6 +1439,7 @@
             "24. Overdue",
             "25. Hate This & I'll Love You"
           ],
+          "toRecord": true,
           "genre": [
             "Alternative Rock"
           ],
@@ -1459,6 +1465,7 @@
             "35. I Can't",
             "36. Blow Out"
           ],
+          "toRecord": true,
           "genre": [
             "Alternative Rock",
             "Pop Rock",
@@ -1882,7 +1889,8 @@
         "19. One",
         "20. Enter Sandman",
         "21. Battery"
-      ]
+      ],
+      "toRecord": true
     },
     {
       "genre": [
@@ -1914,6 +1922,7 @@
             "12. Something in the Way",
             "13. Endless, Nameless (Hidden Track)"
           ],
+          "toRecord": true,
           "genre": [
             "Alternative Rock",
             "Grunge"
@@ -1940,6 +1949,7 @@
             "23. Swallow",
             "24. H.K. Farewell (Hidden Track)"
           ],
+          "toRecord": true,
           "genre": [
             "Alternative Rock"
           ],
@@ -1968,6 +1978,7 @@
             "37. God in My Bed",
             "38. Winners"
           ],
+          "toRecord": true,
           "genre": [
             "Alternative Rock"
           ],
@@ -2020,6 +2031,7 @@
             "24. Eleanor Rigby",
             "25. Yellow Submarine"
           ],
+          "toRecord": true,
           "genre": [
             "Rock"
           ],
@@ -2046,6 +2058,7 @@
             "35. Sweet Home Chicago",
             "36. JailHouse Rock"
           ],
+          "toRecord": true,
           "genre": [
             "Rock",
             "Blues"
@@ -2079,6 +2092,7 @@
             "53. No Shoes",
             "54. She Shot Me Down"
           ],
+          "toRecord": true,
           "genre": [
             "Blues"
           ],
@@ -2119,6 +2133,7 @@
             "14. Scissors",
             "15. Eeyore"
           ],
+          "toRecord": true,
           "genre": [
             "Metal"
           ],
@@ -2148,6 +2163,7 @@
             "29. Aerials",
             "30. Der Voghormia"
           ],
+          "toRecord": true,
           "genre": [
             "Metal"
           ],
@@ -2174,6 +2190,7 @@
             "41. Change (In the House of Flies)",
             "42. Pink Maggit"
           ],
+          "toRecord": true,
           "genre": [
             "Metal"
           ],
@@ -2262,6 +2279,7 @@
             "20. Nancy Boy",
             "21. Pure Morning"
           ],
+          "toRecord": true,
           "genre": [
             "Alternative Rock"
           ],
@@ -2287,6 +2305,7 @@
             "31. Taste In Men (Jazz version)",
             "32. Slave to the Wage (Organ version)"
           ],
+          "toRecord": true,
           "genre": [
             "Acoustic"
           ],
@@ -2326,7 +2345,8 @@
             "11. Changes (Shawn Mullins)",
             "12. Stay Young (Oasis)",
             "13. Another Brick In the Wall (Part1) (Class of '99)"
-          ]
+          ],
+          "toRecord": true
         },
         {
           "title": "Empire Records",
@@ -2354,7 +2374,8 @@
             "31. How (The Cranberries)",
             "32. Plowed (Sponge)",
             "33. Sugarhigh (Coyote Shivers)"
-          ]
+          ],
+          "toRecord": true
         }
       ]
     },
@@ -2673,7 +2694,8 @@
             "10. Dave's Gone Skiing",
             "11. Baba Mnumzane - Live",
             "12. Africa - Live"
-          ]
+          ],
+          "toRecord": true
         },
         {
           "title": "Best of Rockers'n'Ballads",
@@ -2696,7 +2718,8 @@
             "25. Hey you",
             "26. The Zoo",
             "27. China White"
-          ]
+          ],
+          "toRecord": true
         }
       ]
     },
@@ -2729,7 +2752,8 @@
             "12. J'avance pour ma familia",
             "13. Derniers pas dans la mafia",
             "14. Un reup qui fait reup"
-          ]
+          ],
+          "toRecord": true
         },
         {
           "title": "Mixomatose",
@@ -2752,7 +2776,8 @@
             "27. La routine",
             "28. Jalouse-moi",
             "29. Soirée Chirée"
-          ]
+          ],
+          "toRecord": true
         }
       ]
     },
@@ -2890,6 +2915,48 @@
       "genre": "Rap",
       "duration": "1:18:31",
       "cover": "images/sadhill.jpg"
+    },
+    {
+      "title": "Thriller",
+      "artist": "Michael Jackson",
+      "genre": "Pop Rock, Soul Funk",
+      "duration": "42:19",
+      "cover": "images/thriller.jpeg"
+    },
+    {
+      "title": "The Miseducation of Lauryn Hill",
+      "artist": "Lauryn Hill",
+      "genre": "Rap, Soul Funk, Reggae",
+      "duration": "1:17:39",
+      "cover": "images/miseduation.jpg"
+    },
+    {
+      "title": "MTV Unplugged",
+      "artist": "Alanis Morissette",
+      "genre": "Pop Rock, Folk",
+      "duration": "53:18",
+      "cover": "images/alanisunplugged.jpg"
+    },
+    {
+      "title": "Live à Bercy",
+      "artist": "Mylène Farmer",
+      "genre": "Pop Rock, Variété, Français",
+      "duration": "1:58:13",
+      "cover": "images/farmerbercy.jpg"
+    },
+    {
+      "title": "Le tour de M",
+      "artist": "M",
+      "genre": "Rock, Pop Rock, Variété, Français",
+      "duration": "1:50:00",
+      "cover": "images/tourdem.jpg"
+    },
+    {
+      "title": "Superunknown",
+      "artist": "Soundgarden",
+      "genre": "Alternative Rock, Grunge",
+      "duration": "1:10:19",
+      "cover": "images/Superunknown.jpg"
     }
   ]
 }
