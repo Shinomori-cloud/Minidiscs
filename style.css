@@ -1115,16 +1115,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   FORMULAIRES : POLICE RÉDUITE ET RELIEF
+   FORMULAIRES : RELIEF
    ========================================== */
-
-/* Réduction de la taille de police dans les champs de saisie */
-.modal-content input,
-.modal-content select,
-.modal-content textarea {
-  font-size: 0.7rem;
-  padding: 6px 8px;
-}
 
 /* Bordure nette et relief rétro 90s pour détacher le formulaire du fond */
 .modal-content {
