@@ -1279,29 +1279,29 @@ function renderPlannerGenreFilter() {
   const menu = document.createElement('div');
   menu.id = 'planner-genre-menu';
   
-  // Placement au-dessus du bouton fixe (z-index: 2000)
+  // Placement au-dessus du bouton fixe (z-index: 2000) et affichage en 1 seule colonne
   Object.assign(menu.style, {
     position: 'absolute',
     bottom: 'calc(100% + 12px)',
     right: '0',
-    minWidth: '240px',
-    maxWidth: '300px',
-    maxHeight: '220px',
+    minWidth: '200px',
+    maxWidth: '260px',
+    maxHeight: '240px',
     overflowY: 'auto',
     background: 'rgba(25, 25, 25, 0.95)',
     backdropFilter: 'blur(12px)',
     border: '1px solid rgba(255, 255, 255, 0.15)',
     borderRadius: '16px',
-    padding: '10px',
+    padding: '8px',
     boxShadow: '0 -8px 25px rgba(0, 0, 0, 0.5)',
     zIndex: '2000',
     display: 'flex',
-    flexWrap: 'wrap',
-    gap: '6px'
+    flexDirection: 'column',
+    gap: '4px'
   });
 
   let html = `
-    <button type="button" class="tag-btn ${currentPlannerGenreFilters.size === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="font-size: 0.8rem; padding: 4px 10px;">
+    <button type="button" class="tag-btn ${currentPlannerGenreFilters.size === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; text-align: left; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start;">
       Tous
     </button>
   `;
@@ -1309,7 +1309,7 @@ function renderPlannerGenreFilter() {
   genres.forEach(genre => {
     const isActive = currentPlannerGenreFilters.has(genre);
     html += `
-      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${genre.replace(/'/g, "\\'")}')" style="font-size: 0.8rem; padding: 4px 10px; border-radius: 15px;">
+      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${genre.replace(/'/g, "\\'")}')" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; text-align: left; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start;">
         ${isActive ? '✓ ' : ''}${genre}
       </button>
     `;
