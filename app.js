@@ -1464,6 +1464,11 @@ window.addEventListener('popstate', () => {
     }
   }
 
+  // Si le hash est vide, #home ou inconnu -> Accueil
+  if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
+  if (typeof renderDashboard === 'function') renderDashboard(false);
+});
+
 // Remplit dynamiquement les menus déroulants avec genres et types existants
 function populateFormDatalists() {
   if (!catalogData || !Array.isArray(catalogData)) return;
@@ -1508,8 +1513,3 @@ function populateFormDatalists() {
       .join('');
   }
 }
-
-  // Si le hash est vide, #home ou inconnu -> Accueil
-  if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-  if (typeof renderDashboard === 'function') renderDashboard(false);
-});
