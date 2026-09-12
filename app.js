@@ -156,7 +156,7 @@ function updateSearchVisibility(show) {
     }
   } else {
     if (floatingActions) floatingActions.classList.add('hidden');
-    if (fabBtn) fabBtn.textContent = '🔍';
+    if (fabBtn) fabBtn.textContent = '| Search';
     if (topSearch) topSearch.classList.add('closed');
     
     currentSearchQuery = '';
