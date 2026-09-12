@@ -1457,6 +1457,40 @@ window.addEventListener('popstate', () => {
     }
   }
 
+// Remplit dynamiquement les menus déroulants avec les genres et types existants
+function populateFormDatalists() {
+  if (!catalogData) return;
+
+  const genresSet = new Set();
+  const typesSet = new Set();
+
+  catalogData.forEach(md => {
+    if (typeof getMDAllGenres === 'function') {
+      getMDAllGenres(md).forEach(g => genresSet.add(g));
+    }
+    if (typeof getMDAllTypes === 'function') {
+      getMDAllTypes(md).forEach(t => typesSet.add(t));
+    }
+  });
+
+  const genresDatalist = document.getElementById('genres-list');
+  const typesDatalist = document.getElementById('types-list');
+
+  if (genresDatalist) {
+    genresDatalist.innerHTML = Array.from(genresSet)
+      .sort()
+      .map(g => `<option value="${g}">`)
+      .join('');
+  }
+
+  if (typesDatalist) {
+    typesDatalist.innerHTML = Array.from(typesSet)
+      .sort()
+      .map(t => `<option value="${t}">`)
+      .join('');
+  }
+}
+
   // Si le hash est vide, #home ou inconnu -> Accueil
   if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
   if (typeof renderDashboard === 'function') renderDashboard(false);
