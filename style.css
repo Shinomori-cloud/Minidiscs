@@ -923,6 +923,39 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   color: #ffffff !important;
 }
 
+/* FILTRES MULTIPLES PLANIFICATEUR */
+.genre-filter-container {
+  margin: 10px 0 15px 0;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+}
+
+.tags-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-btn {
+  background: #ffffff;
+  border: 2px solid #000000;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 2px 2px 0px #000000;
+  user-select: none;
+}
+
+.tag-btn.active {
+  background: #ff007f; /* Couleur active rétro */
+  color: #ffffff;
+  box-shadow: 1px 1px 0px #000000;
+  transform: translate(1px, 1px);
+}
+
 /* ==========================================
    9. BOUTONS D'ACTION & MODALES ADMIN
    ========================================== */
