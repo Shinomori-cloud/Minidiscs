@@ -33,7 +33,7 @@
             "14. Razor Boy (Billy Goodrum)",
             "15. Where He Can Hide (Tom Wolfe)"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Alternative Rock",
             "Pop Rock"
@@ -63,7 +63,7 @@
             "28. You Blew Me Off (Bare, Jr.)",
             "29. Bittersweet Symphony (The Verve)"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Alternative Rock",
             "Pop Rock"
@@ -2279,7 +2279,7 @@
             "20. Nancy Boy",
             "21. Pure Morning"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Alternative Rock"
           ],
@@ -2305,7 +2305,7 @@
             "31. Taste In Men (Jazz version)",
             "32. Slave to the Wage (Organ version)"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Acoustic"
           ],
@@ -2346,7 +2346,7 @@
             "12. Stay Young (Oasis)",
             "13. Another Brick In the Wall (Part1) (Class of '99)"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "title": "Empire Records",
@@ -2375,7 +2375,7 @@
             "32. Plowed (Sponge)",
             "33. Sugarhigh (Coyote Shivers)"
           ],
-          "toRecord": true
+          "toRecord": false
         }
       ]
     },
@@ -2589,10 +2589,10 @@
       "md_cover": "images/md_29.jpg",
       "albums": [
         {
-          "title": "Greatest Hits",
+          "title": "Greatest Hits Live",
           "artist": "Bruce Springsteen",
           "year": "1995",
-          "cover": "images/bruce_springsteen_best.jpg",
+          "cover": "images/brucelive.jpg",
           "tracks": [
             "01. Atlantic City",
             "02. Badlands",
@@ -2607,6 +2607,7 @@
             "11. Jungleland",
             "12. Point Blank"
           ],
+          "toRecord": true,
           "genre": [
             "Rock",
             "Folk"
@@ -2632,6 +2633,7 @@
             "21. The Needle and the Damage Done",
             "22. Words (Between the Lines of Age)"
           ],
+          "toRecord": true,
           "genre": [
             "Rock",
             "Folk"
@@ -2657,6 +2659,7 @@
             "31. Positively 4th Street",
             "32. Just like a Woman"
           ],
+          "toRecord": true,
           "genre": [
             "Folk"
           ],
@@ -2957,6 +2960,125 @@
       "genre": "Alternative Rock, Grunge",
       "duration": "1:10:19",
       "cover": "images/Superunknown.jpg"
+    },
+    {
+      "title": "Fight Club",
+      "artist": "The Dust Brothers",
+      "genre": "Experimental",
+      "duration": "1:04:00",
+      "cover": "images/fightclub.jpg"
+    },
+    {
+      "title": "666.667 Club",
+      "artist": "Noir Désir",
+      "genre": "Rock, Français",
+      "duration": "50:39",
+      "cover": "images/666667club.jpg"
+    },
+    {
+      "title": "Incesticide",
+      "artist": "Nirvana",
+      "genre": "Alternative Rock, Grunge",
+      "duration": "44:44",
+      "cover": "images/incesticide.jpg"
+    },
+    {
+      "title": "Mystery White Boy",
+      "artist": "Jeff Buckley",
+      "genre": "Rock, Blues",
+      "duration": "1:23:00",
+      "cover": "images/mysterywhite.jpg"
+    },
+    {
+      "title": "Boys don't cry",
+      "artist": "The Curr",
+      "genre": "Rock",
+      "duration": "36:00",
+      "cover": "images/Boysdontcry.jpg"
+    },
+    {
+      "title": "High/Low",
+      "artist": "Nada Surf",
+      "genre": "Alternative Rock",
+      "duration": "36:31",
+      "cover": "images/HighLow.jpg"
+    },
+    {
+      "title": "Rurouni Kenshin: Seisouhen",
+      "artist": "Taku Iwasaki",
+      "genre": "Orchestral",
+      "duration": "50:52",
+      "cover": "images/Kenshin.jpg"
+    },
+    {
+      "title": "Is this it",
+      "artist": "The Strokes",
+      "genre": "Alternative Rock,",
+      "duration": "36:28",
+      "cover": "images/isthisit.jpg"
+    },
+    {
+      "title": "A kind of magic",
+      "artist": "Queen",
+      "genre": "Rock",
+      "duration": "53:37",
+      "cover": "images/akindofmagic.jpg"
+    },
+    {
+      "title": "Highly Evolved",
+      "artist": "The Vines",
+      "genre": "Alternative Rock, Grunge",
+      "duration": "43:40",
+      "cover": "images/higlyevolved.jpg"
+    },
+    {
+      "title": "Homogenic",
+      "artist": "Bjork",
+      "genre": "Experimental, Electronic",
+      "duration": "43:35",
+      "cover": "images/homogenic.jpg"
+    },
+    {
+      "title": "The Marshall Mathers LP",
+      "artist": "Eminem",
+      "genre": "Rap",
+      "duration": "1:12:17",
+      "cover": "images/marshallmathers.jpg"
+    },
+    {
+      "title": "Ready to die",
+      "artist": "The Notorious Big",
+      "genre": "Rap",
+      "duration": "1:16:58",
+      "cover": "images/readytodie.jpg"
+    },
+    {
+      "title": "Rumours",
+      "artist": "Fleetwood Mac",
+      "genre": "Pop Rock",
+      "duration": "39:03",
+      "cover": "images/rumours.jpg"
+    },
+    {
+      "title": "Iowa",
+      "artist": "Slipknot",
+      "genre": "Metal",
+      "duration": "1:06:25",
+      "cover": "images/iowa.jpg"
+    },
+    {
+      "title": "Tom McRae",
+      "artist": "Tom McRae",
+      "genre": "Pop Rock, folk",
+      "duration": "45:10",
+      "cover": "images/tommcrae.jpg"
+    },
+    {
+      "title": "Mamagubida",
+      "artist": "Tryo",
+      "genre": "Français, Reggae, Folk",
+      "duration": "1:13:53",
+      "cover": "images/tryo.jpg"
     }
   ]
 }
