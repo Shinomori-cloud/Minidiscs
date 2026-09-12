@@ -1114,6 +1114,21 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 2px 2px 0px #000;
 }
 
+/* Réduction de la taille de police dans les champs de saisie et suggestions */
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  font-size: 0.85rem; /* Ajuste la taille selon ta préférence (ex: 0.8rem ou 0.85rem) */
+  padding: 6px 8px;
+}
+
+/* Découpe et relief du formulaire (Modales) */
+.modal-content {
+  border: 3px solid #000000; /* Bordure nette */
+  box-shadow: 6px 6px 0px #000000; /* Ombre rétro en relief */
+  background-color: #ffffff; /* S'assure d'un fond bien opacifié */
+}
+
 /* ==========================================
    10. TOAST & FAB
    ========================================== */
