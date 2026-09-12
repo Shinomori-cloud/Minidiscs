@@ -96,13 +96,13 @@ function updateFilterIcon() {
   if (!filterBtn) return;
 
   if (currentRecordFilter === 'toRecord') {
-    filterBtn.textContent = '💽';
+    filterBtn.textContent = 'Rec';
     filterBtn.classList.add('active');
   } else if (currentRecordFilter === 'recorded') {
-    filterBtn.textContent = '✅';
+    filterBtn.textContent = 'Ok';
     filterBtn.classList.add('active');
   } else {
-    filterBtn.textContent = '🌐';
+    filterBtn.textContent = 'All';
     filterBtn.classList.remove('active');
   }
 }
