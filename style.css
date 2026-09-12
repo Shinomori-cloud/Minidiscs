@@ -917,6 +917,12 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   pointer-events: auto !important;
 }
 
+/* Couleur personnalisée pour le bouton Ajouter un album */
+.compil-actions button[onclick*="openAlbumSelector"] {
+  background-color: #ff007f !important; /* Remplace #06d6a0 par la couleur voulue */
+  color: #ffffff !important;
+}
+
 /* ==========================================
    9. BOUTONS D'ACTION & MODALES ADMIN
    ========================================== */
