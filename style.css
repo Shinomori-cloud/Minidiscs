@@ -1182,7 +1182,6 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 /* Bouton actif (quand un filtre est sélectionné) */
 .floating-actions-bar .action-btn.active {
-  background-color: #ff007f;
   color: #ffffff;
 }
 
