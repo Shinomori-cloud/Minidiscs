@@ -1330,8 +1330,8 @@ function clearPlannerGenreFilters() {
 }
 
 function renderCompilPlanner(pushState = true) {
-   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
-   if (fa) fa.style.display = 'none';
+  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+  if (fa) fa.style.display = 'none';
    
   if (pushState && window.location.hash !== '#planner') {
     window.location.hash = '#planner';
@@ -1394,12 +1394,15 @@ function renderCompilPlanner(pushState = true) {
       </div>
 
       <div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
-        <div class="compil-actions" style="display:flex; gap:10px; max-width: 500px; width:100%; justify-content: center; background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(10px); padding: 10px 15px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); pointer-events: auto;">
-          <button type="button" class="btn-primary" id="planner-btn-add" style="flex:1; border-radius:20px;">＋ Ajouter un Album</button>
+        <div class="compil-actions" style="display:flex; gap:8px; max-width: 600px; width:100%; justify-content: center; background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(10px); padding: 10px 12px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); pointer-events: auto;">
+          <button type="button" class="btn-primary" id="planner-btn-add" style="flex:1; border-radius:20px;">＋ Ajouter</button>
           <button type="button" class="btn-secondary" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="flex:1; border-radius:20px;">
-            💾 Convertir en MD (${selectedIdeaIndices.size})
+            💾 Convertir (${selectedIdeaIndices.size})
           </button>
-          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex:1; border-radius:20px;">Réinitialiser la sélection</button>
+          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex:1; border-radius:20px;">Réinitialiser</button>
+          <button type="button" class="btn-sub" id="planner-btn-genre-toggle" style="flex:1; border-radius:20px; white-space:nowrap;">
+            🏷️ Genres ${currentPlannerGenreFilters.size > 0 ? `(${currentPlannerGenreFilters.size})` : ''}
+          </button>
         </div>
       </div>
     </div>
@@ -1442,6 +1445,9 @@ function renderCompilPlanner(pushState = true) {
 
   const resetBtn = document.getElementById('planner-btn-reset');
   if (resetBtn) resetBtn.addEventListener('click', clearIdeaSelection);
+
+  const genreToggleBtn = document.getElementById('planner-btn-genre-toggle');
+  if (genreToggleBtn) genreToggleBtn.addEventListener('click', togglePlannerGenreDropdown);
 }
 
 function deleteIdeaAlbum(index) {
