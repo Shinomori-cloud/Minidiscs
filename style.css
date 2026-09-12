@@ -917,10 +917,10 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   pointer-events: auto !important;
 }
 
-/* Couleur personnalisée pour le bouton Ajouter un album */
-.compil-actions button[onclick*="openAlbumSelector"] {
-  background-color: #ff007f !important; /* Remplace #06d6a0 par la couleur voulue */
-  color: #ffffff !important;
+/* Ciblage du tout premier bouton dans la barre d'actions du planificateur */
+.compil-actions button:first-child {
+  background-color: #06d6a0 !important; /* Ta couleur ici */
+  color: #000000 !important;
 }
 
 /* ==========================================
