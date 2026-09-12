@@ -1248,11 +1248,17 @@ function injectPlannerHeaderBadge() {
 }
 
 function renderPlannerGenreFilter() {
-  const container = document.getElementById('planner-genre-filter');
-  const tagsCloud = document.getElementById('planner-tags-list');
-  if (!container || !tagsCloud) return;
+  const genreBtn = document.getElementById('planner-btn-genre-toggle');
+  if (!genreBtn) return;
 
-  // Extraction uniquement des genres présents dans la collection principale de MiniDiscs (catalogData)
+  // Nettoyage de l'ancien menu s'il existe déjà
+  const existingMenu = document.getElementById('planner-genre-menu');
+  if (existingMenu) existingMenu.remove();
+
+  // Si le menu n'est pas ouvert, on s'arrête là
+  if (!isPlannerGenreDropdownOpen) return;
+
+  // Extraction des genres présents dans la collection principale
   const genresSet = new Set();
   
   if (catalogData && Array.isArray(catalogData)) {
@@ -1267,47 +1273,56 @@ function renderPlannerGenreFilter() {
   }
 
   const genres = Array.from(genresSet).filter(Boolean).sort();
+  if (genres.length === 0) return;
 
-  if (genres.length === 0) {
-    container.style.display = 'none';
-    tagsCloud.innerHTML = '';
-    return;
-  }
-
-  container.style.display = 'block';
-
-  const activeCount = currentPlannerGenreFilters.size;
-  const btnLabel = activeCount > 0 
-    ? `🏷️ Genres (${activeCount}) ${isPlannerGenreDropdownOpen ? '▴' : '▾'}`
-    : `🏷️ Filtrer par genre ${isPlannerGenreDropdownOpen ? '▴' : '▾'}`;
+  // Création du conteneur du menu au premier plan
+  const menu = document.createElement('div');
+  menu.id = 'planner-genre-menu';
+  
+  // Placement au-dessus du bouton fixe (z-index: 2000)
+  Object.assign(menu.style, {
+    position: 'absolute',
+    bottom: 'calc(100% + 12px)',
+    right: '0',
+    minWidth: '240px',
+    maxWidth: '300px',
+    maxHeight: '220px',
+    overflowY: 'auto',
+    background: 'rgba(25, 25, 25, 0.95)',
+    backdropFilter: 'blur(12px)',
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    borderRadius: '16px',
+    padding: '10px',
+    boxShadow: '0 -8px 25px rgba(0, 0, 0, 0.5)',
+    zIndex: '2000',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '6px'
+  });
 
   let html = `
-    <button type="button" class="action-btn-dropdown" onclick="togglePlannerGenreDropdown()" style="padding: 6px 14px; border-radius: 20px; font-weight: bold; background: var(--bg-card, #222); color: var(--text-main, #fff); border: 1px solid rgba(255,255,255,0.2); cursor: pointer;">
-      ${btnLabel}
+    <button type="button" class="tag-btn ${currentPlannerGenreFilters.size === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="font-size: 0.8rem; padding: 4px 10px;">
+      Tous
     </button>
   `;
 
-  if (isPlannerGenreDropdownOpen) {
+  genres.forEach(genre => {
+    const isActive = currentPlannerGenreFilters.has(genre);
     html += `
-      <div class="genre-dropdown-menu" style="margin-top: 8px; padding: 10px; background: rgba(25, 25, 25, 0.95); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); display: flex; flex-wrap: wrap; gap: 6px; max-height: 180px; overflow-y: auto;">
-        <button type="button" class="tag-btn ${currentPlannerGenreFilters.size === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="font-size: 0.8rem; padding: 4px 10px;">
-          Tous
-        </button>
+      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${genre.replace(/'/g, "\\'")}')" style="font-size: 0.8rem; padding: 4px 10px; border-radius: 15px;">
+        ${isActive ? '✓ ' : ''}${genre}
+      </button>
     `;
+  });
 
-    genres.forEach(genre => {
-      const isActive = currentPlannerGenreFilters.has(genre);
-      html += `
-        <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${genre.replace(/'/g, "\\'")}')" style="font-size: 0.8rem; padding: 4px 10px; border-radius: 15px;">
-          ${isActive ? '✓ ' : ''}${genre}
-        </button>
-      `;
-    });
+  menu.innerHTML = html;
 
-    html += `</div>`;
+  // On attache le menu au conteneur `.compil-actions` en s'assurant qu'il est en position relative
+  const actionsContainer = genreBtn.closest('.compil-actions') || genreBtn.parentElement;
+  if (actionsContainer) {
+    actionsContainer.style.position = 'relative';
+    actionsContainer.appendChild(menu);
   }
-
-  tagsCloud.innerHTML = html;
 }
 
 function togglePlannerGenreDropdown() {
