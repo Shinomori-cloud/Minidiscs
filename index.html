@@ -53,12 +53,12 @@
       <form id="admin-form">
         <div class="form-group">
           <label>Genre(s)</label>
-          <input type="text" id="md-genre" placeholder="ex: ROCK, SYNTHWAVE (séparés par virgule)" required>
+          <input type="text" id="md-genre" list="genres-list" placeholder="ex: ROCK, SYNTHWAVE (séparés par virgule)" required>
         </div>
 
         <div class="form-group">
           <label>Type(s) de MiniDisc</label>
-          <input type="text" id="md-type-tags" placeholder="ex: ALBUM, LIVE, COMPILATION (séparés par virgule)">
+          <input type="text" id="md-type-tags" list="types-list" placeholder="ex: ALBUM, LIVE, COMPILATION (séparés par virgule)">
         </div>
 
         <div class="form-group">
@@ -132,7 +132,7 @@
 
         <div class="form-group">
           <label>Genre(s)</label>
-          <input type="text" id="idea-genre" placeholder="ex: ELECTRONIC, HOUSE">
+          <input type="text" id="idea-genre" list="genres-list" placeholder="ex: ELECTRONIC, HOUSE">
         </div>
 
         <div class="form-group">
@@ -156,6 +156,10 @@
   <!-- POP-UP TOAST -->
   <div id="toast" class="toast hidden"></div>
 
+  <!-- LISTES DE SUGGESTIONS DYNAMIQUES -->
+  <datalist id="genres-list"></datalist>
+  <datalist id="types-list"></datalist>
+
   <script src="app.js"></script>
 
   <!-- VIGNETTE FLOTTANTE COMBINÉE (FILTRE + RECHERCHE) -->
@@ -164,3 +168,4 @@
     <button id="search-fab-btn" class="action-btn" onclick="toggleSearch()" title="Rechercher">🔍</button>
   </div>
 </body>
+</html>
