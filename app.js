@@ -1464,19 +1464,28 @@ window.addEventListener('popstate', () => {
     }
   }
 
-// Remplit dynamiquement les menus déroulants avec les genres et types existants
+// Remplit dynamiquement les menus déroulants avec genres et types existants
 function populateFormDatalists() {
-  if (!catalogData) return;
+  if (!catalogData || !Array.isArray(catalogData)) return;
 
   const genresSet = new Set();
   const typesSet = new Set();
 
   catalogData.forEach(md => {
+    // Récupération sécurisée des genres
     if (typeof getMDAllGenres === 'function') {
       getMDAllGenres(md).forEach(g => genresSet.add(g));
+    } else if (md.genre) {
+      const gList = Array.isArray(md.genre) ? md.genre : md.genre.split(',');
+      gList.forEach(g => genresSet.add(g.trim()));
     }
+
+    // Récupération sécurisée des types
     if (typeof getMDAllTypes === 'function') {
       getMDAllTypes(md).forEach(t => typesSet.add(t));
+    } else if (md.type) {
+      const tList = Array.isArray(md.type) ? md.type : md.type.split(',');
+      tList.forEach(t => typesSet.add(t.trim()));
     }
   });
 
@@ -1485,6 +1494,7 @@ function populateFormDatalists() {
 
   if (genresDatalist) {
     genresDatalist.innerHTML = Array.from(genresSet)
+      .filter(Boolean)
       .sort()
       .map(g => `<option value="${g}">`)
       .join('');
@@ -1492,6 +1502,7 @@ function populateFormDatalists() {
 
   if (typesDatalist) {
     typesDatalist.innerHTML = Array.from(typesSet)
+      .filter(Boolean)
       .sort()
       .map(t => `<option value="${t}">`)
       .join('');
