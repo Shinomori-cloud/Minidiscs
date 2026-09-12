@@ -919,8 +919,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 /* Ciblage du tout premier bouton dans la barre d'actions du planificateur */
 .compil-actions button:first-child {
-  background-color: #06d6a0 !important; /* Ta couleur ici */
-  color: #000000 !important;
+  background-color: #ff007f !important; /* Ta couleur ici */
+  color: #ffffff !important;
 }
 
 /* ==========================================
