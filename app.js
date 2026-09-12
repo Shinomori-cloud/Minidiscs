@@ -1095,6 +1095,10 @@ function downloadUpdatedJSON() {
 /* ==========================================
    PLANIFICATEUR DE COMPILATION & IDÉES
    ========================================== */
+
+// 1. Variable globale pour le filtre de genre du planificateur
+let currentPlannerGenreFilter = null;
+
 function getIdeaList() {
   if (!catalogData) return [];
   if (!window.ideaAlbums) window.ideaAlbums = [];
@@ -1196,6 +1200,14 @@ function updatePlannerHeader() {
 function clearPlannerHeaderInfo() {
   const badge = document.getElementById('header-planner-badge');
   if (badge) badge.remove();
+
+  const genreFilter = document.getElementById('planner-genre-filter');
+  if (genreFilter) genreFilter.style.display = 'none';
+}
+
+function clearPlannerHeaderInfo() {
+  const badge = document.getElementById('header-planner-badge');
+  if (badge) badge.remove();
 }
 
 function injectPlannerHeaderBadge() {
@@ -1237,6 +1249,60 @@ function injectPlannerHeaderBadge() {
   }
 }
 
+function renderPlannerGenreFilter() {
+  const container = document.getElementById('planner-genre-filter');
+  const tagsCloud = document.getElementById('planner-tags-list');
+  if (!container || !tagsCloud) return;
+
+  // Extraction uniquement des genres présents dans la collection de MiniDiscs (catalogData)
+  const genresSet = new Set();
+  
+  if (catalogData && Array.isArray(catalogData)) {
+    catalogData.forEach(md => {
+      if (typeof getMDAllGenres === 'function') {
+        getMDAllGenres(md).forEach(g => genresSet.add(g.trim().toUpperCase()));
+      } else if (md.genre) {
+        const gList = Array.isArray(md.genre) ? md.genre : md.genre.split(',');
+        gList.forEach(g => genresSet.add(g.trim().toUpperCase()));
+      }
+    });
+  }
+
+  const genres = Array.from(genresSet).filter(Boolean).sort();
+
+  // Si aucun genre n'est trouvé dans le catalogue, on masque le conteneur
+  if (genres.length === 0) {
+    container.style.display = 'none';
+    tagsCloud.innerHTML = '';
+    return;
+  }
+
+  container.style.display = 'block';
+
+  // Bouton "Tous" + un bouton par genre issu des MiniDiscs
+  let html = `
+    <button type="button" class="tag-btn ${currentPlannerGenreFilter === null ? 'active' : ''}" onclick="filterPlannerByGenre(null)">
+      Tous
+    </button>
+  `;
+
+  genres.forEach(genre => {
+    const isActive = currentPlannerGenreFilter === genre;
+    html += `
+      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="filterPlannerByGenre('${genre.replace(/'/g, "\\'")}')">
+        ${genre}
+      </button>
+    `;
+  });
+
+  tagsCloud.innerHTML = html;
+}
+
+function filterPlannerByGenre(genre) {
+  currentPlannerGenreFilter = genre;
+  renderCompilPlanner(false);
+}
+
 function renderCompilPlanner(pushState = true) {
    const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
    if (fa) fa.style.display = 'none';
@@ -1251,23 +1317,29 @@ function renderCompilPlanner(pushState = true) {
   if (backBtn) backBtn.classList.remove('hidden');
   if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
 
-  if (pushState && window.location.hash !== '#planner') {
-    history.pushState({ view: 'planner' }, '', '#planner');
-  }
   injectPlannerHeaderBadge();
 
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
-  if (pushState && window.location.hash !== '#planner') {
-    history.pushState({ view: 'planner' }, '', '#planner');
+  const rawIdeas = getIdeaList();
+
+  // Filtrage des idées selon le genre sélectionné
+  let filteredIdeas = rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex }));
+  if (currentPlannerGenreFilter) {
+    filteredIdeas = filteredIdeas.filter(item => {
+      if (!item.genre) return false;
+      const itemGenres = Array.isArray(item.genre) 
+        ? item.genre.map(g => g.trim().toUpperCase())
+        : item.genre.split(',').map(g => g.trim().toUpperCase());
+      return itemGenres.includes(currentPlannerGenreFilter);
+    });
   }
 
-  const rawIdeas = getIdeaList();
-  const ideas = dailyShuffle(rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex })), '-planner');
+  const ideas = dailyShuffle(filteredIdeas, '-planner');
 
   let cardsHTML = '';
   if (ideas.length === 0) {
-    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album dans votre liste d'idées. Ajoutez-en avec le bouton ci-dessous !</p>`;
+    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album trouvé${currentPlannerGenreFilter ? ' pour ce genre' : ''}.</p>`;
   } else {
     ideas.forEach((item) => {
       const index = item.originalIndex;
@@ -1307,6 +1379,8 @@ function renderCompilPlanner(pushState = true) {
     </div>
   `;
 
+  // Injection des boutons de genres et mise à jour du header
+  renderPlannerGenreFilter();
   updatePlannerHeader();
 
   const gridContainer = document.getElementById('ideas-grid-container');
