@@ -1,9 +1,6 @@
 /* ==========================================
    VARIABLES GLOBALES & ÉLÉMENTS DOM
    ========================================== */
-/* ==========================================
-   VARIABLES GLOBALES & ÉLÉMENTS DOM
-   ========================================== */
 let catalogData = null;
 let currentMD = null;
 let currentAlbum = null;
@@ -1103,9 +1100,6 @@ function downloadUpdatedJSON() {
    PLANIFICATEUR DE COMPILATION & IDÉES
    ========================================== */
 
-// 1. Variable globale pour le filtre de genre du planificateur
-let currentPlannerGenreFilter = null;
-
 function getIdeaList() {
   if (!catalogData) return [];
   if (!window.ideaAlbums) window.ideaAlbums = [];
@@ -1210,11 +1204,8 @@ function clearPlannerHeaderInfo() {
 
   const genreFilter = document.getElementById('planner-genre-filter');
   if (genreFilter) genreFilter.style.display = 'none';
-}
 
-function clearPlannerHeaderInfo() {
-  const badge = document.getElementById('header-planner-badge');
-  if (badge) badge.remove();
+  isPlannerGenreDropdownOpen = false;
 }
 
 function injectPlannerHeaderBadge() {
@@ -1261,7 +1252,7 @@ function renderPlannerGenreFilter() {
   const tagsCloud = document.getElementById('planner-tags-list');
   if (!container || !tagsCloud) return;
 
-  // Extraction uniquement des genres présents dans la collection de MiniDiscs (catalogData)
+  // Extraction uniquement des genres présents dans la collection principale de MiniDiscs (catalogData)
   const genresSet = new Set();
   
   if (catalogData && Array.isArray(catalogData)) {
@@ -1277,7 +1268,6 @@ function renderPlannerGenreFilter() {
 
   const genres = Array.from(genresSet).filter(Boolean).sort();
 
-  // Si aucun genre n'est trouvé dans le catalogue, on masque le conteneur
   if (genres.length === 0) {
     container.style.display = 'none';
     tagsCloud.innerHTML = '';
@@ -1286,27 +1276,56 @@ function renderPlannerGenreFilter() {
 
   container.style.display = 'block';
 
-  // Bouton "Tous" + un bouton par genre issu des MiniDiscs
+  const activeCount = currentPlannerGenreFilters.size;
+  const btnLabel = activeCount > 0 
+    ? `🏷️ Genres (${activeCount}) ${isPlannerGenreDropdownOpen ? '▴' : '▾'}`
+    : `🏷️ Filtrer par genre ${isPlannerGenreDropdownOpen ? '▴' : '▾'}`;
+
   let html = `
-    <button type="button" class="tag-btn ${currentPlannerGenreFilter === null ? 'active' : ''}" onclick="filterPlannerByGenre(null)">
-      Tous
+    <button type="button" class="action-btn-dropdown" onclick="togglePlannerGenreDropdown()" style="padding: 6px 14px; border-radius: 20px; font-weight: bold; background: var(--bg-card, #222); color: var(--text-main, #fff); border: 1px solid rgba(255,255,255,0.2); cursor: pointer;">
+      ${btnLabel}
     </button>
   `;
 
-  genres.forEach(genre => {
-    const isActive = currentPlannerGenreFilter === genre;
+  if (isPlannerGenreDropdownOpen) {
     html += `
-      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="filterPlannerByGenre('${genre.replace(/'/g, "\\'")}')">
-        ${genre}
-      </button>
+      <div class="genre-dropdown-menu" style="margin-top: 8px; padding: 10px; background: rgba(25, 25, 25, 0.95); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); display: flex; flex-wrap: wrap; gap: 6px; max-height: 180px; overflow-y: auto;">
+        <button type="button" class="tag-btn ${currentPlannerGenreFilters.size === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="font-size: 0.8rem; padding: 4px 10px;">
+          Tous
+        </button>
     `;
-  });
+
+    genres.forEach(genre => {
+      const isActive = currentPlannerGenreFilters.has(genre);
+      html += `
+        <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${genre.replace(/'/g, "\\'")}')" style="font-size: 0.8rem; padding: 4px 10px; border-radius: 15px;">
+          ${isActive ? '✓ ' : ''}${genre}
+        </button>
+      `;
+    });
+
+    html += `</div>`;
+  }
 
   tagsCloud.innerHTML = html;
 }
 
-function filterPlannerByGenre(genre) {
-  currentPlannerGenreFilter = genre;
+function togglePlannerGenreDropdown() {
+  isPlannerGenreDropdownOpen = !isPlannerGenreDropdownOpen;
+  renderPlannerGenreFilter();
+}
+
+function togglePlannerGenre(genre) {
+  if (currentPlannerGenreFilters.has(genre)) {
+    currentPlannerGenreFilters.delete(genre);
+  } else {
+    currentPlannerGenreFilters.add(genre);
+  }
+  renderCompilPlanner(false);
+}
+
+function clearPlannerGenreFilters() {
+  currentPlannerGenreFilters.clear();
   renderCompilPlanner(false);
 }
 
@@ -1330,15 +1349,15 @@ function renderCompilPlanner(pushState = true) {
 
   const rawIdeas = getIdeaList();
 
-  // Filtrage des idées selon le genre sélectionné
+  // Filtrage des idées par sélection multiple de genres
   let filteredIdeas = rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex }));
-  if (currentPlannerGenreFilter) {
+  if (currentPlannerGenreFilters.size > 0) {
     filteredIdeas = filteredIdeas.filter(item => {
       if (!item.genre) return false;
       const itemGenres = Array.isArray(item.genre) 
         ? item.genre.map(g => g.trim().toUpperCase())
         : item.genre.split(',').map(g => g.trim().toUpperCase());
-      return itemGenres.includes(currentPlannerGenreFilter);
+      return itemGenres.some(g => currentPlannerGenreFilters.has(g));
     });
   }
 
@@ -1346,7 +1365,7 @@ function renderCompilPlanner(pushState = true) {
 
   let cardsHTML = '';
   if (ideas.length === 0) {
-    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album trouvé${currentPlannerGenreFilter ? ' pour ce genre' : ''}.</p>`;
+    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album trouvé${currentPlannerGenreFilters.size > 0 ? ' pour ce(s) genre(s)' : ''}.</p>`;
   } else {
     ideas.forEach((item) => {
       const index = item.originalIndex;
@@ -1386,7 +1405,6 @@ function renderCompilPlanner(pushState = true) {
     </div>
   `;
 
-  // Injection des boutons de genres et mise à jour du header
   renderPlannerGenreFilter();
   updatePlannerHeader();
 
