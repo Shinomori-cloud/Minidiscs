@@ -1134,17 +1134,6 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   FORMULAIRES : RELIEF
-   ========================================== */
-
-/* Bordure nette et relief rétro 90s pour détacher le formulaire du fond */
-.modal-content {
-  border: 3px solid #000000;
-  box-shadow: 6px 6px 0px #000000;
-  background-color: #ffffff;
-}
-
-/* ==========================================
    10. TOAST & FAB
    ========================================== */
 .toast {
