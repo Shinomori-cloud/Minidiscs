@@ -308,6 +308,9 @@ function processLoadedData(data) {
     catalogData = [];
     if (!window.ideaAlbums) window.ideaAlbums = [];
   }
+
+// Remplissage dynamique des menus déroulants une fois catalogData chargé
+  populateFormDatalists();
 }
 
 fetch('data.json')
@@ -819,6 +822,9 @@ function deleteMD(index) {
    GESTION DE LA MODALE ADMIN
    ========================================== */
 function openAdminModal(indexToEdit = null) {
+  // Rafraîchir les listes de suggestions (genres / types)
+  populateFormDatalists();
+
   editingMDIndex = indexToEdit;
   const modalTitle = document.querySelector('#admin-modal h3');
   const albumsContainer = document.getElementById('albums-container');
@@ -1365,6 +1371,7 @@ function clearIdeaSelection() {
 }
 
 function openIdeaModal() {
+  populateFormDatalists();
   const form = document.getElementById('idea-form');
   if (form) form.reset();
   const coverInput = document.getElementById('idea-cover');
