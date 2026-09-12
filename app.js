@@ -67,7 +67,7 @@ function toggleSearch() {
 
   if (!isClosed) {
     topSearch.classList.add('closed');
-    if (fabBtn) fabBtn.textContent = 'Search';
+    if (fabBtn) fabBtn.textContent = '| Search';
     if (currentSearchQuery !== '') {
       currentSearchQuery = '';
       if (searchInput) searchInput.value = '';
