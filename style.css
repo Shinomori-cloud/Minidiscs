@@ -1241,23 +1241,31 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: none !important;
 }
 
-/* Style du texte du bouton filtre (All, Rec, Ok) */
-#filter-fab-btn {
-  font-family: inherit; /* Utilise la police globale de ton app */
-  font-size: 0.75rem !important; /* Taille de la police */
-  font-weight: 800 !important; /* Épaisseur (ex: 700 ou 900 pour un style retro/bold) */
-  color: #ffffff !important; /* Couleur du texte */
-  letter-spacing: 0.5px; /* Espacement entre les lettres */
+/* Style unifié pour le bouton filtre ET le bouton Search / ✕ */
+#filter-fab-btn,
+.floating-actions-bar button,
+#floating-actions button,
+.floating-actions-bar button *,
+#floating-actions button * {
+  font-family: inherit !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  letter-spacing: 0.5px !important;
   
-/* Ajustements de taille du bouton pour accueillir le texte */
   width: auto !important;
   min-width: 32px;
   padding: 2px 6px !important;
 
-/* --- AJOUTS POUR HARMONISER "| SEARCH" ET "✕" --- */
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   white-space: nowrap !important;
   line-height: 1 !important;
+}
+  
+/* Ajustements de taille du bouton pour accueillir le texte */
+  width: auto !important;
+  min-width: 32px;
+  padding: 2px 6px !important;
 }
