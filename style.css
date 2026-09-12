@@ -1157,7 +1157,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 3px 3px 0px #000000;
   z-index: 1500;
   transition: opacity 0.2s ease;
-  height: 32px; /* Hauteur fixe optionnelle */
+  height: 34px; /* Hauteur fixe optionnelle */
   box-sizing: border-box; /* Assure que la bordure reste incluse dans la hauteur */
 }
 
