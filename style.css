@@ -1249,8 +1249,15 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   color: #ffffff !important; /* Couleur du texte */
   letter-spacing: 0.5px; /* Espacement entre les lettres */
   
-  /* Ajustements de taille du bouton pour accueillir le texte */
+/* Ajustements de taille du bouton pour accueillir le texte */
   width: auto !important;
   min-width: 32px;
   padding: 2px 6px !important;
+
+/* --- AJOUTS POUR HARMONISER "| SEARCH" ET "✕" --- */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
 }
