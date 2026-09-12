@@ -1,6 +1,9 @@
 /* ==========================================
    VARIABLES GLOBALES & ÉLÉMENTS DOM
    ========================================== */
+/* ==========================================
+   VARIABLES GLOBALES & ÉLÉMENTS DOM
+   ========================================== */
 let catalogData = null;
 let currentMD = null;
 let currentAlbum = null;
@@ -13,6 +16,10 @@ let toastTimeout = null;
 let hasUnsavedChanges = false;
 let selectedIdeaIndices = new Set();
 let currentRecordFilter = 'all'; // 'all', 'toRecord', 'recorded'
+
+// Filtre multi-genres et état du menu déroulant du planificateur
+let currentPlannerGenreFilters = new Set();
+let isPlannerGenreDropdownOpen = false;
 
 const STORAGE_KEY = 'minidisc_catalog_backup';
 
