@@ -1190,58 +1190,91 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: none !important;
 }
 
-/* Vignette flottante (Filtre + Recherche + Genre + Ajout) */
-.floating-actions-bar {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
+/* ==========================================
+   BOUTON FLOTTANT UNIQUE & MENU DÉROULANT
+   ========================================== */
+
+/* Conteneur fixe en bas à droite */
+#floating-actions.fab-container {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+}
+
+/* Règle stricte : masque le bouton s'il a la classe hidden */
+#floating-actions.fab-container.hidden {
+  display: none !important;
+}
+
+/* Bouton principal rond ⚙️ */
+#floating-actions .fab-main-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  font-size: 1.4rem;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  
-  /* Largeur ajustée pour 4 boutons */
-  width: 220px; 
-  
-  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
-  border: 3px solid #000000;
-  border-radius: 30px;
-  padding: 4px 12px;
+  justify-content: center;
+  transition: transform 0.15s ease, background-color 0.15s;
+}
+
+#floating-actions .fab-main-btn:active {
+  transform: scale(0.92);
+}
+
+/* Menu déroulant au-dessus du bouton */
+#floating-actions #fab-menu {
+  position: absolute;
+  bottom: 62px;
+  right: 0;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px;
+  background: #ffffff;
+  padding: 8px;
+  border-radius: 12px;
+  border: 2px solid #000000;
   box-shadow: 4px 4px 0px #000000;
-  z-index: 1500;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  height: 46px;
-  box-sizing: border-box;
+  min-width: 190px;
 }
 
-.floating-actions-bar .action-btn,
-#btn-add-md,
-#filter-fab-btn,
-#btn-search,
-#btn-filter-genre {
-  background: none;
+#floating-actions #fab-menu.hidden {
+  display: none !important;
+}
+
+/* Éléments du menu */
+#floating-actions .fab-item {
+  background: transparent;
   border: none;
-  font-family: inherit !important;
-  font-size: 1.1rem !important;
-  color: #ffffff !important;
-  width: 36px !important;
-  height: 36px !important;
-  padding: 0 !important;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
   cursor: pointer;
-  border-radius: 50%;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  line-height: 1 !important;
-  transition: background-color 0.2s, transform 0.1s;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: background 0.15s ease;
 }
 
-.floating-actions-bar .action-btn:active {
-  transform: scale(0.85);
+#floating-actions .fab-item:hover {
+  background-color: #f0f4f8;
 }
 
-.floating-actions-bar .action-btn.active {
-  background-color: rgba(255, 255, 255, 0.25);
+/* Ligne de séparation dans le menu */
+#floating-actions .fab-divider {
+  border: 0;
+  height: 1px;
+  background: #e0e0e0;
+  margin: 4px 0;
 }
 
 /* ==========================================
