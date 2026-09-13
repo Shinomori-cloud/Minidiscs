@@ -923,11 +923,17 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   color: #ffffff !important;
 }
 
-/* FILTRES MULTIPLES PLANIFICATEUR */
-.genre-filter-container {
-  margin: 10px 0 15px 0;
-  padding: 0;
-  background: transparent !important; /* Arrière-plan supprimé */
+/* ==========================================
+   FILTRES PLANIFICATEUR (SANS ENCART GRIS)
+   ========================================== */
+#planner-view .genre-filter-container {
+  margin: 10px 0 15px 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  position: static !important;
+  width: 100% !important;
 }
 
 .tags-cloud {
@@ -949,7 +955,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .tag-btn.active {
-  background: #ff007f; /* Couleur active rétro */
+  background: #ff007f;
   color: #ffffff;
   box-shadow: 1px 1px 0px #000000;
   transform: translate(1px, 1px);
@@ -1036,8 +1042,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   max-width: 500px;
   margin: 40px auto;
   color: var(--text-main);
-  border: 2px solid #000;
-  box-shadow: 4px 4px 0px #000;
+  border: 3px solid #000000;
+  box-shadow: 6px 6px 0px #000000;
 }
 
 .modal-header {
@@ -1146,39 +1152,12 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 2px 2px 0px #000;
 }
 
-/* ==========================================
-   FORMULAIRES : POLICE RÉDUITE ET RELIEF
-   ========================================== */
-
-/* Réduction de la taille de police dans les champs de saisie */
+/* Formulaires */
 .modal-content input,
 .modal-content select,
 .modal-content textarea {
   font-size: 0.85rem;
   padding: 6px 8px;
-}
-
-/* Bordure nette et relief rétro 90s pour détacher le formulaire du fond */
-.modal-content {
-  border: 3px solid #000000;
-  box-shadow: 6px 6px 0px #000000;
-  background-color: #ffffff;
-}
-
-.genre-filter-container {
-  position: fixed;
-  bottom: 65px;
-  right: 20px;
-  background: #ffffff;
-  border: 3px solid #000000;
-  border-radius: 12px;
-  padding: 10px;
-  box-shadow: 4px 4px 0px #000000;
-  z-index: 1400;
-  max-width: 280px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
 }
 
 /* ==========================================
@@ -1203,13 +1182,12 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   white-space: nowrap;
 }
 
-.toast.hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, 20px);
+.toast.hidden,
+.hidden {
+  display: none !important;
 }
 
-/* Vignette flottante combinée (Filtre + Recherche) */
+/* Vignette flottante (Filtre + Recherche) */
 .floating-actions-bar {
   position: fixed;
   bottom: 20px;
@@ -1228,7 +1206,6 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-sizing: border-box;
 }
 
-/* Style unifié pour les boutons à l'intérieur de la vignette flottante */
 .floating-actions-bar .action-btn,
 #filter-fab-btn,
 #btn-search,
@@ -1258,44 +1235,21 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   transform: scale(0.9);
 }
 
-/* Bouton actif (quand un filtre est sélectionné) */
 .floating-actions-bar .action-btn.active {
   color: #ffffff;
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Menu déroulant des filtres (affiche le conteneur juste au-dessus de la barre flottante) */
-.genre-filter-container {
-  position: fixed;
-  bottom: 65px;
-  right: 20px;
-  background: #ffffff;
-  border: 3px solid #000000;
-  border-radius: 12px;
-  padding: 10px;
-  box-shadow: 4px 4px 0px #000000;
-  z-index: 1400;
-  max-width: 280px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-/* Classe utilitaire globale */
-.hidden {
-  display: none !important;
-}
-
 /* ==========================================
-   MENU DE FILTRES MINIDISC (VERROUILLAGE BLOC)
+   11. MENU DE FILTRES DROPDOWN (ISOLATION TOTALE)
    ========================================== */
-
 #genre-filter-dropdown.hidden {
   display: none !important;
 }
 
 #genre-filter-dropdown:not(.hidden) {
-  display: block !important;
+  display: flex !important;
+  flex-direction: column !important;
   position: fixed !important;
   bottom: 65px !important;
   right: 20px !important;
@@ -1318,28 +1272,26 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   padding-bottom: 8px !important;
   border-bottom: 2px solid #000000 !important;
   box-sizing: border-box !important;
+  flex-shrink: 0 !important;
 }
 
 .md-filter-list {
-  display: block !important;
+  display: flex !important;
+  flex-direction: column !important;
   width: 100% !important;
   max-height: calc(60vh - 65px) !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   box-sizing: border-box !important;
-  padding-right: 4px !important;
+  gap: 8px !important;
+  padding-right: 2px !important;
 }
 
-/* Reinitialisation stricte des boutons pour tuer toute derivation latérale */
-#genre-filter-dropdown button.md-filter-btn {
+/* Boutons de la fenêtre de filtre */
+#genre-filter-dropdown .md-filter-btn {
   display: block !important;
-  float: none !important;
-  clear: both !important;
-  position: static !important;
   width: 100% !important;
-  min-width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 0 8px 0 !important;
+  margin: 0 !important;
   padding: 8px 10px !important;
   background: #f0f0f0 !important;
   color: #000000 !important;
@@ -1352,24 +1304,20 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   cursor: pointer !important;
   box-shadow: 2px 2px 0px #000000 !important;
   box-sizing: border-box !important;
-  transform: none !important;
-  transition: background-color 0.15s !important;
+  transition: transform 0.1s, background-color 0.15s !important;
+  flex-shrink: 0 !important;
 }
 
-#genre-filter-dropdown .md-filter-list button.md-filter-btn:last-child {
-  margin-bottom: 0 !important;
-}
-
-#genre-filter-dropdown button.md-filter-btn:hover {
+#genre-filter-dropdown .md-filter-btn:hover {
   background: #e0e0e0 !important;
 }
 
-#genre-filter-dropdown button.md-filter-btn:active {
+#genre-filter-dropdown .md-filter-btn:active {
   transform: translate(1px, 1px) !important;
   box-shadow: 1px 1px 0px #000000 !important;
 }
 
-#genre-filter-dropdown button.md-filter-btn.active {
+#genre-filter-dropdown .md-filter-btn.active {
   background: #ff007f !important;
   color: #ffffff !important;
 }
