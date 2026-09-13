@@ -1302,6 +1302,18 @@ function injectPlannerHeaderBadge() {
   }
 }
 
+// Extraction utilitaire des genres d'un item (compatible avec le Dashboard)
+function getItemGenresList(item) {
+  if (typeof getMDAllGenres === 'function') {
+    return getMDAllGenres(item);
+  }
+  if (!item || !item.genre) return [];
+  if (Array.isArray(item.genre)) {
+    return item.genre.map(g => String(g).trim().toUpperCase()).filter(Boolean);
+  }
+  return String(item.genre).split(',').map(g => g.trim().toUpperCase()).filter(Boolean);
+}
+
 /* RENDU DU PLANIFICATEUR AVEC CARTES ET BARRE D'ACTIONS FLOTTANTE */
 function renderCompilPlanner(pushState = true) {
   if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
@@ -1332,11 +1344,11 @@ function renderCompilPlanner(pushState = true) {
 
   const rawIdeas = getIdeaList();
 
-  // Filtrage par genre
+  // Filtrage par genre avec extraction propre
   const filteredIdeas = rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex })).filter(item => {
     if (typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.size > 0) {
-      const itemGenre = (item.genre || '').trim().toUpperCase();
-      return currentPlannerGenreFilters.has(itemGenre);
+      const itemGenres = getItemGenresList(item);
+      return Array.from(currentPlannerGenreFilters).some(g => itemGenres.includes(g));
     }
     return true;
   });
@@ -1473,14 +1485,16 @@ function renderPlannerGenreFilter() {
 
   const genresSet = new Set();
   const ideas = getIdeaList();
+  
+  // Extraction propre des genres uniques à partir de la liste d'idées
   ideas.forEach(item => {
-    if (item.genre) genresSet.add(item.genre.trim().toUpperCase());
+    const itemGenres = getItemGenresList(item);
+    itemGenres.forEach(g => genresSet.add(g));
   });
 
-  const genres = Array.from(genresSet).filter(Boolean).sort();
+  const genres = Array.from(genresSet).sort();
   if (genres.length === 0) return;
 
-  // Calcul du positionnement dynamique au-dessus du bouton "Genres"
   const rect = genreBtn.getBoundingClientRect();
 
   const menu = document.createElement('div');
@@ -1582,7 +1596,7 @@ function openIdeaModal() {
   const coverInput = document.getElementById('idea-cover');
   if (coverInput) coverInput.value = "images/";
   const modal = document.getElementById('idea-modal');
-  if (modal) modal.classList.remove('hidden');
+  if (modal) modal.classList.add('hidden');
 }
 
 function closeIdeaModal() {
