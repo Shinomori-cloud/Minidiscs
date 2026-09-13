@@ -1467,6 +1467,9 @@ function getItemGenresList(item) {
 /* RENDU DU PLANIFICATEUR - VERSION SÉCURISÉE */
 function renderCompilPlanner(pushState = true) {
   try {
+    // Initialise l'état du sous-menu fermé au chargement de la vue
+    window.isPlannerGenreDropdownOpen = false;
+
     if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
 
     const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
@@ -1474,7 +1477,7 @@ function renderCompilPlanner(pushState = true) {
       fa.style.display = 'flex';
       fa.classList.remove('hidden');
     }
-
+     
     if (typeof currentMD !== 'undefined') window.currentMD = null;
     if (typeof currentAlbum !== 'undefined') window.currentAlbum = null;
 
@@ -1609,9 +1612,11 @@ function togglePlannerFabMenu() {
   const isOpening = (menu.style.display === 'none' || menu.style.display === '');
   menu.style.display = isOpening ? 'flex' : 'none';
 
-  // Réinitialise l'état du sous-menu à la fermeture du menu principal
+  // Réinitialise l'état et retire le sous-menu du DOM à la fermeture
   if (!isOpening) {
     window.isPlannerGenreDropdownOpen = false;
+    const subMenu = document.getElementById('planner-genre-submenu');
+    if (subMenu) subMenu.remove();
   }
 }
 
@@ -1633,8 +1638,7 @@ function toggleIdeaSelection(index) {
 }
 
 function togglePlannerGenreDropdown() {
-  // Correction 1 : bascule nette dès le 1er clic sans état 'undefined'
-  window.isPlannerGenreDropdownOpen = !window.isPlannerGenreDropdownOpen;
+  window.isPlannerGenreDropdownOpen = !Boolean(window.isPlannerGenreDropdownOpen);
   renderPlannerGenreFilter();
 }
 
@@ -1684,10 +1688,23 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
     gap: '6px',
     maxHeight: '180px',
     overflowY: 'auto',
-    // Correction 2 : bloque le pull-to-refresh natif sur mobile au scroll
     overscrollBehavior: 'contain',
+    touchAction: 'pan-y',
     webkitOverflowScrolling: 'touch'
   });
+
+  // Intercepte le geste vers le bas tout en haut du menu pour bloquer le pull-to-refresh
+  let startY = 0;
+  scrollArea.addEventListener('touchstart', (e) => {
+    startY = e.touches[0].pageY;
+  }, { passive: true });
+
+  scrollArea.addEventListener('touchmove', (e) => {
+    const currentY = e.touches[0].pageY;
+    if (scrollArea.scrollTop === 0 && currentY > startY) {
+      e.stopPropagation();
+    }
+  }, { passive: true });
 
   const activeFilters = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters : new Set();
 
@@ -1734,7 +1751,6 @@ function togglePlannerGenreFilter(genre) {
 
   renderCompilPlanner(false);
 
-  // Correction 3 : réouvre le menu parent et garde le sous-menu actif après le rendu de la grille
   const menu = document.getElementById('planner-fab-menu');
   if (menu) menu.style.display = 'flex';
   window.isPlannerGenreDropdownOpen = true;
@@ -1748,7 +1764,6 @@ function clearPlannerGenreFilters() {
   }
   renderCompilPlanner(false);
 
-  // Correction 3 : conserve le menu ouvert lors de la réinitialisation des filtres
   const menu = document.getElementById('planner-fab-menu');
   if (menu) menu.style.display = 'flex';
   window.isPlannerGenreDropdownOpen = true;
