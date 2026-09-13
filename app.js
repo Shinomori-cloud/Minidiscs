@@ -1378,25 +1378,25 @@ function renderCompilPlanner(pushState = true) {
       </div>
 
 <div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
-        <div class="compil-actions" style="display:flex; gap:8px; max-width: 600px; width:100%; justify-content: center; background: rgba(30, 30, 30, 0.9); backdrop-filter: blur(10px); padding: 10px 14px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); pointer-events: auto; align-items: center;">
+        <div class="compil-actions" style="display: flex; gap: 8px; max-width: 600px; width: 100%; justify-content: center; align-items: stretch; background: rgba(30, 30, 30, 0.9); backdrop-filter: blur(10px); padding: 10px 14px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); pointer-events: auto;">
           
-          <!-- 1. AJOUTER (Largeur: flex / Hauteur: min-height) -->
-          <button type="button" class="btn-primary" id="planner-btn-add" style="flex: 1; min-height: 44px; border-radius: 20px; font-size: 0.8rem; padding: 6px 8px;">
+          <!-- 1. AJOUTER -->
+          <button type="button" class="btn-primary" id="planner-btn-add" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.8rem; padding: 0 8px;">
             ＋ Ajouter
           </button>
 
           <!-- 2. CONVERTIR -->
-          <button type="button" class="btn-secondary" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="flex: 1; min-height: 44px; border-radius: 20px; font-size: 0.8rem; padding: 6px 8px; background: #06d6a0; color: #000;">
+          <button type="button" class="btn-secondary" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.8rem; padding: 0 8px; background: #06d6a0; color: #000; font-weight: bold;">
             💾 Convertir (${selectedIdeaIndices.size})
           </button>
 
           <!-- 3. RÉINITIALISER -->
-          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex: 1; min-height: 44px; border-radius: 20px; font-size: 0.8rem; padding: 6px 8px;">
+          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.8rem; padding: 0 8px;">
             Réinitialiser
           </button>
 
-          <!-- 4. GENRES (Déplacé à droite) -->
-          <button type="button" class="tag-btn" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="flex: 1; min-height: 44px; border-radius: 20px; font-size: 0.8rem; padding: 6px 8px;">
+          <!-- 4. GENRES -->
+          <button type="button" class="tag-btn" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.8rem; padding: 0 8px;">
             🏷️ Genres
           </button>
 
