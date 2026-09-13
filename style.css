@@ -1474,3 +1474,20 @@ html, body {
   background-color: #e9ecef;
   color: #000;
 }
+
+/* Défilement fluide pour le sous-menu des genres s'il y en a beaucoup */
+#floating-actions .fab-scrollable-submenu {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-right: 4px;
+}
+
+/* Scrollbar discrète pour le sous-menu */
+#floating-actions .fab-scrollable-submenu::-webkit-scrollbar {
+  width: 4px;
+}
+
+#floating-actions .fab-scrollable-submenu::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
