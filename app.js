@@ -1229,7 +1229,7 @@ function updatePlannerHeader() {
   const convertBtn = document.getElementById('planner-btn-convert');
   if (convertBtn) {
     convertBtn.disabled = selectedIdeaIndices.size === 0;
-    convertBtn.textContent = `💾 Convertir en MD (${selectedIdeaIndices.size})`;
+    convertBtn.textContent = `💾 Convertir (${selectedIdeaIndices.size})`;
   }
 
   const remainingSeconds = maxSeconds - totalSeconds;
@@ -1341,7 +1341,7 @@ function renderCompilPlanner(pushState = true) {
     return true;
   });
 
-  // Melange quotidien si la fonction existe, sinon liste directe
+  // Mélange quotidien si la fonction existe, sinon liste directe
   const ideas = typeof dailyShuffle === 'function' ? dailyShuffle(filteredIdeas, '-planner') : filteredIdeas;
 
   let cardsHTML = '';
@@ -1377,7 +1377,7 @@ function renderCompilPlanner(pushState = true) {
         ${cardsHTML}
       </div>
 
-<div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
+      <div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
         <div class="compil-actions" style="display: flex; gap: 8px; max-width: 600px; width: 100%; justify-content: center; align-items: stretch; background: rgba(30, 30, 30, 0.9); backdrop-filter: blur(10px); padding: 10px 14px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); pointer-events: auto;">
           
           <!-- 1. AJOUTER -->
@@ -1480,17 +1480,19 @@ function renderPlannerGenreFilter() {
   const genres = Array.from(genresSet).filter(Boolean).sort();
   if (genres.length === 0) return;
 
+  // Calcul du positionnement dynamique au-dessus du bouton "Genres"
+  const rect = genreBtn.getBoundingClientRect();
+
   const menu = document.createElement('div');
   menu.id = 'planner-genre-menu';
   
   Object.assign(menu.style, {
     position: 'fixed',
-    bottom: '75px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    minWidth: '220px',
-    maxWidth: '300px',
-    maxHeight: '220px',
+    bottom: `${window.innerHeight - rect.top + 8}px`,
+    right: `${window.innerWidth - rect.right}px`,
+    minWidth: '180px',
+    maxWidth: '260px',
+    maxHeight: '360px',
     overflowY: 'auto',
     background: 'rgba(25, 25, 25, 0.95)',
     backdropFilter: 'blur(12px)',
