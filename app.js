@@ -82,31 +82,14 @@ function toggleSearch() {
 }
 
 // Ouvre et ferme le sous-menu des genres dans le FAB avec la bonne liste
+// Ouvre et ferme le sous-menu des genres dans le FAB et génère sa liste
 function toggleGenreDropdown() {
   toggleFabSubmenu('genres-submenu');
 
   const submenu = document.getElementById('genres-submenu');
   
   if (submenu && !submenu.classList.contains('hidden')) {
-    // 1. On cherche d'où vient la liste des genres
-    let genresList = [];
-
-    if (typeof getAllGenres === 'function') {
-      genresList = getAllGenres();
-    } else if (typeof extractUniqueGenres === 'function') {
-      genresList = extractUniqueGenres();
-    } else if (typeof minidiscs !== 'undefined' && Array.isArray(minidiscs)) {
-      // Extraction directe si tu as un tableau "minidiscs"
-      const set = new Set();
-      minidiscs.forEach(md => {
-        if (md.genre) set.add(md.genre);
-        if (Array.isArray(md.genres)) md.genres.forEach(g => set.add(g));
-      });
-      genresList = Array.from(set).sort();
-    }
-
-    // 2. On injecte dans le FAB
-    populateFabGenreMenu(genresList);
+    populateFabGenreMenu();
   }
 }
 
