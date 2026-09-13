@@ -180,7 +180,7 @@
     
     <!-- 1. Filtre par statut avec sous-menu -->
     <button type="button" class="fab-item" onclick="toggleFabSubmenu('status-submenu')">
-      💿 Filtrer par statut ▾
+      🔴 Filtrer par statut ▾
     </button>
     <div id="status-submenu" class="fab-submenu hidden">
       <!-- Remplace "setRecordFilter" par ta vraie fonction de filtrage si besoin -->
@@ -191,12 +191,12 @@
 
     <!-- 2. Recherche (ne ferme plus le menu) -->
     <button type="button" class="fab-item" onclick="toggleSearch();">
-      🔍 Rechercher
+      🧐 Rechercher
     </button>
 
     <!-- 3. Filtre par genre avec sous-menu dynamique -->
 <button type="button" class="fab-item" onclick="toggleGenreDropdown()">
-  🎨 Filtrer par genre ▾
+  📻 Filtrer par genre ▾
 </button>
 <div id="genres-submenu" class="fab-submenu hidden fab-scrollable-submenu">
   <!-- Les genres seront injectés ici par JS -->
@@ -206,7 +206,7 @@
     
     <!-- 4. Administration (ferme le menu car on change d'écran) -->
     <button type="button" class="fab-item" onclick="openAdminModal(); toggleFabMenu();">
-      ➕ Ajouter un MD
+      💽 Ajouter un MD
     </button>
     <button type="button" class="fab-item" onclick="downloadUpdatedJSON(); toggleFabMenu();">
       💾 Exporter le JSON
@@ -215,7 +215,7 @@
 
   <!-- Le bouton déclencheur unique -->
   <button type="button" id="fab-main-btn" class="fab-main-btn" onclick="toggleFabMenu()" title="Menu principal">
-    ⚙️
+    🎚️
   </button>
 </div>
 
