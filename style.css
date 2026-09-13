@@ -1209,22 +1209,33 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 3px 3px 0px #000000;
   z-index: 1500;
   transition: opacity 0.2s ease;
-  height: 36px; /* Hauteur fixe optionnelle */
-  box-sizing: border-box; /* Assure que la bordure reste incluse dans la hauteur */
+  height: 36px;
+  box-sizing: border-box;
 }
 
-/* Boutons à l'intérieur de la vignette */
-.floating-actions-bar .action-btn {
+/* Style unifié pour les boutons à l'intérieur de la vignette flottante */
+.floating-actions-bar .action-btn,
+#filter-fab-btn,
+#btn-search,
+#btn-filter-genre {
   background: none;
   border: none;
-  font-size: 1.1rem;
-  width: 38px;
-  height: 38px;
+  font-family: inherit !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  letter-spacing: 0.5px !important;
+  width: auto !important;
+  min-width: 32px;
+  height: 100%;
+  padding: 2px 8px !important;
   cursor: pointer;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 20px;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
   transition: background-color 0.2s, transform 0.1s;
 }
 
@@ -1235,37 +1246,27 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 /* Bouton actif (quand un filtre est sélectionné) */
 .floating-actions-bar .action-btn.active {
   color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Menu déroulant des filtres (affiche le conteneur juste au-dessus de la barre flottante) */
+.genre-filter-container {
+  position: fixed;
+  bottom: 65px;
+  right: 20px;
+  background: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 4px 4px 0px #000000;
+  z-index: 1400;
+  max-width: 280px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Classe utilitaire globale */
 .hidden {
   display: none !important;
-}
-
-/* Style unifié pour le bouton filtre ET le bouton Search / ✕ */
-#filter-fab-btn,
-.floating-actions-bar button,
-#floating-actions button,
-.floating-actions-bar button *,
-#floating-actions button * {
-  font-family: inherit !important;
-  font-size: 0.75rem !important;
-  font-weight: 800 !important;
-  color: #ffffff !important;
-  letter-spacing: 0.5px !important;
-  
-  width: auto !important;
-  min-width: 32px;
-  padding: 2px 6px !important;
-
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  white-space: nowrap !important;
-  line-height: 1 !important;
-}
-  
-/* Ajustements de taille du bouton pour accueillir le texte */
-  width: auto !important;
-  min-width: 32px;
-  padding: 2px 6px !important;
 }
