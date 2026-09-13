@@ -1310,13 +1310,9 @@ function parseTimeToSeconds(timeStr) {
   const parts = timeStr.toString().trim().split(':').map(Number);
   if (parts.some(isNaN)) return 0;
 
-  if (parts.length === 3) {
-    return parts[0] * 3600 + parts[1] * 60 + parts[2];
-  } else if (parts.length === 2) {
-    return parts[0] * 60 + parts[1];
-  } else if (parts.length === 1) {
-    return parts[0] * 60;
-  }
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  if (parts.length === 2) return parts[0] * 60 + parts[1];
+  if (parts.length === 1) return parts[0] * 60;
   return 0;
 }
 
@@ -1324,11 +1320,11 @@ function formatSecondsToDisplay(totalSec) {
   const h = Math.floor(totalSec / 3600);
   const m = Math.floor((totalSec % 3600) / 60);
   const s = totalSec % 60;
+  const pad = num => String(num).padStart(2, '0');
 
-  if (h > 0) {
-    return `${h}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
-  }
-  return `${m}m ${String(s).padStart(2, '0')}s`;
+  return h > 0 
+    ? `${h}h ${pad(m)}m ${pad(s)}s` 
+    : `${m}m ${pad(s)}s`;
 }
 
 function updatePlannerHeader() {
@@ -1336,44 +1332,34 @@ function updatePlannerHeader() {
   const selectedListEl = document.getElementById('planner-selected-list');
   
   const ideas = getIdeaList();
-  const maxSeconds = 148 * 60;
+  const maxSeconds = 148 * 60; // 2h 28m
   let totalSeconds = 0;
-  let selectedHTML = '';
 
   if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
 
-  selectedIdeaIndices.forEach(idx => {
-    if (ideas[idx]) {
+  const selectedHTML = Array.from(selectedIdeaIndices)
+    .filter(idx => ideas[idx])
+    .map(idx => {
       const item = ideas[idx];
       totalSeconds += parseTimeToSeconds(item.duration);
-
-      selectedHTML += `
+      return `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 8px;">
           <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #000; font-weight: 600;">
             🎵 <span style="color: #666;">${item.artist || 'Artiste'}</span> - ${item.title || 'Titre'}
           </div>
           <div style="font-weight: 700; color: #000; white-space: nowrap;">⏱️ ${item.duration || '00:00'}</div>
-        </div>
-      `;
-    }
-  });
+        </div>`;
+    }).join('');
 
   if (selectedListEl) {
-    if (selectedIdeaIndices.size > 0) {
-      selectedListEl.innerHTML = selectedHTML;
-      selectedListEl.style.display = 'block';
-    } else {
-      selectedListEl.innerHTML = '';
-      selectedListEl.style.display = 'none';
-    }
+    const hasSelection = selectedIdeaIndices.size > 0;
+    selectedListEl.innerHTML = hasSelection ? selectedHTML : '';
+    selectedListEl.style.display = hasSelection ? 'block' : 'none';
   }
 
-  const formattedTime = formatSecondsToDisplay(totalSeconds);
-  const isOverLimit = totalSeconds > maxSeconds;
-
   if (durationTextEl) {
-    durationTextEl.style.color = isOverLimit ? '#e63946' : '#06d6a0';
-    durationTextEl.textContent = `${formattedTime} / 2h 28m`;
+    durationTextEl.style.color = totalSeconds > maxSeconds ? '#e63946' : '#06d6a0';
+    durationTextEl.textContent = `${formatSecondsToDisplay(totalSeconds)} / 2h 28m`;
   }
 
   const convertBtn = document.getElementById('planner-btn-convert');
@@ -1390,23 +1376,16 @@ function updatePlannerHeader() {
 
     const isSelected = selectedIdeaIndices.has(index);
     const itemSec = parseTimeToSeconds(item.duration);
+    const isDisabled = !isSelected && itemSec > remainingSeconds;
 
-    if (!isSelected && itemSec > remainingSeconds) {
-      card.classList.add('disabled-card');
-      card.style.opacity = '0.4';
-    } else {
-      card.classList.remove('disabled-card');
-      card.style.opacity = '1';
-    }
+    card.classList.toggle('disabled-card', isDisabled);
+    card.style.opacity = isDisabled ? '0.4' : '1';
   });
 }
 
 function clearPlannerHeaderInfo() {
-  const badge = document.getElementById('header-planner-badge');
-  if (badge) badge.remove();
-
-  const genreMenu = document.getElementById('planner-genre-menu');
-  if (genreMenu) genreMenu.remove();
+  document.getElementById('header-planner-badge')?.remove();
+  document.getElementById('planner-genre-menu')?.remove();
 
   if (typeof isPlannerGenreDropdownOpen !== 'undefined') {
     isPlannerGenreDropdownOpen = false;
@@ -1415,48 +1394,30 @@ function clearPlannerHeaderInfo() {
 
 function injectPlannerHeaderBadge() {
   const header = document.querySelector('header') || document.querySelector('.header');
-  if (!header) return;
+  if (!header || document.getElementById('header-planner-badge')) return;
 
-  let badge = document.getElementById('header-planner-badge');
-  if (!badge) {
-    badge = document.createElement('div');
-    badge.id = 'header-planner-badge';
-    badge.style.cssText = `
-      position: fixed;
-      top: 150px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 999;
-      background: #ffffff;
-      border: 2px solid #000000;
-      border-radius: 16px;
-      padding: 10px 16px;
-      box-shadow: 4px 4px 0px #000000;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: calc(100% - 32px);
-      max-width: 568px;
-      box-sizing: border-box;
-    `;
-    
-    badge.innerHTML = `
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-        <span style="font-size: 0.85rem; font-weight: bold; color: #000000;">Durée sélectionnée :</span>
-        <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
-      </div>
-      <div id="planner-selected-list" style="display: none; border-top: 1.5px dashed #ccc; padding-top: 6px; max-height: 100px; overflow-y: auto; font-size: 0.78rem;"></div>
-    `;
+  const badge = document.createElement('div');
+  badge.id = 'header-planner-badge';
+  badge.style.cssText = `
+    position: fixed; top: 150px; left: 50%; transform: translateX(-50%); z-index: 999;
+    background: #ffffff; border: 2px solid #000000; border-radius: 16px; padding: 10px 16px;
+    box-shadow: 4px 4px 0px #000000; display: flex; flex-direction: column; gap: 8px;
+    width: calc(100% - 32px); max-width: 568px; box-sizing: border-box;
+  `;
+  
+  badge.innerHTML = `
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+      <span style="font-size: 0.85rem; font-weight: bold; color: #000000;">Durée sélectionnée :</span>
+      <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
+    </div>
+    <div id="planner-selected-list" style="display: none; border-top: 1.5px dashed #ccc; padding-top: 6px; max-height: 100px; overflow-y: auto; font-size: 0.78rem;"></div>
+  `;
 
-    header.after(badge);
-  }
+  header.after(badge);
 }
 
-// Extraction propre des genres uniques d'un album ou d'une idée
 function getItemGenresList(item) {
-  if (typeof getMDAllGenres === 'function') {
-    return getMDAllGenres(item);
-  }
+  if (typeof getMDAllGenres === 'function') return getMDAllGenres(item);
   if (!item || !item.genre) return [];
   if (Array.isArray(item.genre)) {
     return item.genre.map(g => String(g).trim().toUpperCase()).filter(Boolean);
@@ -1464,12 +1425,10 @@ function getItemGenresList(item) {
   return String(item.genre).split(',').map(g => g.trim().toUpperCase()).filter(Boolean);
 }
 
-/* RENDU DU PLANIFICATEUR - VERSION SÉCURISÉE */
+/* RENDU DU PLANIFICATEUR */
 function renderCompilPlanner(pushState = true) {
   try {
-    // Initialise l'état du sous-menu fermé au chargement de la vue
     window.isPlannerGenreDropdownOpen = false;
-
     if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
 
     const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
@@ -1477,39 +1436,35 @@ function renderCompilPlanner(pushState = true) {
       fa.style.display = 'flex';
       fa.classList.remove('hidden');
     }
-     
+      
     if (typeof currentMD !== 'undefined') window.currentMD = null;
     if (typeof currentAlbum !== 'undefined') window.currentAlbum = null;
 
-    const backBtn = document.getElementById('back-btn') || document.querySelector('.back-btn');
-    if (backBtn) backBtn.classList.remove('hidden');
-
+    document.getElementById('back-btn')?.classList.remove('hidden');
+    
     const headerTitle = document.getElementById('header-title') || document.querySelector('.header-title');
     if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
 
-    const featuredContainer = document.getElementById('featured-container');
-    if (featuredContainer) featuredContainer.classList.add('hidden');
+    document.getElementById('featured-container')?.classList.add('hidden');
 
     if (pushState && window.location.hash !== '#planner') {
       history.pushState({ view: 'planner' }, '', '#planner');
     }
 
     if (typeof updateSearchVisibility === 'function') updateSearchVisibility(false);
-    if (typeof injectPlannerHeaderBadge === 'function') injectPlannerHeaderBadge();
+    injectPlannerHeaderBadge();
 
     const rawIdeas = typeof getIdeaList === 'function' ? getIdeaList() : [];
     let ideas = rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex }));
 
     if (typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.size > 0) {
       ideas = ideas.filter(item => {
-        const itemGenres = typeof getItemGenresList === 'function' ? getItemGenresList(item) : [];
+        const itemGenres = getItemGenresList(item);
         return Array.from(currentPlannerGenreFilters).some(g => itemGenres.includes(g));
       });
     }
 
-    if (typeof dailyShuffle === 'function') {
-      ideas = dailyShuffle(ideas, '-planner');
-    }
+    if (typeof dailyShuffle === 'function') ideas = dailyShuffle(ideas, '-planner');
 
     let cardsHTML = '';
     if (rawIdeas.length === 0) {
@@ -1517,12 +1472,12 @@ function renderCompilPlanner(pushState = true) {
     } else if (ideas.length === 0) {
       cardsHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 30px; color: #fff;">Aucun album ne correspond aux filtres.</p>`;
     } else {
-      ideas.forEach((item) => {
+      cardsHTML = ideas.map(item => {
         const index = item.originalIndex;
         const isSelected = selectedIdeaIndices.has(index);
         const coverSrc = (item.cover && item.cover !== 'images/') ? item.cover : '';
 
-        cardsHTML += `
+        return `
           <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
             ${coverSrc 
               ? `<img src="${coverSrc}" class="idea-cover" alt="cover">` 
@@ -1534,12 +1489,11 @@ function renderCompilPlanner(pushState = true) {
             <button type="button" class="idea-delete-btn" data-delete="${index}">🗑️</button>
           </div>
         `;
-      });
+      }).join('');
     }
 
     const activeGenreCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
     const countSelect = selectedIdeaIndices.size;
-
     const appContainer = document.getElementById('app') || document.body;
     
     appContainer.innerHTML = `
@@ -1550,34 +1504,31 @@ function renderCompilPlanner(pushState = true) {
 
         <div style="position: fixed; bottom: 30px; right: 22px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
           <div id="planner-fab-menu" style="display: none; flex-direction: column; gap: 10px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 12px; box-shadow: 4px 4px 0px #000000; min-width: 180px;">
-            <button type="button" id="planner-btn-add" onclick="if(typeof openIdeaModal==='function') openIdeaModal();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ff007f; color: #ffffff; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';">
+            <button type="button" id="planner-btn-add" onclick="if(typeof openIdeaModal==='function') openIdeaModal();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ff007f; color: #ffffff; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000;">
               💽 Ajouter
             </button>
-            <button type="button" id="planner-btn-convert" onclick="if(typeof convertSelectedToMD==='function') convertSelectedToMD(); else if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''} style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #06d6a0; color: #000000; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: ${countSelect === 0 ? 'not-allowed' : 'pointer'}; opacity: ${countSelect === 0 ? '0.6' : '1'}; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" ${countSelect > 0 ? `onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';"` : ''}>
+            <button type="button" id="planner-btn-convert" onclick="if(typeof convertSelectedToMD==='function') convertSelectedToMD(); else if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''} style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #06d6a0; color: #000000; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: ${countSelect === 0 ? 'not-allowed' : 'pointer'}; opacity: ${countSelect === 0 ? '0.6' : '1'}; text-align: left; box-shadow: 2px 2px 0px #000000;">
               💾 Convertir (${countSelect})
             </button>
-            <button type="button" id="planner-btn-reset" onclick="if(typeof clearIdeaSelection==='function') clearIdeaSelection(); else if(typeof resetPlannerSelections==='function') resetPlannerSelections();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';">
+            <button type="button" id="planner-btn-reset" onclick="if(typeof clearIdeaSelection==='function') clearIdeaSelection(); else if(typeof resetPlannerSelections==='function') resetPlannerSelections();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000;">
               🔄 Réinitialiser
             </button>
           
-            <!-- Ligne de séparation -->
             <div style="border-top: 2px solid #000000; margin: 2px 6px; opacity: 0.15;"></div>
           
-            <button type="button" id="planner-btn-genre-toggle" onclick="if(typeof togglePlannerGenreDropdown==='function') togglePlannerGenreDropdown();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ffffff; color: #000000; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';">
+            <button type="button" id="planner-btn-genre-toggle" onclick="if(typeof togglePlannerGenreDropdown==='function') togglePlannerGenreDropdown();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ffffff; color: #000000; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000;">
               🎵 Genres ${activeGenreCount > 0 ? '(' + activeGenreCount + ')' : ''}
             </button>
           </div>
           
-          <button type="button" onclick="if(typeof togglePlannerFabMenu==='function') togglePlannerFabMenu();" style="width: 50px; height: 50px; border-radius: 50%; background: #ff007f; color: #ffffff; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; font-size: 1.4rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(2px, 2px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='3px 3px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='3px 3px 0px #000';">
+          <button type="button" onclick="togglePlannerFabMenu();" style="width: 50px; height: 50px; border-radius: 50%; background: #ff007f; color: #ffffff; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; font-size: 1.4rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none;">
             ⚡
           </button>
         </div>
       </div>
     `;
 
-    if (typeof updatePlannerHeader === 'function') {
-      updatePlannerHeader();
-    }
+    updatePlannerHeader();
 
     const gridContainer = document.getElementById('ideas-grid-container');
     if (gridContainer) {
@@ -1605,18 +1556,15 @@ function renderCompilPlanner(pushState = true) {
   }
 }
 
-/* Bascule l'affichage du menu flottant du planificateur */
 function togglePlannerFabMenu() {
   const menu = document.getElementById('planner-fab-menu');
   if (!menu) return;
   const isOpening = (menu.style.display === 'none' || menu.style.display === '');
   menu.style.display = isOpening ? 'flex' : 'none';
 
-  // Réinitialise l'état et retire le sous-menu du DOM à la fermeture
   if (!isOpening) {
     window.isPlannerGenreDropdownOpen = false;
-    const subMenu = document.getElementById('planner-genre-submenu');
-    if (subMenu) subMenu.remove();
+    document.getElementById('planner-genre-submenu')?.remove();
   }
 }
 
@@ -1629,7 +1577,7 @@ function toggleIdeaSelection(index) {
     selectedIdeaIndices.add(index);
   }
 
-  if (typeof updatePlannerHeader === 'function') updatePlannerHeader();
+  updatePlannerHeader();
 
   const card = document.querySelector(`.idea-card[data-index="${index}"]`);
   if (card) {
@@ -1651,16 +1599,13 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
     savedScrollTop = existingScrollArea.scrollTop;
   }
 
-  const existingSubMenu = document.getElementById('planner-genre-submenu');
-  if (existingSubMenu) existingSubMenu.remove();
-
+  document.getElementById('planner-genre-submenu')?.remove();
   if (!window.isPlannerGenreDropdownOpen) return;
 
   const genresSet = new Set();
-  const ideas = typeof getIdeaList === 'function' ? getIdeaList() : [];
+  const ideas = getIdeaList();
   ideas.forEach(item => {
-    const itemGenres = typeof getItemGenresList === 'function' ? getItemGenresList(item) : [];
-    itemGenres.forEach(g => genresSet.add(g));
+    getItemGenresList(item).forEach(g => genresSet.add(g));
   });
 
   const genres = Array.from(genresSet).sort();
@@ -1669,50 +1614,37 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   const subMenu = document.createElement('div');
   subMenu.id = 'planner-genre-submenu';
   Object.assign(subMenu.style, {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '6px',
-    background: '#f8f9fa',
-    border: '2px solid #000000',
-    borderRadius: '10px',
-    padding: '8px',
-    marginTop: '4px',
-    boxSizing: 'border-box'
+    display: 'flex', flexDirection: 'column', gap: '6px',
+    background: '#f8f9fa', border: '2px solid #000000', borderRadius: '10px',
+    padding: '8px', marginTop: '4px', boxSizing: 'border-box'
   });
 
   const scrollArea = document.createElement('div');
   scrollArea.id = 'planner-genre-scroll-area';
   Object.assign(scrollArea.style, {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '6px',
-    maxHeight: '180px',
-    overflowY: 'auto',
-    overscrollBehavior: 'contain',
-    webkitOverflowScrolling: 'touch'
+    display: 'flex', flexDirection: 'column', gap: '6px',
+    maxHeight: '180px', overflowY: 'auto', overscrollBehavior: 'contain', webkitOverflowScrolling: 'touch'
   });
 
   const activeFilters = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters : new Set();
 
-  const allBtn = document.createElement('button');
-  allBtn.type = 'button';
-  allBtn.textContent = 'Tous les genres';
-  allBtn.style.cssText = `height: 32px; min-height: 32px; border: 2px solid #000000; border-radius: 8px; background: ${activeFilters.size === 0 ? '#000000' : '#ffffff'}; color: ${activeFilters.size === 0 ? '#ffffff' : '#000000'}; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: left; padding: 0 8px; box-shadow: 1px 1px 0px #000000;`;
-  allBtn.onclick = () => {
-    if (typeof clearPlannerGenreFilters === 'function') clearPlannerGenreFilters();
-  };
-  scrollArea.appendChild(allBtn);
-
-  genres.forEach(g => {
-    const isSelected = activeFilters.has(g);
+  const createGenreBtn = (text, isSelected, onClick) => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.textContent = g;
-    btn.style.cssText = `height: 32px; min-height: 32px; border: 2px solid #000000; border-radius: 8px; background: ${isSelected ? '#ff007f' : '#ffffff'}; color: ${isSelected ? '#ffffff' : '#000000'}; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: left; padding: 0 8px; box-shadow: 1px 1px 0px #000000;`;
-    btn.onclick = () => {
+    btn.textContent = text;
+    btn.style.cssText = `height: 32px; min-height: 32px; border: 2px solid #000000; border-radius: 8px; background: ${isSelected ? (text === 'Tous les genres' ? '#000000' : '#ff007f') : '#ffffff'}; color: ${isSelected ? '#ffffff' : '#000000'}; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: left; padding: 0 8px; box-shadow: 1px 1px 0px #000000;`;
+    btn.onclick = onClick;
+    return btn;
+  };
+
+  scrollArea.appendChild(createGenreBtn('Tous les genres', activeFilters.size === 0, () => {
+    if (typeof clearPlannerGenreFilters === 'function') clearPlannerGenreFilters();
+  }));
+
+  genres.forEach(g => {
+    scrollArea.appendChild(createGenreBtn(g, activeFilters.has(g), () => {
       if (typeof togglePlannerGenreFilter === 'function') togglePlannerGenreFilter(g);
-    };
-    scrollArea.appendChild(btn);
+    }));
   });
 
   subMenu.appendChild(scrollArea);
@@ -1788,21 +1720,17 @@ function clearIdeaSelection() {
 
 function openIdeaModal() {
   if (typeof populateFormDatalists === 'function') populateFormDatalists();
-
-  // Activer le conteneur de puces multi-sélection
-  setupMultiSelectContainer('idea-genre', 'genres-list');
+  if (typeof setupMultiSelectContainer === 'function') setupMultiSelectContainer('idea-genre', 'genres-list');
 
   const form = document.getElementById('idea-form');
   if (form) form.reset();
   const coverInput = document.getElementById('idea-cover');
   if (coverInput) coverInput.value = "images/";
-  const modal = document.getElementById('idea-modal');
-  if (modal) modal.classList.remove('hidden');
+  document.getElementById('idea-modal')?.classList.remove('hidden');
 }
 
 function closeIdeaModal() {
-  const modal = document.getElementById('idea-modal');
-  if (modal) modal.classList.add('hidden');
+  document.getElementById('idea-modal')?.classList.add('hidden');
 }
 
 function saveIdeaAlbum(e) {
@@ -1813,11 +1741,10 @@ function saveIdeaAlbum(e) {
   const duration = document.getElementById('idea-duration').value.trim();
   const cover = document.getElementById('idea-cover').value.trim();
 
-  // Nettoyage de la chaîne de genres (ex: "ROCK, HOUSE, " -> "ROCK, HOUSE")
   const genre = rawGenre
     .split(',')
     .map(g => g.trim())
-    .filter(g => g !== '')
+    .filter(Boolean)
     .join(', ');
 
   const newIdea = { title, artist, genre, duration, cover };
