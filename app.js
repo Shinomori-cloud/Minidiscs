@@ -1779,6 +1779,10 @@ function clearIdeaSelection() {
 
 function openIdeaModal() {
   if (typeof populateFormDatalists === 'function') populateFormDatalists();
+
+  // Activer le conteneur de puces multi-sélection
+  setupMultiSelectContainer('idea-genre', 'genres-list');
+
   const form = document.getElementById('idea-form');
   if (form) form.reset();
   const coverInput = document.getElementById('idea-cover');
@@ -1796,9 +1800,16 @@ function saveIdeaAlbum(e) {
   e.preventDefault();
   const title = document.getElementById('idea-title').value.trim();
   const artist = document.getElementById('idea-artist').value.trim();
-  const genre = document.getElementById('idea-genre').value.trim();
+  const rawGenre = document.getElementById('idea-genre').value.trim();
   const duration = document.getElementById('idea-duration').value.trim();
   const cover = document.getElementById('idea-cover').value.trim();
+
+  // Nettoyage de la chaîne de genres (ex: "ROCK, HOUSE, " -> "ROCK, HOUSE")
+  const genre = rawGenre
+    .split(',')
+    .map(g => g.trim())
+    .filter(g => g !== '')
+    .join(', ');
 
   const newIdea = { title, artist, genre, duration, cover };
   
