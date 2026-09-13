@@ -1405,6 +1405,38 @@ function applyStatusFilter(status) {
   }
 }
 
+// Génère dynamiquement les boutons de genres dans le sous-menu FAB
+function populateFabGenreMenu(genresList) {
+  const container = document.getElementById('genres-submenu');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  // Option "TOUS"
+  const allBtn = document.createElement('button');
+  allBtn.type = 'button';
+  allBtn.className = 'fab-item sub-item';
+  allBtn.textContent = 'TOUS';
+  allBtn.onclick = () => {
+    if (typeof filterByGenre === 'function') filterByGenre('ALL');
+    else if (typeof applyGenreFilter === 'function') applyGenreFilter('ALL');
+  };
+  container.appendChild(allBtn);
+
+  // Génération de chaque genre
+  genresList.forEach(genre => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'fab-item sub-item';
+    btn.textContent = genre;
+    btn.onclick = () => {
+      if (typeof filterByGenre === 'function') filterByGenre(genre);
+      else if (typeof applyGenreFilter === 'function') applyGenreFilter(genre);
+    };
+    container.appendChild(btn);
+  });
+}
+
 /* ==========================================
    PLANIFICATEUR DE COMPILATION & IDÉES
    ========================================== */
