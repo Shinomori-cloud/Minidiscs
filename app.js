@@ -54,6 +54,41 @@ function clearLocalBackup() {
   hasUnsavedChanges = false;
 }
 
+// Annule le pull-to-refresh natif quand l'utilisateur tire vers le bas
+// au sommet de la page ou à l'intérieur d'un sous-menu.
+let globalTouchStartY = 0;
+
+window.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 1) {
+    globalTouchStartY = e.touches[0].clientY;
+  }
+}, { passive: true });
+
+window.addEventListener('touchmove', (e) => {
+  if (e.touches.length !== 1) return;
+
+  const currentY = e.touches[0].clientY;
+  const isDraggingDown = currentY > globalTouchStartY;
+
+  // Si le menu du planificateur est ouvert
+  if (window.isPlannerGenreDropdownOpen) {
+    const scrollArea = document.getElementById('planner-genre-scroll-area');
+    if (scrollArea) {
+      const isAtTop = scrollArea.scrollTop <= 0;
+      // Si on essaie de glisser vers le bas au sommet du menu
+      if (isAtTop && isDraggingDown) {
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+    }
+  }
+
+  // Sécurité générale : si la page principale est tout en haut
+  if (window.scrollY <= 0 && isDraggingDown) {
+    if (e.cancelable) e.preventDefault();
+  }
+}, { passive: false });
+
 /* ==========================================
    GESTION DU BOUTON ET DE LA BARRE DE RECHERCHE
    ========================================== */
@@ -1691,24 +1726,6 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
     overscrollBehavior: 'contain',
     webkitOverflowScrolling: 'touch'
   });
-
-  // BLOQUAGE CIBLÉ DU PULL-TO-REFRESH PWA
-  let touchStartY = 0;
-
-  scrollArea.addEventListener('touchstart', (e) => {
-    touchStartY = e.touches[0].clientY;
-  }, { passive: true });
-
-  scrollArea.addEventListener('touchmove', (e) => {
-    const touchCurrentY = e.touches[0].clientY;
-    const isDraggingDown = touchCurrentY > touchStartY;
-
-    // Si on pointe en haut de la liste et qu'on tire vers le bas, on annule l'événement pour la page
-    if (scrollArea.scrollTop <= 0 && isDraggingDown) {
-      if (e.cancelable) e.preventDefault();
-      e.stopPropagation();
-    }
-  }, { passive: false });
 
   const activeFilters = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters : new Set();
 
