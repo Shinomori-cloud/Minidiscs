@@ -1631,40 +1631,31 @@ function toggleIdeaSelection(index) {
   }
 }
 
-function togglePlannerGenreDropdown(e) {
-  // Récupère l'événement s'il existe
-  const evt = e || window.event;
-  if (evt && evt.stopPropagation) {
-    evt.stopPropagation();
-  }
-
-  // Si non défini ou fermé, on ouvre (true), sinon on bascule
+function togglePlannerGenreDropdown() {
   if (typeof window.isPlannerGenreDropdownOpen === 'undefined') {
     window.isPlannerGenreDropdownOpen = true;
   } else {
     window.isPlannerGenreDropdownOpen = !window.isPlannerGenreDropdownOpen;
   }
-
   renderPlannerGenreFilter();
 }
 
 function renderPlannerGenreFilter(savedScrollTop = 0) {
-  const genreBtn = document.getElementById('planner-btn-genre-toggle');
-  if (!genreBtn) return;
+  const fabMenu = document.getElementById('planner-fab-menu');
+  if (!fabMenu) return;
 
   const existingScrollArea = document.getElementById('planner-genre-scroll-area');
   if (existingScrollArea && savedScrollTop === 0) {
     savedScrollTop = existingScrollArea.scrollTop;
   }
 
-  const existingMenu = document.getElementById('planner-genre-menu');
-  if (existingMenu) existingMenu.remove();
+  const existingSubMenu = document.getElementById('planner-genre-submenu');
+  if (existingSubMenu) existingSubMenu.remove();
 
-  if (typeof isPlannerGenreDropdownOpen === 'undefined' || !isPlannerGenreDropdownOpen) return;
+  if (typeof window.isPlannerGenreDropdownOpen === 'undefined' || !window.isPlannerGenreDropdownOpen) return;
 
   const genresSet = new Set();
   const ideas = typeof getIdeaList === 'function' ? getIdeaList() : [];
-  
   ideas.forEach(item => {
     const itemGenres = typeof getItemGenresList === 'function' ? getItemGenresList(item) : [];
     itemGenres.forEach(g => genresSet.add(g));
@@ -1673,28 +1664,60 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   const genres = Array.from(genresSet).sort();
   if (genres.length === 0) return;
 
-  const rect = genreBtn.getBoundingClientRect();
-
-  const menu = document.createElement('div');
-  menu.id = 'planner-genre-menu';
-  
-  Object.assign(menu.style, {
-    position: 'fixed',
-    bottom: `${window.innerHeight - rect.top + 8}px`,
-    right: `${window.innerWidth - rect.right}px`,
-    minWidth: '190px',
-    maxWidth: '260px',
-    maxHeight: '320px',
-    background: '#ffffff',
-    border: '2px solid #000000',
-    borderRadius: '12px',
-    padding: '8px',
-    boxShadow: '4px 4px 0px #000000',
-    zIndex: '2000',
+  const subMenu = document.createElement('div');
+  subMenu.id = 'planner-genre-submenu';
+  Object.assign(subMenu.style, {
     display: 'flex',
     flexDirection: 'column',
+    gap: '6px',
+    background: '#f8f9fa',
+    border: '2px solid #000000',
+    borderRadius: '10px',
+    padding: '8px',
+    marginTop: '4px',
     boxSizing: 'border-box'
   });
+
+  const scrollArea = document.createElement('div');
+  scrollArea.id = 'planner-genre-scroll-area';
+  Object.assign(scrollArea.style, {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+    maxHeight: '180px',
+    overflowY: 'auto'
+  });
+
+  const activeFilters = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters : new Set();
+
+  const allBtn = document.createElement('button');
+  allBtn.type = 'button';
+  allBtn.textContent = 'Tous les genres';
+  allBtn.style.cssText = `height: 32px; min-height: 32px; border: 2px solid #000000; border-radius: 8px; background: ${activeFilters.size === 0 ? '#000000' : '#ffffff'}; color: ${activeFilters.size === 0 ? '#ffffff' : '#000000'}; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: left; padding: 0 8px; box-shadow: 1px 1px 0px #000000;`;
+  allBtn.onclick = () => {
+    if (typeof clearPlannerGenreFilters === 'function') clearPlannerGenreFilters();
+  };
+  scrollArea.appendChild(allBtn);
+
+  genres.forEach(g => {
+    const isSelected = activeFilters.has(g);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = g;
+    btn.style.cssText = `height: 32px; min-height: 32px; border: 2px solid #000000; border-radius: 8px; background: ${isSelected ? '#ff007f' : '#ffffff'}; color: ${isSelected ? '#ffffff' : '#000000'}; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: left; padding: 0 8px; box-shadow: 1px 1px 0px #000000;`;
+    btn.onclick = () => {
+      if (typeof togglePlannerGenreFilter === 'function') togglePlannerGenreFilter(g);
+    };
+    scrollArea.appendChild(btn);
+  });
+
+  subMenu.appendChild(scrollArea);
+  fabMenu.appendChild(subMenu);
+
+  if (savedScrollTop > 0) {
+    scrollArea.scrollTop = savedScrollTop;
+  }
+}
 
   const activeCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
 
