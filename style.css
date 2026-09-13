@@ -1333,76 +1333,68 @@ html, body {
 }
 
 /* ==========================================
-   MENU FLOTTANT (FAB)
+   BOUTON FLOTTANT UNIQUE & MENU DÉROULANT (MAIN FAB)
    ========================================== */
 
-/* Conteneur global fixe en bas à droite */
-.fab-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
+/* Conteneur fixe ciblé pour ne pas impacter le planificateur */
+#floating-actions.fab-container {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
 }
 
-/* Barre d'icônes d'action */
-.fab-bar {
-  display: flex;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 6px 10px;
-  border-radius: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 1px solid #ccc;
-  backdrop-filter: blur(4px);
-}
-
-/* Boutons d'icônes de la barre */
-.action-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 4px;
+/* Bouton principal rond ⚙️ */
+#floating-actions .fab-main-btn {
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  transition: transform 0.15s ease;
-}
-
-.action-btn:hover {
-  transform: scale(1.15);
-}
-
-/* Menu déroulant compact (popover) */
-.fab-menu {
-  position: absolute;
-  bottom: 100%; /* S'affiche juste au-dessus de la barre */
-  right: 0;
-  margin-bottom: 8px; /* Espace entre le menu et la barre */
-  display: flex;
-  flex-direction: column;
-  min-width: 160px; /* Largeur fixe et étroite */
   background: #ffffff;
-  padding: 6px;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  border: 1px solid #e0e0e0;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, background-color 0.15s;
 }
 
-.fab-menu.hidden {
+#floating-actions .fab-main-btn:active {
+  transform: scale(0.92);
+}
+
+/* Menu déroulant au-dessus du bouton */
+#floating-actions #fab-menu {
+  position: absolute;
+  bottom: 62px;
+  right: 0;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px;
+  background: #ffffff;
+  padding: 8px;
+  border-radius: 12px;
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  min-width: 190px;
+}
+
+#floating-actions #fab-menu.hidden {
   display: none !important;
 }
 
 /* Éléments du menu */
-.fab-item {
+#floating-actions .fab-item {
   background: transparent;
   border: none;
-  padding: 8px 12px;
+  padding: 10px 12px;
   text-align: left;
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 600;
   color: #333;
   cursor: pointer;
   border-radius: 6px;
@@ -1410,6 +1402,14 @@ html, body {
   transition: background 0.15s ease;
 }
 
-.fab-item:hover {
+#floating-actions .fab-item:hover {
   background-color: #f0f4f8;
+}
+
+/* Ligne de séparation dans le menu */
+#floating-actions .fab-divider {
+  border: 0;
+  height: 1px;
+  background: #e0e0e0;
+  margin: 4px 0;
 }
