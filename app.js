@@ -1496,7 +1496,7 @@ function renderCompilPlanner(pushState = true) {
           </button>
 
           <!-- 3. RÉINITIALISER -->
-          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.7rem; padding: 0 8px; background: #fa6102; color: #ffffff; font-weight: bold">
+          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.7rem; padding: 0 8px; background: #f70c63; color: #ffffff; font-weight: bold">
             Réinitialiser
           </button>
 
