@@ -1482,27 +1482,27 @@ function renderCompilPlanner(pushState = true) {
         ${cardsHTML}
       </div>
 
-     <div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
+     <div style="position: fixed; bottom: 35px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
       <div class="compil-actions" style="display: flex; gap: 8px; max-width: 600px; width: 100%; justify-content: center; align-items: center; pointer-events: auto;">
   
           <!-- 1. AJOUTER -->
-          <button type="button" class="btn-primary" id="planner-btn-add" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.8rem; padding: 0 8px;">
+          <button type="button" class="btn-primary" id="planner-btn-add" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.7rem; padding: 0 8px;">
             ＋ Ajouter
           </button>
 
           <!-- 2. CONVERTIR -->
-          <button type="button" class="btn-secondary" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.8rem; padding: 0 8px; background: #06d6a0; color: #000; font-weight: bold;">
-            💾 Convertir (${selectedIdeaIndices.size})
+          <button type="button" class="btn-secondary" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.7rem; padding: 0 8px; background: #06d6a0; color: #ffffff; font-weight: bold;">
+            Convertir en MD (${selectedIdeaIndices.size})
           </button>
 
           <!-- 3. RÉINITIALISER -->
-          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.8rem; padding: 0 8px;">
+          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.7rem; padding: 0 8px; background: #fa6102; color: #ffffff; font-weight: bold">
             Réinitialiser
           </button>
 
           <!-- 4. GENRES -->
-          <button type="button" class="tag-btn" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.8rem; padding: 0 8px; ${genreBtnStyle}">
-            🏷️ Genres${activeGenreCount > 0 ? ` (${activeGenreCount})` : ''}
+          <button type="button" class="tag-btn" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.7rem; padding: 0 8px; ${genreBtnStyle}">
+            Genres${activeGenreCount > 0 ? ` (${activeGenreCount})` : ''}
           </button>
 
         </div>
