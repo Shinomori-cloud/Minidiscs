@@ -1420,7 +1420,7 @@ function toggleGenreFilter(genre) {
   if (btn) {
     const count = currentGenreFilters.size;
     btn.textContent = count > 0 ? `| Filter (${count})` : '| Filter';
-}
+  }
 
 function clearGenreFilters() {
   currentGenreFilters.clear();
@@ -1435,6 +1435,7 @@ function clearGenreFilters() {
 
   const btn = document.getElementById('btn-filter-genre') || document.getElementById('planner-btn-genre-toggle');
   if (btn) btn.textContent = '| Filter';
+ }
 }
 
 function deleteIdeaAlbum(index) {
