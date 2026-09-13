@@ -1167,13 +1167,13 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   bottom: 450px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #c404b8;
+  background-color: #403f40;
   color: #ffffff;
   padding: 12px 20px;
   border-radius: 10px;
   font-size: 0.88rem;
   font-weight: 700;
-  border: 2px solid #000;
+  border: 4px solid #000;
   box-shadow: 3px 3px 0px #000;
   z-index: 9999;
   transition: opacity 0.25s ease, transform 0.25s ease;
