@@ -1606,7 +1606,13 @@ function renderCompilPlanner(pushState = true) {
 function togglePlannerFabMenu() {
   const menu = document.getElementById('planner-fab-menu');
   if (!menu) return;
-  menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
+  const isOpening = (menu.style.display === 'none' || menu.style.display === '');
+  menu.style.display = isOpening ? 'flex' : 'none';
+
+  // Réinitialise l'état du sous-menu à la fermeture du menu principal
+  if (!isOpening) {
+    window.isPlannerGenreDropdownOpen = false;
+  }
 }
 
 function toggleIdeaSelection(index) {
@@ -1627,11 +1633,8 @@ function toggleIdeaSelection(index) {
 }
 
 function togglePlannerGenreDropdown() {
-  if (typeof window.isPlannerGenreDropdownOpen === 'undefined') {
-    window.isPlannerGenreDropdownOpen = true;
-  } else {
-    window.isPlannerGenreDropdownOpen = !window.isPlannerGenreDropdownOpen;
-  }
+  // Correction 1 : bascule nette dès le 1er clic sans état 'undefined'
+  window.isPlannerGenreDropdownOpen = !window.isPlannerGenreDropdownOpen;
   renderPlannerGenreFilter();
 }
 
@@ -1647,7 +1650,7 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   const existingSubMenu = document.getElementById('planner-genre-submenu');
   if (existingSubMenu) existingSubMenu.remove();
 
-  if (typeof window.isPlannerGenreDropdownOpen === 'undefined' || !window.isPlannerGenreDropdownOpen) return;
+  if (!window.isPlannerGenreDropdownOpen) return;
 
   const genresSet = new Set();
   const ideas = typeof getIdeaList === 'function' ? getIdeaList() : [];
@@ -1680,7 +1683,10 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
     flexDirection: 'column',
     gap: '6px',
     maxHeight: '180px',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    // Correction 2 : bloque le pull-to-refresh natif sur mobile au scroll
+    overscrollBehavior: 'contain',
+    webkitOverflowScrolling: 'touch'
   });
 
   const activeFilters = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters : new Set();
@@ -1727,6 +1733,12 @@ function togglePlannerGenreFilter(genre) {
   }
 
   renderCompilPlanner(false);
+
+  // Correction 3 : réouvre le menu parent et garde le sous-menu actif après le rendu de la grille
+  const menu = document.getElementById('planner-fab-menu');
+  if (menu) menu.style.display = 'flex';
+  window.isPlannerGenreDropdownOpen = true;
+
   renderPlannerGenreFilter(scrollTop);
 }
 
@@ -1735,6 +1747,12 @@ function clearPlannerGenreFilters() {
     currentPlannerGenreFilters.clear();
   }
   renderCompilPlanner(false);
+
+  // Correction 3 : conserve le menu ouvert lors de la réinitialisation des filtres
+  const menu = document.getElementById('planner-fab-menu');
+  if (menu) menu.style.display = 'flex';
+  window.isPlannerGenreDropdownOpen = true;
+
   renderPlannerGenreFilter(0);
 }
 
