@@ -1263,6 +1263,140 @@ function formatSecondsToDisplay(totalSec) {
   return `${m}m ${String(s).padStart(2, '0')}s`;
 }
 
+/* RENDU DE LA VUE DU PLANIFICATEUR */
+function renderCompilPlanner(pushState = true) {
+  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+  if (fa) {
+    fa.style.display = 'flex';
+    fa.classList.remove('hidden');
+  }
+
+  currentMD = null;
+  currentAlbum = null;
+
+  if (backBtn) backBtn.classList.remove('hidden');
+  if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
+
+  if (featuredContainer) featuredContainer.classList.add('hidden');
+
+  if (pushState && window.location.hash !== '#planner') {
+    history.pushState({ view: 'planner' }, '', '#planner');
+  }
+
+  if (typeof updateSearchVisibility === 'function') {
+    updateSearchVisibility(false);
+  }
+
+  // Active le badge de calcul de durée dans le header
+  injectPlannerHeaderBadge();
+
+  const ideas = getIdeaList();
+
+  // Filtrage par genre si actif dans le planificateur
+  const filteredIdeas = ideas.filter(item => {
+    if (typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.size > 0) {
+      const itemGenre = (item.genre || '').trim().toUpperCase();
+      return currentPlannerGenreFilters.has(itemGenre);
+    }
+    return true;
+  });
+
+  let cardsHTML = '';
+  if (!ideas || ideas.length === 0) {
+    cardsHTML = `
+      <div style="text-align: center; padding: 40px 16px; color: var(--text-sub, #aaa);">
+        <p style="margin-bottom: 16px; font-size: 0.9rem;">Aucune idée d'album enregistrée pour le moment.</p>
+        <button type="button" class="btn-primary" onclick="openIdeaModal()" style="width: auto; margin: 0 auto;">
+          ＋ Ajouter une idée d'album
+        </button>
+      </div>
+    `;
+  } else if (filteredIdeas.length === 0) {
+    cardsHTML = `
+      <div style="text-align: center; padding: 30px 16px; color: var(--text-sub, #aaa);">
+        <p style="font-size: 0.85rem;">Aucun album ne correspond aux filtres sélectionnés.</p>
+      </div>
+    `;
+  } else {
+    filteredIdeas.forEach((item, index) => {
+      const realIndex = ideas.indexOf(item);
+      const isSelected = typeof selectedIdeaIndices !== 'undefined' && selectedIdeaIndices.has(realIndex);
+      const coverSrc = item.cover || 'images/default-cover.jpg';
+
+      cardsHTML += `
+        <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${realIndex}" onclick="toggleIdeaSelection(${realIndex})" style="display: flex; align-items: center; justify-content: space-between; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid ${isSelected ? '#06d6a0' : 'rgba(255,255,255,0.1)'}; cursor: pointer;">
+          <div style="display: flex; align-items: center; gap: 12px; overflow: hidden;">
+            <img src="${coverSrc}" alt="Cover" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px;" onerror="this.src='images/default-cover.jpg';">
+            <div style="overflow: hidden;">
+              <div style="font-weight: 700; font-size: 0.9rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Sans titre'}</div>
+              <div style="font-size: 0.8rem; color: var(--text-sub, #aaa); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.artist || 'Artiste inconnu'}</div>
+              <div style="font-size: 0.75rem; color: #06d6a0; margin-top: 2px;">⏱️ ${item.duration || '00:00'} ${item.genre ? `• ${item.genre}` : ''}</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" onclick="event.stopPropagation(); deleteIdeaAlbum(${realIndex})" style="background: transparent; border: none; color: #e63946; cursor: pointer; font-size: 1.1rem; padding: 4px 8px;" title="Supprimer">
+              🗑️
+            </button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  app.innerHTML = `
+    <div class="planner-container" style="padding-top: 130px; padding-bottom: 100px; max-width: 600px; margin: 0 auto; padding-left: 16px; padding-right: 16px;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <button type="button" class="btn-primary" onclick="openIdeaModal()" style="width: auto; padding: 8px 14px; font-size: 0.8rem;">
+          ＋ Ajouter une idée
+        </button>
+        
+        <div class="compil-actions" style="display: flex; gap: 8px;">
+          <button type="button" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" class="tag-btn" style="padding: 6px 12px; font-size: 0.8rem;">
+            🏷️ Genre
+          </button>
+          <button type="button" onclick="clearIdeaSelection()" class="tag-btn" style="padding: 6px 12px; font-size: 0.8rem;">
+            🔄 RÀZ
+          </button>
+        </div>
+      </div>
+
+      <div id="ideas-list-container">
+        ${cardsHTML}
+      </div>
+
+      <div style="margin-top: 20px;">
+        <button type="button" id="planner-btn-convert" onclick="convertSelectedToMD()" class="btn-primary" style="width: 100%; padding: 12px; font-size: 0.95rem; background: #06d6a0; color: #000;" ${typeof selectedIdeaIndices !== 'undefined' && selectedIdeaIndices.size > 0 ? '' : 'disabled'}>
+          💾 Convertir en MD (${typeof selectedIdeaIndices !== 'undefined' ? selectedIdeaIndices.size : 0})
+        </button>
+      </div>
+
+    </div>
+  `;
+
+  updatePlannerHeader();
+  window.scrollTo(0, 0);
+}
+
+function toggleIdeaSelection(index) {
+  if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
+
+  if (selectedIdeaIndices.has(index)) {
+    selectedIdeaIndices.delete(index);
+  } else {
+    selectedIdeaIndices.add(index);
+  }
+
+  updatePlannerHeader();
+
+  const card = document.querySelector(`.idea-card[data-index="${index}"]`);
+  if (card) {
+    const isSelected = selectedIdeaIndices.has(index);
+    card.classList.toggle('selected', isSelected);
+    card.style.borderColor = isSelected ? '#06d6a0' : 'rgba(255,255,255,0.1)';
+  }
+}
+
 function updatePlannerHeader() {
   const durationTextEl = document.getElementById('planner-duration-text');
   const selectedListEl = document.getElementById('planner-selected-list');
@@ -1272,6 +1406,8 @@ function updatePlannerHeader() {
   let totalSeconds = 0;
   let selectedHTML = '';
 
+  if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
+
   selectedIdeaIndices.forEach(idx => {
     if (ideas[idx]) {
       const item = ideas[idx];
@@ -1280,9 +1416,9 @@ function updatePlannerHeader() {
       selectedHTML += `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 8px;">
           <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #000; font-weight: 600;">
-            🎵 <span style="color: #666;">${item.artist}</span> - ${item.title}
+            🎵 <span style="color: #666;">${item.artist || 'Artiste'}</span> - ${item.title || 'Titre'}
           </div>
-          <div style="font-weight: 700; color: #000; white-space: nowrap;">⏱️ ${item.duration}</div>
+          <div style="font-weight: 700; color: #000; white-space: nowrap;">⏱️ ${item.duration || '00:00'}</div>
         </div>
       `;
     }
@@ -1323,8 +1459,10 @@ function updatePlannerHeader() {
 
     if (!isSelected && itemSec > remainingSeconds) {
       card.classList.add('disabled-card');
+      card.style.opacity = '0.4';
     } else {
       card.classList.remove('disabled-card');
+      card.style.opacity = '1';
     }
   });
 }
@@ -1336,7 +1474,9 @@ function clearPlannerHeaderInfo() {
   const genreFilter = document.getElementById('planner-genre-filter');
   if (genreFilter) genreFilter.style.display = 'none';
 
-  isPlannerGenreDropdownOpen = false;
+  if (typeof isPlannerGenreDropdownOpen !== 'undefined') {
+    isPlannerGenreDropdownOpen = false;
+  }
 }
 
 function injectPlannerHeaderBadge() {
@@ -1378,18 +1518,21 @@ function injectPlannerHeaderBadge() {
   }
 }
 
+function togglePlannerGenreDropdown() {
+  if (typeof isPlannerGenreDropdownOpen === 'undefined') window.isPlannerGenreDropdownOpen = false;
+  isPlannerGenreDropdownOpen = !isPlannerGenreDropdownOpen;
+  renderPlannerGenreFilter();
+}
+
 function renderPlannerGenreFilter() {
   const genreBtn = document.getElementById('planner-btn-genre-toggle');
   if (!genreBtn) return;
 
-  // Nettoyage de l'ancien menu s'il existe déjà
   const existingMenu = document.getElementById('planner-genre-menu');
   if (existingMenu) existingMenu.remove();
 
-  // Si le menu n'est pas ouvert, on s'arrête là
-  if (!isPlannerGenreDropdownOpen) return;
+  if (typeof isPlannerGenreDropdownOpen === 'undefined' || !isPlannerGenreDropdownOpen) return;
 
-  // Extraction des genres présents dans la collection principale
   const genresSet = new Set();
   
   if (catalogData && Array.isArray(catalogData)) {
@@ -1406,11 +1549,9 @@ function renderPlannerGenreFilter() {
   const genres = Array.from(genresSet).filter(Boolean).sort();
   if (genres.length === 0) return;
 
-  // Création du conteneur du menu au premier plan
   const menu = document.createElement('div');
   menu.id = 'planner-genre-menu';
   
-  // Placement au-dessus du bouton fixe (z-index: 2000) et affichage en 1 seule colonne
   Object.assign(menu.style, {
     position: 'absolute',
     bottom: 'calc(100% + 12px)',
@@ -1431,14 +1572,16 @@ function renderPlannerGenreFilter() {
     gap: '4px'
   });
 
+  const activeCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
+
   let html = `
-    <button type="button" class="tag-btn ${currentPlannerGenreFilters.size === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; text-align: left; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start;">
+    <button type="button" class="tag-btn ${activeCount === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; text-align: left; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start;">
       Tous
     </button>
   `;
 
   genres.forEach(genre => {
-    const isActive = currentPlannerGenreFilters.has(genre);
+    const isActive = typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.has(genre);
     html += `
       <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${genre.replace(/'/g, "\\'")}')" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; text-align: left; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start;">
         ${isActive ? '✓ ' : ''}${genre}
@@ -1448,7 +1591,6 @@ function renderPlannerGenreFilter() {
 
   menu.innerHTML = html;
 
-  // On attache le menu au conteneur `.compil-actions` en s'assurant qu'il est en position relative
   const actionsContainer = genreBtn.closest('.compil-actions') || genreBtn.parentElement;
   if (actionsContainer) {
     actionsContainer.style.position = 'relative';
@@ -1456,20 +1598,38 @@ function renderPlannerGenreFilter() {
   }
 }
 
+function togglePlannerGenre(genre) {
+  if (typeof currentPlannerGenreFilters === 'undefined') window.currentPlannerGenreFilters = new Set();
+
+  if (currentPlannerGenreFilters.has(genre)) {
+    currentPlannerGenreFilters.delete(genre);
+  } else {
+    currentPlannerGenreFilters.add(genre);
+  }
+
+  renderCompilPlanner(false);
+}
+
+function clearPlannerGenreFilters() {
+  if (typeof currentPlannerGenreFilters !== 'undefined') {
+    currentPlannerGenreFilters.clear();
+  }
+  renderCompilPlanner(false);
+}
+
 function toggleGenreDropdown() {
+  if (typeof isGenreDropdownOpen === 'undefined') window.isGenreDropdownOpen = false;
   isGenreDropdownOpen = !isGenreDropdownOpen;
 
-  // Garantit que la barre flottante principale reste visible
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) {
     fa.style.display = 'flex';
     fa.classList.remove('hidden');
   }
 
-  // Met à jour le texte du bouton de filtre dans la barre principale
   const btn = document.getElementById('btn-filter-genre');
   if (btn) {
-    const count = currentGenreFilters.size;
+    const count = typeof currentGenreFilters !== 'undefined' ? currentGenreFilters.size : 0;
     btn.textContent = count > 0 ? `| Filter (${count})` : '| Filter';
   }
 
@@ -1479,20 +1639,18 @@ function toggleGenreDropdown() {
 function renderGenreFilter() {
   let container = document.getElementById('genre-filter-dropdown');
   
-  // Crée le conteneur s'il n'existe pas dans le DOM
   if (!container) {
     container = document.createElement('div');
     container.id = 'genre-filter-dropdown';
     document.body.appendChild(container);
   }
 
-  if (!isGenreDropdownOpen) {
+  if (typeof isGenreDropdownOpen === 'undefined' || !isGenreDropdownOpen) {
     container.classList.add('hidden');
     container.style.display = 'none';
     return;
   }
 
-  // Récupération intelligente et multi-sources des genres
   const allGenresSet = new Set();
   let sourceData = [];
 
@@ -1508,14 +1666,12 @@ function renderGenreFilter() {
   }
 
   sourceData.forEach(md => {
-    // Extrait les genres au niveau racine
     const rawGenre = md.genre || md.genres || md.style;
     if (rawGenre) {
       const genres = Array.isArray(rawGenre) ? rawGenre : String(rawGenre).split(',');
       genres.forEach(g => { if (g && g.trim()) allGenresSet.add(g.trim().toUpperCase()); });
     }
 
-    // Extrait les genres au niveau des albums si c'est une série
     if (Array.isArray(md.albums)) {
       md.albums.forEach(album => {
         const albumGenre = album.genre || album.genres;
@@ -1528,8 +1684,8 @@ function renderGenreFilter() {
   });
 
   const sortedGenres = Array.from(allGenresSet).sort();
+  const activeCount = typeof currentGenreFilters !== 'undefined' ? currentGenreFilters.size : 0;
 
-  // Positionne le menu pop-up au-dessus de la barre flottante
   container.style.position = 'fixed';
   container.style.bottom = '75px';
   container.style.right = '15px';
@@ -1539,8 +1695,8 @@ function renderGenreFilter() {
 
   let html = `
     <div style="background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); border: 2px solid #fff; border-radius: 12px; padding: 10px; max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); min-width: 140px;">
-      <button type="button" onclick="clearGenreFilters()" style="background: ${currentGenreFilters.size === 0 ? '#fff' : 'transparent'}; color: ${currentGenreFilters.size === 0 ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer;">
-        ${currentGenreFilters.size === 0 ? '✓ TOUS' : 'TOUS'}
+      <button type="button" onclick="clearGenreFilters()" style="background: ${activeCount === 0 ? '#fff' : 'transparent'}; color: ${activeCount === 0 ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer;">
+        ${activeCount === 0 ? '✓ TOUS' : 'TOUS'}
       </button>
   `;
 
@@ -1548,7 +1704,7 @@ function renderGenreFilter() {
     html += `<span style="color:#aaa; font-size:0.75rem; padding:4px;">Aucun genre trouvé</span>`;
   } else {
     sortedGenres.forEach(genre => {
-      const isChecked = currentGenreFilters.has(genre);
+      const isChecked = typeof currentGenreFilters !== 'undefined' && currentGenreFilters.has(genre);
       const safeGenre = genre.replace(/'/g, "\\'");
       html += `
         <button type="button" onclick="toggleGenreFilter('${safeGenre}')" style="background: ${isChecked ? '#fff' : 'transparent'}; color: ${isChecked ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
@@ -1564,20 +1720,20 @@ function renderGenreFilter() {
 }
 
 function toggleGenreFilter(genre) {
+  if (typeof currentGenreFilters === 'undefined') window.currentGenreFilters = new Set();
+
   if (currentGenreFilters.has(genre)) {
     currentGenreFilters.delete(genre);
   } else {
     currentGenreFilters.add(genre);
   }
 
-  // Rafraîchit directement la liste des MiniDiscs
   if (typeof renderMDList === 'function') {
     renderMDList();
   } else if (typeof renderApp === 'function') {
     renderApp();
   }
   
-  // Met à jour l'état visuel du menu et du bouton
   renderGenreFilter();
 
   const btn = document.getElementById('btn-filter-genre');
@@ -1588,7 +1744,9 @@ function toggleGenreFilter(genre) {
 }
 
 function clearGenreFilters() {
-  currentGenreFilters.clear();
+  if (typeof currentGenreFilters !== 'undefined') {
+    currentGenreFilters.clear();
+  }
 
   if (typeof renderMDList === 'function') {
     renderMDList();
@@ -1609,26 +1767,30 @@ function deleteIdeaAlbum(index) {
   if (confirm(`Supprimer "${ideas[index].title}" de vos idées ?`)) {
     ideas.splice(index, 1);
     
-    const updatedIndices = new Set();
-    selectedIdeaIndices.forEach(i => {
-      if (i > index) updatedIndices.add(i - 1);
-      else if (i < index) updatedIndices.add(i);
-    });
-    selectedIdeaIndices = updatedIndices;
+    if (typeof selectedIdeaIndices !== 'undefined') {
+      const updatedIndices = new Set();
+      selectedIdeaIndices.forEach(i => {
+        if (i > index) updatedIndices.add(i - 1);
+        else if (i < index) updatedIndices.add(i);
+      });
+      selectedIdeaIndices = updatedIndices;
+    }
 
-    saveLocalBackup();
-    showToast("🗑️ Album supprimé des idées");
+    if (typeof saveLocalBackup === 'function') saveLocalBackup();
+    if (typeof showToast === 'function') showToast("🗑️ Album supprimé des idées");
     renderCompilPlanner(false);
   }
 }
 
 function clearIdeaSelection() {
-  selectedIdeaIndices.clear();
+  if (typeof selectedIdeaIndices !== 'undefined') {
+    selectedIdeaIndices.clear();
+  }
   renderCompilPlanner(false);
 }
 
 function openIdeaModal() {
-  populateFormDatalists();
+  if (typeof populateFormDatalists === 'function') populateFormDatalists();
   const form = document.getElementById('idea-form');
   if (form) form.reset();
   const coverInput = document.getElementById('idea-cover');
@@ -1655,14 +1817,14 @@ function saveIdeaAlbum(e) {
   if (!window.ideaAlbums) window.ideaAlbums = [];
   window.ideaAlbums.push(newIdea);
 
-  saveLocalBackup();
+  if (typeof saveLocalBackup === 'function') saveLocalBackup();
   closeIdeaModal();
-  showToast("💡 Album ajouté aux idées !");
+  if (typeof showToast === 'function') showToast("💡 Album ajouté aux idées !");
   renderCompilPlanner(false);
 }
 
 function convertSelectedToMD() {
-  if (selectedIdeaIndices.size === 0) return;
+  if (typeof selectedIdeaIndices === 'undefined' || selectedIdeaIndices.size === 0) return;
 
   const ideas = getIdeaList();
   const selectedAlbums = Array.from(selectedIdeaIndices).map(i => ideas[i]);
@@ -1680,14 +1842,18 @@ function convertSelectedToMD() {
     }))
   };
 
-  catalogData.push(newMD);
+  if (Array.isArray(catalogData)) {
+    catalogData.push(newMD);
+  } else if (catalogData && Array.isArray(catalogData.minidiscs)) {
+    catalogData.minidiscs.push(newMD);
+  }
 
   window.ideaAlbums = ideas.filter((_, idx) => !selectedIdeaIndices.has(idx));
   selectedIdeaIndices.clear();
 
   clearPlannerHeaderInfo();
-  saveLocalBackup();
-  showToast("🎉 Albums convertis en MiniDisc avec succès !");
+  if (typeof saveLocalBackup === 'function') saveLocalBackup();
+  if (typeof showToast === 'function') showToast("🎉 Albums convertis en MiniDisc avec succès !");
   renderDashboard(true);
 }
 
