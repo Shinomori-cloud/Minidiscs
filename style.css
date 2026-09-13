@@ -1288,16 +1288,16 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   MENU DE FILTRES DES MINIDISCS (GRAND & STICKY)
+   MENU DE FILTRES DES MINIDISCS (CORRECTION ALIGNEMENT)
    ========================================== */
 
-/* Masquage strict par défaut */
+/* Masquage par défaut */
 #genre-filter-dropdown,
 .genre-filter-container.hidden {
   display: none !important;
 }
 
-/* Fenêtre principale agrandie */
+/* Fenêtre principale */
 #genre-filter-dropdown:not(.hidden) {
   display: flex !important;
   flex-direction: column !important;
@@ -1311,31 +1311,35 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 4px 4px 0px #000000 !important;
   z-index: 1400 !important;
   width: 220px !important;
-  max-height: 70vh !important; /* Occupe jusqu'à 70% de la hauteur de l'écran */
+  max-height: 65vh !important;
   box-sizing: border-box !important;
 }
 
-/* Zone fixe pour le bouton TOUS */
+/* Zone fixe en haut (TOUS) */
 .genre-filter-sticky {
   flex-shrink: 0;
+  width: 100% !important;
   margin-bottom: 8px;
   padding-bottom: 8px;
-  border-bottom: 2px solid #000000; /* Ligne de séparation sous TOUS */
+  border-bottom: 2px solid #000000;
+  box-sizing: border-box !important;
 }
 
-/* Zone défilante pour les genres */
+/* Zone défilante (1 SEULE COLONNE) */
 .genre-filter-scroll {
   flex-grow: 1;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important; /* Force la colonne unique */
   gap: 8px;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-/* Style des puces (boutons) */
+/* Style uniforme pour TOUS les boutons */
 #genre-filter-dropdown .genre-chip {
   display: block !important;
-  width: 100% !important;
+  width: 100% !important; /* Prend toute la largeur */
   text-align: center;
   background: #f0f0f0;
   color: #000000;
@@ -1360,6 +1364,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 1px 1px 0px #000000;
 }
 
+/* Bouton actif */
 #genre-filter-dropdown .genre-chip.active {
   background: #ff007f;
   color: #ffffff;
