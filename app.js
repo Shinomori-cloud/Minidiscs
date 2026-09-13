@@ -4,7 +4,8 @@
 let catalogData = null;
 let currentMD = null;
 let currentAlbum = null;
-let currentGenreFilter = null;
+let currentGenreFilters = new Set(); // Gestion multi-genres pour le catalogue principal
+let isGenreDropdownOpen = false;     // État d'ouverture du menu filtre du catalogue
 let currentTypeFilter = null;
 let currentSearchQuery = '';
 let adminAlbumCount = 0;
@@ -1336,7 +1337,7 @@ function toggleGenreDropdown() {
   }
 
   // Met à jour le texte du bouton de filtre dans la barre principale
-  const btn = document.getElementById('btn-filter-genre') || document.getElementById('planner-btn-genre-toggle');
+  const btn = document.getElementById('btn-filter-genre');
   if (btn) {
     const count = currentGenreFilters.size;
     btn.textContent = count > 0 ? `| Filter (${count})` : '| Filter';
@@ -1346,8 +1347,14 @@ function toggleGenreDropdown() {
 }
 
 function renderGenreFilter() {
-  const container = document.getElementById('genre-filter-dropdown') || document.getElementById('planner-genre-filter');
-  if (!container) return;
+  let container = document.getElementById('genre-filter-dropdown');
+  
+  // Crée le conteneur s'il n'existe pas dans le DOM
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'genre-filter-dropdown';
+    document.body.appendChild(container);
+  }
 
   if (!isGenreDropdownOpen) {
     container.classList.add('hidden');
@@ -1355,9 +1362,11 @@ function renderGenreFilter() {
     return;
   }
 
-  // Récupère les genres depuis la liste globale des MiniDiscs (mdData)
+  // Récupère les genres depuis catalogData ou window.mdData
   const allGenresSet = new Set();
-  const sourceData = Array.isArray(window.mdData) ? window.mdData : (typeof getMDList === 'function' ? getMDList() : []);
+  const sourceData = (catalogData && Array.isArray(catalogData.minidiscs))
+    ? catalogData.minidiscs
+    : (Array.isArray(window.mdData) ? window.mdData : []);
 
   sourceData.forEach(md => {
     if (md.genre) {
@@ -1379,21 +1388,25 @@ function renderGenreFilter() {
   container.classList.remove('hidden');
 
   let html = `
-    <div style="background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); border: 2px solid #fff; border-radius: 12px; padding: 10px; max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.6);">
+    <div style="background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); border: 2px solid #fff; border-radius: 12px; padding: 10px; max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); min-width: 140px;">
       <button type="button" onclick="clearGenreFilters()" style="background: ${currentGenreFilters.size === 0 ? '#fff' : 'transparent'}; color: ${currentGenreFilters.size === 0 ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer;">
         ${currentGenreFilters.size === 0 ? '✓ TOUS' : 'TOUS'}
       </button>
   `;
 
-  sortedGenres.forEach(genre => {
-    const isChecked = currentGenreFilters.has(genre);
-    html += `
-      <button type="button" onclick="toggleGenreFilter('${genre}')" style="background: ${isChecked ? '#fff' : 'transparent'}; color: ${isChecked ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-        <span>${genre}</span>
-        ${isChecked ? '<span>✓</span>' : ''}
-      </button>
-    `;
-  });
+  if (sortedGenres.length === 0) {
+    html += `<span style="color:#aaa; font-size:0.75rem; padding:4px;">Aucun genre</span>`;
+  } else {
+    sortedGenres.forEach(genre => {
+      const isChecked = currentGenreFilters.has(genre);
+      html += `
+        <button type="button" onclick="toggleGenreFilter('${genre}')" style="background: ${isChecked ? '#fff' : 'transparent'}; color: ${isChecked ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+          <span>${genre}</span>
+          ${isChecked ? '<span>✓</span>' : ''}
+        </button>
+      `;
+    });
+  }
 
   html += `</div>`;
   container.innerHTML = html;
@@ -1416,11 +1429,12 @@ function toggleGenreFilter(genre) {
   // Met à jour l'état visuel du menu et du bouton
   renderGenreFilter();
 
-  const btn = document.getElementById('btn-filter-genre') || document.getElementById('planner-btn-genre-toggle');
+  const btn = document.getElementById('btn-filter-genre');
   if (btn) {
     const count = currentGenreFilters.size;
     btn.textContent = count > 0 ? `| Filter (${count})` : '| Filter';
   }
+}
 
 function clearGenreFilters() {
   currentGenreFilters.clear();
@@ -1433,9 +1447,8 @@ function clearGenreFilters() {
 
   renderGenreFilter();
 
-  const btn = document.getElementById('btn-filter-genre') || document.getElementById('planner-btn-genre-toggle');
+  const btn = document.getElementById('btn-filter-genre');
   if (btn) btn.textContent = '| Filter';
- }
 }
 
 function deleteIdeaAlbum(index) {
