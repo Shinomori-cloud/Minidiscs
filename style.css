@@ -1321,3 +1321,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   background: #ff007f !important;
   color: #ffffff !important;
 }
+
+html, body {
+  overscroll-behavior-y: none;
+}
