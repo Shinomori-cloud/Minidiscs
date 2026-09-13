@@ -1288,7 +1288,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   MENU DE FILTRES MINIDISC (CONTENEUR ET LISTE ISOLÉS)
+   MENU DE FILTRES MINIDISC (VERROUILLAGE BLOC)
    ========================================== */
 
 #genre-filter-dropdown.hidden {
@@ -1296,8 +1296,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 #genre-filter-dropdown:not(.hidden) {
-  display: flex !important;
-  flex-direction: column !important;
+  display: block !important;
   position: fixed !important;
   bottom: 65px !important;
   right: 20px !important;
@@ -1313,33 +1312,35 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   overflow: hidden !important;
 }
 
-/* Zone fixe pour le bouton TOUS */
 .md-filter-top {
+  display: block !important;
   width: 100% !important;
   margin-bottom: 8px !important;
   padding-bottom: 8px !important;
   border-bottom: 2px solid #000000 !important;
   box-sizing: border-box !important;
-  flex-shrink: 0 !important;
 }
 
-/* Zone défilante pour les autres genres */
 .md-filter-list {
-  width: 100% !important;
-  overflow-y: auto !important;
-  box-sizing: border-box !important;
-  flex-grow: 1 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
-  padding-right: 2px !important;
-}
-
-/* Style unique pour CHAQUE bouton du menu */
-#genre-filter-dropdown .md-filter-btn {
   display: block !important;
   width: 100% !important;
-  margin: 0 !important;
+  max-height: calc(60vh - 65px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+  padding-right: 4px !important;
+}
+
+/* Reinitialisation stricte des boutons pour tuer toute derivation latérale */
+#genre-filter-dropdown button.md-filter-btn {
+  display: block !important;
+  float: none !important;
+  clear: both !important;
+  position: static !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 0 8px 0 !important;
   padding: 8px 10px !important;
   background: #f0f0f0 !important;
   color: #000000 !important;
@@ -1352,20 +1353,24 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   cursor: pointer !important;
   box-shadow: 2px 2px 0px #000000 !important;
   box-sizing: border-box !important;
-  transition: transform 0.1s, background-color 0.15s !important;
-  flex-shrink: 0 !important;
+  transform: none !important;
+  transition: background-color 0.15s !important;
 }
 
-#genre-filter-dropdown .md-filter-btn:hover {
+#genre-filter-dropdown .md-filter-list button.md-filter-btn:last-child {
+  margin-bottom: 0 !important;
+}
+
+#genre-filter-dropdown button.md-filter-btn:hover {
   background: #e0e0e0 !important;
 }
 
-#genre-filter-dropdown .md-filter-btn:active {
+#genre-filter-dropdown button.md-filter-btn:active {
   transform: translate(1px, 1px) !important;
   box-shadow: 1px 1px 0px #000000 !important;
 }
 
-#genre-filter-dropdown .md-filter-btn.active {
+#genre-filter-dropdown button.md-filter-btn.active {
   background: #ff007f !important;
   color: #ffffff !important;
 }
