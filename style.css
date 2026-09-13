@@ -1288,84 +1288,80 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   MENU DE FILTRES DES MINIDISCS (CORRECTION ALIGNEMENT)
+   MENU DE FILTRES MINIDISC (ISOLÉ)
    ========================================== */
 
-/* Masquage par défaut */
 #genre-filter-dropdown,
 .genre-filter-container.hidden {
   display: none !important;
 }
 
-/* Fenêtre principale */
 #genre-filter-dropdown:not(.hidden) {
-  display: flex !important;
-  flex-direction: column !important;
+  display: block !important;
   position: fixed !important;
   bottom: 65px !important;
   right: 20px !important;
+  width: 220px !important;
+  max-height: 60vh !important;
   background: #ffffff !important;
   border: 3px solid #000000 !important;
   border-radius: 12px !important;
   padding: 10px !important;
   box-shadow: 4px 4px 0px #000000 !important;
   z-index: 1400 !important;
-  width: 220px !important;
-  max-height: 65vh !important;
   box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
-/* Zone fixe en haut (TOUS) */
-.genre-filter-sticky {
-  flex-shrink: 0;
+.md-filter-top {
   width: 100% !important;
-  margin-bottom: 8px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #000000;
+  margin-bottom: 8px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 2px solid #000000 !important;
   box-sizing: border-box !important;
 }
 
-/* Zone défilante (1 SEULE COLONNE) */
-.genre-filter-scroll {
-  flex-grow: 1;
-  overflow-y: auto;
-  display: flex !important;
-  flex-direction: column !important; /* Force la colonne unique */
-  gap: 8px;
+.md-filter-list {
   width: 100% !important;
+  max-height: calc(60vh - 60px) !important;
+  overflow-y: auto !important;
   box-sizing: border-box !important;
 }
 
-/* Style uniforme pour TOUS les boutons */
-#genre-filter-dropdown .genre-chip {
+/* Style direct des boutons isolés */
+button.md-filter-btn {
   display: block !important;
-  width: 100% !important; /* Prend toute la largeur */
-  text-align: center;
-  background: #f0f0f0;
-  color: #000000;
-  border: 2px solid #000000;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-family: inherit;
-  font-size: 0.75rem;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 2px 2px 0px #000000;
-  transition: transform 0.1s, background-color 0.15s;
+  width: 100% !important;
+  margin: 0 0 8px 0 !important;
+  padding: 8px 10px !important;
+  background: #f0f0f0 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 8px !important;
+  font-family: inherit !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  box-shadow: 2px 2px 0px #000000 !important;
   box-sizing: border-box !important;
+  transition: transform 0.1s, background-color 0.15s !important;
 }
 
-#genre-filter-dropdown .genre-chip:hover {
-  background: #e0e0e0;
+.md-filter-list button.md-filter-btn:last-child {
+  margin-bottom: 0 !important;
 }
 
-#genre-filter-dropdown .genre-chip:active {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0px #000000;
+button.md-filter-btn:hover {
+  background: #e0e0e0 !important;
 }
 
-/* Bouton actif */
-#genre-filter-dropdown .genre-chip.active {
-  background: #ff007f;
-  color: #ffffff;
+button.md-filter-btn:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px #000000 !important;
+}
+
+button.md-filter-btn.active {
+  background: #ff007f !important;
+  color: #ffffff !important;
 }
