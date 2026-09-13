@@ -96,7 +96,7 @@ function toggleGenreDropdown() {
   }
 }
 
-// Génère le contenu dynamique des filtres avec structure isolée
+// Génère le contenu dynamique des filtres par genre avec les classes isolées
 function renderGenreDropdownContent() {
   const dropdown = document.getElementById('genre-filter-dropdown');
   if (!dropdown || !catalogData) return;
@@ -124,7 +124,7 @@ function renderGenreDropdownContent() {
   }
 
   const isAllActive = !currentGenreFilter || currentGenreFilter === 'ALL' ? 'active' : '';
-  
+
   let html = `
     <div class="md-filter-top">
       <button class="md-filter-btn ${isAllActive}" onclick="selectGenreFilter('ALL')">TOUS</button>
