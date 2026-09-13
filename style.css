@@ -17,12 +17,20 @@
   padding: 0;
 }
 
+/* Verrouillage du scroll natif pour Hermit */
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text-main);
   padding: 16px;
   max-width: 600px;
   margin: 0 auto;
+  height: 100%;
+  overflow: hidden; /* Empêche le pull-to-refresh global d'Hermit */
 
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: no-repeat;
