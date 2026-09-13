@@ -1375,35 +1375,41 @@ html, body {
   transform: scale(1.15);
 }
 
-/* Menu déroulant au-dessus */
+/* Menu déroulant compact (popover) */
 .fab-menu {
+  position: absolute;
+  bottom: 100%; /* S'affiche juste au-dessus de la barre */
+  right: 0;
+  margin-bottom: 8px; /* Espace entre le menu et la barre */
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  background: white;
-  padding: 8px;
+  min-width: 160px; /* Largeur fixe et étroite */
+  background: #ffffff;
+  padding: 6px;
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  border: 1px solid #ddd;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e0e0e0;
 }
 
 .fab-menu.hidden {
   display: none !important;
 }
 
-/* Boutons du menu d'admin */
+/* Éléments du menu */
 .fab-item {
-  background: none;
+  background: transparent;
   border: none;
   padding: 8px 12px;
   text-align: left;
   font-size: 0.85rem;
   font-weight: 500;
+  color: #333;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
   white-space: nowrap;
+  transition: background 0.15s ease;
 }
 
 .fab-item:hover {
-  background-color: #f1f3f5;
+  background-color: #f0f4f8;
 }
