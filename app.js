@@ -1327,7 +1327,16 @@ function renderPlannerGenreFilter() {
 
 function togglePlannerGenreDropdown() {
   isPlannerGenreDropdownOpen = !isPlannerGenreDropdownOpen;
+  
+  // Rendu du menu pop-up au-dessus du bouton
   renderPlannerGenreFilter();
+  
+  // Mise à jour dynamique du libellé du bouton dans la barre
+  const btn = document.getElementById('planner-btn-genre-toggle');
+  if (btn) {
+    const count = currentPlannerGenreFilters.size;
+    btn.textContent = count > 0 ? `| Filter (${count})` : '| Filter';
+  }
 }
 
 function togglePlannerGenre(genre) {
