@@ -2046,3 +2046,14 @@ function populateFormDatalists() {
       .join('');
   }
 }
+
+// Sauvegarder le token sur le téléphone
+function saveGithubToken(token) {
+  localStorage.setItem('github_token', token.trim());
+  alert('Token GitHub enregistré avec succès !');
+}
+
+// Récupérer le token stocké
+function getGithubToken() {
+  return localStorage.getItem('github_token');
+}
