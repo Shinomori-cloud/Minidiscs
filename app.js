@@ -68,7 +68,7 @@ function toggleSearch() {
 
   if (!isClosed) {
     topSearch.classList.add('closed');
-    if (fabBtn) fabBtn.textContent = '| Search';
+    if (fabBtn) fabBtn.textContent = '🔍';
     if (currentSearchQuery !== '') {
       currentSearchQuery = '';
       if (searchInput) searchInput.value = '';
@@ -180,13 +180,13 @@ function updateFilterIcon() {
   if (!filterBtn) return;
 
   if (currentRecordFilter === 'toRecord') {
-    filterBtn.textContent = 'Rec';
+    filterBtn.textContent = '🔴';
     filterBtn.classList.add('active');
   } else if (currentRecordFilter === 'recorded') {
-    filterBtn.textContent = 'Ok';
+    filterBtn.textContent = '✅';
     filterBtn.classList.add('active');
   } else {
-    filterBtn.textContent = 'All';
+    filterBtn.textContent = '💿';
     filterBtn.classList.remove('active');
   }
 }
@@ -237,7 +237,7 @@ function updateSearchVisibility(show) {
     }
   } else {
     if (floatingActions) floatingActions.classList.add('hidden');
-    if (fabBtn) fabBtn.textContent = '| Search';
+    if (fabBtn) fabBtn.textContent = '🔍';
     if (topSearch) topSearch.classList.add('closed');
     if (genreDropdown) genreDropdown.classList.add('hidden');
 
