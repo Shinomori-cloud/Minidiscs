@@ -1288,7 +1288,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   MENU DE FILTRES MINIDISC (ISOLÉ)
+   MENU DE FILTRES MINIDISC (FINAL FIX DEFILEMENT)
    ========================================== */
 
 #genre-filter-dropdown,
@@ -1297,7 +1297,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 #genre-filter-dropdown:not(.hidden) {
-  display: block !important;
+  display: flex !important;
+  flex-direction: column !important;
   position: fixed !important;
   bottom: 65px !important;
   right: 20px !important;
@@ -1310,7 +1311,6 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 4px 4px 0px #000000 !important;
   z-index: 1400 !important;
   box-sizing: border-box !important;
-  overflow: hidden !important;
 }
 
 .md-filter-top {
@@ -1319,20 +1319,24 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   padding-bottom: 8px !important;
   border-bottom: 2px solid #000000 !important;
   box-sizing: border-box !important;
+  flex-shrink: 0 !important;
 }
 
 .md-filter-list {
   width: 100% !important;
-  max-height: calc(60vh - 60px) !important;
   overflow-y: auto !important;
   box-sizing: border-box !important;
+  flex-grow: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  padding: 4px 2px !important; /* Marge interne pour ne pas couper les ombres des boutons */
 }
 
-/* Style direct des boutons isolés */
 button.md-filter-btn {
   display: block !important;
   width: 100% !important;
-  margin: 0 0 8px 0 !important;
+  margin: 0 !important;
   padding: 8px 10px !important;
   background: #f0f0f0 !important;
   color: #000000 !important;
@@ -1346,10 +1350,7 @@ button.md-filter-btn {
   box-shadow: 2px 2px 0px #000000 !important;
   box-sizing: border-box !important;
   transition: transform 0.1s, background-color 0.15s !important;
-}
-
-.md-filter-list button.md-filter-btn:last-child {
-  margin-bottom: 0 !important;
+  flex-shrink: 0 !important; /* Empêche l'écrasement des boutons */
 }
 
 button.md-filter-btn:hover {
