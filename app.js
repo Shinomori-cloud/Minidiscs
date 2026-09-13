@@ -1688,40 +1688,27 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
     gap: '6px',
     maxHeight: '180px',
     overflowY: 'auto',
-    overscrollBehavior: 'none',
+    overscrollBehavior: 'contain',
     webkitOverflowScrolling: 'touch'
   });
 
-  // CORRECTION PULL-TO-REFRESH SUR MOBILE
-  let lastTouchY = 0;
+  // BLOQUAGE CIBLÉ DU PULL-TO-REFRESH PWA
+  let touchStartY = 0;
 
   scrollArea.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-      lastTouchY = e.touches[0].clientY;
-    }
+    touchStartY = e.touches[0].clientY;
   }, { passive: true });
 
   scrollArea.addEventListener('touchmove', (e) => {
-    if (e.touches.length !== 1) return;
+    const touchCurrentY = e.touches[0].clientY;
+    const isDraggingDown = touchCurrentY > touchStartY;
 
-    const currentY = e.touches[0].clientY;
-    const isSwipingDown = currentY > lastTouchY; // L'utilisateur glisse son doigt vers le bas
-    const isAtTop = scrollArea.scrollTop <= 0;
-    const isAtBottom = (scrollArea.scrollTop + scrollArea.clientHeight) >= scrollArea.scrollHeight;
-
-    // Si on essaie de tirer vers le bas alors qu'on est au sommet de la liste :
-    if (isAtTop && isSwipingDown) {
-      // Bloque l'action par défaut du navigateur (pull-to-refresh)
+    // Si on pointe en haut de la liste et qu'on tire vers le bas, on annule l'événement pour la page
+    if (scrollArea.scrollTop <= 0 && isDraggingDown) {
       if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
     }
-
-    // Si on essaie de tirer vers le haut alors qu'on est tout en bas de la liste :
-    if (isAtBottom && !isSwipingDown) {
-      if (e.cancelable) e.preventDefault();
-    }
-
-    lastTouchY = currentY;
-  }, { passive: false }); // { passive: false } est obligatoire pour autoriser e.preventDefault()
+  }, { passive: false });
 
   const activeFilters = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters : new Set();
 
