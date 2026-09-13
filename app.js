@@ -1547,16 +1547,16 @@ function renderCompilPlanner(pushState = true) {
 
         <div style="position: fixed; bottom: 80px; right: 20px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
           <div id="planner-fab-menu" style="display: none; flex-direction: column; gap: 8px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 10px; box-shadow: 4px 4px 0px #000000; min-width: 170px;">
-            <button type="button" onclick="if(typeof openIdeaModal==='function') openIdeaModal();" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #ff007f; color: #fff; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+            <button type="button" id="planner-btn-add" onclick="if(typeof openIdeaModal==='function') openIdeaModal();" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #ff007f; color: #fff; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
               ＋ Ajouter
             </button>
-            <button type="button" onclick="if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''} style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #06d6a0; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+            <button type="button" id="planner-btn-convert" onclick="if(typeof convertSelectedToMD==='function') convertSelectedToMD(); else if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''} style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #06d6a0; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
               💾 Convertir (${countSelect})
             </button>
-            <button type="button" onclick="if(typeof togglePlannerGenreDropdown==='function') togglePlannerGenreDropdown();" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #fff; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+            <button type="button" id="planner-btn-genre-toggle" onclick="if(typeof togglePlannerGenreDropdown==='function') togglePlannerGenreDropdown();" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #fff; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
               🏷️ Genres ${activeGenreCount > 0 ? '(' + activeGenreCount + ')' : ''}
             </button>
-            <button type="button" onclick="if(typeof resetPlannerSelections==='function') resetPlannerSelections();" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+            <button type="button" id="planner-btn-reset" onclick="if(typeof clearIdeaSelection==='function') clearIdeaSelection(); else if(typeof resetPlannerSelections==='function') resetPlannerSelections();" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
               🔄 Réinitialiser
             </button>
           </div>
@@ -1567,6 +1567,32 @@ function renderCompilPlanner(pushState = true) {
         </div>
       </div>
     `;
+
+    if (typeof updatePlannerHeader === 'function') {
+      updatePlannerHeader();
+    }
+
+    const gridContainer = document.getElementById('ideas-grid-container');
+    if (gridContainer) {
+      gridContainer.addEventListener('click', (e) => {
+        const deleteBtn = e.target.closest('[data-delete]');
+        if (deleteBtn) {
+          e.stopPropagation();
+          const index = parseInt(deleteBtn.getAttribute('data-delete'), 10);
+          if (typeof deleteIdeaAlbum === 'function') deleteIdeaAlbum(index);
+          return;
+        }
+
+        const card = e.target.closest('.idea-card');
+        if (card) {
+          const index = parseInt(card.getAttribute('data-index'), 10);
+          if (typeof toggleIdeaSelection === 'function') toggleIdeaSelection(index);
+        }
+      });
+    }
+
+    window.scrollTo(0, 0);
+
   } catch (err) {
     console.error("Erreur dans renderCompilPlanner:", err);
   }
@@ -1579,39 +1605,6 @@ function togglePlannerFabMenu() {
   menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
 }
 
-  updatePlannerHeader();
-
-  const gridContainer = document.getElementById('ideas-grid-container');
-  if (gridContainer) {
-    gridContainer.addEventListener('click', (e) => {
-      const deleteBtn = e.target.closest('[data-delete]');
-      if (deleteBtn) {
-        e.stopPropagation();
-        const index = parseInt(deleteBtn.getAttribute('data-delete'), 10);
-        deleteIdeaAlbum(index);
-        return;
-      }
-
-      const card = e.target.closest('.idea-card');
-      if (card) {
-        const index = parseInt(card.getAttribute('data-index'), 10);
-        toggleIdeaSelection(index);
-      }
-    });
-  }
-
-  const addBtn = document.getElementById('planner-btn-add');
-  if (addBtn) addBtn.addEventListener('click', openIdeaModal);
-
-  const convertBtn = document.getElementById('planner-btn-convert');
-  if (convertBtn) convertBtn.addEventListener('click', convertSelectedToMD);
-
-  const resetBtn = document.getElementById('planner-btn-reset');
-  if (resetBtn) resetBtn.addEventListener('click', clearIdeaSelection);
-
-  window.scrollTo(0, 0);
-}
-
 function toggleIdeaSelection(index) {
   if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
 
@@ -1621,7 +1614,7 @@ function toggleIdeaSelection(index) {
     selectedIdeaIndices.add(index);
   }
 
-  updatePlannerHeader();
+  if (typeof updatePlannerHeader === 'function') updatePlannerHeader();
 
   const card = document.querySelector(`.idea-card[data-index="${index}"]`);
   if (card) {
@@ -1650,10 +1643,10 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   if (typeof isPlannerGenreDropdownOpen === 'undefined' || !isPlannerGenreDropdownOpen) return;
 
   const genresSet = new Set();
-  const ideas = getIdeaList();
+  const ideas = typeof getIdeaList === 'function' ? getIdeaList() : [];
   
   ideas.forEach(item => {
-    const itemGenres = getItemGenresList(item);
+    const itemGenres = typeof getItemGenresList === 'function' ? getItemGenresList(item) : [];
     itemGenres.forEach(g => genresSet.add(g));
   });
 
@@ -1689,12 +1682,12 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   const allBtnWrapper = document.createElement('div');
   allBtnWrapper.style.cssText = 'position: sticky; top: 0; z-index: 10; background: #ffffff; padding-bottom: 6px; border-bottom: 1.5px solid #000000; flex-shrink: 0;';
   allBtnWrapper.innerHTML = `
-    <button type="button" class="tag-btn ${activeCount === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="width: 100%; text-align: left;">
+    <button type="button" class="tag-btn ${activeCount === 0 ? 'active' : ''}" onclick="if(typeof clearPlannerGenreFilters==='function') clearPlannerGenreFilters();" style="width: 100%; text-align: left;">
       Tous les genres
     </button>
   `;
   menu.appendChild(allBtnWrapper);
-
+   
   // 2. Zone de défilement propre pour les genres
   const scrollArea = document.createElement('div');
   scrollArea.id = 'planner-genre-scroll-area';
