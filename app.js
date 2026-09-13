@@ -89,7 +89,6 @@ function toggleGenreDropdown() {
   const isHidden = dropdown.classList.contains('hidden');
 
   if (isHidden) {
-    // Génère les puces de genres avant d'afficher le conteneur
     renderGenreDropdownContent();
     dropdown.classList.remove('hidden');
   } else {
@@ -97,23 +96,27 @@ function toggleGenreDropdown() {
   }
 }
 
-// Génère le contenu dynamique des filtres par genre
+// Génère le contenu dynamique des filtres par genre à partir de catalogData
 function renderGenreDropdownContent() {
   const dropdown = document.getElementById('genre-filter-dropdown');
-  if (!dropdown) return;
+  if (!dropdown || !catalogData) return;
 
   const allGenres = new Set();
 
-  // Extraction des genres via la structure de tes MiniDiscs
-  if (Array.isArray(window.minidiscs || typeof minidiscs !== 'undefined' && minidiscs)) {
-    const list = window.minidiscs || minidiscs;
-    list.forEach(md => {
-      const genres = getMDAllGenres(md);
-      genres.forEach(g => {
-        if (g && g.trim()) allGenres.add(g.trim().toUpperCase());
-      });
+  catalogData.forEach(md => {
+    let genres = [];
+    if (typeof getMDAllGenres === 'function') {
+      genres = getMDAllGenres(md);
+    } else if (md.genre) {
+      genres = typeof md.genre === 'string' ? md.genre.split(',') : md.genre;
+    }
+
+    genres.forEach(g => {
+      if (g && typeof g === 'string' && g.trim()) {
+        allGenres.add(g.trim().toUpperCase());
+      }
     });
-  }
+  });
 
   if (allGenres.size === 0) {
     dropdown.innerHTML = `<span style="font-size: 0.75rem; color: #666; font-weight: bold; padding: 4px;">Aucun genre</span>`;
@@ -133,10 +136,6 @@ function renderGenreDropdownContent() {
 // Application du filtre sélectionné et rafraîchissement de la liste
 function selectGenreFilter(genre) {
   currentGenreFilter = genre === 'ALL' ? '' : genre;
-
-  // Mise à jour de la classe active sur les puces
-  const chips = document.querySelectorAll('#genre-filter-dropdown .genre-chip');
-  chips.forEach(chip => chip.classList.remove('active'));
 
   const dropdown = document.getElementById('genre-filter-dropdown');
   if (dropdown) dropdown.classList.add('hidden');
@@ -159,7 +158,6 @@ function cycleRecordFilter() {
   }
 
   updateFilterIcon();
-  // Conservation des filtres de genre et de type actifs lors du cycle
   renderMDList({ 
     genre: currentGenreFilter, 
     type: currentTypeFilter, 
