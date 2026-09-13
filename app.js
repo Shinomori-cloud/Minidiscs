@@ -1385,6 +1385,26 @@ document.addEventListener('click', (e) => {
   }
 });
 
+// Ouvre/ferme le sous-menu du statut dans le FAB
+function toggleFabSubmenu(id) {
+  const submenu = document.getElementById(id);
+  if (submenu) {
+    submenu.classList.toggle('hidden');
+  }
+}
+
+// Applique le filtre de statut directement au clic
+function applyStatusFilter(status) {
+  // Si tu as déjà une variable de filtre globale (ex: currentRecordFilter)
+  // tu peux l'affecter directement ici, ou utiliser ton switcher :
+  if (typeof setRecordFilter === 'function') {
+    setRecordFilter(status);
+  } else if (typeof cycleRecordFilter === 'function') {
+    // Si tu n'as que cycleRecordFilter, on la déclenche
+    cycleRecordFilter();
+  }
+}
+
 /* ==========================================
    PLANIFICATEUR DE COMPILATION & IDÉES
    ========================================== */
