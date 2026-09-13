@@ -1288,44 +1288,48 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   MENU DE FILTRES DES MINIDISCS (1 COLONNE)
+   MENU DE FILTRES DES MINIDISCS (1 SEULE COLONNE)
    ========================================== */
 .genre-filter-container,
 #genre-filter-dropdown {
-  position: fixed;
-  bottom: 65px;
-  right: 20px;
-  background: #ffffff;
-  border: 3px solid #000000;
-  border-radius: 12px;
-  padding: 10px;
-  box-shadow: 4px 4px 0px #000000;
-  z-index: 1400;
-  width: 220px;
-  max-height: 300px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column; /* Une seule colonne */
-  gap: 8px;
-  box-sizing: border-box;
+  position: fixed !important;
+  bottom: 65px !important;
+  right: 20px !important;
+  background: #ffffff !important;
+  border: 3px solid #000000 !important;
+  border-radius: 12px !important;
+  padding: 10px !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+  z-index: 1400 !important;
+  width: 220px !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
+  display: block !important; /* Force l'empilement vertical */
+  box-sizing: border-box !important;
 }
 
-/* Style des puces de genres à l'intérieur */
+/* Force chaque bouton à occuper toute la ligne (1 seul par ligne) */
 #genre-filter-dropdown .genre-chip {
-  width: 100%; /* Un seul élément par ligne */
+  display: block !important;
+  width: 100% !important;
+  margin-bottom: 8px !important;
   text-align: center;
   background: #f0f0f0;
   color: #000000;
   border: 2px solid #000000;
   border-radius: 8px;
-  padding: 6px 12px;
+  padding: 8px 12px;
   font-family: inherit;
   font-size: 0.75rem;
   font-weight: 800;
   cursor: pointer;
   box-shadow: 2px 2px 0px #000000;
   transition: transform 0.1s, background-color 0.15s;
-  box-sizing: border-box;
+  box-sizing: border-box !important;
+}
+
+#genre-filter-dropdown .genre-chip:last-child {
+  margin-bottom: 0 !important;
 }
 
 #genre-filter-dropdown .genre-chip:hover {
