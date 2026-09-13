@@ -54,41 +54,6 @@ function clearLocalBackup() {
   hasUnsavedChanges = false;
 }
 
-// Annule le pull-to-refresh natif quand l'utilisateur tire vers le bas
-// au sommet de la page ou à l'intérieur d'un sous-menu.
-let globalTouchStartY = 0;
-
-window.addEventListener('touchstart', (e) => {
-  if (e.touches.length === 1) {
-    globalTouchStartY = e.touches[0].clientY;
-  }
-}, { passive: true });
-
-window.addEventListener('touchmove', (e) => {
-  if (e.touches.length !== 1) return;
-
-  const currentY = e.touches[0].clientY;
-  const isDraggingDown = currentY > globalTouchStartY;
-
-  // Si le menu du planificateur est ouvert
-  if (window.isPlannerGenreDropdownOpen) {
-    const scrollArea = document.getElementById('planner-genre-scroll-area');
-    if (scrollArea) {
-      const isAtTop = scrollArea.scrollTop <= 0;
-      // Si on essaie de glisser vers le bas au sommet du menu
-      if (isAtTop && isDraggingDown) {
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-    }
-  }
-
-  // Sécurité générale : si la page principale est tout en haut
-  if (window.scrollY <= 0 && isDraggingDown) {
-    if (e.cancelable) e.preventDefault();
-  }
-}, { passive: false });
-
 /* ==========================================
    GESTION DU BOUTON ET DE LA BARRE DE RECHERCHE
    ========================================== */
