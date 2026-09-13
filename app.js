@@ -1545,7 +1545,7 @@ function renderCompilPlanner(pushState = true) {
           ${cardsHTML}
         </div>
 
-         <div style="position: fixed; bottom: 80px; right: 20px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+         <div style="position: fixed; bottom: 30px; right: 22px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
            <div id="planner-fab-menu" style="display: none; flex-direction: column; gap: 10px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 12px; box-shadow: 4px 4px 0px #000000; min-width: 180px;">
              <button type="button" id="planner-btn-add" onclick="if(typeof openIdeaModal==='function') openIdeaModal();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ff007f; color: #ffffff; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';">
                💽 Ajouter
