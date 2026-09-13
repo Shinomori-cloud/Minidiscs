@@ -44,6 +44,8 @@ function saveLocalBackup() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     hasUnsavedChanges = true;
+
+    syncCollectionToGithub(payload);
   } catch (err) {
     console.error("Erreur de sauvegarde locale:", err);
   }
@@ -2066,9 +2068,9 @@ async function syncCollectionToGithub(dataArray) {
   }
 
   // Remplace par tes informations
-  const USERNAME = 'TON_PSEUDO_GITHUB';
-  const REPO = 'TON_NOM_DE_REPO';
-  const FILE_PATH = 'data/minidiscs.json'; // Chemin vers ton fichier JSON dans le repo
+  const USERNAME = 'Shinomori-cloud';
+  const REPO = 'Minidiscs';
+  const FILE_PATH = 'data.json'; // Chemin vers ton fichier JSON dans le repo
 
   const url = `https://api.github.com/repos/${USERNAME}/${REPO}/contents/${FILE_PATH}`;
 
