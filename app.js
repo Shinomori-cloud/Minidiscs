@@ -963,9 +963,42 @@ function deleteMD(index) {
 /* ==========================================
    GESTION DE LA MODALE ADMIN
    ========================================== */
+
+/* ==========================================
+   UTILITAIRE : SELECTION MULTIPLE DATALIST
+   ========================================== */
+function enableMultiDatalistInput(inputId) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+
+  if (input.dataset.multiDatalistAttached) return;
+  input.dataset.multiDatalistAttached = "true";
+
+  input.addEventListener('input', function() {
+    const datalistId = input.getAttribute('list');
+    if (!datalistId) return;
+    const datalist = document.getElementById(datalistId);
+    if (!datalist) return;
+
+    const options = Array.from(datalist.options).map(opt => opt.value);
+    const currentValue = input.value;
+
+    const parts = currentValue.split(',').map(p => p.trimStart());
+    const lastPart = parts[parts.length - 1].trim();
+
+    if (options.includes(lastPart)) {
+      parts[parts.length - 1] = lastPart;
+      input.value = parts.join(', ') + ', ';
+    }
+  });
+}
+
 function openAdminModal(indexToEdit = null) {
   // Rafraîchir les listes de suggestions (genres / types)
   populateFormDatalists();
+
+   enableMultiDatalistInput('md-genre');
+  enableMultiDatalistInput('md-type-tags');
 
   editingMDIndex = indexToEdit;
   const modalTitle = document.querySelector('#admin-modal h3');
@@ -1082,6 +1115,9 @@ function addAdminAlbumBlock() {
   const container = document.getElementById('albums-container');
   if (!container) return;
 
+  const genreInputId = `album-genre-${adminAlbumCount}`;
+  const typeInputId = `album-type-${adminAlbumCount}`;
+
   const div = document.createElement('div');
   div.className = 'album-block';
   div.style.cssText = "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px; position: relative;";
@@ -1092,8 +1128,8 @@ function addAdminAlbumBlock() {
     </div>
     <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album" required></div>
     <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste" required></div>
-    <div class="form-group"><input type="text" class="album-type" placeholder="Type(s) de l'album (ex: Album, Live)"></div>
-    <div class="form-group"><input type="text" class="album-genre" placeholder="Genre(s) de l'album (séparés par virgule)"></div>
+    <div class="form-group"><input type="text" id="${typeInputId}" class="album-type" list="types-list" placeholder="Type(s) de l'album (ex: Album, Live)"></div>
+    <div class="form-group"><input type="text" id="${genreInputId}" class="album-genre" list="genres-list" placeholder="Genre(s) de l'album (séparés par virgule)"></div>
     <div class="form-group"><input type="text" class="album-year" placeholder="Année (ex: 1998)"></div>
     <div class="form-group"><input type="text" class="album-cover" value="images/" placeholder="URL Pochette Album"></div>
     <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne)"></textarea></div>
@@ -1105,6 +1141,10 @@ function addAdminAlbumBlock() {
     </div>
   `;
   container.appendChild(div);
+
+  // Activer la saisie multiple sur les champs du nouvel album
+  enableMultiDatalistInput(genreInputId);
+  enableMultiDatalistInput(typeInputId);
 }
 
 function removeAdminAlbumBlock(button) {
