@@ -189,10 +189,13 @@
       🔍 Rechercher
     </button>
 
-    <!-- 3. Filtre par genre (ne ferme plus le menu) -->
-    <button type="button" class="fab-item" onclick="typeof toggleGenreDropdown === 'function' ? toggleGenreDropdown() : toggleGenreFilter();">
-      🎨 Filtrer par genre
+    <!-- 3. Filtre par genre avec sous-menu dynamique -->
+    <button type="button" class="fab-item" onclick="toggleFabSubmenu('genres-submenu')">
+      🎨 Filtrer par genre ▾
     </button>
+    <div id="genres-submenu" class="fab-submenu hidden fab-scrollable-submenu">
+      <!-- Les genres seront injectés ici par JS -->
+    </div>
     
     <hr class="fab-divider">
     
