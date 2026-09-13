@@ -314,9 +314,40 @@ function processLoadedData(data) {
     if (!window.ideaAlbums) window.ideaAlbums = [];
   }
 
-// Remplissage dynamique des menus déroulants une fois catalogData chargé
+  // Remplissage dynamique des menus déroulants une fois catalogData chargé
   populateFormDatalists();
 }
+
+// Fonction globale pour appliquer la vue selon l'URL (hash)
+function handleRoute() {
+  const hash = window.location.hash;
+  if (hash.startsWith('#planner')) {
+    if (typeof renderCompilPlanner === 'function') {
+      renderCompilPlanner(false);
+    }
+  } else if (hash.startsWith('#minidiscs')) {
+    const urlParams = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
+    const genre = urlParams.get('genre');
+    const type = urlParams.get('type');
+    if (typeof renderMDList === 'function') {
+      renderMDList({ genre, type }, false);
+    }
+  } else if (hash.startsWith('#md-')) {
+    const mdIndex = parseInt(hash.replace('#md-', ''), 10);
+    if (!isNaN(mdIndex) && catalogData[mdIndex] && typeof openMD === 'function') {
+      openMD(mdIndex, false);
+    } else if (typeof renderDashboard === 'function') {
+      renderDashboard(false);
+    }
+  } else {
+    if (typeof renderDashboard === 'function') {
+      renderDashboard(false);
+    }
+  }
+}
+
+// Écouteur pour réagir aux clics sur les ancres / boutons de navigation
+window.addEventListener('hashchange', handleRoute);
 
 fetch('data.json')
   .then(response => {
@@ -339,24 +370,8 @@ fetch('data.json')
       processLoadedData(data);
     }
 
-    const hash = window.location.hash;
-    if (hash.startsWith('#planner')) {
-      renderCompilPlanner(false);
-    } else if (hash.startsWith('#minidiscs')) {
-      const urlParams = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
-      const genre = urlParams.get('genre');
-      const type = urlParams.get('type');
-      renderMDList({ genre, type }, false);
-    } else if (hash.startsWith('#md-')) {
-      const mdIndex = parseInt(hash.replace('#md-', ''), 10);
-      if (!isNaN(mdIndex) && catalogData[mdIndex]) {
-        openMD(mdIndex, false);
-      } else {
-        renderDashboard(false);
-      }
-    } else {
-      renderDashboard(false);
-    }
+    // Déclenche l'affichage initial de la vue
+    handleRoute();
   })
   .catch(err => {
     const savedBackup = localStorage.getItem(STORAGE_KEY);
@@ -366,7 +381,7 @@ fetch('data.json')
         processLoadedData(parsedBackup);
         hasUnsavedChanges = true;
         showToast("⚡ Données chargées depuis la sauvegarde locale !");
-        renderDashboard(false);
+        handleRoute();
         return;
       } catch (e) {}
     }
