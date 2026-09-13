@@ -168,13 +168,28 @@
   <datalist id="genres-list"></datalist>
   <datalist id="types-list"></datalist>
 
-  <!-- VIGNETTE FLOTTANTE COMBINÉE (FILTRE + RECHERCHE + GENRES) -->
-<div id="floating-actions" class="floating-actions-bar hidden">
-  <button id="filter-fab-btn" class="action-btn" onclick="cycleRecordFilter()" title="Filtrer par statut (Tous / À enregistrer / Enregistrés)">💿</button>
-  <button id="btn-search" class="action-btn" onclick="toggleSearch()" title="Rechercher">🔍</button>
-  <button id="btn-filter-genre" class="action-btn" onclick="typeof toggleGenreDropdown === 'function' ? toggleGenreDropdown() : (typeof toggleGenreFilter === 'function' && toggleGenreFilter())" title="Filtrer par genre">🎨</button>
-  <button id="btn-add-md" class="action-btn" onclick="openAdminModal()" title="Ajouter un MiniDisc">➕</button>
-</div>>
+  <!-- BOUTON FLOTTANT COMBINÉ (FAB) -->
+<div id="floating-actions" class="fab-container hidden">
+  <!-- Menu déroulant d'actions (masqué par défaut) -->
+  <div id="fab-menu" class="fab-menu hidden">
+    <button type="button" class="fab-item" onclick="openAdminModal(); toggleFabMenu();">
+      ➕ Ajouter un MiniDisc
+    </button>
+    <button type="button" class="fab-item" onclick="downloadUpdatedJSON(); toggleFabMenu();">
+      💾 Exporter le JSON
+    </button>
+  </div>
+
+  <!-- Barre d'actions rapides + bouton principal du menu -->
+  <div class="fab-bar">
+    <button id="filter-fab-btn" class="action-btn" onclick="cycleRecordFilter()" title="Filtrer par statut (Tous / À enregistrer / Enregistrés)">💿</button>
+    <button id="btn-search" class="action-btn" onclick="toggleSearch()" title="Rechercher">🔍</button>
+    <button id="btn-filter-genre" class="action-btn" onclick="typeof toggleGenreDropdown === 'function' ? toggleGenreDropdown() : (typeof toggleGenreFilter === 'function' && toggleGenreFilter())" title="Filtrer par genre">🎨</button>
+    
+    <!-- Bouton déclencheur du menu d'administration -->
+    <button id="fab-main-btn" class="action-btn fab-trigger" onclick="toggleFabMenu()" title="Menu administration">⚙️</button>
+  </div>
+</div>
 
   <!-- CHARGEMENT DU SCRIPT À LA FIN POUR ACCÉDER À TOUS LES ÉLÉMENTS DU DOM -->
   <script src="app.js"></script>
