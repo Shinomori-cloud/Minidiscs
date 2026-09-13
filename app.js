@@ -1468,7 +1468,6 @@ function getItemGenresList(item) {
 function renderCompilPlanner(pushState = true) {
   if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
 
-  // Afficher la barre d'actions globale si elle existe
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) {
     fa.style.display = 'flex';
@@ -1480,24 +1479,17 @@ function renderCompilPlanner(pushState = true) {
 
   if (typeof backBtn !== 'undefined' && backBtn) backBtn.classList.remove('hidden');
   if (typeof headerTitle !== 'undefined' && headerTitle) headerTitle.textContent = "PLANIFICATEUR";
-
   if (typeof featuredContainer !== 'undefined' && featuredContainer) featuredContainer.classList.add('hidden');
 
   if (pushState && window.location.hash !== '#planner') {
     history.pushState({ view: 'planner' }, '', '#planner');
   }
 
-  if (typeof updateSearchVisibility === 'function') {
-    updateSearchVisibility(false);
-  }
-
-  if (typeof injectPlannerHeaderBadge === 'function') {
-    injectPlannerHeaderBadge();
-  }
+  if (typeof updateSearchVisibility === 'function') updateSearchVisibility(false);
+  if (typeof injectPlannerHeaderBadge === 'function') injectPlannerHeaderBadge();
 
   const rawIdeas = typeof getIdeaList === 'function' ? getIdeaList() : [];
 
-  // Filtrage par genre avec découpage des genres uniques
   const filteredIdeas = rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex })).filter(item => {
     if (typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.size > 0) {
       const itemGenres = typeof getItemGenresList === 'function' ? getItemGenresList(item) : [];
@@ -1510,9 +1502,9 @@ function renderCompilPlanner(pushState = true) {
 
   let cardsHTML = '';
   if (rawIdeas.length === 0) {
-    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px; color: var(--text-sub, #aaa);">Aucun album dans votre liste d'idées. Ajoutez-en avec le bouton ci-dessous !</p>`;
+    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album dans votre liste d'idées. Ajoutez-en avec le bouton ci-dessous !</p>`;
   } else if (ideas.length === 0) {
-    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px; color: var(--text-sub, #aaa);">Aucun album ne correspond aux filtres sélectionnés.</p>`;
+    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album ne correspond aux filtres sélectionnés.</p>`;
   } else {
     ideas.forEach((item) => {
       const index = item.originalIndex;
@@ -1521,66 +1513,50 @@ function renderCompilPlanner(pushState = true) {
 
       cardsHTML += `
         <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
-          ${coverSrc
-            ? `<img src="${coverSrc}" class="idea-cover" alt="cover" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'idea-cover\\' style=\\'background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;\\'>Pas d\\'image</div>';">`
+          ${coverSrc 
+            ? `<img src="${coverSrc}" class="idea-cover" alt="cover">` 
             : `<div class="idea-cover" style="background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;">Pas d'image</div>`
           }
-          <div class="idea-title" title="${item.title || ''}">${item.title || 'Sans titre'}</div>
-          <div class="idea-artist" title="${item.artist || ''}">${item.artist || 'Artiste inconnu'}</div>
+          <div class="idea-title">${item.title || 'Sans titre'}</div>
+          <div class="idea-artist">${item.artist || 'Artiste inconnu'}</div>
           <div class="idea-duration">⏱️ ${item.duration || '00:00'}</div>
-          <button type="button" class="idea-delete-btn" data-delete="${index}" title="Supprimer cet album">🗑️</button>
+          <button type="button" class="idea-delete-btn" data-delete="${index}">🗑️</button>
         </div>
       `;
     });
   }
 
   const activeGenreCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
-  const genreBtnStyle = activeGenreCount > 0 
-    ? 'background: #ff007f; color: #ffffff; border: 2px solid #000000; box-shadow: 2px 2px 0px #000000; font-weight: bold;'
-    : '';
-   
+  const countSelect = selectedIdeaIndices.size;
+  const isConvertDisabled = countSelect === 0 ? 'disabled' : '';
+
   const appContainer = document.getElementById('app') || document.body;
   
   appContainer.innerHTML = `
     <div style="padding-bottom: 110px; padding-top: 215px; max-width: 800px; margin: 0 auto;">
-      
       <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
       </div>
 
-      <!-- BOUTON FLOTTANT DÉPLOYABLE (FAB PLANIFICATEUR) -->
       <div style="position: fixed; bottom: 80px; right: 20px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
-        
-        <!-- MENU DÉPLOYÉ (Masqué par défaut) -->
         <div id="planner-fab-menu" style="display: none; flex-direction: column; gap: 8px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 10px; box-shadow: 4px 4px 0px #000000; min-width: 170px;">
-          
-          <!-- 1. AJOUTER -->
           <button type="button" id="planner-btn-add" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #ff007f; color: #fff; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
             ＋ Ajouter
           </button>
-
-          <!-- 2. CONVERTIR -->
-          <button type="button" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #06d6a0; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
-            💾 Convertir (${selectedIdeaIndices.size})
+          <button type="button" id="planner-btn-convert" ${isConvertDisabled} style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #06d6a0; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+            💾 Convertir (${countSelect})
           </button>
-
-          <!-- 3. GENRES -->
-          <button type="button" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #fff; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left; ${genreBtnStyle}">
-            🏷️ Genres${activeGenreCount > 0 ? ` (${activeGenreCount})` : ''}
+          <button type="button" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #fff; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+            🏷️ Genres ${activeGenreCount > 0 ? '(' + activeGenreCount + ')' : ''}
           </button>
-
-          <!-- 4. RÉINITIALISER -->
           <button type="button" id="planner-btn-reset" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
             🔄 Réinitialiser
           </button>
-
         </div>
 
-        <!-- BOUTON PRINCIPAL EN BAS À DROITE -->
         <button type="button" onclick="togglePlannerFabMenu()" style="width: 50px; height: 50px; border-radius: 50%; background: #ff007f; color: #ffffff; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; font-size: 1.4rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none;">
           ⚡
         </button>
-
       </div>
     </div>
   `;
