@@ -60,7 +60,7 @@ function clearLocalBackup() {
 function toggleSearch() {
   const topSearch = document.getElementById('search-bar');
   const searchInput = document.getElementById('search-input');
-  const fabBtn = document.getElementById('search-fab-btn');
+  const fabBtn = document.getElementById('btn-search');
 
   if (!topSearch) return;
 
@@ -78,6 +78,19 @@ function toggleSearch() {
     topSearch.classList.remove('closed');
     if (fabBtn) fabBtn.textContent = '✕';
     if (searchInput) searchInput.focus();
+  }
+}
+
+// Ouvre et ferme le menu déroulant des genres pour le filtre de la liste
+function toggleGenreDropdown() {
+  const dropdown = document.getElementById('genre-filter-dropdown');
+  if (!dropdown) return;
+  
+  const isHidden = dropdown.classList.contains('hidden');
+  if (isHidden) {
+    dropdown.classList.remove('hidden');
+  } else {
+    dropdown.classList.add('hidden');
   }
 }
 
@@ -153,7 +166,7 @@ function updateSearchVisibility(show) {
   const floatingActions = document.getElementById('floating-actions');
   const topSearch = document.getElementById('search-bar');
   const searchInput = document.getElementById('search-input');
-  const fabBtn = document.getElementById('search-fab-btn');
+  const fabBtn = document.getElementById('btn-search');
 
   if (show) {
     if (floatingActions) floatingActions.classList.remove('hidden');
