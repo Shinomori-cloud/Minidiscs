@@ -1545,26 +1545,30 @@ function renderCompilPlanner(pushState = true) {
           ${cardsHTML}
         </div>
 
-        <div style="position: fixed; bottom: 80px; right: 20px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
-  <div id="planner-fab-menu" style="display: none; flex-direction: column; gap: 10px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 12px; box-shadow: 4px 4px 0px #000000; min-width: 180px;">
-    <button type="button" id="planner-btn-add" onclick="if(typeof openIdeaModal==='function') openIdeaModal();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ff007f; color: #ffffff; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';">
-      ＋ Ajouter
-    </button>
-    <button type="button" id="planner-btn-convert" onclick="if(typeof convertSelectedToMD==='function') convertSelectedToMD(); else if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''} style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #06d6a0; color: #000000; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: ${countSelect === 0 ? 'not-allowed' : 'pointer'}; opacity: ${countSelect === 0 ? '0.6' : '1'}; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" ${countSelect > 0 ? `onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';"` : ''}>
-      💾 Convertir (${countSelect})
-    </button>
-    <button type="button" id="planner-btn-genre-toggle" onclick="if(typeof togglePlannerGenreDropdown==='function') togglePlannerGenreDropdown();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ffffff; color: #000000; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';">
-      🏷️ Genres ${activeGenreCount > 0 ? '(' + activeGenreCount + ')' : ''}
-    </button>
-    <button type="button" id="planner-btn-reset" onclick="if(typeof clearIdeaSelection==='function') clearIdeaSelection(); else if(typeof resetPlannerSelections==='function') resetPlannerSelections();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';">
-      🔄 Réinitialiser
-    </button>
-  </div>
-
-  <button type="button" onclick="const m=document.getElementById('planner-fab-menu'); if(m) m.style.display=(m.style.display==='none'||!m.style.display)?'flex':'none';" style="width: 50px; height: 50px; border-radius: 50%; background: #ff007f; color: #ffffff; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; font-size: 1.4rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(2px, 2px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='3px 3px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='3px 3px 0px #000';">
-    ⚡
-  </button>
-</div>
+         <div style="position: fixed; bottom: 80px; right: 20px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+           <div id="planner-fab-menu" style="display: none; flex-direction: column; gap: 10px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 12px; box-shadow: 4px 4px 0px #000000; min-width: 180px;">
+             <button type="button" id="planner-btn-add" onclick="if(typeof openIdeaModal==='function') openIdeaModal();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ff007f; color: #ffffff; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';">
+               💽 Ajouter
+             </button>
+             <button type="button" id="planner-btn-convert" onclick="if(typeof convertSelectedToMD==='function') convertSelectedToMD(); else if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''} style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #06d6a0; color: #000000; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: ${countSelect === 0 ? 'not-allowed' : 'pointer'}; opacity: ${countSelect === 0 ? '0.6' : '1'}; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" ${countSelect > 0 ? `onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';"` : ''}>
+               💾 Convertir (${countSelect})
+             </button>
+             <button type="button" id="planner-btn-reset" onclick="if(typeof clearIdeaSelection==='function') clearIdeaSelection(); else if(typeof resetPlannerSelections==='function') resetPlannerSelections();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';">
+               🔄 Réinitialiser
+             </button>
+         
+             <!-- Ligne de séparation flottante -->
+             <div style="border-top: 2px solid #000000; margin: 2px 6px; opacity: 0.15;"></div>
+         
+             <button type="button" id="planner-btn-genre-toggle" onclick="if(typeof togglePlannerGenreDropdown==='function') togglePlannerGenreDropdown();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ffffff; color: #000000; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(1px, 1px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='2px 2px 0px #000';">
+               🎵 Genres ${activeGenreCount > 0 ? '(' + activeGenreCount + ')' : ''}
+             </button>
+           </div>
+         
+           <button type="button" onclick="const m=document.getElementById('planner-fab-menu'); if(m) m.style.display=(m.style.display==='none'||!m.style.display)?'flex':'none';" style="width: 50px; height: 50px; border-radius: 50%; background: #ff007f; color: #ffffff; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; font-size: 1.4rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none; transition: transform 0.05s ease, box-shadow 0.05s ease;" onmousedown="this.style.transform='translate(2px, 2px)'; this.style.boxShadow='1px 1px 0px #000';" onmouseup="this.style.transform='none'; this.style.boxShadow='3px 3px 0px #000';" onmouseleave="this.style.transform='none'; this.style.boxShadow='3px 3px 0px #000';">
+             ⚡
+           </button>
+         </div>
 
           <button type="button" onclick="const m=document.getElementById('planner-fab-menu'); if(m) m.style.display=(m.style.display==='none'||!m.style.display)?'flex':'none';" style="width: 50px; height: 50px; border-radius: 50%; background: #ff007f; color: #ffffff; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; font-size: 1.4rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none;">
             ⚡
