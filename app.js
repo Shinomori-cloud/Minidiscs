@@ -1482,7 +1482,6 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   const genreBtn = document.getElementById('planner-btn-genre-toggle');
   if (!genreBtn) return;
 
-  // Si le menu existe déjà et qu'on n'a pas passé de position de scroll, on la récupère
   const existingScrollArea = document.getElementById('planner-genre-scroll-area');
   if (existingScrollArea && savedScrollTop === 0) {
     savedScrollTop = existingScrollArea.scrollTop;
@@ -1509,14 +1508,13 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   const menu = document.createElement('div');
   menu.id = 'planner-genre-menu';
   
-  // Fenêtre globale du menu
   Object.assign(menu.style, {
     position: 'fixed',
     bottom: `${window.innerHeight - rect.top + 8}px`,
     right: `${window.innerWidth - rect.right}px`,
     minWidth: '190px',
     maxWidth: '260px',
-    maxHeight: '340px',
+    maxHeight: '320px',
     background: '#ffffff',
     border: '2px solid #000000',
     borderRadius: '12px',
@@ -1525,15 +1523,14 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
     zIndex: '2000',
     display: 'flex',
     flexDirection: 'column',
-    gap: '6px',
     boxSizing: 'border-box'
   });
 
   const activeCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
 
-  // 1. Bouton "Tous les genres" BLOQUÉ EN HAUT (Sticky)
+  // 1. Bouton "Tous les genres" (Fixe en haut)
   const allBtnWrapper = document.createElement('div');
-  allBtnWrapper.style.cssText = 'position: sticky; top: 0; z-index: 10; background: #ffffff; padding-bottom: 6px; border-bottom: 1.5px solid #000000;';
+  allBtnWrapper.style.cssText = 'position: sticky; top: 0; z-index: 10; background: #ffffff; padding-bottom: 6px; border-bottom: 1.5px solid #000000; flex-shrink: 0;';
   allBtnWrapper.innerHTML = `
     <button type="button" class="tag-btn ${activeCount === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="width: 100%; text-align: left;">
       Tous les genres
@@ -1541,26 +1538,28 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   `;
   menu.appendChild(allBtnWrapper);
 
-  // 2. Zone défilante réservée aux genres
+  // 2. Zone de défilement propre pour les genres
   const scrollArea = document.createElement('div');
   scrollArea.id = 'planner-genre-scroll-area';
   Object.assign(scrollArea.style, {
-    overflowY: 'auto',
+    overflowY: 'scroll',
     display: 'flex',
     flexDirection: 'column',
     gap: '6px',
     paddingTop: '6px',
     paddingRight: '4px',
-    maxHeight: '260px',
-    touchAction: 'pan-y'
+    flex: '1',
+    webkitOverflowScrolling: 'touch'
   });
 
   let genresHtml = '';
   genres.forEach(genre => {
     const isActive = typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.has(genre);
-    const escapedGenre = genre.replace(/'/g, "\\'");
+    // Échappement propre pour ne pas casser le HTML
+    const safeGenreAttr = genre.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, "\\'");
+    
     genresHtml += `
-      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre(event, '${escapedGenre}')" style="width: 100%; text-align: left; shrink: 0;">
+      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${safeGenreAttr}')" style="width: 100%; text-align: left; flex-shrink: 0;">
         ${isActive ? '✓ ' : ''}${genre}
       </button>
     `;
@@ -1570,13 +1569,15 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   menu.appendChild(scrollArea);
   document.body.appendChild(menu);
 
-  // Restauration exacte de la position du scroll
   if (savedScrollTop > 0) {
     scrollArea.scrollTop = savedScrollTop;
   }
 }
 
 function togglePlannerGenre(genre) {
+  const scrollArea = document.getElementById('planner-genre-scroll-area');
+  const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
+
   if (typeof currentPlannerGenreFilters === 'undefined') window.currentPlannerGenreFilters = new Set();
 
   if (currentPlannerGenreFilters.has(genre)) {
@@ -1585,10 +1586,8 @@ function togglePlannerGenre(genre) {
     currentPlannerGenreFilters.add(genre);
   }
 
-  // Met à jour la grille
   renderCompilPlanner(false);
-  // Re-rend le menu pour mettre à jour les classes .active
-  renderPlannerGenreFilter();
+  renderPlannerGenreFilter(scrollTop);
 }
 
 function clearPlannerGenreFilters() {
@@ -1596,7 +1595,7 @@ function clearPlannerGenreFilters() {
     currentPlannerGenreFilters.clear();
   }
   renderCompilPlanner(false);
-  renderPlannerGenreFilter();
+  renderPlannerGenreFilter(0);
 }
 
 function deleteIdeaAlbum(index) {
