@@ -596,7 +596,6 @@ function renderDashboard(pushState = true) {
 
 /* 2. PLANIFICATEUR DE COMPILATION */
 function renderCompilPlanner(pushState = true) {
-  // Affiche la barre d'actions flottante
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) {
     fa.style.display = 'flex';
@@ -608,7 +607,6 @@ function renderCompilPlanner(pushState = true) {
   currentMD = null;
   currentAlbum = null;
 
-  // Gestion du bouton retour et de l'entête
   if (backBtn) backBtn.classList.remove('hidden');
   if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
 
@@ -622,7 +620,6 @@ function renderCompilPlanner(pushState = true) {
     updateSearchVisibility(false);
   }
 
-  // Récupération des idées d'albums enregistrées
   const ideas = typeof getIdeaList === 'function' 
     ? getIdeaList() 
     : (window.ideaAlbums || []);
@@ -630,9 +627,9 @@ function renderCompilPlanner(pushState = true) {
   let ideasHTML = '';
   if (!ideas || ideas.length === 0) {
     ideasHTML = `
-      <div style="text-align: center; padding: 30px 10px; color: var(--text-sub, #aaa);">
-        <p style="margin-bottom: 12px; font-size: 0.9rem;">Aucune idée de compilation enregistrée pour le moment.</p>
-        <button type="button" class="btn-primary" onclick="openIdeaModal()" style="font-size: 0.85rem; padding: 8px 16px;">
+      <div class="dashboard-card" style="text-align: center; padding: 30px 16px;">
+        <p style="margin-bottom: 16px; font-size: 0.85rem; color: var(--text-sub, #aaa);">Aucune idée de compilation enregistrée pour le moment.</p>
+        <button type="button" class="btn-primary" onclick="openIdeaModal()" style="width: auto; margin: 0 auto;">
           ＋ Ajouter une idée d'album
         </button>
       </div>
@@ -640,29 +637,31 @@ function renderCompilPlanner(pushState = true) {
   } else {
     ideas.forEach((idea, idx) => {
       const title = idea.title || "Album sans titre";
-      const artist = idea.artist ? ` - ${idea.artist}` : "";
+      const artist = idea.artist ? ` — ${idea.artist}` : "";
       const tracksCount = Array.isArray(idea.tracks) ? idea.tracks.length : 0;
 
       ideasHTML += `
-        <div class="dashboard-card" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <div style="font-weight: 800; font-size: 0.95rem; color: #fff;">${title}</div>
-            <div style="font-size: 0.8rem; color: var(--text-sub, #aaa);">${artist} (${tracksCount} pistes)</div>
+        <div class="dashboard-card" style="margin-bottom: 12px; padding: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 800; font-size: 0.95rem; color: #fff;">${title}</div>
+              <div style="font-size: 0.8rem; color: var(--text-sub, #aaa); margin-top: 4px;">${artist} (${tracksCount} pistes)</div>
+            </div>
+            <button type="button" onclick="deleteIdeaAlbum(${idx})" style="background: transparent; border: none; color: #e63946; cursor: pointer; font-size: 1.1rem; padding: 4px 8px;" title="Supprimer">
+              🗑️
+            </button>
           </div>
-          <button type="button" onclick="deleteIdeaAlbum(${idx})" style="background: transparent; border: none; color: #e63946; cursor: pointer; font-size: 1.1rem; padding: 4px 8px;" title="Supprimer">
-            🗑️
-          </button>
         </div>
       `;
     });
   }
 
   app.innerHTML = `
-    <div class="planner-container" style="padding-top: 20px; padding-bottom: 90px;">
+    <div class="dashboard-container" style="padding-top: 20px; padding-bottom: 90px;">
       <div class="dashboard-card" style="margin-bottom: 20px;">
-        <div class="dashboard-section-title" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="dashboard-section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0;">
           <span>MES IDÉES DE COMPILATIONS</span>
-          <button type="button" class="btn-primary" onclick="openIdeaModal()" style="font-size: 0.75rem; padding: 4px 10px;">
+          <button type="button" class="btn-primary" onclick="openIdeaModal()" style="width: auto; padding: 6px 12px; font-size: 0.75rem;">
             ＋ Nouvelle idée
           </button>
         </div>
