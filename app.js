@@ -92,7 +92,12 @@ function cycleRecordFilter() {
   }
   
   updateFilterIcon();
-  renderMDList({ record: currentRecordFilter }, false);
+  // Conservation des filtres de genre et de type actifs lors du cycle
+  renderMDList({ 
+    genre: currentGenreFilter, 
+    type: currentTypeFilter, 
+    record: currentRecordFilter 
+  }, false);
 }
 
 // Met à jour l'icône du bouton selon le filtre actif
@@ -164,6 +169,14 @@ function updateSearchVisibility(show) {
     if (searchInput) searchInput.value = '';
   }
 }
+
+// Sécurité : attachement automatique de l'événement au bouton de filtre si non présent dans le HTML
+document.addEventListener('DOMContentLoaded', () => {
+  const filterBtn = document.getElementById('filter-fab-btn');
+  if (filterBtn && !filterBtn.onclick) {
+    filterBtn.addEventListener('click', cycleRecordFilter);
+  }
+});
 
 /* ==========================================
    UTILITAIRE TOAST
