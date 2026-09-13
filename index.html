@@ -168,13 +168,14 @@
   <datalist id="genres-list"></datalist>
   <datalist id="types-list"></datalist>
 
-  <script src="app.js"></script>
-
   <!-- VIGNETTE FLOTTANTE COMBINÉE (FILTRE + RECHERCHE + GENRES) -->
   <div id="floating-actions" class="floating-actions-bar hidden">
-    <button id="filter-fab-btn" class="action-btn" onclick="cycleRecordFilter()" title="Filtrer la liste">🌐</button>
+    <button id="filter-fab-btn" class="action-btn" onclick="cycleRecordFilter()" title="Filtrer par statut (Tous / À enregistrer / Enregistrés)">All</button>
     <button id="btn-search" class="action-btn" onclick="toggleSearch()" title="Rechercher">| Search</button>
     <button id="btn-filter-genre" class="action-btn" onclick="toggleGenreDropdown()" title="Filtrer par genre">| Filter</button>
   </div>
+
+  <!-- CHARGEMENT DU SCRIPT À LA FIN POUR ACCÉDER À TOUS LES ÉLÉMENTS DU DOM -->
+  <script src="app.js"></script>
 </body>
 </html>
