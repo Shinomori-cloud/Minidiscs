@@ -1318,7 +1318,7 @@ function updatePlannerHeader() {
   const convertBtn = document.getElementById('planner-btn-convert');
   if (convertBtn) {
     convertBtn.disabled = selectedIdeaIndices.size === 0;
-    convertBtn.textContent = `💾 Convertir (${selectedIdeaIndices.size})`;
+    convertBtn.textContent = `Convertir en MD (${selectedIdeaIndices.size})`;
   }
 
   const remainingSeconds = maxSeconds - totalSeconds;
