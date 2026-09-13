@@ -1464,10 +1464,11 @@ function getItemGenresList(item) {
   return String(item.genre).split(',').map(g => g.trim().toUpperCase()).filter(Boolean);
 }
 
-/* RENDU DU PLANIFICATEUR AVEC CARTES ET BARRE D'ACTIONS FLOTTANTE */
+/* RENDU DU PLANIFICATEUR AVEC CARTES ET BOUTON ACTION FLOTTANT */
 function renderCompilPlanner(pushState = true) {
   if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
 
+  // Afficher la barre d'actions globale si elle existe
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) {
     fa.style.display = 'flex';
@@ -1477,10 +1478,10 @@ function renderCompilPlanner(pushState = true) {
   currentMD = null;
   currentAlbum = null;
 
-  if (backBtn) backBtn.classList.remove('hidden');
-  if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
+  if (typeof backBtn !== 'undefined' && backBtn) backBtn.classList.remove('hidden');
+  if (typeof headerTitle !== 'undefined' && headerTitle) headerTitle.textContent = "PLANIFICATEUR";
 
-  if (featuredContainer) featuredContainer.classList.add('hidden');
+  if (typeof featuredContainer !== 'undefined' && featuredContainer) featuredContainer.classList.add('hidden');
 
   if (pushState && window.location.hash !== '#planner') {
     history.pushState({ view: 'planner' }, '', '#planner');
@@ -1490,14 +1491,16 @@ function renderCompilPlanner(pushState = true) {
     updateSearchVisibility(false);
   }
 
-  injectPlannerHeaderBadge();
+  if (typeof injectPlannerHeaderBadge === 'function') {
+    injectPlannerHeaderBadge();
+  }
 
-  const rawIdeas = getIdeaList();
+  const rawIdeas = typeof getIdeaList === 'function' ? getIdeaList() : [];
 
   // Filtrage par genre avec découpage des genres uniques
   const filteredIdeas = rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex })).filter(item => {
     if (typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.size > 0) {
-      const itemGenres = getItemGenresList(item);
+      const itemGenres = typeof getItemGenresList === 'function' ? getItemGenresList(item) : [];
       return Array.from(currentPlannerGenreFilters).some(g => itemGenres.includes(g));
     }
     return true;
@@ -1536,15 +1539,17 @@ function renderCompilPlanner(pushState = true) {
     ? 'background: #ff007f; color: #ffffff; border: 2px solid #000000; box-shadow: 2px 2px 0px #000000; font-weight: bold;'
     : '';
    
-  app.innerHTML = `
+  const appContainer = document.getElementById('app') || document.body;
+  
+  appContainer.innerHTML = `
     <div style="padding-bottom: 110px; padding-top: 215px; max-width: 800px; margin: 0 auto;">
       
       <div class="ideas-grid" id="ideas-grid-container">
         ${cardsHTML}
       </div>
 
-      <!-- BOUTON FLOTTANT DÉPLOYABLE (FAB) -->
-      <div style="position: fixed; bottom: 25px; right: 20px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+      <!-- BOUTON FLOTTANT DÉPLOYABLE (FAB PLANIFICATEUR) -->
+      <div style="position: fixed; bottom: 80px; right: 20px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
         
         <!-- MENU DÉPLOYÉ (Masqué par défaut) -->
         <div id="planner-fab-menu" style="display: none; flex-direction: column; gap: 8px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 10px; box-shadow: 4px 4px 0px #000000; min-width: 170px;">
