@@ -510,19 +510,24 @@ main#app {
   margin-top: 395px;
   position: relative;
   z-index: 1;
+  height: calc(100vh - 395px); /* Adapte la hauteur au scroll interne */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 body:has(.dashboard-container) main#app {
   margin-top: 435px;
+  height: calc(100vh - 435px);
 }
 
-/* Espacement adapté au planificateur pour passer sous le badge */
 body:has(#header-planner-badge) main#app {
   margin-top: 130px !important;
+  height: calc(100vh - 130px) !important;
 }
 
 body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   margin-top: 150px;
+  height: calc(100vh - 150px);
 }
 
 /* ==========================================
