@@ -1511,17 +1511,19 @@ function renderPlannerGenreFilter() {
     right: `${window.innerWidth - rect.right}px`,
     minWidth: '180px',
     maxWidth: '260px',
-    maxHeight: '360px',
+    maxHeight: '320px',
     overflowY: 'auto',
+    overscrollBehavior: 'contain', /* Empêche le scroll de la page quand on défile dans le menu */
     background: '#ffffff',
     border: '2px solid #000000',
     borderRadius: '12px',
-    padding: '8px',
+    padding: '8px 6px',
     boxShadow: '4px 4px 0px #000000',
     zIndex: '2000',
     display: 'flex',
     flexDirection: 'column',
-    gap: '6px'
+    gap: '6px',
+    boxSizing: 'border-box'
   });
 
   const activeCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
