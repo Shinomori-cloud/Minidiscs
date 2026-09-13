@@ -123,12 +123,22 @@ function renderGenreDropdownContent() {
     return;
   }
 
-  let html = `<button class="genre-chip ${!currentGenreFilter || currentGenreFilter === 'ALL' ? 'active' : ''}" onclick="selectGenreFilter('ALL')">TOUS</button>`;
-  
+  // Bouton "TOUS" verrouillé en haut
+  const isAllActive = !currentGenreFilter || currentGenreFilter === 'ALL' ? 'active' : '';
+  let html = `
+    <div class="genre-filter-sticky">
+      <button class="genre-chip ${isAllActive}" onclick="selectGenreFilter('ALL')">TOUS</button>
+    </div>
+    <div class="genre-filter-scroll">
+  `;
+
+  // Puces de genres défilantes
   Array.from(allGenres).sort().forEach(genre => {
     const isActive = currentGenreFilter === genre ? 'active' : '';
     html += `<button class="genre-chip ${isActive}" onclick="selectGenreFilter('${genre.replace(/'/g, "\\'")}')">${genre}</button>`;
   });
+
+  html += `</div>`;
 
   dropdown.innerHTML = html;
 }
