@@ -1631,9 +1631,14 @@ function toggleIdeaSelection(index) {
   }
 }
 
-function togglePlannerGenreDropdown(event) {
-  if (event) event.stopPropagation(); // Empêche le clic de fermer le menu immédiatement
+function togglePlannerGenreDropdown(e) {
+  // Récupère l'événement s'il existe
+  const evt = e || window.event;
+  if (evt && evt.stopPropagation) {
+    evt.stopPropagation();
+  }
 
+  // Si non défini ou fermé, on ouvre (true), sinon on bascule
   if (typeof window.isPlannerGenreDropdownOpen === 'undefined') {
     window.isPlannerGenreDropdownOpen = true;
   } else {
