@@ -168,27 +168,32 @@
   <datalist id="genres-list"></datalist>
   <datalist id="types-list"></datalist>
 
-  <!-- BOUTON FLOTTANT COMBINÉ (FAB) -->
+<!-- BOUTON FLOTTANT UNIQUE ET SON MENU -->
 <div id="floating-actions" class="fab-container hidden">
-  <!-- Menu déroulant d'actions (masqué par défaut) -->
+  <!-- Menu déroulant avec toutes les actions -->
   <div id="fab-menu" class="fab-menu hidden">
+    <button type="button" class="fab-item" onclick="cycleRecordFilter(); toggleFabMenu();">
+      💿 Filtrer par statut
+    </button>
+    <button type="button" class="fab-item" onclick="toggleSearch(); toggleFabMenu();">
+      🔍 Rechercher
+    </button>
+    <button type="button" class="fab-item" onclick="(typeof toggleGenreDropdown === 'function' ? toggleGenreDropdown() : toggleGenreFilter()); toggleFabMenu();">
+      🎨 Filtrer par genre
+    </button>
+    <hr class="fab-divider">
     <button type="button" class="fab-item" onclick="openAdminModal(); toggleFabMenu();">
-      ➕ Ajouter un MiniDisc
+      ➕ Ajouter un MD
     </button>
     <button type="button" class="fab-item" onclick="downloadUpdatedJSON(); toggleFabMenu();">
       💾 Exporter le JSON
     </button>
   </div>
 
-  <!-- Barre d'actions rapides + bouton principal du menu -->
-  <div class="fab-bar">
-    <button id="filter-fab-btn" class="action-btn" onclick="cycleRecordFilter()" title="Filtrer par statut (Tous / À enregistrer / Enregistrés)">💿</button>
-    <button id="btn-search" class="action-btn" onclick="toggleSearch()" title="Rechercher">🔍</button>
-    <button id="btn-filter-genre" class="action-btn" onclick="typeof toggleGenreDropdown === 'function' ? toggleGenreDropdown() : (typeof toggleGenreFilter === 'function' && toggleGenreFilter())" title="Filtrer par genre">🎨</button>
-    
-    <!-- Bouton déclencheur du menu d'administration -->
-    <button id="fab-main-btn" class="action-btn fab-trigger" onclick="toggleFabMenu()" title="Menu administration">⚙️</button>
-  </div>
+  <!-- Le bouton déclencheur unique -->
+  <button type="button" id="fab-main-btn" class="fab-main-btn" onclick="toggleFabMenu()" title="Menu principal">
+    ⚙️
+  </button>
 </div>
 
   <!-- CHARGEMENT DU SCRIPT À LA FIN POUR ACCÉDER À TOUS LES ÉLÉMENTS DU DOM -->
