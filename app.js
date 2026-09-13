@@ -264,13 +264,38 @@ function updateSearchVisibility(show) {
   }
 }
 
-// Sécurité : attachement automatique de l'événement au bouton de filtre si non présent dans le HTML
-document.addEventListener('DOMContentLoaded', () => {
-  const filterBtn = document.getElementById('filter-fab-btn');
-  if (filterBtn && !filterBtn.onclick) {
-    filterBtn.addEventListener('click', cycleRecordFilter);
+// Fonction pour attacher l'événement au bouton
+function initGithubTokenForm() {
+  const tokenInput = document.getElementById('gh-token-input');
+  const saveBtn = document.getElementById('save-token-btn');
+
+  if (!saveBtn || !tokenInput) {
+    console.warn("Éléments du formulaire Token introuvables.");
+    return;
   }
-});
+
+  // Affiche le token déjà sauvegardé s'il existe
+  tokenInput.value = getGithubToken() || '';
+
+  // Gestion du clic
+  saveBtn.addEventListener('click', (e) => {
+    e.preventDefault(); // Empêche tout rechargement de formulaire HTML
+    const val = tokenInput.value;
+    if (val) {
+      saveGithubToken(val);
+    } else {
+      localStorage.removeItem('github_token');
+      alert('Token supprimé.');
+    }
+  });
+}
+
+// S'assure que le DOM est prêt avant d'exécuter l'initialisation
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initGithubTokenForm);
+} else {
+  initGithubTokenForm();
+}
 
 /* ==========================================
    UTILITAIRE TOAST
