@@ -1167,7 +1167,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   bottom: 450px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #f70c63;
+  background-color: #c404b8;
   color: #ffffff;
   padding: 12px 20px;
   border-radius: 10px;
@@ -1178,7 +1178,11 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   z-index: 9999;
   transition: opacity 0.25s ease, transform 0.25s ease;
   text-align: center;
-  white-space: nowrap;
+
+   /* MODIFICATIONS POUR LA LARGEUR */
+  max-width: 260px; /* Limite la largeur globale */
+  width: max-content; /* S'adapte au texte court sans être trop large */
+  white-space: normal; /* Autorise le retour à la ligne */
 }
 
 .toast.hidden,
