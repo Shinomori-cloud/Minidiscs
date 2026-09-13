@@ -927,7 +927,6 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 .genre-filter-container {
   margin: 10px 0 15px 0;
   padding: 8px;
-  background: rgba(0, 0, 0, 0.05);
   border-radius: 6px;
 }
 
