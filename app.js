@@ -1688,25 +1688,40 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
     gap: '6px',
     maxHeight: '180px',
     overflowY: 'auto',
-    overscrollBehavior: 'contain',
-    touchAction: 'pan-y',
+    overscrollBehavior: 'none',
     webkitOverflowScrolling: 'touch'
   });
 
-  // CORRECTION : Interception active pour annuler le pull-to-refresh
-  let startY = 0;
+  // CORRECTION PULL-TO-REFRESH SUR MOBILE
+  let lastTouchY = 0;
+
   scrollArea.addEventListener('touchstart', (e) => {
-    startY = e.touches[0].pageY;
+    if (e.touches.length === 1) {
+      lastTouchY = e.touches[0].clientY;
+    }
   }, { passive: true });
 
   scrollArea.addEventListener('touchmove', (e) => {
-    const currentY = e.touches[0].pageY;
-    // Si on est au sommet et qu'on tire vers le bas, on annule l'action navigateur
-    if (scrollArea.scrollTop <= 0 && currentY > startY) {
+    if (e.touches.length !== 1) return;
+
+    const currentY = e.touches[0].clientY;
+    const isSwipingDown = currentY > lastTouchY; // L'utilisateur glisse son doigt vers le bas
+    const isAtTop = scrollArea.scrollTop <= 0;
+    const isAtBottom = (scrollArea.scrollTop + scrollArea.clientHeight) >= scrollArea.scrollHeight;
+
+    // Si on essaie de tirer vers le bas alors qu'on est au sommet de la liste :
+    if (isAtTop && isSwipingDown) {
+      // Bloque l'action par défaut du navigateur (pull-to-refresh)
       if (e.cancelable) e.preventDefault();
-      e.stopPropagation();
     }
-  }, { passive: false }); // passer à false permet à preventDefault() de fonctionner
+
+    // Si on essaie de tirer vers le haut alors qu'on est tout en bas de la liste :
+    if (isAtBottom && !isSwipingDown) {
+      if (e.cancelable) e.preventDefault();
+    }
+
+    lastTouchY = currentY;
+  }, { passive: false }); // { passive: false } est obligatoire pour autoriser e.preventDefault()
 
   const activeFilters = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters : new Set();
 
