@@ -17,20 +17,12 @@
   padding: 0;
 }
 
-/* Verrouillage du scroll natif pour Hermit */
-html {
-  height: 100%;
-  overflow: hidden;
-}
-
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text-main);
   padding: 16px;
   max-width: 600px;
   margin: 0 auto;
-  height: 100%;
-  overflow: hidden; /* Empêche le pull-to-refresh global d'Hermit */
 
   background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: no-repeat;
@@ -510,24 +502,18 @@ main#app {
   margin-top: 395px;
   position: relative;
   z-index: 1;
-  height: calc(100vh - 395px); /* Adapte la hauteur au scroll interne */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 body:has(.dashboard-container) main#app {
   margin-top: 435px;
-  height: calc(100vh - 435px);
 }
 
 body:has(#header-planner-badge) main#app {
   margin-top: 130px !important;
-  height: calc(100vh - 130px) !important;
 }
 
 body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   margin-top: 150px;
-  height: calc(100vh - 150px);
 }
 
 /* ==========================================
