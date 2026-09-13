@@ -1288,10 +1288,18 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   MENU DE FILTRES DES MINIDISCS (1 SEULE COLONNE)
+   MENU DE FILTRES DES MINIDISCS (NEO-BRUTALIST)
    ========================================== */
-.genre-filter-container,
-#genre-filter-dropdown {
+
+/* Masquage strict par défaut */
+#genre-filter-dropdown,
+.genre-filter-container.hidden {
+  display: none !important;
+}
+
+/* Fenêtre du menu lorsqu'elle est ouverte */
+#genre-filter-dropdown:not(.hidden) {
+  display: block !important;
   position: fixed !important;
   bottom: 65px !important;
   right: 20px !important;
@@ -1301,14 +1309,13 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   padding: 10px !important;
   box-shadow: 4px 4px 0px #000000 !important;
   z-index: 1400 !important;
-  width: 220px !important;
-  max-height: 300px !important;
+  width: 200px !important;
+  max-height: 280px !important;
   overflow-y: auto !important;
-  display: block !important; /* Force l'empilement vertical */
   box-sizing: border-box !important;
 }
 
-/* Force chaque bouton à occuper toute la ligne (1 seul par ligne) */
+/* Boutons de genres : 1 par ligne */
 #genre-filter-dropdown .genre-chip {
   display: block !important;
   width: 100% !important;
@@ -1341,13 +1348,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 1px 1px 0px #000000;
 }
 
-/* Puce active (sélectionnée) */
 #genre-filter-dropdown .genre-chip.active {
   background: #ff007f;
   color: #ffffff;
-}
-
-/* Classe utilitaire pour masquer le menu */
-#genre-filter-dropdown.hidden {
-  display: none !important;
 }
