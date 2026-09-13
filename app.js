@@ -1002,6 +1002,12 @@ function setupMultiSelectContainer(inputId, datalistId) {
           parts.push(optValue);
           input.value = parts.join(', ') + ', ';
           renderBadges(); // Met à jour les puces restantes
+          
+          // NOUVEAU : Si c'est un champ de genre d'album, mettre à jour les genres globaux
+          if (input.classList.contains('album-genre')) {
+            updateGlobalGenresFromAlbums();
+          }
+          
           input.focus();
         };
         container.appendChild(badge);
@@ -1010,8 +1016,50 @@ function setupMultiSelectContainer(inputId, datalistId) {
   }
 
   // Mettre à jour si l'utilisateur retape du texte à la main
-  input.oninput = renderBadges;
+  input.oninput = () => {
+    renderBadges();
+    // NOUVEAU : Synchronisation en temps réel si modification manuelle
+    if (input.classList.contains('album-genre')) {
+      updateGlobalGenresFromAlbums();
+    }
+  };
+  
   renderBadges();
+}
+
+/* ==========================================
+   NOUVEAU : SYNCHRONISATION AUTOMATIQUE DES GENRES
+   ========================================== */
+function updateGlobalGenresFromAlbums() {
+  const checkedRadio = document.querySelector('input[name="md-type"]:checked');
+  const isCompil = checkedRadio ? checkedRadio.value === 'compil' : true;
+
+  // On ne synchronise que si nous sommes en mode Série d'albums
+  if (isCompil) return;
+
+  const albumGenreInputs = document.querySelectorAll('.album-block .album-genre');
+  const collectedGenres = new Set();
+
+  albumGenreInputs.forEach(input => {
+    const rawValues = input.value.split(',');
+    rawValues.forEach(val => {
+      const trimmed = val.trim();
+      if (trimmed) {
+        // Normalisation en majuscules pour éviter "Rock" et "ROCK"
+        collectedGenres.add(trimmed.toUpperCase());
+      }
+    });
+  });
+
+  const globalGenreInput = document.getElementById('md-genre');
+  if (globalGenreInput) {
+    globalGenreInput.value = Array.from(collectedGenres).join(', ');
+    // Mettre à jour les puces de suggestions du champ global si existantes
+    const globalContainer = globalGenreInput.parentElement.querySelector('.tag-suggestions');
+    if (globalContainer) {
+      setupMultiSelectContainer('md-genre', 'genres-list');
+    }
+  }
 }
 
 function openAdminModal(indexToEdit = null) {
@@ -1072,6 +1120,8 @@ function openAdminModal(indexToEdit = null) {
           block.querySelector('.album-to-record').checked = !!album.toRecord;
         }
       });
+      // Recalculer les genres globaux au chargement de l'édition
+      updateGlobalGenresFromAlbums();
     }
 
   } else {
@@ -1121,9 +1171,19 @@ function toggleAdminType(isInit = false) {
   
   const secCompil = document.getElementById('section-compil');
   const secAlbums = document.getElementById('section-albums');
+  const mdGenreInput = document.getElementById('md-genre');
 
   if (secCompil) secCompil.classList.toggle('hidden', !isCompil);
   if (secAlbums) secAlbums.classList.toggle('hidden', isCompil);
+
+  // Bascule du champ global "Genre" en lecture seule quand on est en mode "albums"
+  if (mdGenreInput) {
+    mdGenreInput.readOnly = !isCompil;
+    mdGenreInput.style.backgroundColor = !isCompil ? '#f0f0f0' : '';
+    if (!isCompil) {
+      updateGlobalGenresFromAlbums();
+    }
+  }
 
   const albumsContainer = document.getElementById('albums-container');
   if (!isCompil && !isInit && albumsContainer && albumsContainer.children.length === 0) {
@@ -1170,7 +1230,11 @@ function addAdminAlbumBlock() {
 
 function removeAdminAlbumBlock(button) {
   const block = button.closest('.album-block');
-  if (block) block.remove();
+  if (block) {
+    block.remove();
+    // Mettre à jour les genres globaux si un album est supprimé
+    updateGlobalGenresFromAlbums();
+  }
 }
 
 function submitNewMD(e) {
@@ -1178,11 +1242,16 @@ function submitNewMD(e) {
 
   if (catalogData === null) return;
 
+  // S'assurer que le champ global contient bien tous les genres des albums avant enregistrement
+  const checkedRadio = document.querySelector('input[name="md-type"]:checked');
+  const typeFormat = checkedRadio ? checkedRadio.value : 'compil';
+  if (typeFormat !== 'compil') {
+    updateGlobalGenresFromAlbums();
+  }
+
   const rawGenreInput = document.getElementById('md-genre').value.trim();
   const rawTypeInput = document.getElementById('md-type-tags') ? document.getElementById('md-type-tags').value.trim() : '';
   const mdCover = document.getElementById('md-cover').value.trim();
-  const checkedRadio = document.querySelector('input[name="md-type"]:checked');
-  const typeFormat = checkedRadio ? checkedRadio.value : 'compil';
 
   if (!rawGenreInput) {
     showToast("⚠️ Veuillez renseigner au moins un genre");
