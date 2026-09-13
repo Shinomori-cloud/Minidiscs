@@ -1325,70 +1325,70 @@ function renderPlannerGenreFilter() {
   }
 }
 
-function togglePlannerGenreDropdown() {
-  isPlannerGenreDropdownOpen = !isPlannerGenreDropdownOpen;
-  
-  // 1. S'assure que la barre flottante reste affichée
+function toggleGenreDropdown() {
+  isGenreDropdownOpen = !isGenreDropdownOpen;
+
+  // Garantit que la barre flottante principale reste visible
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) {
     fa.style.display = 'flex';
     fa.classList.remove('hidden');
   }
 
-  // 2. Met à jour le libellé du bouton avec le nombre de filtres
-  const btn = document.getElementById('planner-btn-genre-toggle');
+  // Met à jour le texte du bouton de filtre dans la barre principale
+  const btn = document.getElementById('btn-filter-genre') || document.getElementById('planner-btn-genre-toggle');
   if (btn) {
-    const count = currentPlannerGenreFilters.size;
+    const count = currentGenreFilters.size;
     btn.textContent = count > 0 ? `| Filter (${count})` : '| Filter';
   }
 
-  // 3. Rendu du menu pop-up sans recharger toute la vue
-  renderPlannerGenreFilter();
+  renderGenreFilter();
 }
 
-function renderPlannerGenreFilter() {
-  const filterContainer = document.getElementById('planner-genre-filter');
-  if (!filterContainer) return;
+function renderGenreFilter() {
+  const container = document.getElementById('genre-filter-dropdown') || document.getElementById('planner-genre-filter');
+  if (!container) return;
 
-  if (!isPlannerGenreDropdownOpen) {
-    filterContainer.classList.add('hidden');
-    filterContainer.style.display = 'none';
+  if (!isGenreDropdownOpen) {
+    container.classList.add('hidden');
+    container.style.display = 'none';
     return;
   }
 
-  // Récupération de tous les genres disponibles dans la liste
-  const rawIdeas = getIdeaList();
+  // Récupère les genres depuis la liste globale des MiniDiscs (mdData)
   const allGenresSet = new Set();
-  rawIdeas.forEach(item => {
-    if (item.genre) {
-      const genres = Array.isArray(item.genre)
-        ? item.genre
-        : item.genre.split(',');
+  const sourceData = Array.isArray(window.mdData) ? window.mdData : (typeof getMDList === 'function' ? getMDList() : []);
+
+  sourceData.forEach(md => {
+    if (md.genre) {
+      const genres = Array.isArray(md.genre) 
+        ? md.genre 
+        : md.genre.split(',');
       genres.forEach(g => allGenresSet.add(g.trim().toUpperCase()));
     }
   });
 
   const sortedGenres = Array.from(allGenresSet).sort();
 
-  // Positionnement au-dessus de la barre flottante
-  filterContainer.style.position = 'fixed';
-  filterContainer.style.bottom = '75px';
-  filterContainer.style.right = '15px';
-  filterContainer.style.zIndex = '2000';
-  filterContainer.style.display = 'flex';
-  filterContainer.classList.remove('hidden');
+  // Positionne le menu pop-up au-dessus de la barre flottante
+  container.style.position = 'fixed';
+  container.style.bottom = '75px';
+  container.style.right = '15px';
+  container.style.zIndex = '2000';
+  container.style.display = 'flex';
+  container.classList.remove('hidden');
 
   let html = `
     <div style="background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); border: 2px solid #fff; border-radius: 12px; padding: 10px; max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.6);">
-      <button type="button" onclick="clearPlannerGenreFilters()" style="background: ${currentPlannerGenreFilters.size === 0 ? '#fff' : 'transparent'}; color: ${currentPlannerGenreFilters.size === 0 ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer;">
-        ${currentPlannerGenreFilters.size === 0 ? '✓ TOUS' : 'TOUS'}
+      <button type="button" onclick="clearGenreFilters()" style="background: ${currentGenreFilters.size === 0 ? '#fff' : 'transparent'}; color: ${currentGenreFilters.size === 0 ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer;">
+        ${currentGenreFilters.size === 0 ? '✓ TOUS' : 'TOUS'}
       </button>
   `;
 
   sortedGenres.forEach(genre => {
-    const isChecked = currentPlannerGenreFilters.has(genre);
+    const isChecked = currentGenreFilters.has(genre);
     html += `
-      <button type="button" onclick="togglePlannerGenreFilter('${genre}')" style="background: ${isChecked ? '#fff' : 'transparent'}; color: ${isChecked ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+      <button type="button" onclick="toggleGenreFilter('${genre}')" style="background: ${isChecked ? '#fff' : 'transparent'}; color: ${isChecked ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
         <span>${genre}</span>
         ${isChecked ? '<span>✓</span>' : ''}
       </button>
@@ -1396,147 +1396,46 @@ function renderPlannerGenreFilter() {
   });
 
   html += `</div>`;
-  filterContainer.innerHTML = html;
+  container.innerHTML = html;
 }
 
-function togglePlannerGenreFilter(genre) {
-  if (currentPlannerGenreFilters.has(genre)) {
-    currentPlannerGenreFilters.delete(genre);
+function toggleGenreFilter(genre) {
+  if (currentGenreFilters.has(genre)) {
+    currentGenreFilters.delete(genre);
   } else {
-    currentPlannerGenreFilters.add(genre);
+    currentGenreFilters.add(genre);
+  }
+
+  // Rafraîchit directement la liste des MiniDiscs
+  if (typeof renderMDList === 'function') {
+    renderMDList();
+  } else if (typeof renderApp === 'function') {
+    renderApp();
   }
   
-  // Rafraîchit le planificateur sans masquer la barre
-  renderCompilPlanner(false);
+  // Met à jour l'état visuel du menu et du bouton
+  renderGenreFilter();
+
+  const btn = document.getElementById('btn-filter-genre') || document.getElementById('planner-btn-genre-toggle');
+  if (btn) {
+    const count = currentGenreFilters.size;
+    btn.textContent = count > 0 ? `| Filter (${count})` : '| Filter';
+  }
 }
 
-function clearPlannerGenreFilters() {
-  currentPlannerGenreFilters.clear();
-  renderCompilPlanner(false);
-}
+function clearGenreFilters() {
+  currentGenreFilters.clear();
 
-function renderCompilPlanner(pushState = true) {
-  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
-  if (fa) {
-    fa.style.display = 'flex';
-    fa.classList.remove('hidden');
-  }
-   
-  if (pushState && window.location.hash !== '#planner') {
-    window.location.hash = '#planner';
-    return;
-  }
-   
-  currentMD = null;
-  currentAlbum = null;
-  if (backBtn) backBtn.classList.remove('hidden');
-  if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
-
-  injectPlannerHeaderBadge();
-
-  if (featuredContainer) featuredContainer.classList.add('hidden');
-
-  const rawIdeas = getIdeaList();
-
-  // Filtrage des idées par sélection multiple de genres
-  let filteredIdeas = rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex }));
-  if (currentPlannerGenreFilters.size > 0) {
-    filteredIdeas = filteredIdeas.filter(item => {
-      if (!item.genre) return false;
-      const itemGenres = Array.isArray(item.genre) 
-        ? item.genre.map(g => g.trim().toUpperCase())
-        : item.genre.split(',').map(g => g.trim().toUpperCase());
-      return itemGenres.some(g => currentPlannerGenreFilters.has(g));
-    });
+  if (typeof renderMDList === 'function') {
+    renderMDList();
+  } else if (typeof renderApp === 'function') {
+    renderApp();
   }
 
-  const ideas = dailyShuffle(filteredIdeas, '-planner');
+  renderGenreFilter();
 
-  let cardsHTML = '';
-  if (ideas.length === 0) {
-    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album trouvé${currentPlannerGenreFilters.size > 0 ? ' pour ce(s) genre(s)' : ''}.</p>`;
-  } else {
-    ideas.forEach((item) => {
-      const index = item.originalIndex;
-      const isSelected = selectedIdeaIndices.has(index);
-      const coverSrc = (item.cover && item.cover !== 'images/') ? item.cover : '';
-
-      cardsHTML += `
-        <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
-          ${coverSrc 
-            ? `<img src="${coverSrc}" class="idea-cover" alt="cover">` 
-            : `<div class="idea-cover" style="background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;">Pas d'image</div>`
-          }
-          <div class="idea-title" title="${item.title}">${item.title}</div>
-          <div class="idea-artist" title="${item.artist}">${item.artist}</div>
-          <div class="idea-duration">⏱️ ${item.duration}</div>
-          <button type="button" class="idea-delete-btn" data-delete="${index}" title="Supprimer cet album">🗑️</button>
-        </div>
-      `;
-    });
-  }
-   
-  app.innerHTML = `
-    <div style="padding-bottom: 90px; padding-top: 215px;">
-      <div class="ideas-grid" id="ideas-grid-container">
-        ${cardsHTML}
-      </div>
-
-      <div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
-        <div class="compil-actions" style="display:flex; gap:8px; max-width: 600px; width:100%; justify-content: center; background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(10px); padding: 10px 12px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); pointer-events: auto;">
-          <button type="button" class="btn-primary" id="planner-btn-add" style="flex:1; border-radius:20px;">＋ Ajouter</button>
-          <button type="button" class="btn-secondary" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="flex:1; border-radius:20px;">
-            💾 Convertir (${selectedIdeaIndices.size})
-          </button>
-          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex:1; border-radius:20px;">Réinitialiser</button>
-          <button type="button" class="btn-sub" id="planner-btn-genre-toggle" style="flex:1; border-radius:20px; white-space:nowrap;">
-            🏷️ Genres ${currentPlannerGenreFilters.size > 0 ? `(${currentPlannerGenreFilters.size})` : ''}
-          </button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  renderPlannerGenreFilter();
-  updatePlannerHeader();
-
-  const gridContainer = document.getElementById('ideas-grid-container');
-  if (gridContainer) {
-    gridContainer.addEventListener('click', (e) => {
-      const deleteBtn = e.target.closest('[data-delete]');
-      if (deleteBtn) {
-        e.stopPropagation();
-        const index = parseInt(deleteBtn.getAttribute('data-delete'), 10);
-        deleteIdeaAlbum(index);
-        return;
-      }
-
-      const card = e.target.closest('.idea-card');
-      if (card) {
-        const index = parseInt(card.getAttribute('data-index'), 10);
-        if (selectedIdeaIndices.has(index)) {
-          selectedIdeaIndices.delete(index);
-          card.classList.remove('selected');
-        } else {
-          selectedIdeaIndices.add(index);
-          card.classList.add('selected');
-        }
-        updatePlannerHeader();
-      }
-    });
-  }
-
-  const addBtn = document.getElementById('planner-btn-add');
-  if (addBtn) addBtn.addEventListener('click', openIdeaModal);
-
-  const convertBtn = document.getElementById('planner-btn-convert');
-  if (convertBtn) convertBtn.addEventListener('click', convertSelectedToMD);
-
-  const resetBtn = document.getElementById('planner-btn-reset');
-  if (resetBtn) resetBtn.addEventListener('click', clearIdeaSelection);
-
-  const genreToggleBtn = document.getElementById('planner-btn-genre-toggle');
-  if (genreToggleBtn) genreToggleBtn.addEventListener('click', togglePlannerGenreDropdown);
+  const btn = document.getElementById('btn-filter-genre') || document.getElementById('planner-btn-genre-toggle');
+  if (btn) btn.textContent = '| Filter';
 }
 
 function deleteIdeaAlbum(index) {
