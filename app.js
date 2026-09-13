@@ -1402,34 +1402,51 @@ function applyStatusFilter(status) {
   }
 }
 
-// Génère dynamiquement les boutons de genres dans le sous-menu FAB
-function populateFabGenreMenu(genresList) {
+// Remplit le sous-menu FAB avec la liste exacte de tes genres
+function populateFabGenreMenu() {
   const container = document.getElementById('genres-submenu');
-  if (!container) return;
+  if (!container || !catalogData) return;
+
+  const allGenres = new Set();
+
+  // 1. Extraction des genres depuis catalogData
+  catalogData.forEach(md => {
+    let genres = [];
+    if (typeof getMDAllGenres === 'function') {
+      genres = getMDAllGenres(md);
+    } else if (md.genre) {
+      genres = typeof md.genre === 'string' ? md.genre.split(',') : md.genre;
+    }
+
+    genres.forEach(g => {
+      if (g && typeof g === 'string' && g.trim()) {
+        allGenres.add(g.trim().toUpperCase());
+      }
+    });
+  });
 
   container.innerHTML = '';
 
-  // Option "TOUS"
+  if (allGenres.size === 0) {
+    container.innerHTML = `<span style="font-size: 0.75rem; color: #666; padding: 6px 12px;">Aucun genre</span>`;
+    return;
+  }
+
+  // 2. Option "TOUS"
   const allBtn = document.createElement('button');
   allBtn.type = 'button';
-  allBtn.className = 'fab-item sub-item';
+  allBtn.className = `fab-item sub-item ${!currentGenreFilter || currentGenreFilter === 'ALL' ? 'active' : ''}`;
   allBtn.textContent = 'TOUS';
-  allBtn.onclick = () => {
-    if (typeof filterByGenre === 'function') filterByGenre('ALL');
-    else if (typeof applyGenreFilter === 'function') applyGenreFilter('ALL');
-  };
+  allBtn.onclick = () => selectGenreFilter('ALL');
   container.appendChild(allBtn);
 
-  // Génération de chaque genre
-  genresList.forEach(genre => {
+  // 3. Génération des boutons de chaque genre
+  Array.from(allGenres).sort().forEach(genre => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'fab-item sub-item';
+    btn.className = `fab-item sub-item ${currentGenreFilter === genre ? 'active' : ''}`;
     btn.textContent = genre;
-    btn.onclick = () => {
-      if (typeof filterByGenre === 'function') filterByGenre(genre);
-      else if (typeof applyGenreFilter === 'function') applyGenreFilter(genre);
-    };
+    btn.onclick = () => selectGenreFilter(genre);
     container.appendChild(btn);
   });
 }
