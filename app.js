@@ -1478,9 +1478,15 @@ function togglePlannerGenreDropdown() {
   renderPlannerGenreFilter();
 }
 
-function renderPlannerGenreFilter() {
+function renderPlannerGenreFilter(savedScrollTop = 0) {
   const genreBtn = document.getElementById('planner-btn-genre-toggle');
   if (!genreBtn) return;
+
+  // Si le menu existe déjà et qu'on n'a pas passé de position de scroll, on la récupère
+  const existingScrollArea = document.getElementById('planner-genre-scroll-area');
+  if (existingScrollArea && savedScrollTop === 0) {
+    savedScrollTop = existingScrollArea.scrollTop;
+  }
 
   const existingMenu = document.getElementById('planner-genre-menu');
   if (existingMenu) existingMenu.remove();
@@ -1490,7 +1496,6 @@ function renderPlannerGenreFilter() {
   const genresSet = new Set();
   const ideas = getIdeaList();
   
-  // Extraction propre des genres uniques
   ideas.forEach(item => {
     const itemGenres = getItemGenresList(item);
     itemGenres.forEach(g => genresSet.add(g));
@@ -1504,20 +1509,18 @@ function renderPlannerGenreFilter() {
   const menu = document.createElement('div');
   menu.id = 'planner-genre-menu';
   
-  // Conteneur du menu (positionnement uniquement, pas d'impact sur les boutons)
+  // Fenêtre globale du menu
   Object.assign(menu.style, {
     position: 'fixed',
     bottom: `${window.innerHeight - rect.top + 8}px`,
     right: `${window.innerWidth - rect.right}px`,
-    minWidth: '180px',
+    minWidth: '190px',
     maxWidth: '260px',
-    maxHeight: '320px',
-    overflowY: 'auto',
-    overscrollBehavior: 'contain', /* Empêche le scroll de la page quand on défile dans le menu */
+    maxHeight: '340px',
     background: '#ffffff',
     border: '2px solid #000000',
     borderRadius: '12px',
-    padding: '8px 6px',
+    padding: '8px',
     boxShadow: '4px 4px 0px #000000',
     zIndex: '2000',
     display: 'flex',
@@ -1528,26 +1531,49 @@ function renderPlannerGenreFilter() {
 
   const activeCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
 
-  // 1. Bouton "Tous les genres" (prend .active si 0 filtre actif)
-  let html = `
+  // 1. Bouton "Tous les genres" BLOQUÉ EN HAUT (Sticky)
+  const allBtnWrapper = document.createElement('div');
+  allBtnWrapper.style.cssText = 'position: sticky; top: 0; z-index: 10; background: #ffffff; padding-bottom: 6px; border-bottom: 1.5px solid #000000;';
+  allBtnWrapper.innerHTML = `
     <button type="button" class="tag-btn ${activeCount === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="width: 100%; text-align: left;">
       Tous les genres
     </button>
   `;
+  menu.appendChild(allBtnWrapper);
 
-  // 2. Boutons de chaque genre (prennent .active si le genre est dans le Set)
+  // 2. Zone défilante réservée aux genres
+  const scrollArea = document.createElement('div');
+  scrollArea.id = 'planner-genre-scroll-area';
+  Object.assign(scrollArea.style, {
+    overflowY: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+    paddingTop: '6px',
+    paddingRight: '4px',
+    maxHeight: '260px',
+    touchAction: 'pan-y'
+  });
+
+  let genresHtml = '';
   genres.forEach(genre => {
     const isActive = typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.has(genre);
     const escapedGenre = genre.replace(/'/g, "\\'");
-    html += `
-      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${escapedGenre}')" style="width: 100%; text-align: left;">
+    genresHtml += `
+      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre(event, '${escapedGenre}')" style="width: 100%; text-align: left; shrink: 0;">
         ${isActive ? '✓ ' : ''}${genre}
       </button>
     `;
   });
 
-  menu.innerHTML = html;
+  scrollArea.innerHTML = genresHtml;
+  menu.appendChild(scrollArea);
   document.body.appendChild(menu);
+
+  // Restauration exacte de la position du scroll
+  if (savedScrollTop > 0) {
+    scrollArea.scrollTop = savedScrollTop;
+  }
 }
 
 function togglePlannerGenre(genre) {
