@@ -1652,6 +1652,7 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   const existingSubMenu = document.getElementById('planner-genre-submenu');
   if (existingSubMenu) existingSubMenu.remove();
 
+  // Correction : window.isPlannerGenreDropdownOpen partout
   if (typeof window.isPlannerGenreDropdownOpen === 'undefined' || !window.isPlannerGenreDropdownOpen) return;
 
   const genresSet = new Set();
