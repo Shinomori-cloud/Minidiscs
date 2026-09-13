@@ -1328,23 +1328,85 @@ function renderPlannerGenreFilter() {
 function togglePlannerGenreDropdown() {
   isPlannerGenreDropdownOpen = !isPlannerGenreDropdownOpen;
   
-  // Rendu du menu pop-up au-dessus du bouton
-  renderPlannerGenreFilter();
-  
-  // Mise à jour dynamique du libellé du bouton dans la barre
+  // 1. S'assure que la barre flottante reste affichée
+  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+  if (fa) {
+    fa.style.display = 'flex';
+    fa.classList.remove('hidden');
+  }
+
+  // 2. Met à jour le libellé du bouton avec le nombre de filtres
   const btn = document.getElementById('planner-btn-genre-toggle');
   if (btn) {
     const count = currentPlannerGenreFilters.size;
     btn.textContent = count > 0 ? `| Filter (${count})` : '| Filter';
   }
+
+  // 3. Rendu du menu pop-up sans recharger toute la vue
+  renderPlannerGenreFilter();
 }
 
-function togglePlannerGenre(genre) {
+function renderPlannerGenreFilter() {
+  const filterContainer = document.getElementById('planner-genre-filter');
+  if (!filterContainer) return;
+
+  if (!isPlannerGenreDropdownOpen) {
+    filterContainer.classList.add('hidden');
+    filterContainer.style.display = 'none';
+    return;
+  }
+
+  // Récupération de tous les genres disponibles dans la liste
+  const rawIdeas = getIdeaList();
+  const allGenresSet = new Set();
+  rawIdeas.forEach(item => {
+    if (item.genre) {
+      const genres = Array.isArray(item.genre)
+        ? item.genre
+        : item.genre.split(',');
+      genres.forEach(g => allGenresSet.add(g.trim().toUpperCase()));
+    }
+  });
+
+  const sortedGenres = Array.from(allGenresSet).sort();
+
+  // Positionnement au-dessus de la barre flottante
+  filterContainer.style.position = 'fixed';
+  filterContainer.style.bottom = '75px';
+  filterContainer.style.right = '15px';
+  filterContainer.style.zIndex = '2000';
+  filterContainer.style.display = 'flex';
+  filterContainer.classList.remove('hidden');
+
+  let html = `
+    <div style="background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); border: 2px solid #fff; border-radius: 12px; padding: 10px; max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.6);">
+      <button type="button" onclick="clearPlannerGenreFilters()" style="background: ${currentPlannerGenreFilters.size === 0 ? '#fff' : 'transparent'}; color: ${currentPlannerGenreFilters.size === 0 ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer;">
+        ${currentPlannerGenreFilters.size === 0 ? '✓ TOUS' : 'TOUS'}
+      </button>
+  `;
+
+  sortedGenres.forEach(genre => {
+    const isChecked = currentPlannerGenreFilters.has(genre);
+    html += `
+      <button type="button" onclick="togglePlannerGenreFilter('${genre}')" style="background: ${isChecked ? '#fff' : 'transparent'}; color: ${isChecked ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+        <span>${genre}</span>
+        ${isChecked ? '<span>✓</span>' : ''}
+      </button>
+    `;
+  });
+
+  html += `</div>`;
+  filterContainer.innerHTML = html;
+}
+
+function togglePlannerGenreFilter(genre) {
   if (currentPlannerGenreFilters.has(genre)) {
     currentPlannerGenreFilters.delete(genre);
   } else {
     currentPlannerGenreFilters.add(genre);
   }
+  
+  // Rafraîchit le planificateur sans masquer la barre
   renderCompilPlanner(false);
 }
 
