@@ -139,12 +139,31 @@ function renderGenreDropdownContent() {
   dropdown.innerHTML = html;
 }
 
+// Gère l'affichage du badge de genre sous le header
+function updateGenreBadge() {
+  const badge = document.getElementById('active-genre-badge');
+  const badgeText = document.getElementById('active-genre-text');
+  
+  if (!badge || !badgeText) return;
+
+  // S'affiche uniquement si un genre est sélectionné et qu'il n'est pas 'ALL'
+  if (currentGenreFilter && currentGenreFilter !== 'ALL') {
+    badgeText.textContent = `GENRE : ${currentGenreFilter}`;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
 // Application du filtre sélectionné et rafraîchissement de la liste
 function selectGenreFilter(genre) {
   currentGenreFilter = genre === 'ALL' ? '' : genre;
 
   const dropdown = document.getElementById('genre-filter-dropdown');
   if (dropdown) dropdown.classList.add('hidden');
+
+  // Met à jour l'affichage du badge sous le header
+  updateGenreBadge();
 
   renderMDList({ 
     genre: currentGenreFilter, 
