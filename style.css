@@ -926,8 +926,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 /* FILTRES MULTIPLES PLANIFICATEUR */
 .genre-filter-container {
   margin: 10px 0 15px 0;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 0;
+  background: transparent !important; /* Arrière-plan supprimé */
 }
 
 .tags-cloud {
