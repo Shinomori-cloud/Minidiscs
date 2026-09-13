@@ -1288,7 +1288,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   MENU DE FILTRES DES MINIDISCS (NEO-BRUTALIST)
+   MENU DE FILTRES DES MINIDISCS (GRAND & STICKY)
    ========================================== */
 
 /* Masquage strict par défaut */
@@ -1297,9 +1297,10 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: none !important;
 }
 
-/* Fenêtre du menu lorsqu'elle est ouverte */
+/* Fenêtre principale agrandie */
 #genre-filter-dropdown:not(.hidden) {
-  display: block !important;
+  display: flex !important;
+  flex-direction: column !important;
   position: fixed !important;
   bottom: 65px !important;
   right: 20px !important;
@@ -1309,17 +1310,32 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   padding: 10px !important;
   box-shadow: 4px 4px 0px #000000 !important;
   z-index: 1400 !important;
-  width: 200px !important;
-  max-height: 280px !important;
-  overflow-y: auto !important;
+  width: 220px !important;
+  max-height: 70vh !important; /* Occupe jusqu'à 70% de la hauteur de l'écran */
   box-sizing: border-box !important;
 }
 
-/* Boutons de genres : 1 par ligne */
+/* Zone fixe pour le bouton TOUS */
+.genre-filter-sticky {
+  flex-shrink: 0;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #000000; /* Ligne de séparation sous TOUS */
+}
+
+/* Zone défilante pour les genres */
+.genre-filter-scroll {
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Style des puces (boutons) */
 #genre-filter-dropdown .genre-chip {
   display: block !important;
   width: 100% !important;
-  margin-bottom: 8px !important;
   text-align: center;
   background: #f0f0f0;
   color: #000000;
@@ -1333,10 +1349,6 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 2px 2px 0px #000000;
   transition: transform 0.1s, background-color 0.15s;
   box-sizing: border-box !important;
-}
-
-#genre-filter-dropdown .genre-chip:last-child {
-  margin-bottom: 0 !important;
 }
 
 #genre-filter-dropdown .genre-chip:hover {
