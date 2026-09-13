@@ -152,7 +152,7 @@
       </form>
     </div>
   </div>
-  
+
   <!-- FILTRE DE GENRES MULTIPLE POUR LE PLANIFICATEUR -->
   <div id="planner-genre-filter" class="genre-filter-container">
     <div id="planner-tags-list" class="tags-cloud"></div>
@@ -167,10 +167,11 @@
 
   <script src="app.js"></script>
 
-  <!-- VIGNETTE FLOTTANTE COMBINÉE (FILTRE + RECHERCHE) -->
+  <!-- VIGNETTE FLOTTANTE COMBINÉE (FILTRE + RECHERCHE + GENRES) -->
   <div id="floating-actions" class="floating-actions-bar hidden">
     <button id="filter-fab-btn" class="action-btn" onclick="cycleRecordFilter()" title="Filtrer la liste">🌐</button>
-    <button id="search-fab-btn" class="action-btn" onclick="toggleSearch()" title="Rechercher">🔍</button>
+    <button id="search-fab-btn" class="action-btn" onclick="toggleSearch()" title="Rechercher">| Search</button>
+    <button id="planner-btn-genre-toggle" class="action-btn" onclick="togglePlannerGenreDropdown()" title="Filtrer par genre">| Filter</button>
   </div>
 </body>
 </html>
