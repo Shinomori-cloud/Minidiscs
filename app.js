@@ -1543,32 +1543,50 @@ function renderCompilPlanner(pushState = true) {
         ${cardsHTML}
       </div>
 
-   <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 480px; z-index: 1000; pointer-events: none;">
-    <div style="display: flex; gap: 6px; background: #ffffff; border: 3px solid #000000; border-radius: 35px; padding: 6px 8px; box-shadow: 4px 4px 0px #000000; pointer-events: auto; justify-content: space-between; align-items: center;">
-    
-      <!-- 1. AJOUTER -->
-      <button type="button" id="planner-btn-add" style="flex: 1; height: 38px; border: 2px solid #000000; border-radius: 20px; background: #ff007f; color: #ffffff; font-weight: 800; font-size: 0.75rem; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; margin: 0; box-sizing: border-box; cursor: pointer;">
-        ＋ Ajouter
-      </button>
+      <!-- BOUTON FLOTTANT DÉPLOYABLE (FAB) -->
+      <div style="position: fixed; bottom: 25px; right: 20px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+        
+        <!-- MENU DÉPLOYÉ (Masqué par défaut) -->
+        <div id="planner-fab-menu" style="display: none; flex-direction: column; gap: 8px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 10px; box-shadow: 4px 4px 0px #000000; min-width: 170px;">
+          
+          <!-- 1. AJOUTER -->
+          <button type="button" id="planner-btn-add" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #ff007f; color: #fff; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+            ＋ Ajouter
+          </button>
 
-      <!-- 2. CONVERTIR -->
-      <button type="button" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="flex: 1.2; height: 38px; border: 2px solid #000000; border-radius: 20px; background: #06d6a0; color: #000000; font-weight: 800; font-size: 0.75rem; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; margin: 0; box-sizing: border-box; cursor: pointer;">
-        💾 Convertir (${selectedIdeaIndices.size})
-      </button>
+          <!-- 2. CONVERTIR -->
+          <button type="button" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #06d6a0; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+            💾 Convertir (${selectedIdeaIndices.size})
+          </button>
 
-      <!-- 3. RÉINITIALISER -->
-      <button type="button" id="planner-btn-reset" style="flex: 0.9; height: 38px; border: 2px solid #000000; border-radius: 20px; background: #f8f9fa; color: #000000; font-weight: 800; font-size: 0.75rem; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; margin: 0; box-sizing: border-box; cursor: pointer;">
-        Réinit.
-      </button>
+          <!-- 3. GENRES -->
+          <button type="button" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #fff; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left; ${genreBtnStyle}">
+            🏷️ Genres${activeGenreCount > 0 ? ` (${activeGenreCount})` : ''}
+          </button>
 
-      <!-- 4. GENRES -->
-      <button type="button" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="flex: 1; height: 38px; border: 2px solid #000000; border-radius: 20px; background: #ffffff; color: #000000; font-weight: 800; font-size: 0.75rem; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; margin: 0; box-sizing: border-box; cursor: pointer; ${genreBtnStyle}">
-        🏷️ Genres${activeGenreCount > 0 ? ` (${activeGenreCount})` : ''}
-      </button>
+          <!-- 4. RÉINITIALISER -->
+          <button type="button" id="planner-btn-reset" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+            🔄 Réinitialiser
+          </button>
 
+        </div>
+
+        <!-- BOUTON PRINCIPAL EN BAS À DROITE -->
+        <button type="button" onclick="togglePlannerFabMenu()" style="width: 50px; height: 50px; border-radius: 50%; background: #ff007f; color: #ffffff; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; font-size: 1.4rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none;">
+          ⚡
+        </button>
+
+      </div>
     </div>
-  </div>
   `;
+}
+
+/* Bascule l'affichage du menu flottant du planificateur */
+function togglePlannerFabMenu() {
+  const menu = document.getElementById('planner-fab-menu');
+  if (!menu) return;
+  menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
+}
 
   updatePlannerHeader();
 
