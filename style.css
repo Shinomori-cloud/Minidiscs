@@ -1288,11 +1288,10 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   MENU DE FILTRES MINIDISC (FINAL FIX DEFILEMENT)
+   MENU DE FILTRES MINIDISC (CONTENEUR ET LISTE ISOLÉS)
    ========================================== */
 
-#genre-filter-dropdown,
-.genre-filter-container.hidden {
+#genre-filter-dropdown.hidden {
   display: none !important;
 }
 
@@ -1311,8 +1310,10 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 4px 4px 0px #000000 !important;
   z-index: 1400 !important;
   box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
+/* Zone fixe pour le bouton TOUS */
 .md-filter-top {
   width: 100% !important;
   margin-bottom: 8px !important;
@@ -1322,6 +1323,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   flex-shrink: 0 !important;
 }
 
+/* Zone défilante pour les autres genres */
 .md-filter-list {
   width: 100% !important;
   overflow-y: auto !important;
@@ -1330,10 +1332,11 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
-  padding: 4px 2px !important; /* Marge interne pour ne pas couper les ombres des boutons */
+  padding-right: 2px !important;
 }
 
-button.md-filter-btn {
+/* Style unique pour CHAQUE bouton du menu */
+#genre-filter-dropdown .md-filter-btn {
   display: block !important;
   width: 100% !important;
   margin: 0 !important;
@@ -1350,19 +1353,19 @@ button.md-filter-btn {
   box-shadow: 2px 2px 0px #000000 !important;
   box-sizing: border-box !important;
   transition: transform 0.1s, background-color 0.15s !important;
-  flex-shrink: 0 !important; /* Empêche l'écrasement des boutons */
+  flex-shrink: 0 !important;
 }
 
-button.md-filter-btn:hover {
+#genre-filter-dropdown .md-filter-btn:hover {
   background: #e0e0e0 !important;
 }
 
-button.md-filter-btn:active {
+#genre-filter-dropdown .md-filter-btn:active {
   transform: translate(1px, 1px) !important;
   box-shadow: 1px 1px 0px #000000 !important;
 }
 
-button.md-filter-btn.active {
+#genre-filter-dropdown .md-filter-btn.active {
   background: #ff007f !important;
   color: #ffffff !important;
 }
