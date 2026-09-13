@@ -594,6 +594,89 @@ function renderDashboard(pushState = true) {
   window.scrollTo(0, 0);
 }
 
+/* 2. PLANIFICATEUR DE COMPILATION */
+function renderCompilPlanner(pushState = true) {
+  // Affiche la barre d'actions flottante
+  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+  if (fa) {
+    fa.style.display = 'flex';
+    fa.classList.remove('hidden');
+  }
+
+  if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
+
+  currentMD = null;
+  currentAlbum = null;
+
+  // Gestion du bouton retour et de l'entête
+  if (backBtn) backBtn.classList.remove('hidden');
+  if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
+
+  if (featuredContainer) featuredContainer.classList.add('hidden');
+
+  if (pushState && window.location.hash !== '#planner') {
+    history.pushState({ view: 'planner' }, '', '#planner');
+  }
+
+  if (typeof updateSearchVisibility === 'function') {
+    updateSearchVisibility(false);
+  }
+
+  // Récupération des idées d'albums enregistrées
+  const ideas = typeof getIdeaList === 'function' 
+    ? getIdeaList() 
+    : (window.ideaAlbums || []);
+
+  let ideasHTML = '';
+  if (!ideas || ideas.length === 0) {
+    ideasHTML = `
+      <div style="text-align: center; padding: 30px 10px; color: var(--text-sub, #aaa);">
+        <p style="margin-bottom: 12px; font-size: 0.9rem;">Aucune idée de compilation enregistrée pour le moment.</p>
+        <button type="button" class="btn-primary" onclick="openIdeaModal()" style="font-size: 0.85rem; padding: 8px 16px;">
+          ＋ Ajouter une idée d'album
+        </button>
+      </div>
+    `;
+  } else {
+    ideas.forEach((idea, idx) => {
+      const title = idea.title || "Album sans titre";
+      const artist = idea.artist ? ` - ${idea.artist}` : "";
+      const tracksCount = Array.isArray(idea.tracks) ? idea.tracks.length : 0;
+
+      ideasHTML += `
+        <div class="dashboard-card" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 800; font-size: 0.95rem; color: #fff;">${title}</div>
+            <div style="font-size: 0.8rem; color: var(--text-sub, #aaa);">${artist} (${tracksCount} pistes)</div>
+          </div>
+          <button type="button" onclick="deleteIdeaAlbum(${idx})" style="background: transparent; border: none; color: #e63946; cursor: pointer; font-size: 1.1rem; padding: 4px 8px;" title="Supprimer">
+            🗑️
+          </button>
+        </div>
+      `;
+    });
+  }
+
+  app.innerHTML = `
+    <div class="planner-container" style="padding-top: 20px; padding-bottom: 90px;">
+      <div class="dashboard-card" style="margin-bottom: 20px;">
+        <div class="dashboard-section-title" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>MES IDÉES DE COMPILATIONS</span>
+          <button type="button" class="btn-primary" onclick="openIdeaModal()" style="font-size: 0.75rem; padding: 4px 10px;">
+            ＋ Nouvelle idée
+          </button>
+        </div>
+      </div>
+
+      <div id="ideas-list-container">
+        ${ideasHTML}
+      </div>
+    </div>
+  `;
+
+  window.scrollTo(0, 0);
+}
+
 /* 2. LISTE DES MINIDISCS */
 function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
