@@ -2057,3 +2057,63 @@ function saveGithubToken(token) {
 function getGithubToken() {
   return localStorage.getItem('github_token');
 }
+
+async function syncCollectionToGithub(dataArray) {
+  const token = getGithubToken();
+  if (!token) {
+    console.warn("Pas de token GitHub configuré. Sauvegarde locale uniquement.");
+    return;
+  }
+
+  // Remplace par tes informations
+  const USERNAME = 'TON_PSEUDO_GITHUB';
+  const REPO = 'TON_NOM_DE_REPO';
+  const FILE_PATH = 'data/minidiscs.json'; // Chemin vers ton fichier JSON dans le repo
+
+  const url = `https://api.github.com/repos/${USERNAME}/${REPO}/contents/${FILE_PATH}`;
+
+  try {
+    // Étape A : Récupérer le SHA actuel du fichier
+    const getResponse = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    let sha = '';
+    if (getResponse.ok) {
+      const fileData = await getResponse.json();
+      sha = fileData.sha;
+    }
+
+    // Étape B : Convertir les données en JSON puis en Base64 (UTF-8 compatible)
+    const jsonString = JSON.stringify(dataArray, null, 2);
+    const bytes = new TextEncoder().encode(jsonString);
+    const base64Content = btoa(String.fromCharCode(...bytes));
+
+    // Étape C : Pousser la mise à jour sur GitHub
+    const putResponse = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        message: 'Mise à jour automatique de la collection MiniDisc',
+        content: base64Content,
+        sha: sha // Nécessaire pour écraser le fichier existant
+      })
+    });
+
+    if (putResponse.ok) {
+      console.log("Synchronisation GitHub réussie !");
+    } else {
+      console.error("Erreur lors de la synchro GitHub :", await putResponse.json());
+    }
+
+  } catch (error) {
+    console.error("Erreur réseau pendant la synchronisation :", error);
+  }
+}
