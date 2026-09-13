@@ -1631,9 +1631,15 @@ function toggleIdeaSelection(index) {
   }
 }
 
-function togglePlannerGenreDropdown() {
-  if (typeof isPlannerGenreDropdownOpen === 'undefined') window.isPlannerGenreDropdownOpen = false;
-  isPlannerGenreDropdownOpen = !isPlannerGenreDropdownOpen;
+function togglePlannerGenreDropdown(event) {
+  if (event) event.stopPropagation(); // Empêche le clic de fermer le menu immédiatement
+
+  if (typeof window.isPlannerGenreDropdownOpen === 'undefined') {
+    window.isPlannerGenreDropdownOpen = true;
+  } else {
+    window.isPlannerGenreDropdownOpen = !window.isPlannerGenreDropdownOpen;
+  }
+
   renderPlannerGenreFilter();
 }
 
