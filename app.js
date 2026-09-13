@@ -511,7 +511,7 @@ function renderDashboard(pushState = true) {
   Object.keys(typeCounts).sort((a,b) => typeCounts[b] - typeCounts[a]).forEach(t => {
     const safeType = t.replace(/'/g, "\\'");
     typeBadgesHTML += `
-      <div class="genre-badge" style="border-left-color: #ff007f;" onclick="renderMDList({ type: '${safeType}' })">
+      <div class="genre-badge" style="border-left-color: #ff007f;" onclick="window.location.hash = '#minidiscs?type=${safeType}'">
         <span class="genre-name" style="color:#ff007f">${t}</span>
         <span class="genre-count">${typeCounts[t]}</span>
       </div>
@@ -523,7 +523,7 @@ function renderDashboard(pushState = true) {
     const color = typeof getBorderColor === 'function' ? getBorderColor(g) : '#00f0ff';
     const safeGenre = g.replace(/'/g, "\\'");
     genreBadgesHTML += `
-      <div class="genre-badge" style="border-left-color: ${color};" onclick="renderMDList({ genre: '${safeGenre}' })">
+      <div class="genre-badge" style="border-left-color: ${color};" onclick="window.location.hash = '#minidiscs?genre=${safeGenre}'">
         <span class="genre-name" style="color:${color}">${g}</span>
         <span class="genre-count">${genreCounts[g]}</span>
       </div>
@@ -558,12 +558,12 @@ function renderDashboard(pushState = true) {
         <div class="genres-grid">${genreBadgesHTML}</div>
       </div>
 
-      <button class="btn-primary" style="margin-top: 16px; margin-bottom: 8px; width: 100%;" onclick="renderMDList({})">
+      <button class="btn-primary" style="margin-top: 16px; margin-bottom: 8px; width: 100%;" onclick="window.location.hash = '#minidiscs'">
         VOIR TOUS LES MINIDISCS &rarr;
       </button>
 
       <div class="dashboard-actions-row">
-        <button class="action-btn-wide" onclick="renderCompilPlanner()">
+        <button class="action-btn-wide" onclick="window.location.hash = '#planner'">
           Créer une compilation
         </button>
         <button class="action-btn-wide" onclick="openAdminModal()">
