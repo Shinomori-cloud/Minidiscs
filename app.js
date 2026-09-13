@@ -1464,102 +1464,112 @@ function getItemGenresList(item) {
   return String(item.genre).split(',').map(g => g.trim().toUpperCase()).filter(Boolean);
 }
 
-/* RENDU DU PLANIFICATEUR AVEC CARTES ET BOUTON ACTION FLOTTANT */
+/* RENDU DU PLANIFICATEUR - VERSION SÉCURISÉE */
 function renderCompilPlanner(pushState = true) {
-  if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
+  try {
+    if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
 
-  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
-  if (fa) {
-    fa.style.display = 'flex';
-    fa.classList.remove('hidden');
-  }
-
-  currentMD = null;
-  currentAlbum = null;
-
-  if (typeof backBtn !== 'undefined' && backBtn) backBtn.classList.remove('hidden');
-  if (typeof headerTitle !== 'undefined' && headerTitle) headerTitle.textContent = "PLANIFICATEUR";
-  if (typeof featuredContainer !== 'undefined' && featuredContainer) featuredContainer.classList.add('hidden');
-
-  if (pushState && window.location.hash !== '#planner') {
-    history.pushState({ view: 'planner' }, '', '#planner');
-  }
-
-  if (typeof updateSearchVisibility === 'function') updateSearchVisibility(false);
-  if (typeof injectPlannerHeaderBadge === 'function') injectPlannerHeaderBadge();
-
-  const rawIdeas = typeof getIdeaList === 'function' ? getIdeaList() : [];
-
-  const filteredIdeas = rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex })).filter(item => {
-    if (typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.size > 0) {
-      const itemGenres = typeof getItemGenresList === 'function' ? getItemGenresList(item) : [];
-      return Array.from(currentPlannerGenreFilters).some(g => itemGenres.includes(g));
+    const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+    if (fa) {
+      fa.style.display = 'flex';
+      fa.classList.remove('hidden');
     }
-    return true;
-  });
 
-  const ideas = typeof dailyShuffle === 'function' ? dailyShuffle(filteredIdeas, '-planner') : filteredIdeas;
+    if (typeof currentMD !== 'undefined') window.currentMD = null;
+    if (typeof currentAlbum !== 'undefined') window.currentAlbum = null;
 
-  let cardsHTML = '';
-  if (rawIdeas.length === 0) {
-    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album dans votre liste d'idées. Ajoutez-en avec le bouton ci-dessous !</p>`;
-  } else if (ideas.length === 0) {
-    cardsHTML = `<p class="planner-text-white" style="text-align:center; grid-column: 1/-1; padding: 30px;">Aucun album ne correspond aux filtres sélectionnés.</p>`;
-  } else {
-    ideas.forEach((item) => {
-      const index = item.originalIndex;
-      const isSelected = selectedIdeaIndices.has(index);
-      const coverSrc = (item.cover && item.cover !== 'images/') ? item.cover : '';
+    const backBtn = document.getElementById('back-btn') || document.querySelector('.back-btn');
+    if (backBtn) backBtn.classList.remove('hidden');
 
-      cardsHTML += `
-        <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
-          ${coverSrc 
-            ? `<img src="${coverSrc}" class="idea-cover" alt="cover">` 
-            : `<div class="idea-cover" style="background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;">Pas d'image</div>`
-          }
-          <div class="idea-title">${item.title || 'Sans titre'}</div>
-          <div class="idea-artist">${item.artist || 'Artiste inconnu'}</div>
-          <div class="idea-duration">⏱️ ${item.duration || '00:00'}</div>
-          <button type="button" class="idea-delete-btn" data-delete="${index}">🗑️</button>
+    const headerTitle = document.getElementById('header-title') || document.querySelector('.header-title');
+    if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
+
+    const featuredContainer = document.getElementById('featured-container');
+    if (featuredContainer) featuredContainer.classList.add('hidden');
+
+    if (pushState && window.location.hash !== '#planner') {
+      history.pushState({ view: 'planner' }, '', '#planner');
+    }
+
+    if (typeof updateSearchVisibility === 'function') updateSearchVisibility(false);
+    if (typeof injectPlannerHeaderBadge === 'function') injectPlannerHeaderBadge();
+
+    const rawIdeas = typeof getIdeaList === 'function' ? getIdeaList() : [];
+    let ideas = rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex }));
+
+    if (typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.size > 0) {
+      ideas = ideas.filter(item => {
+        const itemGenres = typeof getItemGenresList === 'function' ? getItemGenresList(item) : [];
+        return Array.from(currentPlannerGenreFilters).some(g => itemGenres.includes(g));
+      });
+    }
+
+    if (typeof dailyShuffle === 'function') {
+      ideas = dailyShuffle(ideas, '-planner');
+    }
+
+    let cardsHTML = '';
+    if (rawIdeas.length === 0) {
+      cardsHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 30px; color: #fff;">Aucun album dans votre liste d'idées.</p>`;
+    } else if (ideas.length === 0) {
+      cardsHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 30px; color: #fff;">Aucun album ne correspond aux filtres.</p>`;
+    } else {
+      ideas.forEach((item) => {
+        const index = item.originalIndex;
+        const isSelected = selectedIdeaIndices.has(index);
+        const coverSrc = (item.cover && item.cover !== 'images/') ? item.cover : '';
+
+        cardsHTML += `
+          <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
+            ${coverSrc 
+              ? `<img src="${coverSrc}" class="idea-cover" alt="cover">` 
+              : `<div class="idea-cover" style="background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;">Pas d'image</div>`
+            }
+            <div class="idea-title">${item.title || 'Sans titre'}</div>
+            <div class="idea-artist">${item.artist || 'Artiste inconnu'}</div>
+            <div class="idea-duration">⏱️ ${item.duration || '00:00'}</div>
+            <button type="button" class="idea-delete-btn" data-delete="${index}">🗑️</button>
+          </div>
+        `;
+      });
+    }
+
+    const activeGenreCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
+    const countSelect = selectedIdeaIndices.size;
+
+    const appContainer = document.getElementById('app') || document.body;
+    
+    appContainer.innerHTML = `
+      <div style="padding-bottom: 110px; padding-top: 215px; max-width: 800px; margin: 0 auto;">
+        <div class="ideas-grid" id="ideas-grid-container">
+          ${cardsHTML}
         </div>
-      `;
-    });
+
+        <div style="position: fixed; bottom: 80px; right: 20px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+          <div id="planner-fab-menu" style="display: none; flex-direction: column; gap: 8px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 10px; box-shadow: 4px 4px 0px #000000; min-width: 170px;">
+            <button type="button" onclick="if(typeof openIdeaModal==='function') openIdeaModal();" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #ff007f; color: #fff; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+              ＋ Ajouter
+            </button>
+            <button type="button" onclick="if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''} style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #06d6a0; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+              💾 Convertir (${countSelect})
+            </button>
+            <button type="button" onclick="if(typeof togglePlannerGenreDropdown==='function') togglePlannerGenreDropdown();" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #fff; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+              🏷️ Genres ${activeGenreCount > 0 ? '(' + activeGenreCount + ')' : ''}
+            </button>
+            <button type="button" onclick="if(typeof resetPlannerSelections==='function') resetPlannerSelections();" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
+              🔄 Réinitialiser
+            </button>
+          </div>
+
+          <button type="button" onclick="const m=document.getElementById('planner-fab-menu'); if(m) m.style.display=(m.style.display==='none'||!m.style.display)?'flex':'none';" style="width: 50px; height: 50px; border-radius: 50%; background: #ff007f; color: #ffffff; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; font-size: 1.4rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none;">
+            ⚡
+          </button>
+        </div>
+      </div>
+    `;
+  } catch (err) {
+    console.error("Erreur dans renderCompilPlanner:", err);
   }
-
-  const activeGenreCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
-  const countSelect = selectedIdeaIndices.size;
-  const isConvertDisabled = countSelect === 0 ? 'disabled' : '';
-
-  const appContainer = document.getElementById('app') || document.body;
-  
-  appContainer.innerHTML = `
-    <div style="padding-bottom: 110px; padding-top: 215px; max-width: 800px; margin: 0 auto;">
-      <div class="ideas-grid" id="ideas-grid-container">
-        ${cardsHTML}
-      </div>
-
-      <div style="position: fixed; bottom: 80px; right: 20px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
-        <div id="planner-fab-menu" style="display: none; flex-direction: column; gap: 8px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 10px; box-shadow: 4px 4px 0px #000000; min-width: 170px;">
-          <button type="button" id="planner-btn-add" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #ff007f; color: #fff; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
-            ＋ Ajouter
-          </button>
-          <button type="button" id="planner-btn-convert" ${isConvertDisabled} style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #06d6a0; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
-            💾 Convertir (${countSelect})
-          </button>
-          <button type="button" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #fff; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
-            🏷️ Genres ${activeGenreCount > 0 ? '(' + activeGenreCount + ')' : ''}
-          </button>
-          <button type="button" id="planner-btn-reset" style="height: 38px; border: 2px solid #000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.8rem; padding: 0 10px; cursor: pointer; text-align: left;">
-            🔄 Réinitialiser
-          </button>
-        </div>
-
-        <button type="button" onclick="togglePlannerFabMenu()" style="width: 50px; height: 50px; border-radius: 50%; background: #ff007f; color: #ffffff; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; font-size: 1.4rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none;">
-          ⚡
-        </button>
-      </div>
-    </div>
-  `;
 }
 
 /* Bascule l'affichage du menu flottant du planificateur */
