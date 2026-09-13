@@ -85,13 +85,67 @@ function toggleSearch() {
 function toggleGenreDropdown() {
   const dropdown = document.getElementById('genre-filter-dropdown');
   if (!dropdown) return;
-  
+
   const isHidden = dropdown.classList.contains('hidden');
+
   if (isHidden) {
+    // Génère les puces de genres avant d'afficher le conteneur
+    renderGenreDropdownContent();
     dropdown.classList.remove('hidden');
   } else {
     dropdown.classList.add('hidden');
   }
+}
+
+// Génère le contenu dynamique des filtres par genre
+function renderGenreDropdownContent() {
+  const dropdown = document.getElementById('genre-filter-dropdown');
+  if (!dropdown) return;
+
+  const allGenres = new Set();
+
+  // Extraction des genres via la structure de tes MiniDiscs
+  if (Array.isArray(window.minidiscs || typeof minidiscs !== 'undefined' && minidiscs)) {
+    const list = window.minidiscs || minidiscs;
+    list.forEach(md => {
+      const genres = getMDAllGenres(md);
+      genres.forEach(g => {
+        if (g && g.trim()) allGenres.add(g.trim().toUpperCase());
+      });
+    });
+  }
+
+  if (allGenres.size === 0) {
+    dropdown.innerHTML = `<span style="font-size: 0.75rem; color: #666; font-weight: bold; padding: 4px;">Aucun genre</span>`;
+    return;
+  }
+
+  let html = `<button class="genre-chip ${!currentGenreFilter || currentGenreFilter === 'ALL' ? 'active' : ''}" onclick="selectGenreFilter('ALL')">TOUS</button>`;
+  
+  Array.from(allGenres).sort().forEach(genre => {
+    const isActive = currentGenreFilter === genre ? 'active' : '';
+    html += `<button class="genre-chip ${isActive}" onclick="selectGenreFilter('${genre.replace(/'/g, "\\'")}')">${genre}</button>`;
+  });
+
+  dropdown.innerHTML = html;
+}
+
+// Application du filtre sélectionné et rafraîchissement de la liste
+function selectGenreFilter(genre) {
+  currentGenreFilter = genre === 'ALL' ? '' : genre;
+
+  // Mise à jour de la classe active sur les puces
+  const chips = document.querySelectorAll('#genre-filter-dropdown .genre-chip');
+  chips.forEach(chip => chip.classList.remove('active'));
+
+  const dropdown = document.getElementById('genre-filter-dropdown');
+  if (dropdown) dropdown.classList.add('hidden');
+
+  renderMDList({ 
+    genre: currentGenreFilter, 
+    type: currentTypeFilter, 
+    record: currentRecordFilter 
+  }, false);
 }
 
 // Change le filtre à chaque clic (Tous -> À enregistrer -> Enregistrés)
@@ -103,7 +157,7 @@ function cycleRecordFilter() {
   } else {
     currentRecordFilter = 'all';
   }
-  
+
   updateFilterIcon();
   // Conservation des filtres de genre et de type actifs lors du cycle
   renderMDList({ 
@@ -177,7 +231,7 @@ function updateSearchVisibility(show) {
     if (floatingActions) floatingActions.classList.add('hidden');
     if (fabBtn) fabBtn.textContent = '| Search';
     if (topSearch) topSearch.classList.add('closed');
-    
+
     currentSearchQuery = '';
     if (searchInput) searchInput.value = '';
   }
