@@ -153,8 +153,11 @@
     </div>
   </div>
 
+  <!-- FILTRE DE GENRES MULTIPLE POUR LA COLLECTION PRINCIPALE -->
+  <div id="genre-filter-dropdown" class="genre-filter-container hidden"></div>
+
   <!-- FILTRE DE GENRES MULTIPLE POUR LE PLANIFICATEUR -->
-  <div id="planner-genre-filter" class="genre-filter-container">
+  <div id="planner-genre-filter" class="genre-filter-container hidden">
     <div id="planner-tags-list" class="tags-cloud"></div>
   </div>
 
@@ -170,8 +173,8 @@
   <!-- VIGNETTE FLOTTANTE COMBINÉE (FILTRE + RECHERCHE + GENRES) -->
   <div id="floating-actions" class="floating-actions-bar hidden">
     <button id="filter-fab-btn" class="action-btn" onclick="cycleRecordFilter()" title="Filtrer la liste">🌐</button>
-    <button id="search-fab-btn" class="action-btn" onclick="toggleSearch()" title="Rechercher">| Search</button>
-    <button id="planner-btn-genre-toggle" class="action-btn" onclick="togglePlannerGenreDropdown()" title="Filtrer par genre">| Filter</button>
+    <button id="btn-search" class="action-btn" onclick="toggleSearch()" title="Rechercher">| Search</button>
+    <button id="btn-filter-genre" class="action-btn" onclick="toggleGenreDropdown()" title="Filtrer par genre">| Filter</button>
   </div>
 </body>
 </html>
