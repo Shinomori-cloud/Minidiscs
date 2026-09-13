@@ -1491,3 +1491,22 @@ html, body {
   background: #ccc;
   border-radius: 4px;
 }
+
+.active-genre-badge {
+  text-align: center;
+  margin: -6px auto 10px auto;
+  pointer-events: none;
+}
+
+.active-genre-badge span {
+  display: inline-block;
+  background: #ff007f;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
