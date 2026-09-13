@@ -282,11 +282,18 @@ if (!window.location.hash || window.location.hash === '#') {
 if (backBtn) {
   backBtn.addEventListener('click', () => {
     if (currentAlbum !== null) {
-      openMD(currentMD, true);
+      // Si on est dans le détail d'un album, retour au MiniDisc parent
+      if (currentMD !== null) {
+        window.location.hash = `#md-${currentMD}`;
+      } else {
+        window.location.hash = '#minidiscs';
+      }
     } else if (currentMD !== null) {
-      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, true);
+      // Si on est dans le détail d'un MiniDisc, retour à la liste
+      window.location.hash = '#minidiscs';
     } else {
-      renderDashboard(true);
+      // Sinon, retour au Dashboard
+      window.location.hash = '#dashboard';
     }
   });
 }
