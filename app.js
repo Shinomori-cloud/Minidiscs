@@ -965,48 +965,58 @@ function deleteMD(index) {
    ========================================== */
 
 /* ==========================================
-   UTILITAIRE : SÉLECTION MULTIPLE DATALIST
+   UTILITAIRE : SÉLECTION MULTIPLE PAR SUGGESTIONS
    ========================================== */
-function enableMultiDatalistInput(inputId) {
+function setupMultiSelectContainer(inputId, datalistId) {
   const input = document.getElementById(inputId);
-  if (!input) return;
+  const datalist = document.getElementById(datalistId);
+  if (!input || !datalist) return;
 
-  if (input.dataset.multiDatalistAttached) return;
-  input.dataset.multiDatalistAttached = "true";
+  // Éviter de réattacher le conteneur plusieurs fois
+  let container = input.parentElement.querySelector('.tag-suggestions');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'tag-suggestions';
+    container.style.cssText = "display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;";
+    input.parentElement.appendChild(container);
+  }
 
-  input.addEventListener('input', function() {
-    const datalistId = input.getAttribute('list');
-    if (!datalistId) return;
-    const datalist = document.getElementById(datalistId);
-    if (!datalist) return;
-
+  // Fonction pour afficher les badges des options disponibles
+  function renderBadges() {
+    container.innerHTML = '';
+    const currentValues = input.value.split(',').map(v => v.trim().toLowerCase());
     const options = Array.from(datalist.options).map(opt => opt.value);
-    const currentValue = input.value;
 
-    const parts = currentValue.split(',').map(p => p.trimStart());
-    const lastPart = parts[parts.length - 1].trim();
+    options.forEach(optValue => {
+      // Si l'option n'est pas encore ajoutée dans le champ
+      if (!currentValues.includes(optValue.toLowerCase())) {
+        const badge = document.createElement('span');
+        badge.textContent = `+ ${optValue}`;
+        badge.style.cssText = "background: #e9ecef; color: #212529; border: 1px solid #ced4da; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; user-select: none;";
+        
+        badge.onclick = () => {
+          const parts = input.value.split(',').map(p => p.trim()).filter(p => p !== '');
+          parts.push(optValue);
+          input.value = parts.join(', ') + ', ';
+          renderBadges(); // Met à jour les puces restantes
+          input.focus();
+        };
+        container.appendChild(badge);
+      }
+    });
+  }
 
-    // Si le mot saisi/cliqué fait partie des options de la datalist
-    if (options.includes(lastPart)) {
-      parts[parts.length - 1] = lastPart;
-      // Ajout du mot et de la virgule espace
-      input.value = parts.join(', ') + ', ';
-
-      // Astuce : réouvrir le menu de suggestions immédiatement
-      setTimeout(() => {
-        input.blur();
-        input.focus();
-      }, 50);
-    }
-  });
+  // Mettre à jour si l'utilisateur retape du texte à la main
+  input.oninput = renderBadges;
+  renderBadges();
 }
 
 function openAdminModal(indexToEdit = null) {
   // Rafraîchir les listes de suggestions (genres / types)
   populateFormDatalists();
 
-   enableMultiDatalistInput('md-genre');
-  enableMultiDatalistInput('md-type-tags');
+  setupMultiSelectContainer('md-genre', 'genres-list');
+  setupMultiSelectContainer('md-type-tags', 'types-list');
 
   editingMDIndex = indexToEdit;
   const modalTitle = document.querySelector('#admin-modal h3');
@@ -1150,9 +1160,9 @@ function addAdminAlbumBlock() {
   `;
   container.appendChild(div);
 
-  // Activer la saisie multiple sur les champs du nouvel album
-  enableMultiDatalistInput(genreInputId);
-  enableMultiDatalistInput(typeInputId);
+  // Activer la sélection par puces pour le nouvel album
+  setupMultiSelectContainer(genreInputId, 'genres-list');
+  setupMultiSelectContainer(typeInputId, 'types-list');
 }
 
 function removeAdminAlbumBlock(button) {
