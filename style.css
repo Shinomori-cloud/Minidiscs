@@ -1165,7 +1165,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
    ========================================== */
 .toast {
   position: fixed;
-  bottom: 200px;
+  bottom: 450px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #f70c63;
