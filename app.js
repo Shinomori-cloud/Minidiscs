@@ -965,7 +965,7 @@ function deleteMD(index) {
    ========================================== */
 
 /* ==========================================
-   UTILITAIRE : SELECTION MULTIPLE DATALIST
+   UTILITAIRE : SÉLECTION MULTIPLE DATALIST
    ========================================== */
 function enableMultiDatalistInput(inputId) {
   const input = document.getElementById(inputId);
@@ -986,9 +986,17 @@ function enableMultiDatalistInput(inputId) {
     const parts = currentValue.split(',').map(p => p.trimStart());
     const lastPart = parts[parts.length - 1].trim();
 
+    // Si le mot saisi/cliqué fait partie des options de la datalist
     if (options.includes(lastPart)) {
       parts[parts.length - 1] = lastPart;
+      // Ajout du mot et de la virgule espace
       input.value = parts.join(', ') + ', ';
+
+      // Astuce : réouvrir le menu de suggestions immédiatement
+      setTimeout(() => {
+        input.blur();
+        input.focus();
+      }, 50);
     }
   });
 }
