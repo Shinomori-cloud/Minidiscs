@@ -1302,7 +1302,7 @@ function injectPlannerHeaderBadge() {
   }
 }
 
-// Extraction utilitaire des genres d'un item (compatible avec le Dashboard)
+// Extraction propre des genres uniques d'un album ou d'une idée
 function getItemGenresList(item) {
   if (typeof getMDAllGenres === 'function') {
     return getMDAllGenres(item);
@@ -1344,7 +1344,7 @@ function renderCompilPlanner(pushState = true) {
 
   const rawIdeas = getIdeaList();
 
-  // Filtrage par genre avec extraction propre
+  // Filtrage par genre avec découpage des genres uniques
   const filteredIdeas = rawIdeas.map((item, originalIndex) => ({ ...item, originalIndex })).filter(item => {
     if (typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.size > 0) {
       const itemGenres = getItemGenresList(item);
@@ -1353,7 +1353,6 @@ function renderCompilPlanner(pushState = true) {
     return true;
   });
 
-  // Mélange quotidien si la fonction existe, sinon liste directe
   const ideas = typeof dailyShuffle === 'function' ? dailyShuffle(filteredIdeas, '-planner') : filteredIdeas;
 
   let cardsHTML = '';
@@ -1381,6 +1380,11 @@ function renderCompilPlanner(pushState = true) {
       `;
     });
   }
+
+  const activeGenreCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
+  const genreBtnStyle = activeGenreCount > 0 
+    ? 'background: #ff007f; color: #ffffff; border: 2px solid #000000; box-shadow: 2px 2px 0px #000000; font-weight: bold;'
+    : '';
    
   app.innerHTML = `
     <div style="padding-bottom: 110px; padding-top: 215px; max-width: 800px; margin: 0 auto;">
@@ -1408,8 +1412,8 @@ function renderCompilPlanner(pushState = true) {
           </button>
 
           <!-- 4. GENRES -->
-          <button type="button" class="tag-btn" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.8rem; padding: 0 8px;">
-            🏷️ Genres
+          <button type="button" class="tag-btn" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.8rem; padding: 0 8px; ${genreBtnStyle}">
+            🏷️ Genres${activeGenreCount > 0 ? ` (${activeGenreCount})` : ''}
           </button>
 
         </div>
@@ -1486,7 +1490,7 @@ function renderPlannerGenreFilter() {
   const genresSet = new Set();
   const ideas = getIdeaList();
   
-  // Extraction propre des genres uniques à partir de la liste d'idées
+  // Extraction de tous les genres uniques individuellement
   ideas.forEach(item => {
     const itemGenres = getItemGenresList(item);
     itemGenres.forEach(g => genresSet.add(g));
@@ -1517,13 +1521,16 @@ function renderPlannerGenreFilter() {
     zIndex: '2000',
     display: 'flex',
     flexDirection: 'column',
-    gap: '4px'
+    gap: '6px'
   });
 
   const activeCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
 
+  const activeStyle = 'background: #ff007f; color: #ffffff; border: 2px solid #000000; box-shadow: 2px 2px 0px #000000; font-weight: bold;';
+  const inactiveStyle = 'background: rgba(255, 255, 255, 0.08); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2);';
+
   let html = `
-    <button type="button" class="tag-btn ${activeCount === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; text-align: left; border-radius: 8px;">
+    <button type="button" class="tag-btn ${activeCount === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; text-align: left; border-radius: 8px; cursor: pointer; transition: all 0.15s ease; ${activeCount === 0 ? activeStyle : inactiveStyle}">
       Tous les genres
     </button>
   `;
@@ -1531,7 +1538,7 @@ function renderPlannerGenreFilter() {
   genres.forEach(genre => {
     const isActive = typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.has(genre);
     html += `
-      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${genre.replace(/'/g, "\\'")}')" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; text-align: left; border-radius: 8px;">
+      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${genre.replace(/'/g, "\\'")}')" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; text-align: left; border-radius: 8px; cursor: pointer; transition: all 0.15s ease; ${isActive ? activeStyle : inactiveStyle}">
         ${isActive ? '✓ ' : ''}${genre}
       </button>
     `;
@@ -1596,7 +1603,7 @@ function openIdeaModal() {
   const coverInput = document.getElementById('idea-cover');
   if (coverInput) coverInput.value = "images/";
   const modal = document.getElementById('idea-modal');
-  if (modal) modal.classList.add('hidden');
+  if (modal) modal.classList.remove('hidden');
 }
 
 function closeIdeaModal() {
