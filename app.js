@@ -1482,9 +1482,9 @@ function renderCompilPlanner(pushState = true) {
         ${cardsHTML}
       </div>
 
-      <div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
-        <div class="compil-actions" style="display: flex; gap: 8px; max-width: 600px; width: 100%; justify-content: center; align-items: stretch; background: rgba(30, 30, 30, 0.9); backdrop-filter: blur(10px); padding: 10px 14px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); pointer-events: auto;">
-          
+     <div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
+      <div class="compil-actions" style="display: flex; gap: 8px; max-width: 600px; width: 100%; justify-content: center; align-items: center; pointer-events: auto;">
+  
           <!-- 1. AJOUTER -->
           <button type="button" class="btn-primary" id="planner-btn-add" style="flex: 1; height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; margin: 0; border-radius: 20px; font-size: 0.8rem; padding: 0 8px;">
             ＋ Ajouter
