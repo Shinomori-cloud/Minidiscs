@@ -1446,3 +1446,31 @@ html, body {
   background: #e0e0e0;
   margin: 4px 0;
 }
+
+/* Style du sous-menu (Statut) */
+#floating-actions .fab-submenu {
+  display: flex !important;
+  flex-direction: column !important;
+  padding-left: 16px; /* Décalage pour montrer que c'est un sous-menu */
+  margin-top: 2px;
+  margin-bottom: 4px;
+  border-left: 2px solid #e0e0e0;
+  gap: 2px;
+}
+
+#floating-actions .fab-submenu.hidden {
+  display: none !important;
+}
+
+/* Style spécifique pour les boutons du sous-menu */
+#floating-actions .fab-item.sub-item {
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  font-weight: 500;
+  color: #555;
+}
+
+#floating-actions .fab-item.sub-item:hover {
+  background-color: #e9ecef;
+  color: #000;
+}
