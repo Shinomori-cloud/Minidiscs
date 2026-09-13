@@ -1365,6 +1365,27 @@ function downloadUpdatedJSON() {
 }
 
 /* ==========================================
+   GESTION DU MENU FLOTTANT (FAB)
+   ========================================== */
+
+// Ouvre et ferme le menu déroulant au clic sur le pignon ⚙️
+function toggleFabMenu() {
+  const menu = document.getElementById('fab-menu');
+  if (menu) {
+    menu.classList.toggle('hidden');
+  }
+}
+
+// Ferme le menu si l'utilisateur clique en dehors de la zone du FAB
+document.addEventListener('click', (e) => {
+  const container = document.getElementById('floating-actions');
+  const menu = document.getElementById('fab-menu');
+  if (container && menu && !container.contains(e.target)) {
+    menu.classList.add('hidden');
+  }
+});
+
+/* ==========================================
    PLANIFICATEUR DE COMPILATION & IDÉES
    ========================================== */
 
