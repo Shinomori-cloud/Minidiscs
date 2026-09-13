@@ -1377,14 +1377,29 @@ function renderCompilPlanner(pushState = true) {
         ${cardsHTML}
       </div>
 
-      <div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
+<div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; pointer-events: none; z-index: 1000;">
         <div class="compil-actions" style="display:flex; gap:8px; max-width: 600px; width:100%; justify-content: center; background: rgba(30, 30, 30, 0.9); backdrop-filter: blur(10px); padding: 10px 14px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); pointer-events: auto; align-items: center;">
-          <button type="button" class="btn-primary" id="planner-btn-add" style="flex:1; border-radius:20px; font-size: 0.8rem; padding: 8px 10px;">＋ Ajouter</button>
-          <button type="button" class="tag-btn" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="padding: 8px 12px; font-size: 0.8rem; border-radius: 20px;">🏷️ Genre</button>
-          <button type="button" class="btn-secondary" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="flex:1.2; border-radius:20px; font-size: 0.8rem; padding: 8px 10px; background: #06d6a0; color: #000;">
+          
+          <!-- 1. AJOUTER (Largeur: flex / Hauteur: min-height) -->
+          <button type="button" class="btn-primary" id="planner-btn-add" style="flex: 1; min-height: 44px; border-radius: 20px; font-size: 0.8rem; padding: 6px 8px;">
+            ＋ Ajouter
+          </button>
+
+          <!-- 2. CONVERTIR -->
+          <button type="button" class="btn-secondary" id="planner-btn-convert" ${selectedIdeaIndices.size === 0 ? 'disabled' : ''} style="flex: 1; min-height: 44px; border-radius: 20px; font-size: 0.8rem; padding: 6px 8px; background: #06d6a0; color: #000;">
             💾 Convertir (${selectedIdeaIndices.size})
           </button>
-          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex:1; border-radius:20px; font-size: 0.8rem; padding: 8px 10px;">Réinitialiser</button>
+
+          <!-- 3. RÉINITIALISER -->
+          <button type="button" class="btn-sub" id="planner-btn-reset" style="flex: 1; min-height: 44px; border-radius: 20px; font-size: 0.8rem; padding: 6px 8px;">
+            Réinitialiser
+          </button>
+
+          <!-- 4. GENRES (Déplacé à droite) -->
+          <button type="button" class="tag-btn" id="planner-btn-genre-toggle" onclick="togglePlannerGenreDropdown()" style="flex: 1; min-height: 44px; border-radius: 20px; font-size: 0.8rem; padding: 6px 8px;">
+            🏷️ Genres
+          </button>
+
         </div>
       </div>
 
