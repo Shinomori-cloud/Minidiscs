@@ -1201,7 +1201,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   justify-content: space-evenly;
   
   /* Largeur ajustée pour 4 boutons */
-  width: 260px; 
+  width: 220px; 
   
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
   border: 3px solid #000000;
@@ -1210,7 +1210,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 4px 4px 0px #000000;
   z-index: 1500;
   transition: opacity 0.2s ease, transform 0.2s ease;
-  height: 42px;
+  height: 46px;
   box-sizing: border-box;
 }
 
