@@ -972,6 +972,9 @@ function setupMultiSelectContainer(inputId, datalistId) {
   const datalist = document.getElementById(datalistId);
   if (!input || !datalist) return;
 
+  // Retirer l'attribut list pour empêcher le menu déroulant natif du navigateur de s'ouvrir au clic
+  input.removeAttribute('list');
+
   // Éviter de réattacher le conteneur plusieurs fois
   let container = input.parentElement.querySelector('.tag-suggestions');
   if (!container) {
