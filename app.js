@@ -1521,8 +1521,8 @@ function renderCompilPlanner(pushState = true) {
 
       cardsHTML += `
         <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
-          ${coverSrc 
-            ? `<img src="${coverSrc}" class="idea-cover" alt="cover" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'idea-cover\\' style=\\'background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;\\'>Pas d\\'image</div>';">` 
+          ${coverSrc
+            ? `<img src="${coverSrc}" class="idea-cover" alt="cover" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'idea-cover\\' style=\\'background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;\\'>Pas d\\'image</div>';">`
             : `<div class="idea-cover" style="background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;">Pas d'image</div>`
           }
           <div class="idea-title" title="${item.title || ''}">${item.title || 'Sans titre'}</div>
