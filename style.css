@@ -1323,5 +1323,6 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 html, body {
+  overscroll-behavior: none;
   overscroll-behavior-y: none;
 }
