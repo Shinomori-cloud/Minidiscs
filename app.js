@@ -1355,7 +1355,10 @@ function clearPlannerGenreFilters() {
 
 function renderCompilPlanner(pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
-  if (fa) fa.style.display = 'none';
+  if (fa) {
+    fa.style.display = 'flex';
+    fa.classList.remove('hidden');
+  }
    
   if (pushState && window.location.hash !== '#planner') {
     window.location.hash = '#planner';
