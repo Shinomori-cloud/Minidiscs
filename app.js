@@ -1490,7 +1490,7 @@ function renderPlannerGenreFilter() {
   const genresSet = new Set();
   const ideas = getIdeaList();
   
-  // Extraction de tous les genres uniques individuellement
+  // Extraction propre des genres uniques
   ideas.forEach(item => {
     const itemGenres = getItemGenresList(item);
     itemGenres.forEach(g => genresSet.add(g));
@@ -1504,6 +1504,7 @@ function renderPlannerGenreFilter() {
   const menu = document.createElement('div');
   menu.id = 'planner-genre-menu';
   
+  // Conteneur du menu (positionnement uniquement, pas d'impact sur les boutons)
   Object.assign(menu.style, {
     position: 'fixed',
     bottom: `${window.innerHeight - rect.top + 8}px`,
@@ -1512,12 +1513,11 @@ function renderPlannerGenreFilter() {
     maxWidth: '260px',
     maxHeight: '360px',
     overflowY: 'auto',
-    background: 'rgba(25, 25, 25, 0.95)',
-    backdropFilter: 'blur(12px)',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    borderRadius: '16px',
+    background: '#ffffff',
+    border: '2px solid #000000',
+    borderRadius: '12px',
     padding: '8px',
-    boxShadow: '0 -8px 25px rgba(0, 0, 0, 0.6)',
+    boxShadow: '4px 4px 0px #000000',
     zIndex: '2000',
     display: 'flex',
     flexDirection: 'column',
@@ -1526,19 +1526,19 @@ function renderPlannerGenreFilter() {
 
   const activeCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
 
-  const activeStyle = 'background: #ff007f; color: #ffffff; border: 2px solid #000000; box-shadow: 2px 2px 0px #000000; font-weight: bold;';
-  const inactiveStyle = 'background: rgba(255, 255, 255, 0.08); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2);';
-
+  // 1. Bouton "Tous les genres" (prend .active si 0 filtre actif)
   let html = `
-    <button type="button" class="tag-btn ${activeCount === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; text-align: left; border-radius: 8px; cursor: pointer; transition: all 0.15s ease; ${activeCount === 0 ? activeStyle : inactiveStyle}">
+    <button type="button" class="tag-btn ${activeCount === 0 ? 'active' : ''}" onclick="clearPlannerGenreFilters()" style="width: 100%; text-align: left;">
       Tous les genres
     </button>
   `;
 
+  // 2. Boutons de chaque genre (prennent .active si le genre est dans le Set)
   genres.forEach(genre => {
     const isActive = typeof currentPlannerGenreFilters !== 'undefined' && currentPlannerGenreFilters.has(genre);
+    const escapedGenre = genre.replace(/'/g, "\\'");
     html += `
-      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${genre.replace(/'/g, "\\'")}')" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; text-align: left; border-radius: 8px; cursor: pointer; transition: all 0.15s ease; ${isActive ? activeStyle : inactiveStyle}">
+      <button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="togglePlannerGenre('${escapedGenre}')" style="width: 100%; text-align: left;">
         ${isActive ? '✓ ' : ''}${genre}
       </button>
     `;
@@ -1557,7 +1557,10 @@ function togglePlannerGenre(genre) {
     currentPlannerGenreFilters.add(genre);
   }
 
+  // Met à jour la grille
   renderCompilPlanner(false);
+  // Re-rend le menu pour mettre à jour les classes .active
+  renderPlannerGenreFilter();
 }
 
 function clearPlannerGenreFilters() {
@@ -1565,6 +1568,7 @@ function clearPlannerGenreFilters() {
     currentPlannerGenreFilters.clear();
   }
   renderCompilPlanner(false);
+  renderPlannerGenreFilter();
 }
 
 function deleteIdeaAlbum(index) {
