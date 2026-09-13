@@ -1693,7 +1693,7 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
     webkitOverflowScrolling: 'touch'
   });
 
-  // Intercepte le geste vers le bas tout en haut du menu pour bloquer le pull-to-refresh
+  // CORRECTION : Interception active pour annuler le pull-to-refresh
   let startY = 0;
   scrollArea.addEventListener('touchstart', (e) => {
     startY = e.touches[0].pageY;
@@ -1701,10 +1701,12 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
 
   scrollArea.addEventListener('touchmove', (e) => {
     const currentY = e.touches[0].pageY;
-    if (scrollArea.scrollTop === 0 && currentY > startY) {
+    // Si on est au sommet et qu'on tire vers le bas, on annule l'action navigateur
+    if (scrollArea.scrollTop <= 0 && currentY > startY) {
+      if (e.cancelable) e.preventDefault();
       e.stopPropagation();
     }
-  }, { passive: true });
+  }, { passive: false }); // passer à false permet à preventDefault() de fonctionner
 
   const activeFilters = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters : new Set();
 
