@@ -228,6 +228,7 @@ function updateSearchVisibility(show) {
   const topSearch = document.getElementById('search-bar');
   const searchInput = document.getElementById('search-input');
   const fabBtn = document.getElementById('btn-search');
+  const genreDropdown = document.getElementById('genre-filter-dropdown');
 
   if (show) {
     if (floatingActions) floatingActions.classList.remove('hidden');
@@ -238,6 +239,7 @@ function updateSearchVisibility(show) {
     if (floatingActions) floatingActions.classList.add('hidden');
     if (fabBtn) fabBtn.textContent = '| Search';
     if (topSearch) topSearch.classList.add('closed');
+    if (genreDropdown) genreDropdown.classList.add('hidden');
 
     currentSearchQuery = '';
     if (searchInput) searchInput.value = '';
