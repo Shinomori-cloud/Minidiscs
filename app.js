@@ -442,15 +442,22 @@ function renderDashboard(pushState = true) {
 
   currentMD = null;
   currentAlbum = null;
-  currentGenreFilter = null;
+  currentGenreFilters.clear(); // Réinitialise les filtres multiples à l'arrivée sur le dashboard
   currentTypeFilter = null;
   if (backBtn) backBtn.classList.add('hidden');
   if (headerTitle) headerTitle.textContent = "MINIDISCS";
 
-  updateSearchVisibility(false);
+  if (typeof updateSearchVisibility === 'function') {
+    updateSearchVisibility(false);
+  }
 
-  if (catalogData === null) {
-    app.innerHTML = `<p style="text-align:center; padding: 40px; color: var(--text-sub);">Chargement de la collection...</p>`;
+  // Vérification et normalisation des données de la collection
+  const sourceData = (catalogData && Array.isArray(catalogData.minidiscs))
+    ? catalogData.minidiscs
+    : (Array.isArray(catalogData) ? catalogData : (Array.isArray(window.mdData) ? window.mdData : []));
+
+  if (!sourceData || sourceData.length === 0) {
+    app.innerHTML = `<p style="text-align:center; padding: 40px; color: var(--text-sub, #aaa);">Chargement de la collection...</p>`;
     return;
   }
 
@@ -460,19 +467,36 @@ function renderDashboard(pushState = true) {
     history.pushState({ view: 'dashboard' }, '', '#dashboard');
   }
 
-  const totalMD = catalogData.length;
+  const totalMD = sourceData.length;
   const genreCounts = {};
   const typeCounts = {};
 
-  catalogData.forEach(md => {
-    getMDAllGenres(md).forEach(g => genreCounts[g] = (genreCounts[g] || 0) + 1);
-    getMDAllTypes(md).forEach(t => typeCounts[t] = (typeCounts[t] || 0) + 1);
+  // Extraction sécurisée des types et genres
+  sourceData.forEach(md => {
+    const genres = typeof getMDAllGenres === 'function' 
+      ? getMDAllGenres(md) 
+      : (md.genre ? (Array.isArray(md.genre) ? md.genre : md.genre.split(',')) : []);
+
+    const types = typeof getMDAllTypes === 'function' 
+      ? getMDAllTypes(md) 
+      : (md.typeTags || md.type ? (Array.isArray(md.typeTags || md.type) ? (md.typeTags || md.type) : (md.typeTags || md.type).split(',')) : []);
+
+    genres.forEach(g => {
+      const cleanG = g.trim().toUpperCase();
+      if (cleanG) genreCounts[cleanG] = (genreCounts[cleanG] || 0) + 1;
+    });
+
+    types.forEach(t => {
+      const cleanT = t.trim().toUpperCase();
+      if (cleanT) typeCounts[cleanT] = (typeCounts[cleanT] || 0) + 1;
+    });
   });
 
   let typeBadgesHTML = '';
   Object.keys(typeCounts).sort((a,b) => typeCounts[b] - typeCounts[a]).forEach(t => {
+    const safeType = t.replace(/'/g, "\\'");
     typeBadgesHTML += `
-      <div class="genre-badge" style="border-left-color: #ff007f;" onclick="renderMDList({ type: '${t}' })">
+      <div class="genre-badge" style="border-left-color: #ff007f;" onclick="renderMDList({ type: '${safeType}' })">
         <span class="genre-name" style="color:#ff007f">${t}</span>
         <span class="genre-count">${typeCounts[t]}</span>
       </div>
@@ -481,9 +505,10 @@ function renderDashboard(pushState = true) {
 
   let genreBadgesHTML = '';
   Object.keys(genreCounts).sort((a,b) => genreCounts[b] - genreCounts[a]).forEach(g => {
-    const color = getBorderColor(g);
+    const color = typeof getBorderColor === 'function' ? getBorderColor(g) : '#00f0ff';
+    const safeGenre = g.replace(/'/g, "\\'");
     genreBadgesHTML += `
-      <div class="genre-badge" style="border-left-color: ${color};" onclick="renderMDList({ genre: '${g}' })">
+      <div class="genre-badge" style="border-left-color: ${color};" onclick="renderMDList({ genre: '${safeGenre}' })">
         <span class="genre-name" style="color:${color}">${g}</span>
         <span class="genre-count">${genreCounts[g]}</span>
       </div>
@@ -536,7 +561,8 @@ function renderDashboard(pushState = true) {
     </div>
   `;
 
-  renderFeatured();
+  if (typeof renderFeatured === 'function') renderFeatured();
+
   const oldGrid = document.querySelector('.featured-grid:not(#featured-grid-inline)') || document.getElementById('featured-grid');
   const newGrid = document.getElementById('featured-grid-inline');
   if (oldGrid && newGrid) {
@@ -1362,18 +1388,38 @@ function renderGenreFilter() {
     return;
   }
 
-  // Récupère les genres depuis catalogData ou window.mdData
+  // Récupération intelligente et multi-sources des genres
   const allGenresSet = new Set();
-  const sourceData = (catalogData && Array.isArray(catalogData.minidiscs))
-    ? catalogData.minidiscs
-    : (Array.isArray(window.mdData) ? window.mdData : []);
+  let sourceData = [];
+
+  if (typeof catalogData !== 'undefined' && catalogData) {
+    if (Array.isArray(catalogData)) sourceData = catalogData;
+    else if (Array.isArray(catalogData.minidiscs)) sourceData = catalogData.minidiscs;
+    else if (Array.isArray(catalogData.discs)) sourceData = catalogData.discs;
+    else if (Array.isArray(catalogData.items)) sourceData = catalogData.items;
+  }
+  
+  if (sourceData.length === 0 && typeof window.mdData !== 'undefined') {
+    sourceData = Array.isArray(window.mdData) ? window.mdData : [];
+  }
 
   sourceData.forEach(md => {
-    if (md.genre) {
-      const genres = Array.isArray(md.genre) 
-        ? md.genre 
-        : md.genre.split(',');
-      genres.forEach(g => allGenresSet.add(g.trim().toUpperCase()));
+    // Extrait les genres au niveau racine
+    const rawGenre = md.genre || md.genres || md.style;
+    if (rawGenre) {
+      const genres = Array.isArray(rawGenre) ? rawGenre : String(rawGenre).split(',');
+      genres.forEach(g => { if (g && g.trim()) allGenresSet.add(g.trim().toUpperCase()); });
+    }
+
+    // Extrait les genres au niveau des albums si c'est une série
+    if (Array.isArray(md.albums)) {
+      md.albums.forEach(album => {
+        const albumGenre = album.genre || album.genres;
+        if (albumGenre) {
+          const genres = Array.isArray(albumGenre) ? albumGenre : String(albumGenre).split(',');
+          genres.forEach(g => { if (g && g.trim()) allGenresSet.add(g.trim().toUpperCase()); });
+        }
+      });
     }
   });
 
@@ -1395,12 +1441,13 @@ function renderGenreFilter() {
   `;
 
   if (sortedGenres.length === 0) {
-    html += `<span style="color:#aaa; font-size:0.75rem; padding:4px;">Aucun genre</span>`;
+    html += `<span style="color:#aaa; font-size:0.75rem; padding:4px;">Aucun genre trouvé</span>`;
   } else {
     sortedGenres.forEach(genre => {
       const isChecked = currentGenreFilters.has(genre);
+      const safeGenre = genre.replace(/'/g, "\\'");
       html += `
-        <button type="button" onclick="toggleGenreFilter('${genre}')" style="background: ${isChecked ? '#fff' : 'transparent'}; color: ${isChecked ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" onclick="toggleGenreFilter('${safeGenre}')" style="background: ${isChecked ? '#fff' : 'transparent'}; color: ${isChecked ? '#000' : '#fff'}; border: 1px solid #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
           <span>${genre}</span>
           ${isChecked ? '<span>✓</span>' : ''}
         </button>
