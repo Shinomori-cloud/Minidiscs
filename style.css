@@ -1190,22 +1190,24 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: none !important;
 }
 
-/* Vignette flottante (Filtre + Recherche) */
+/* Vignette flottante (Filtre + Recherche + Genre) */
 .floating-actions-bar {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 30px; /* Remontée légèrement */
+  left: 50%;
+  transform: translateX(-50%); /* Centrage parfait au milieu de l'écran */
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: space-around;
+  gap: 8px;
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
   border: 3px solid #000000;
   border-radius: 30px;
-  padding: 3px 6px;
-  box-shadow: 3px 3px 0px #000000;
+  padding: 4px 12px;
+  box-shadow: 4px 4px 0px #000000;
   z-index: 1500;
-  transition: opacity 0.2s ease;
-  height: 36px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  height: 42px;
   box-sizing: border-box;
 }
 
@@ -1216,35 +1218,30 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   background: none;
   border: none;
   font-family: inherit !important;
-  font-size: 0.75rem !important;
-  font-weight: 800 !important;
+  font-size: 1.1rem !important; /* Taille d'icône bien lisible */
   color: #ffffff !important;
-  letter-spacing: 0.5px !important;
-  width: auto !important;
-  min-width: 32px;
-  height: 100%;
-  padding: 2px 8px !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
   cursor: pointer;
-  border-radius: 20px;
+  border-radius: 50%;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  white-space: nowrap !important;
   line-height: 1 !important;
   transition: background-color 0.2s, transform 0.1s;
 }
 
 .floating-actions-bar .action-btn:active {
-  transform: scale(0.9);
+  transform: scale(0.85);
 }
 
 .floating-actions-bar .action-btn.active {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.25);
 }
 
 /* ==========================================
-   11. MENU DE FILTRES DROPDOWN (ISOLATION TOTALE)
+   11. MENU DE FILTRES DROPDOWN (RE-CENTRÉ)
    ========================================== */
 #genre-filter-dropdown.hidden {
   display: none !important;
@@ -1254,13 +1251,14 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: flex !important;
   flex-direction: column !important;
   position: fixed !important;
-  bottom: 65px !important;
-  right: 20px !important;
-  width: 220px !important;
+  bottom: 82px !important; /* Positionné juste au-dessus de la barre flottante */
+  left: 50% !important;
+  transform: translateX(-50%) !important; /* Centré au-dessus de la barre */
+  width: 240px !important;
   max-height: 60vh !important;
   background: #ffffff !important;
   border: 3px solid #000000 !important;
-  border-radius: 12px !important;
+  border-radius: 16px !important;
   padding: 10px !important;
   box-shadow: 4px 4px 0px #000000 !important;
   z-index: 1400 !important;
@@ -1284,7 +1282,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   width: 100% !important;
   max-height: calc(60vh - 65px) !important;
   overflow-y: auto !important;
-  overflow-x: hidden !important;
+  overflow-x: hidden !hidden;
   box-sizing: border-box !important;
   gap: 8px !important;
   padding-right: 2px !important;
