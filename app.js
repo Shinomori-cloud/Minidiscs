@@ -1420,7 +1420,6 @@ function toggleGenreFilter(genre) {
   if (btn) {
     const count = currentGenreFilters.size;
     btn.textContent = count > 0 ? `| Filter (${count})` : '| Filter';
-  }
 }
 
 function clearGenreFilters() {
