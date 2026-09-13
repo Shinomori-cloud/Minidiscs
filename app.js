@@ -81,18 +81,24 @@ function toggleSearch() {
   }
 }
 
-// Ouvre et ferme le menu déroulant des genres pour le filtre de la liste
+// Ouvre et ferme le sous-menu des genres dans le FAB
 function toggleGenreDropdown() {
-  const dropdown = document.getElementById('genre-filter-dropdown');
-  if (!dropdown) return;
+  // 1. On ouvre/ferme le sous-menu du FAB
+  toggleFabSubmenu('genres-submenu');
 
-  const isHidden = dropdown.classList.contains('hidden');
-
-  if (isHidden) {
-    renderGenreDropdownContent();
-    dropdown.classList.remove('hidden');
-  } else {
-    dropdown.classList.add('hidden');
+  const submenu = document.getElementById('genres-submenu');
+  
+  // 2. Si le sous-menu vient d'être ouvert, on injecte les genres
+  if (submenu && !submenu.classList.contains('hidden')) {
+    // Si la fonction qui extrait la liste des genres existe
+    if (typeof getAllGenres === 'function') {
+      populateFabGenreMenu(getAllGenres());
+    } else if (typeof getAvailableGenres === 'function') {
+      populateFabGenreMenu(getAvailableGenres());
+    } else {
+      // Sinon on appelle ton ancienne fonction de rendu si elle renvoie les genres
+      renderGenreDropdownContent(); 
+    }
   }
 }
 
