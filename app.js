@@ -2144,3 +2144,30 @@ async function syncCollectionToGithub(dataArray) {
     console.error("Erreur réseau pendant la synchronisation :", error);
   }
 }
+
+// Gestion du token GitHub dans app.js
+function initGithubTokenForm() {
+  const tokenInput = document.getElementById('gh-token-input');
+  const saveBtn = document.getElementById('save-token-btn');
+
+  if (!saveBtn || !tokenInput) return;
+
+  tokenInput.value = getGithubToken() || '';
+
+  saveBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const val = tokenInput.value;
+    if (val) {
+      saveGithubToken(val);
+    } else {
+      localStorage.removeItem('github_token');
+      alert('Token supprimé.');
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initGithubTokenForm);
+} else {
+  initGithubTokenForm();
+}
