@@ -1414,6 +1414,31 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   transform: rotate(45deg);
 }
 
+/* Titre de section après un séparateur : remet une marge en haut */
+.fab-divider + .fab-section-title {
+  margin-top: 6px;
+}
+
+/* Champ de recherche intégré dans le FAB */
+.fab-search-input {
+  width: 100%;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.03);
+  padding: 0 10px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.fab-search-input:focus {
+  background: #ffffff;
+  border-color: #007aff;
+}
+
 /* ==========================================
    11. MENU DE FILTRES DROPDOWN (RE-CENTRÉ)
    ========================================== */
