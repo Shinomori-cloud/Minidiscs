@@ -2250,7 +2250,7 @@
       "md_cover": "images/md_16.jpg",
       "albums": [
         {
-          "title": "Live at Paris Olympia '00",
+          "title": "Live at Paris Olympia",
           "artist": "Placebo",
           "year": "2000",
           "cover": "images/placebo_olympia.jpg",
@@ -2286,7 +2286,7 @@
           ]
         },
         {
-          "title": "Live at Ancienne Belgique '01",
+          "title": "Live at Ancienne Belgique",
           "artist": "Placebo",
           "year": "2001",
           "cover": "images/placebo_acoustic.jpg",
