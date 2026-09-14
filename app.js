@@ -1234,7 +1234,10 @@ function addAdminAlbumBlock() {
     <div class="form-group"><input type="text" id="${typeInputId}" class="album-type" list="types-list" placeholder="Type(s) de l'album (ex: Album, Live)"></div>
     <div class="form-group"><input type="text" id="${genreInputId}" class="album-genre" list="genres-list" placeholder="Genre(s) de l'album (séparés par virgule)"></div>
     <div class="form-group"><input type="text" class="album-year" placeholder="Année (ex: 1998)"></div>
-    <div class="form-group"><input type="text" class="album-cover" value="images/" placeholder="URL Pochette Album"></div>
+    <div class="form-group">
+      <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">Pochette Album</label>
+      <input type="file" class="album-cover" accept="image/*">
+    </div>
     <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne)"></textarea></div>
     <div class="form-group" style="margin-top: 8px;">
       <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">
