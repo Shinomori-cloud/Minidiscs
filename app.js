@@ -1733,7 +1733,7 @@ function renderCompilPlanner(pushState = true) {
           </div>
           
           <button type="button" id="planner-fab-main-btn" class="fab-main-btn" onclick="togglePlannerFabMenu();" title="Menu planificateur">
-            ⚡
+            <span class="fab-icon">🎚️</span>
           </button>
         </div>
       </div>
@@ -1825,26 +1825,18 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
 
   const subMenu = document.createElement('div');
   subMenu.id = 'planner-genre-submenu';
-  Object.assign(subMenu.style, {
-    display: 'flex', flexDirection: 'column', gap: '6px',
-    background: '#f8f9fa', border: '2px solid #000000', borderRadius: '10px',
-    padding: '8px', marginTop: '4px', boxSizing: 'border-box'
-  });
+  subMenu.className = 'fab-submenu';
 
   const scrollArea = document.createElement('div');
   scrollArea.id = 'planner-genre-scroll-area';
-  Object.assign(scrollArea.style, {
-    display: 'flex', flexDirection: 'column', gap: '6px',
-    maxHeight: '180px', overflowY: 'auto', overscrollBehavior: 'contain', webkitOverflowScrolling: 'touch'
-  });
+  scrollArea.className = 'fab-scrollable-submenu fab-genre-list';
 
   const activeFilters = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters : new Set();
 
   const createGenreBtn = (text, isSelected, onClick) => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = text;
-    btn.style.cssText = `height: 32px; min-height: 32px; border: 2px solid #000000; border-radius: 8px; background: ${isSelected ? (text === 'Tous les genres' ? '#000000' : '#ff007f') : '#ffffff'}; color: ${isSelected ? '#ffffff' : '#000000'}; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: left; padding: 0 8px; box-shadow: 1px 1px 0px #000000;`;
+    const btn = document.createElement('div');
+    btn.className = `fab-genre-item ${isSelected ? 'active' : ''}`;
+    btn.innerHTML = `<span>${text}</span>${isSelected ? '<span>✓</span>' : ''}`;
     btn.onclick = onClick;
     return btn;
   };
