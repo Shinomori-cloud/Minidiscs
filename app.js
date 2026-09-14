@@ -85,7 +85,7 @@ function toggleGenreDropdown() {
   }
 }
 
-// Génère le contenu dynamique des filtres avec structure isolée et nettoyée
+// Génère le contenu dynamique des filtres avec la nouvelle structure épurée (style Planificateur)
 function renderGenreDropdownContent() {
   const dropdown = document.getElementById('genre-filter-dropdown');
   if (!dropdown || !catalogData) return;
@@ -112,39 +112,35 @@ function renderGenreDropdownContent() {
     return;
   }
 
-  const isAllActive = !currentGenreFilter || currentGenreFilter === 'ALL' ? 'active' : '';
+  const scrollArea = document.createElement('div');
+  scrollArea.className = 'fab-scrollable-submenu fab-genre-list';
 
-  let html = `
-    <div class="md-filter-top">
-      <button type="button" class="md-filter-btn ${isAllActive}" onclick="selectGenreFilter('ALL')">TOUS</button>
-    </div>
-    <div class="md-filter-list">
-  `;
+  // 1. Bouton "TOUS"
+  const isAllActive = !currentGenreFilter || currentGenreFilter === 'ALL';
+  const allBtn = document.createElement('div');
+  allBtn.className = `fab-genre-item ${isAllActive ? 'active' : ''}`;
+  allBtn.innerHTML = `<span>TOUS</span>${isAllActive ? '<span>✓</span>' : ''}`;
+  allBtn.onclick = (e) => {
+    e.stopPropagation(); // Empêche la fermeture du FAB
+    if (typeof selectGenreFilter === 'function') selectGenreFilter('ALL');
+  };
+  scrollArea.appendChild(allBtn);
 
+  // 2. Boutons par genre
   Array.from(allGenres).sort().forEach(genre => {
-    const isActive = currentGenreFilter === genre ? 'active' : '';
-    html += `<button type="button" class="md-filter-btn ${isActive}" onclick="selectGenreFilter('${genre.replace(/'/g, "\\'")}')">${genre}</button>`;
+    const isActive = currentGenreFilter === genre;
+    const btn = document.createElement('div');
+    btn.className = `fab-genre-item ${isActive ? 'active' : ''}`;
+    btn.innerHTML = `<span>${genre}</span>${isActive ? '<span>✓</span>' : ''}`;
+    btn.onclick = (e) => {
+      e.stopPropagation(); // Empêche la fermeture du FAB
+      if (typeof selectGenreFilter === 'function') selectGenreFilter(genre);
+    };
+    scrollArea.appendChild(btn);
   });
 
-  html += `</div>`;
-
-  dropdown.innerHTML = html;
-}
-
-// Gère l'affichage du badge de genre sous le header
-function updateGenreBadge() {
-  const badge = document.getElementById('active-genre-badge');
-  const badgeText = document.getElementById('active-genre-text');
-  
-  if (!badge || !badgeText) return;
-
-  // S'affiche uniquement si un genre est sélectionné et qu'il n'est pas 'ALL'
-  if (currentGenreFilter && currentGenreFilter !== 'ALL') {
-    badgeText.textContent = `GENRE : ${currentGenreFilter}`;
-    badge.classList.remove('hidden');
-  } else {
-    badge.classList.add('hidden');
-  }
+  dropdown.innerHTML = '';
+  dropdown.appendChild(scrollArea);
 }
 
 // Application du filtre sélectionné et rafraîchissement de la liste
