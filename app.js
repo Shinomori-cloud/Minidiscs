@@ -1510,9 +1510,18 @@ function populateFabGenreMenu() {
   const activeGenreNorm = currentGenreFilter ? currentGenreFilter.toUpperCase().trim() : '';
 
   // Helper pour créer chaque item de genre
-  const createGenreBtn = (text, isSelected, genreValue) => {
+  const createGenreBtn = (text, isSelected, genreValue, isSticky = false) => {
     const btn = document.createElement('div');
     btn.className = `fab-genre-item ${isSelected ? 'active' : ''}`;
+
+    if (isSticky) {
+      btn.style.position = 'sticky';
+      btn.style.top = '0';
+      btn.style.zIndex = '10';
+      btn.style.backgroundColor = 'var(--bg-card, #1a1a1a)';
+      btn.style.borderBottom = '1px solid var(--border-color, rgba(255, 255, 255, 0.1))';
+    }
+
     btn.innerHTML = `<span>${text}</span>${isSelected ? '<span>✓</span>' : ''}`;
     btn.onclick = (e) => {
       e.stopPropagation(); // Empêche la fermeture du FAB
@@ -1521,9 +1530,9 @@ function populateFabGenreMenu() {
     return btn;
   };
 
-  // 2. Option "TOUS"
+  // 2. Option "TOUS" fixée en haut
   const isAllActive = !activeGenreNorm || activeGenreNorm === 'ALL';
-  container.appendChild(createGenreBtn('TOUS', isAllActive, 'ALL'));
+  container.appendChild(createGenreBtn('TOUS', isAllActive, 'ALL', true));
 
   // 3. Boutons par genre
   Array.from(allGenres).sort().forEach(genre => {
