@@ -1262,9 +1262,8 @@ function removeAdminAlbumBlock(button) {
   }
 }
 
-function submitNewMD(e) {
+async function submitNewMD(e) {
   if (e) e.preventDefault();
-
   if (catalogData === null) return;
 
   // S'assurer que le champ global contient bien tous les genres des albums avant enregistrement
@@ -1276,11 +1275,23 @@ function submitNewMD(e) {
 
   const rawGenreInput = document.getElementById('md-genre').value.trim();
   const rawTypeInput = document.getElementById('md-type-tags') ? document.getElementById('md-type-tags').value.trim() : '';
-  const mdCover = document.getElementById('md-cover').value.trim();
+  const mdCoverInput = document.getElementById('md-cover');
 
   if (!rawGenreInput) {
     showToast("⚠️ Veuillez renseigner au moins un genre");
     return;
+  }
+
+  showToast("⏳ Traitement et envoi de l'image...");
+
+  // Upload de l'image principale du MiniDisc si un fichier est sélectionné
+  let mdCoverPath = 'images/';
+  if (mdCoverInput && mdCoverInput.files && mdCoverInput.files.length > 0) {
+    const uploadedPath = await handleImageUpload(mdCoverInput);
+    if (uploadedPath) mdCoverPath = uploadedPath;
+  } else if (editingMDIndex !== null && catalogData[editingMDIndex].md_cover) {
+    // Conservation de l'ancienne image si aucune nouvelle n'a été choisie en édition
+    mdCoverPath = catalogData[editingMDIndex].md_cover;
   }
 
   const parsedMDGenres = rawGenreInput.includes(',') 
@@ -1292,7 +1303,7 @@ function submitNewMD(e) {
     : ['ALBUM'];
 
   let globalTrackCounter = 1;
-  const targetMD = { genre: parsedMDGenres, type: parsedMDTypes, md_cover: mdCover };
+  const targetMD = { genre: parsedMDGenres, type: parsedMDTypes, md_cover: mdCoverPath };
 
   if (typeFormat === 'compil') {
     targetMD.title = document.getElementById('compil-title').value.trim();
@@ -1314,7 +1325,9 @@ function submitNewMD(e) {
       return;
     }
 
-    albumBlocks.forEach(block => {
+    // Boucle for standard pour permettre l'usage d'await sur l'upload d'image de chaque album
+    for (let i = 0; i < albumBlocks.length; i++) {
+      const block = albumBlocks[i];
       const rawTracks = block.querySelector('.album-tracks').value.split('\n');
       const formattedTracks = rawTracks
         .filter(t => t.trim() !== '')
@@ -1330,11 +1343,22 @@ function submitNewMD(e) {
         ? (rawAlbumType.includes(',') ? rawAlbumType.split(',').map(t => t.trim()).filter(t => t !== '') : [rawAlbumType])
         : [];
 
+      // Gestion de l'upload d'image pour l'album
+      const albumCoverInput = block.querySelector('.album-cover');
+      let albumCoverPath = 'images/';
+      
+      if (albumCoverInput && albumCoverInput.files && albumCoverInput.files.length > 0) {
+        const uploadedPath = await handleImageUpload(albumCoverInput);
+        if (uploadedPath) albumCoverPath = uploadedPath;
+      } else if (editingMDIndex !== null && catalogData[editingMDIndex].albums && catalogData[editingMDIndex].albums[i]) {
+        albumCoverPath = catalogData[editingMDIndex].albums[i].cover || 'images/';
+      }
+
       const albumObj = {
         title: block.querySelector('.album-title').value.trim(),
         artist: block.querySelector('.album-artist').value.trim(),
         year: block.querySelector('.album-year').value.trim(),
-        cover: block.querySelector('.album-cover').value.trim(),
+        cover: albumCoverPath,
         tracks: formattedTracks,
         toRecord: block.querySelector('.album-to-record') ? block.querySelector('.album-to-record').checked : false
       };
@@ -1343,15 +1367,15 @@ function submitNewMD(e) {
       if (parsedAlbumTypes.length > 0) albumObj.type = parsedAlbumTypes;
 
       targetMD.albums.push(albumObj);
-    });
+    }
   }
 
   if (editingMDIndex !== null) {
     catalogData[editingMDIndex] = targetMD;
-    showToast("✅ MiniDisc modifié ! Pensez à exporter votre JSON.");
+    showToast("✅ MiniDisc modifié !");
   } else {
     catalogData.push(targetMD);
-    showToast("✅ MiniDisc ajouté ! Pensez à exporter votre JSON.");
+    showToast("✅ MiniDisc ajouté !");
   }
 
   saveLocalBackup();
