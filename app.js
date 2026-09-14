@@ -659,11 +659,7 @@ function renderDashboard(pushState = true) {
     `;
   });
 
-  const jsonBtnStyle = hasUnsavedChanges 
-    ? 'background-color: #e63946; color: #fff;' 
-    : 'background-color: #06d6a0; color: #000;';
-
-  app.innerHTML = `
+   app.innerHTML = `
     <div class="dashboard-container" style="padding-top: 20px; padding-bottom: 90px;">
       
       <div class="dashboard-card" style="margin-bottom: 36px;">
