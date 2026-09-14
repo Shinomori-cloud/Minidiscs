@@ -2120,3 +2120,62 @@ if (document.readyState === 'loading') {
 } else {
   initGithubTokenForm();
 }
+
+async function handleImageUpload(fileInput) {
+  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    return null; // Aucun fichier sélectionné
+  }
+
+  const file = fileInput.files[0];
+  const token = getGithubToken();
+
+  if (!token) {
+    console.warn("Pas de token GitHub disponible. Impossible d'envoyer l'image.");
+    return null;
+  }
+
+  // Nom de fichier unique basé sur le horodatage pour éviter d'écraser des images existantes
+  const extension = file.name.split('.').pop().toLowerCase();
+  const fileName = `img_${Date.now()}.${extension}`;
+  const filePath = `images/${fileName}`;
+
+  // Remplace par tes véritables identifiants
+  const USERNAME = 'TON_PSEUDO_GITHUB';
+  const REPO = 'TON_NOM_DE_REPO';
+  const url = `https://api.github.com/repos/${USERNAME}/${REPO}/contents/${filePath}`;
+
+  try {
+    // Lecture du fichier local en Base64
+    const base64Data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+
+    // Envoi à l'API GitHub
+    const putResponse = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        message: `Ajout automatique de l'image ${fileName}`,
+        content: base64Data
+      })
+    });
+
+    if (putResponse.ok) {
+      console.log(`Image envoyée sur GitHub : ${filePath}`);
+      return filePath;
+    } else {
+      console.error("Erreur lors de l'envoi de l'image sur GitHub :", await putResponse.json());
+      return null;
+    }
+  } catch (err) {
+    console.error("Erreur réseau pendant le chargement de l'image :", err);
+    return null;
+  }
+}
