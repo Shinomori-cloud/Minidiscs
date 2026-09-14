@@ -1781,7 +1781,13 @@ function renderCompilPlanner(pushState = true) {
             <hr class="fab-divider">
             <div class="fab-section-title">Recherche</div>
             <div style="padding: 2px 4px;">
-              <input type="text" id="planner-search-input" class="fab-search-input" placeholder="Chercher une idée..." oninput="if(typeof filterPlannerBySearch==='function') filterPlannerBySearch(this.value);" />
+              <input 
+                type="text" 
+                id="planner-search-input" 
+                class="fab-search-input" 
+                placeholder="Chercher une idée..." 
+                oninput="handlePlannerSearch(this.value);" 
+              />
             </div>
 
             <!-- Section Options -->
