@@ -924,8 +924,13 @@ function openMD(index, pushState = true) {
 /* BASCULE LE MENU FAB DE LA VUE DÉTAIL MINIDISC */
 function toggleMdDetailFabMenu() {
   const menu = document.getElementById('md-detail-fab-menu');
-  if (menu) {
-    menu.classList.toggle('hidden');
+  const btn = document.getElementById('md-detail-fab-main-btn');
+  if (!menu) return;
+
+  const isHidden = menu.classList.toggle('hidden');
+
+  if (btn) {
+    btn.classList.toggle('open', !isHidden);
   }
 }
 
