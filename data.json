@@ -1384,8 +1384,7 @@
     {
       "genre": [
         "Alternative Rock",
-        "Pop Rock",
-        "Grunge"
+        "Pop Rock"
       ],
       "type": [
         "Albums"
@@ -1412,7 +1411,7 @@
             "12. Burger Queen",
             "13. Evil Dildo"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Alternative Rock"
           ],
@@ -1439,7 +1438,7 @@
             "24. Overdue",
             "25. Hate This & I'll Love You"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Alternative Rock"
           ],
@@ -1465,11 +1464,10 @@
             "35. I Can't",
             "36. Blow Out"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Alternative Rock",
-            "Pop Rock",
-            "Grunge"
+            "Pop Rock"
           ],
           "type": [
             "Albums"
@@ -2243,8 +2241,8 @@
     },
     {
       "genre": [
-        "Alternative Rock",
-        "Acoustic"
+        "ALTERNATIVE ROCK",
+        "ACOUSTIC"
       ],
       "type": [
         "Live"
@@ -2252,7 +2250,7 @@
       "md_cover": "images/md_16.jpg",
       "albums": [
         {
-          "title": "Live at Paris Olympia",
+          "title": "Live at Paris Olympia '00",
           "artist": "Placebo",
           "year": "2000",
           "cover": "images/placebo_olympia.jpg",
@@ -2598,16 +2596,14 @@
             "02. Badlands",
             "03. Born to Run",
             "04. The River",
-            "05. Racing in the Street",
-            "06. Streets of Philadelphia - Single Edit",
-            "07. The Promised Land",
-            "08. Thunder Road",
-            "09. Darkness On the Edge of Town",
-            "10. Something in the Night",
-            "11. Jungleland",
-            "12. Point Blank"
+            "05. Streets of Philadelphia - Single Edit",
+            "06. The Promised Land",
+            "07. Thunder Road",
+            "08. Darkness On the Edge of Town",
+            "09. Jungleland",
+            "10. Point Blank"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Rock",
             "Folk"
@@ -2622,18 +2618,18 @@
           "year": "1972",
           "cover": "images/neil_young_harvest.jpg",
           "tracks": [
-            "13. Out on the Weekend",
-            "14. Harvest",
-            "15. A Man Needs a Maid",
-            "16. Heart of Gold",
-            "17. Are You Ready for the Country?",
-            "18. Old Man",
-            "19. There's a World",
-            "20. Alabama",
-            "21. The Needle and the Damage Done",
-            "22. Words (Between the Lines of Age)"
+            "11. Out on the Weekend",
+            "12. Harvest",
+            "13. A Man Needs a Maid",
+            "14. Heart of Gold",
+            "15. Are You Ready for the Country?",
+            "16. Old Man",
+            "17. There's a World",
+            "18. Alabama",
+            "19. The Needle and the Damage Done",
+            "20. Words (Between the Lines of Age)"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Rock",
             "Folk"
@@ -2648,18 +2644,18 @@
           "year": "1967",
           "cover": "images/bob_dylan_greatest_hits.jpg",
           "tracks": [
-            "23. Rainy Day Women #12 & 35",
-            "24. Blowin' in the Wind",
-            "25. The Times They Are A-Changin'",
-            "26. It Ain't Me, Babe",
-            "27. Like a Rolling Stone",
-            "28. Mr. Tambourine Man",
-            "29. Subterranean Homesick Blues",
-            "30. I Want You",
-            "31. Positively 4th Street",
-            "32. Just like a Woman"
+            "21. Rainy Day Women #12 & 35",
+            "22. Blowin' in the Wind",
+            "23. The Times They Are A-Changin'",
+            "24. It Ain't Me, Babe",
+            "25. Like a Rolling Stone",
+            "26. Mr. Tambourine Man",
+            "27. Subterranean Homesick Blues",
+            "28. I Want You",
+            "29. Positively 4th Street",
+            "30. Just like a Woman"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Folk"
           ],
@@ -2818,6 +2814,20 @@
         "03. Reunion",
         "04. L'Internet"
       ]
+    },
+    {
+      "genre": [
+        "REGGAE",
+        "ORCHESTRAL"
+      ],
+      "type": [
+        "LIVE"
+      ],
+      "md_cover": "images/",
+      "title": "Texte",
+      "artist": "",
+      "tracks": [],
+      "toRecord": false
     }
   ],
   "ideaAlbums": [
@@ -2890,13 +2900,6 @@
       "genre": "Alternative Rock, Pop Rock",
       "duration": "52:40",
       "cover": "images/Black_market_music.jpg"
-    },
-    {
-      "title": "Load",
-      "artist": "Metallica",
-      "genre": "Métal, Alternative Rock",
-      "duration": "1:18:59",
-      "cover": "images/load.jpg"
     },
     {
       "title": "Panique Celtique",
@@ -3079,6 +3082,13 @@
       "genre": "Français, Reggae, Folk",
       "duration": "1:13:53",
       "cover": "images/tryo.jpg"
+    },
+    {
+      "title": "Load",
+      "artist": "Metallica",
+      "genre": "METAL",
+      "duration": "1:18:59",
+      "cover": "images/load.jpg"
     }
   ]
 }
