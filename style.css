@@ -1510,3 +1510,10 @@ html, body {
   letter-spacing: 0.8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+/* Now Loading Images */
+@keyframes pulseLoading {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
