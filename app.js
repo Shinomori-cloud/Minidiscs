@@ -1904,7 +1904,7 @@ function openIdeaModal() {
   const form = document.getElementById('idea-form');
   if (form) form.reset();
   const coverInput = document.getElementById('idea-cover');
-  if (coverInput) coverInput.value = "images/";
+  if (coverInput) coverInput.value = "";
   document.getElementById('idea-modal')?.classList.remove('hidden');
 }
 
