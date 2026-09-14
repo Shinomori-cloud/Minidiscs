@@ -1377,32 +1377,33 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   border-radius: 8px;
 }
 
-/* Bouton principal rond (Sombre épuré) */
+/* Bouton principal FAB (Style Néobrutalisme / Retro) */
 .fab-main-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #1c1c1e;
-  color: #ffffff;
-  border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  font-size: 1.1rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background-color: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+  box-shadow: 0 4px 0 #000000, 0 0 12px rgba(0, 240, 255, 0.3);
+  font-size: 1.2rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   outline: none;
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
 .fab-main-btn:hover {
-  transform: scale(1.04);
-  background: #2c2c2e;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #000000, 0 0 16px rgba(0, 240, 255, 0.5);
 }
 
-.fab-main-btn:active {
-  transform: scale(0.96);
+.fab-main-btn:active,
+.fab-main-btn.open {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #000000, 0 0 14px rgba(255, 0, 128, 0.5);
 }
 
 .fab-main-btn .fab-icon {
