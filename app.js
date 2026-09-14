@@ -260,43 +260,63 @@ if (document.readyState === 'loading') {
 
 
 /* ==========================================
-   GESTION DU MENU FLOTTANT (FAB)
+   GESTION DU MENU FLOTTANT (FAB) - CATALOGUE
    ========================================== */
 
-// Ouvre et ferme le menu déroulant au clic sur le pignon ⚙️
+// Ouvre et ferme le menu déroulant principal
 function toggleFabMenu() {
   const menu = document.getElementById('fab-menu');
   const btn = document.getElementById('fab-main-btn');
   if (!menu) return;
 
-  const isOpen = menu.classList.toggle('hidden');
+  const isOpening = menu.classList.contains('hidden');
+  menu.classList.toggle('hidden');
   
   if (btn) {
-    btn.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', isOpening);
+  }
+
+  // Ferme les sous-menus si on ferme le FAB
+  if (!isOpening) {
+    document.getElementById('genres-submenu')?.classList.add('hidden');
+    document.getElementById('status-submenu')?.classList.add('hidden');
   }
 }
 
 // Ferme le menu si l'utilisateur clique en dehors de la zone du FAB
 document.addEventListener('click', (e) => {
-  const container = document.getElementById('floating-actions');
+  const container = document.getElementById('floating-actions') || document.querySelector('.fab-container');
   const menu = document.getElementById('fab-menu');
   if (container && menu && !container.contains(e.target)) {
     menu.classList.add('hidden');
+    document.getElementById('genres-submenu')?.classList.add('hidden');
+    document.getElementById('status-submenu')?.classList.add('hidden');
   }
 });
 
-// Ouvre/ferme le sous-menu du statut dans le FAB
+// Bascule l'affichage d'un sous-menu spécifique (genres ou statut)
 function toggleFabSubmenu(id) {
-  const submenu = document.getElementById(id);
-  if (submenu) {
-    submenu.classList.toggle('hidden');
+  const targetSubmenu = document.getElementById(id);
+  if (!targetSubmenu) return;
+
+  const isHidden = targetSubmenu.classList.contains('hidden');
+
+  // Ferme l'autre sous-menu pour éviter les chevauchements
+  const otherId = id === 'genres-submenu' ? 'status-submenu' : 'genres-submenu';
+  document.getElementById(otherId)?.classList.add('hidden');
+
+  targetSubmenu.classList.toggle('hidden', !isHidden);
+
+  // Si on ouvre les genres, on génère dynamiquement le contenu
+  if (id === 'genres-submenu' && isHidden) {
+    populateFabGenreMenu();
   }
 }
 
-// Applique le filtre de statut directement au clic sans fermer le sous-menu
+// Applique le filtre de statut directement au clic sans fermer le FAB
 function applyStatusFilter(filterValue, event) {
   if (event) {
-    event.stopPropagation(); // Empêche le listener global de fermer le FAB
+    event.stopPropagation();
   }
 
   let targetRecord = 'all';
@@ -306,29 +326,30 @@ function applyStatusFilter(filterValue, event) {
     targetRecord = 'recorded';
   }
 
-  // Application explicite du filtre
+  window.currentRecordFilter = targetRecord;
+
   renderMDList({ 
-    genre: currentGenreFilter, 
-    type: currentTypeFilter, 
+    genre: typeof currentGenreFilter !== 'undefined' ? currentGenreFilter : '', 
+    type: typeof currentTypeFilter !== 'undefined' ? currentTypeFilter : '', 
     record: targetRecord 
   }, false);
 
-  // Maintien explicite du sous-menu de statut ouvert
+  // Garde le sous-menu statut ouvert et rafraîchit l'état visuel si besoin
   const statusSubmenu = document.getElementById('status-submenu');
   if (statusSubmenu) {
     statusSubmenu.classList.remove('hidden');
   }
 }
 
-// Remplit le sous-menu FAB avec le style exact du Planificateur (Bleu + coche)
+// Remplit le sous-menu FAB des genres avec "TOUS" fixe en haut
 function populateFabGenreMenu() {
   const container = document.getElementById('genres-submenu');
   if (!container || !catalogData) return;
 
   const allGenres = new Set();
+  const rawData = Array.isArray(catalogData) ? catalogData : (catalogData.minidiscs || []);
 
-  // 1. Extraction des genres
-  catalogData.forEach(md => {
+  rawData.forEach(md => {
     let genres = [];
     if (typeof getMDAllGenres === 'function') {
       genres = getMDAllGenres(md);
@@ -350,9 +371,8 @@ function populateFabGenreMenu() {
     return;
   }
 
-  const activeGenreNorm = currentGenreFilter ? currentGenreFilter.toUpperCase().trim() : '';
+  const activeGenreNorm = typeof currentGenreFilter !== 'undefined' && currentGenreFilter ? currentGenreFilter.toUpperCase().trim() : '';
 
-  // Helper pour créer chaque item de genre
   const createGenreBtn = (text, isSelected, genreValue, isSticky = false) => {
     const btn = document.createElement('div');
     btn.className = `fab-genre-item ${isSelected ? 'active' : ''}`;
@@ -367,17 +387,19 @@ function populateFabGenreMenu() {
 
     btn.innerHTML = `<span>${text}</span>${isSelected ? '<span>✓</span>' : ''}`;
     btn.onclick = (e) => {
-      e.stopPropagation(); // Empêche la fermeture du FAB
-      selectGenreFilter(genreValue);
+      e.stopPropagation();
+      if (typeof selectGenreFilter === 'function') {
+        selectGenreFilter(genreValue);
+      }
     };
     return btn;
   };
 
-  // 2. Option "TOUS" fixée en haut
+  // Option "TOUS" fixée en haut
   const isAllActive = !activeGenreNorm || activeGenreNorm === 'ALL';
   container.appendChild(createGenreBtn('TOUS', isAllActive, 'ALL', true));
 
-  // 3. Boutons par genre
+  // Boutons par genre
   Array.from(allGenres).sort().forEach(genre => {
     const isSelected = activeGenreNorm === genre;
     container.appendChild(createGenreBtn(genre, isSelected, genre));
