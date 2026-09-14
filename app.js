@@ -2114,12 +2114,12 @@ function handlePlannerSearch(query) {
     
     // Si la recherche correspond au titre ou à l'artiste, on affiche la carte
     if (title.includes(searchTerm) || artist.includes(searchTerm)) {
-      card.style.display = 'flex';
+      card.style.display = '';
     } else {
       card.style.display = 'none';
     }
   });
-}   
+}
 
 /* ==========================================
    GESTION DU BOUTON RETOUR (ANCRAGE HASH)
