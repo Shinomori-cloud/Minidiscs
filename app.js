@@ -64,7 +64,11 @@ function toggleSearch() {
     if (currentSearchQuery !== '') {
       currentSearchQuery = '';
       if (searchInput) searchInput.value = '';
-      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
+      renderMDList({ 
+        genre: currentGenreFilter, 
+        type: currentTypeFilter, 
+        record: currentRecordFilter 
+      }, false);
     }
   } else {
     topSearch.classList.remove('closed');
@@ -73,7 +77,6 @@ function toggleSearch() {
   }
 }
 
-// Ouvre et ferme le sous-menu des genres dans le FAB avec la bonne liste
 // Ouvre et ferme le sous-menu des genres dans le FAB et génère sa liste
 function toggleGenreDropdown() {
   toggleFabSubmenu('genres-submenu');
@@ -163,31 +166,6 @@ function selectGenreFilter(genre) {
   }, false);
 }
 
-function applyStatusFilter(filterValue, event) {
-  if (event) {
-    event.stopPropagation();
-  }
-
-  let targetRecord = 'all';
-  if (filterValue === 'torecord') {
-    targetRecord = 'toRecord';
-  } else if (filterValue === 'recorded') {
-    targetRecord = 'recorded';
-  }
-
-  // 1. Rendu de la liste
-  renderMDList({ 
-    genre: currentGenreFilter, 
-    type: currentTypeFilter, 
-    record: targetRecord 
-  }, false);
-
-  // 2. Maintien forcé du sous-menu ouvert après le rafraîchissement
-  const statusSubmenu = document.getElementById('status-submenu');
-  if (statusSubmenu) {
-    statusSubmenu.classList.remove('hidden');
-  }
-}
 function mdMatchesSearch(md, query) {
   if (!query) return true;
   const q = query.toLowerCase().trim();
@@ -217,7 +195,11 @@ function mdMatchesSearch(md, query) {
 
 function onSearchInput(value) {
   currentSearchQuery = value;
-  renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
+  renderMDList({ 
+    genre: currentGenreFilter, 
+    type: currentTypeFilter, 
+    record: currentRecordFilter 
+  }, false);
 }
 
 function updateSearchVisibility(show) {
@@ -274,6 +256,132 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initGithubTokenForm);
 } else {
   initGithubTokenForm();
+}
+
+
+/* ==========================================
+   GESTION DU MENU FLOTTANT (FAB)
+   ========================================== */
+
+// Ouvre et ferme le menu déroulant au clic sur le pignon ⚙️
+function toggleFabMenu() {
+  const menu = document.getElementById('fab-menu');
+  const btn = document.getElementById('fab-main-btn');
+  if (!menu) return;
+
+  const isOpen = menu.classList.toggle('hidden');
+  
+  if (btn) {
+    btn.classList.toggle('open', !isOpen);
+  }
+}
+
+// Ferme le menu si l'utilisateur clique en dehors de la zone du FAB
+document.addEventListener('click', (e) => {
+  const container = document.getElementById('floating-actions');
+  const menu = document.getElementById('fab-menu');
+  if (container && menu && !container.contains(e.target)) {
+    menu.classList.add('hidden');
+  }
+});
+
+// Ouvre/ferme le sous-menu du statut dans le FAB
+function toggleFabSubmenu(id) {
+  const submenu = document.getElementById(id);
+  if (submenu) {
+    submenu.classList.toggle('hidden');
+  }
+}
+
+// Applique le filtre de statut directement au clic sans fermer le sous-menu
+function applyStatusFilter(filterValue, event) {
+  if (event) {
+    event.stopPropagation(); // Empêche le listener global de fermer le FAB
+  }
+
+  let targetRecord = 'all';
+  if (filterValue === 'torecord') {
+    targetRecord = 'toRecord';
+  } else if (filterValue === 'recorded') {
+    targetRecord = 'recorded';
+  }
+
+  // Application explicite du filtre
+  renderMDList({ 
+    genre: currentGenreFilter, 
+    type: currentTypeFilter, 
+    record: targetRecord 
+  }, false);
+
+  // Maintien explicite du sous-menu de statut ouvert
+  const statusSubmenu = document.getElementById('status-submenu');
+  if (statusSubmenu) {
+    statusSubmenu.classList.remove('hidden');
+  }
+}
+
+// Remplit le sous-menu FAB avec le style exact du Planificateur (Bleu + coche)
+function populateFabGenreMenu() {
+  const container = document.getElementById('genres-submenu');
+  if (!container || !catalogData) return;
+
+  const allGenres = new Set();
+
+  // 1. Extraction des genres
+  catalogData.forEach(md => {
+    let genres = [];
+    if (typeof getMDAllGenres === 'function') {
+      genres = getMDAllGenres(md);
+    } else if (md.genre) {
+      genres = typeof md.genre === 'string' ? md.genre.split(',') : md.genre;
+    }
+
+    genres.forEach(g => {
+      if (g && typeof g === 'string' && g.trim()) {
+        allGenres.add(g.trim().toUpperCase());
+      }
+    });
+  });
+
+  container.innerHTML = '';
+
+  if (allGenres.size === 0) {
+    container.innerHTML = `<span style="font-size: 0.75rem; color: #666; padding: 6px 12px;">Aucun genre</span>`;
+    return;
+  }
+
+  const activeGenreNorm = currentGenreFilter ? currentGenreFilter.toUpperCase().trim() : '';
+
+  // Helper pour créer chaque item de genre
+  const createGenreBtn = (text, isSelected, genreValue, isSticky = false) => {
+    const btn = document.createElement('div');
+    btn.className = `fab-genre-item ${isSelected ? 'active' : ''}`;
+
+    if (isSticky) {
+      btn.style.position = 'sticky';
+      btn.style.top = '0';
+      btn.style.zIndex = '10';
+      btn.style.backgroundColor = 'var(--bg-card, #1a1a1a)';
+      btn.style.borderBottom = '1px solid var(--border-color, rgba(255, 255, 255, 0.1))';
+    }
+
+    btn.innerHTML = `<span>${text}</span>${isSelected ? '<span>✓</span>' : ''}`;
+    btn.onclick = (e) => {
+      e.stopPropagation(); // Empêche la fermeture du FAB
+      selectGenreFilter(genreValue);
+    };
+    return btn;
+  };
+
+  // 2. Option "TOUS" fixée en haut
+  const isAllActive = !activeGenreNorm || activeGenreNorm === 'ALL';
+  container.appendChild(createGenreBtn('TOUS', isAllActive, 'ALL', true));
+
+  // 3. Boutons par genre
+  Array.from(allGenres).sort().forEach(genre => {
+    const isSelected = activeGenreNorm === genre;
+    container.appendChild(createGenreBtn(genre, isSelected, genre));
+  });
 }
 
 /* ==========================================
@@ -1428,125 +1536,6 @@ async function submitNewMD(e) {
   } else if (typeof renderDashboard === 'function') {
     renderDashboard(false);
   }
-}
-
-/* ==========================================
-   GESTION DU MENU FLOTTANT (FAB)
-   ========================================== */
-
-// Ouvre et ferme le menu déroulant au clic sur le pignon ⚙️
-function toggleFabMenu() {
-  const menu = document.getElementById('fab-menu');
-  const btn = document.getElementById('fab-main-btn');
-  if (!menu) return;
-
-  const isOpen = menu.classList.toggle('hidden');
-  
-  if (btn) {
-    btn.classList.toggle('open', !isOpen);
-  }
-}
-
-// Ferme le menu si l'utilisateur clique en dehors de la zone du FAB
-document.addEventListener('click', (e) => {
-  const container = document.getElementById('floating-actions');
-  const menu = document.getElementById('fab-menu');
-  if (container && menu && !container.contains(e.target)) {
-    menu.classList.add('hidden');
-  }
-});
-
-// Ouvre/ferme le sous-menu du statut dans le FAB
-function toggleFabSubmenu(id) {
-  const submenu = document.getElementById(id);
-  if (submenu) {
-    submenu.classList.toggle('hidden');
-  }
-}
-
-// Applique le filtre de statut directement au clic sans fermer le sous-menu
-function applyStatusFilter(filterValue, event) {
-  if (event) {
-    event.stopPropagation(); // Empêche le listener global de fermer le FAB
-  }
-
-  let targetRecord = 'all';
-  if (filterValue === 'torecord') {
-    targetRecord = 'toRecord';
-  } else if (filterValue === 'recorded') {
-    targetRecord = 'recorded';
-  }
-
-  // Application explicite du filtre
-  renderMDList({ 
-    genre: currentGenreFilter, 
-    type: currentTypeFilter, 
-    record: targetRecord 
-  }, false);
-}
-
-// Remplit le sous-menu FAB avec le style exact du Planificateur (Bleu + coche)
-function populateFabGenreMenu() {
-  const container = document.getElementById('genres-submenu');
-  if (!container || !catalogData) return;
-
-  const allGenres = new Set();
-
-  // 1. Extraction des genres
-  catalogData.forEach(md => {
-    let genres = [];
-    if (typeof getMDAllGenres === 'function') {
-      genres = getMDAllGenres(md);
-    } else if (md.genre) {
-      genres = typeof md.genre === 'string' ? md.genre.split(',') : md.genre;
-    }
-
-    genres.forEach(g => {
-      if (g && typeof g === 'string' && g.trim()) {
-        allGenres.add(g.trim().toUpperCase());
-      }
-    });
-  });
-
-  container.innerHTML = '';
-
-  if (allGenres.size === 0) {
-    container.innerHTML = `<span style="font-size: 0.75rem; color: #666; padding: 6px 12px;">Aucun genre</span>`;
-    return;
-  }
-
-  const activeGenreNorm = currentGenreFilter ? currentGenreFilter.toUpperCase().trim() : '';
-
-  // Helper pour créer chaque item de genre
-  const createGenreBtn = (text, isSelected, genreValue, isSticky = false) => {
-    const btn = document.createElement('div');
-    btn.className = `fab-genre-item ${isSelected ? 'active' : ''}`;
-
-    if (isSticky) {
-      btn.style.position = 'sticky';
-      btn.style.top = '0';
-      btn.style.zIndex = '10';
-      btn.style.backgroundColor = 'var(--bg-card, #1a1a1a)';
-      btn.style.borderBottom = '1px solid var(--border-color, rgba(255, 255, 255, 0.1))';
-    }
-
-    btn.innerHTML = `<span>${text}</span>${isSelected ? '<span>✓</span>' : ''}`;
-    btn.onclick = (e) => {
-      e.stopPropagation(); // Empêche la fermeture du FAB
-      selectGenreFilter(genreValue);
-    };
-    return btn;
-  };
-
-  // 2. Option "TOUS" fixée en haut
-  const isAllActive = !activeGenreNorm || activeGenreNorm === 'ALL';
-  container.appendChild(createGenreBtn('TOUS', isAllActive, 'ALL', true));
-
-  // 3. Boutons par genre
-  Array.from(allGenres).sort().forEach(genre => {
-    const isSelected = activeGenreNorm === genre;
-    container.appendChild(createGenreBtn(genre, isSelected, genre));
-  });
 }
 
 /* ==========================================
