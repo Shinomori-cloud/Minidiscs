@@ -1836,7 +1836,8 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
 
   const subMenu = document.createElement('div');
   subMenu.id = 'planner-genre-submenu';
-  subMenu.className = 'fab-submenu';
+  // On utilise exactement les mêmes classes que pour la vue MiniDisc
+  subMenu.className = 'fab-submenu fab-genre-submenu';
 
   const scrollArea = document.createElement('div');
   scrollArea.id = 'planner-genre-scroll-area';
@@ -1887,8 +1888,9 @@ function togglePlannerGenreFilter(genre) {
 
   renderCompilPlanner(false);
 
+  // On s'assure d'enlever le hidden au lieu d'injecter du display inline
   const menu = document.getElementById('planner-fab-menu');
-  if (menu) menu.style.display = 'flex';
+  if (menu) menu.classList.remove('hidden');
   window.isPlannerGenreDropdownOpen = true;
 
   renderPlannerGenreFilter(scrollTop);
@@ -1900,8 +1902,9 @@ function clearPlannerGenreFilters() {
   }
   renderCompilPlanner(false);
 
+  // On s'assure d'enlever le hidden au lieu d'injecter du display inline
   const menu = document.getElementById('planner-fab-menu');
-  if (menu) menu.style.display = 'flex';
+  if (menu) menu.classList.remove('hidden');
   window.isPlannerGenreDropdownOpen = true;
 
   renderPlannerGenreFilter(0);
