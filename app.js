@@ -811,7 +811,7 @@ function renderMDList(filters = {}, pushState = true) {
 function openMD(index, pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'none';
-   
+    
   if (!catalogData || !catalogData[index]) return;
 
   if (pushState) {
@@ -828,10 +828,21 @@ function openMD(index, pushState = true) {
   const allMdGenres = getMDAllGenres(md);
   const borderColor = getBorderColor(allMdGenres);
 
-  const adminControls = `
-    <div class="md-admin-controls">
-      <button class="btn-edit" onclick="event.stopPropagation(); openAdminModal(${index})">✏️ Modifier</button>
-      <button class="btn-delete" onclick="event.stopPropagation(); deleteMD(${index})">🗑️ Supprimer</button>
+  // FAB HTML pour la vue détail d'un MiniDisc
+  const fabHTML = `
+    <div style="position: fixed; bottom: 30px; right: 22px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+      <div id="md-detail-fab-menu" style="display: none; flex-direction: column; gap: 10px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 12px; box-shadow: 4px 4px 0px #000000; min-width: 160px;">
+        <button type="button" onclick="openAdminModal(${index});" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ffffff; color: #000000; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000;">
+          ✏️ Modifier
+        </button>
+        <button type="button" onclick="deleteMD(${index});" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000;">
+          🗑️ Supprimer
+        </button>
+      </div>
+      
+      <button type="button" onclick="toggleMdDetailFabMenu();" style="width: 50px; height: 50px; border-radius: 50%; background: #ff007f; color: #ffffff; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; font-size: 1.4rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none;">
+        ⚡
+      </button>
     </div>
   `;
 
@@ -858,8 +869,7 @@ function openMD(index, pushState = true) {
     const coverHTML = createLoadingCoverHTML(md.md_cover, 'album-cover-large', '💽');
 
     app.innerHTML = `
-      <div class="track-container">
-        ${adminControls}
+      <div class="track-container" style="padding-bottom: 90px;">
         <div class="album-header">
           ${coverHTML}
           <div>
@@ -870,6 +880,7 @@ function openMD(index, pushState = true) {
           </div>
         </div>
         <ul class="track-list">${tracksHTML}</ul>
+        ${fabHTML}
       </div>
     `;
     window.scrollTo(0, 0);
@@ -879,7 +890,7 @@ function openMD(index, pushState = true) {
   // CAS 2 : SÉRIE D'ALBUMS
   if (headerTitle) headerTitle.textContent = "ALBUMS";
 
-  let html = `<div class="list-container">${adminControls}`;
+  let html = `<div class="list-container" style="padding-bottom: 90px;">`;
   md.albums.forEach((album, aIndex) => {
     const albumGenres = getAlbumGenres(album, md);
     const albumColor = getBorderColor(albumGenres);
@@ -905,16 +916,24 @@ function openMD(index, pushState = true) {
       </div>
     `;
   });
-  html += '</div>';
+  html += `${fabHTML}</div>`;
   app.innerHTML = html;
   window.scrollTo(0, 0);
+}
+
+/* BASCULE LE MENU FAB DE LA VUE DÉTAIL MINIDISC */
+function toggleMdDetailFabMenu() {
+  const menu = document.getElementById('md-detail-fab-menu');
+  if (menu) {
+    menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
+  }
 }
 
 /* 4. VUE TRACKLIST ALBUM SPÉCIFIQUE */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'none';
-   
+    
   if (!catalogData || !catalogData[mdIndex] || !catalogData[mdIndex].albums[albumIndex]) return;
 
   currentMD = mdIndex;
