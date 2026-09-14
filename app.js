@@ -2229,17 +2229,25 @@ async function handleImageUpload(fileInput) {
 /* ==========================================
    HELPER D'AFFICHAGE DES IMAGES (NOW LOADING)
    ========================================== */
-function createLoadingCoverHTML(srcPath, cssClass = '', fallbackSvgIcon = '💽') {
-  const defaultFallback = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100%' height='100%' fill='%23111'/><text x='50%' y='50%' font-size='28' text-anchor='middle' dominant-baseline='central'>${fallbackSvgIcon}</text></svg>`;
-  
+function createLoadingCoverHTML(srcPath, cssClass = '') {
+  // S'il n'y a vraiment aucun chemin renseigné
+  if (!srcPath || srcPath.trim() === '' || srcPath === 'images/' || srcPath === 'images/default.jpg') {
+    return `
+      <div class="cover-wrapper ${cssClass}" style="position: relative; background: #111; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #333;">
+        <span style="color: #666; font-family: monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; padding: 4px;">PAS D'IMAGE</span>
+      </div>
+    `;
+  }
+
+  // Si une image est renseignée, on affiche l'effet NOW LOADING...
   return `
     <div class="cover-wrapper ${cssClass}" style="position: relative; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #333;">
-      <span class="now-loading-text" style="color: #00ff66; font-family: monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; animation: pulseLoading 1.2s infinite; text-shadow: 0 0 5px rgba(0,255,102,0.6); pointer-events: none; text-align: center; padding: 4px;">NOW LOADING...</span>
+      <span class="now-loading-text" style="color: #00ff66; font-family: monospace; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; animation: pulseLoading 1.2s infinite; text-shadow: 0 0 5px rgba(0,255,102,0.6); pointer-events: none; text-align: center; padding: 4px;">NOW LOADING...</span>
       <img 
-        src="${srcPath || ''}" 
+        src="${srcPath}" 
         alt="Cover"
         onload="this.previousElementSibling.style.display='none'; this.style.opacity='1';"
-        onerror="this.style.opacity='0'; this.previousElementSibling.style.display='block'; this.previousElementSibling.textContent='${fallbackSvgIcon}';"
+        onerror="this.style.opacity='0'; this.previousElementSibling.style.display='block'; this.previousElementSibling.textContent='NOW LOADING...';"
         style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; opacity: 0; transition: opacity 0.4s ease;"
       >
     </div>
