@@ -1916,13 +1916,22 @@ function closeIdeaModal() {
   document.getElementById('idea-modal')?.classList.add('hidden');
 }
 
-function saveIdeaAlbum(e) {
-  e.preventDefault();
+async function saveIdeaAlbum(e) {
+  if (e) e.preventDefault();
   const title = document.getElementById('idea-title').value.trim();
   const artist = document.getElementById('idea-artist').value.trim();
   const rawGenre = document.getElementById('idea-genre').value.trim();
   const duration = document.getElementById('idea-duration').value.trim();
-  const cover = document.getElementById('idea-cover').value.trim();
+  const coverInput = document.getElementById('idea-cover');
+
+  if (typeof showToast === 'function') showToast("⏳ Traitement et envoi de l'image...");
+
+  // Upload de la pochette sur GitHub
+  let coverPath = 'images/default.jpg';
+  if (coverInput && coverInput.files && coverInput.files.length > 0) {
+    const uploadedPath = await handleImageUpload(coverInput);
+    if (uploadedPath) coverPath = uploadedPath;
+  }
 
   const genre = rawGenre
     .split(',')
@@ -1930,7 +1939,7 @@ function saveIdeaAlbum(e) {
     .filter(Boolean)
     .join(', ');
 
-  const newIdea = { title, artist, genre, duration, cover };
+  const newIdea = { title, artist, genre, duration, cover: coverPath };
   
   if (!window.ideaAlbums) window.ideaAlbums = [];
   window.ideaAlbums.push(newIdea);
@@ -1938,7 +1947,7 @@ function saveIdeaAlbum(e) {
   if (typeof saveLocalBackup === 'function') saveLocalBackup();
   closeIdeaModal();
   if (typeof showToast === 'function') showToast("💡 Album ajouté aux idées !");
-  renderCompilPlanner(false);
+  if (typeof renderCompilPlanner === 'function') renderCompilPlanner(false);
 }
 
 function convertSelectedToMD() {
