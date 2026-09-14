@@ -1363,75 +1363,7 @@ async function submitNewMD(e) {
       return;
     }
 
-    for (const block of albumBlocks) {
-      const albumTitle = block.querySelector('.album-title').value.trim();
-      const albumArtist = block.querySelector('.album-artist').value.trim();
-      const albumYear = block.querySelector('.album-year').value.trim();
-      const albumGenreRaw = block.querySelector('.album-genre').value.trim();
-      const albumTypeRaw = block.querySelector('.album-type-tags') ? block.querySelector('.album-type-tags').value.trim() : '';
-      const albumTracksRaw = block.querySelector('.album-tracks').value.split('\n');
-      const albumCoverInput = block.querySelector('.album-cover');
-
-      let albumCoverPath = 'images/default.jpg';
-      if (albumCoverInput && albumCoverInput.files && albumCoverInput.files.length > 0) {
-        const uploadedPath = await handleImageUpload(albumCoverInput);
-        if (uploadedPath) albumCoverPath = uploadedPath;
-      } else if (editingMDIndex !== null && catalogData[editingMDIndex].albums) {
-        const oldAlbum = catalogData[editingMDIndex].albums.find(a => a.title === albumTitle);
-        if (oldAlbum && oldAlbum.cover) albumCoverPath = oldAlbum.cover;
-      }
-
-      const albumGenre = albumGenreRaw.includes(',') 
-        ? albumGenreRaw.split(',').map(g => g.trim()).filter(g => g !== '')
-        : [albumGenreRaw];
-
-      const albumType = albumTypeRaw 
-        ? (albumTypeRaw.includes(',') ? albumTypeRaw.split(',').map(t => t.trim()).filter(t => t !== '') : [albumTypeRaw])
-        : ['ALBUM'];
-
-      const albumTracks = albumTracksRaw
-        .filter(t => t.trim() !== '')
-        .map(t => `${String(globalTrackCounter++).padStart(2, '0')}. ${t.trim()}`);
-
-      const albumToRecordCheckbox = block.querySelector('.album-to-record');
-      const albumToRecord = albumToRecordCheckbox ? albumToRecordCheckbox.checked : false;
-
-      targetMD.albums.push({
-        title: albumTitle,
-        artist: albumArtist,
-        year: albumYear,
-        genre: albumGenre,
-        type: albumType,
-        cover: albumCoverPath,
-        tracks: albumTracks,
-        toRecord: albumToRecord
-      });
-    }
-  }
-
-  // Enregistrement dans catalogData
-  if (editingMDIndex !== null) {
-    catalogData[editingMDIndex] = targetMD;
-    editingMDIndex = null;
-  } else {
-    catalogData.push(targetMD);
-  }
-
-  if (typeof saveLocalBackup === 'function') saveLocalBackup();
-  if (typeof showToast === 'function') showToast("🎉 MiniDisc enregistré !");
-  if (typeof closeAdminModal === 'function') closeAdminModal();
-
-  // Rechargement de la vue Catalogue active sans rediriger vers l'accueil
-  if (typeof renderMDList === 'function') {
-    renderMDList({ 
-      genre: currentGenreFilter, 
-      type: currentTypeFilter, 
-      record: currentRecordFilter 
-    }, false);
-  }
-}
-
-    // Boucle pour l'upload d'image de chaque album
+    // Boucle pour l'upload d'image et la création de chaque album
     for (let i = 0; i < albumBlocks.length; i++) {
       const block = albumBlocks[i];
       const rawTracks = block.querySelector('.album-tracks').value.split('\n');
@@ -1444,7 +1376,7 @@ async function submitNewMD(e) {
         ? (rawAlbumGenre.includes(',') ? rawAlbumGenre.split(',').map(g => g.trim()).filter(g => g !== '') : [rawAlbumGenre])
         : [];
 
-      const rawAlbumType = block.querySelector('.album-type') ? block.querySelector('.album-type').value.trim() : '';
+      const rawAlbumType = block.querySelector('.album-type-tags') ? block.querySelector('.album-type-tags').value.trim() : (block.querySelector('.album-type') ? block.querySelector('.album-type').value.trim() : '');
       const parsedAlbumTypes = rawAlbumType 
         ? (rawAlbumType.includes(',') ? rawAlbumType.split(',').map(t => t.trim()).filter(t => t !== '') : [rawAlbumType])
         : [];
@@ -1478,17 +1410,29 @@ async function submitNewMD(e) {
     }
   }
 
+  // Enregistrement dans catalogData
   if (editingMDIndex !== null) {
     catalogData[editingMDIndex] = targetMD;
+    editingMDIndex = null;
     showToast("✅ MiniDisc modifié !");
   } else {
     catalogData.push(targetMD);
     showToast("✅ MiniDisc ajouté !");
   }
 
-  saveLocalBackup();
-  closeAdminModal();
-  renderDashboard(false);
+  if (typeof saveLocalBackup === 'function') saveLocalBackup();
+  if (typeof closeAdminModal === 'function') closeAdminModal();
+
+  // Rechargement de la vue Catalogue active
+  if (typeof renderMDList === 'function') {
+    renderMDList({ 
+      genre: typeof currentGenreFilter !== 'undefined' ? currentGenreFilter : '', 
+      type: typeof currentTypeFilter !== 'undefined' ? currentTypeFilter : '', 
+      record: typeof currentRecordFilter !== 'undefined' ? currentRecordFilter : '' 
+    }, false);
+  } else if (typeof renderDashboard === 'function') {
+    renderDashboard(false);
+  }
 }
 
 /* ==========================================
