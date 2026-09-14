@@ -2817,20 +2817,6 @@
     },
     {
       "genre": [
-        "REGGAE",
-        "ORCHESTRAL"
-      ],
-      "type": [
-        "LIVE"
-      ],
-      "md_cover": "images/",
-      "title": "Texte",
-      "artist": "",
-      "tracks": [],
-      "toRecord": false
-    },
-    {
-      "genre": [
         "PUNK ROCK",
         "METAL",
         "POP ROCK"
