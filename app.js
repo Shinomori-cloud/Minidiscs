@@ -1417,8 +1417,13 @@ async function submitNewMD(e) {
 // Ouvre et ferme le menu déroulant au clic sur le pignon ⚙️
 function toggleFabMenu() {
   const menu = document.getElementById('fab-menu');
-  if (menu) {
-    menu.classList.toggle('hidden');
+  const btn = document.getElementById('fab-main-btn');
+  if (!menu) return;
+
+  const isOpen = menu.classList.toggle('hidden');
+  
+  if (btn) {
+    btn.classList.toggle('open', !isOpen);
   }
 }
 
