@@ -1661,14 +1661,15 @@ function renderCompilPlanner(pushState = true) {
       cardsHTML = ideas.map(item => {
         const index = item.originalIndex;
         const isSelected = selectedIdeaIndices.has(index);
-        const coverSrc = (item.cover && item.cover !== 'images/') ? item.cover : '';
+        const coverSrc = (item.cover && item.cover !== 'images/' && item.cover !== 'images/default.jpg') ? item.cover : '';
+
+        const coverHTML = coverSrc 
+          ? createLoadingCoverHTML(coverSrc, 'idea-cover', '💡') 
+          : `<div class="idea-cover" style="background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;">Pas d'image</div>`;
 
         return `
           <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
-            ${coverSrc 
-              ? `<img src="${coverSrc}" class="idea-cover" alt="cover">` 
-              : `<div class="idea-cover" style="background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;">Pas d'image</div>`
-            }
+            ${coverHTML}
             <div class="idea-title">${item.title || 'Sans titre'}</div>
             <div class="idea-artist">${item.artist || 'Artiste inconnu'}</div>
             <div class="idea-duration">⏱️ ${item.duration || '00:00'}</div>
