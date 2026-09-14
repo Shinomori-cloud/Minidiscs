@@ -1765,8 +1765,9 @@ function renderCompilPlanner(pushState = true) {
 function togglePlannerFabMenu() {
   const menu = document.getElementById('planner-fab-menu');
   if (!menu) return;
-  const isOpening = (menu.style.display === 'none' || menu.style.display === '');
-  menu.style.display = isOpening ? 'flex' : 'none';
+  
+  const isOpening = menu.classList.contains('hidden');
+  menu.classList.toggle('hidden');
 
   if (!isOpening) {
     window.isPlannerGenreDropdownOpen = false;
