@@ -989,7 +989,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     </div>
   `;
   window.scrollTo(0, 0);
-
+}
 /* ==========================================
    SUPPRESSION ET MODIFICATION
    ========================================== */
