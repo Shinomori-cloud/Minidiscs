@@ -165,7 +165,7 @@ function selectGenreFilter(genre) {
 
 function applyStatusFilter(filterValue, event) {
   if (event) {
-    event.stopPropagation(); // Empêche la fermeture du sous-menu FAB
+    event.stopPropagation();
   }
 
   let targetRecord = 'all';
@@ -175,13 +175,19 @@ function applyStatusFilter(filterValue, event) {
     targetRecord = 'recorded';
   }
 
+  // 1. Rendu de la liste
   renderMDList({ 
     genre: currentGenreFilter, 
     type: currentTypeFilter, 
     record: targetRecord 
   }, false);
-}
 
+  // 2. Maintien forcé du sous-menu ouvert après le rafraîchissement
+  const statusSubmenu = document.getElementById('status-submenu');
+  if (statusSubmenu) {
+    statusSubmenu.classList.remove('hidden');
+  }
+}
 function mdMatchesSearch(md, query) {
   if (!query) return true;
   const q = query.toLowerCase().trim();
