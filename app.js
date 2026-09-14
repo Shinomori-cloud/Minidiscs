@@ -1464,19 +1464,17 @@ function toggleFabSubmenu(id) {
   }
 }
 
-// Applique le filtre de statut directement au clic
-function applyStatusFilter(filterValue) {
+// Applique le filtre de statut directement au clic sans fermer le sous-menu
+function applyStatusFilter(filterValue, event) {
+  if (event) {
+    event.stopPropagation(); // Empêche le listener global de fermer le FAB
+  }
+
   let targetRecord = 'all';
   if (filterValue === 'torecord') {
     targetRecord = 'toRecord';
   } else if (filterValue === 'recorded') {
     targetRecord = 'recorded';
-  }
-
-  // Masque le sous-menu après sélection
-  const statusSubmenu = document.getElementById('status-submenu');
-  if (statusSubmenu) {
-    statusSubmenu.classList.add('hidden');
   }
 
   // Application explicite du filtre
