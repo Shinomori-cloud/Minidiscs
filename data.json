@@ -3089,6 +3089,13 @@
       "genre": "EXPERIMENTAL, ROCK",
       "duration": "47:51",
       "cover": "images/img_1789392239454.jpg"
+    },
+    {
+      "title": "Pet Sounds",
+      "artist": "The Beach Boys",
+      "genre": "POP ROCK, EXPERIMENTAL",
+      "duration": "36:25",
+      "cover": "images/img_1789393851900.jpg"
     }
   ]
 }
