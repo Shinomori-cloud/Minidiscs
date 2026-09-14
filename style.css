@@ -1189,14 +1189,14 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   BOUTONS FLOTTANTS (FAB) ET MENUS DEROULANTS
+   BOUTONS FLOTTANTS (FAB) ET MENUS DEROULANTS (ÉPURÉ)
    ========================================== */
 
 /* Conteneur fixe en bas à droite */
 .fab-container {
   position: fixed !important;
-  bottom: 20px !important;
-  right: 20px !important;
+  bottom: 24px !important;
+  right: 24px !important;
   z-index: 9999 !important;
   display: flex !important;
   flex-direction: column !important;
@@ -1208,23 +1208,25 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: none !important;
 }
 
-/* Menu déroulant au-dessus du bouton */
+/* Menu déroulant principal (Flottant épuré) */
 .fab-menu {
   position: absolute;
-  bottom: 62px;
+  bottom: 64px;
   right: 0;
   display: flex !important;
   flex-direction: column !important;
-  gap: 8px;
-  background: #ffffff;
-  padding: 12px;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 10px;
   border-radius: 16px;
-  border: 3px solid #000000;
-  box-shadow: 4px 4px 0px #000000;
-  min-width: 200px;
-  max-width: 280px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  min-width: 190px;
+  max-width: 260px;
   max-height: 70vh;
   overflow-y: auto;
+  transition: all 0.2s ease;
 }
 
 .fab-menu.hidden {
@@ -1233,20 +1235,19 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 /* Titres / En-têtes de section dans le menu */
 .fab-section-title {
-  font-size: 0.7rem;
-  font-weight: 900;
+  font-size: 0.65rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #666666;
-  margin: 6px 0 2px 4px;
+  letter-spacing: 0.05em;
+  color: #8e8e93;
+  margin: 6px 0 2px 8px;
 }
 
 /* Ligne de séparation dans le menu */
 .fab-divider {
   border: 0;
-  border-top: 2px solid #000000;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
   margin: 4px 0;
-  opacity: 0.15;
 }
 
 /* Éléments / Boutons d'action du menu */
@@ -1254,74 +1255,67 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 8px;
-  height: 40px;
-  border: 2px solid #000000;
+  gap: 10px;
+  height: 38px;
+  border: none;
   border-radius: 10px;
-  background: #ffffff;
-  color: #000000;
-  font-weight: 800;
+  background: transparent;
+  color: #1c1c1e;
+  font-weight: 500;
   font-size: 0.85rem;
   padding: 0 12px;
   cursor: pointer;
   text-align: left;
-  box-shadow: 2px 2px 0px #000000;
-  transition: transform 0.05s ease, box-shadow 0.05s ease, background-color 0.1s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   width: 100%;
   box-sizing: border-box;
   white-space: nowrap;
 }
 
 .fab-item:hover:not(:disabled) {
-  background-color: #f8f9fa;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .fab-item:active:not(:disabled) {
-  transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0px #000000;
+  background-color: rgba(0, 0, 0, 0.08);
 }
 
 .fab-item:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
-  box-shadow: 2px 2px 0px #000000;
-  transform: none;
 }
 
 /* Variations de couleur pour les actions */
 .fab-item.danger {
-  color: #e63946;
-  background: #fff5f5;
+  color: #ff3b30;
 }
 .fab-item.danger:hover:not(:disabled) {
-  background: #ffe3e3;
+  background: rgba(255, 59, 48, 0.08);
 }
 
 .fab-item.accent {
-  background: #ff007f;
-  color: #ffffff;
+  color: #007aff;
 }
 .fab-item.accent:hover:not(:disabled) {
-  background: #e00070;
+  background: rgba(0, 122, 255, 0.08);
 }
 
 .fab-item.success {
-  background: #06d6a0;
-  color: #000000;
+  color: #34c759;
 }
 .fab-item.success:hover:not(:disabled) {
-  background: #05be8d;
+  background: rgba(52, 199, 89, 0.08);
 }
 
 /* Sous-menus */
 .fab-submenu {
   display: flex !important;
   flex-direction: column !important;
-  padding-left: 12px;
+  padding-left: 10px;
   margin-top: 2px;
   margin-bottom: 4px;
-  border-left: 2px solid #000000;
-  gap: 4px;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  gap: 2px;
 }
 
 .fab-submenu.hidden {
@@ -1330,38 +1324,31 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .fab-item.sub-item {
   font-size: 0.8rem;
-  height: 34px;
-  padding: 0 10px;
-  font-weight: 700;
-  color: #333;
-}
-
-.fab-item.sub-item:hover:not(:disabled) {
-  background-color: #e9ecef;
-  color: #000;
+  height: 32px;
+  padding: 0 8px;
+  color: #636366;
 }
 
 .fab-scrollable-submenu {
-  max-height: 200px;
+  max-height: 180px;
   overflow-y: auto;
-  margin-right: 4px;
 }
 
 .fab-scrollable-submenu::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 
 .fab-scrollable-submenu::-webkit-scrollbar-thumb {
-  background: #000000;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
 }
 
 /* Liste des genres harmonisée */
 .fab-genre-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-top: 4px;
+  gap: 2px;
+  margin-top: 2px;
 }
 
 .fab-genre-item {
@@ -1369,57 +1356,56 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   align-items: center;
   justify-content: space-between;
   padding: 6px 10px;
-  border: 2px solid #000000;
   border-radius: 8px;
   font-size: 0.8rem;
-  font-weight: 700;
-  background: #f8f9fa;
+  font-weight: 500;
+  color: #3a3a3c;
+  background: transparent;
   cursor: pointer;
   user-select: none;
-  box-shadow: 1px 1px 0px #000000;
-  transition: all 0.1s ease;
+  transition: background-color 0.15s ease;
 }
 
 .fab-genre-item:hover {
-  background: #e9ecef;
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .fab-genre-item.active {
-  background: #ff007f;
+  background: #007aff;
   color: #ffffff;
 }
 
-/* Bouton principal rond */
+/* Bouton principal rond (Sombre épuré) */
 .fab-main-btn {
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: #ff007f;
+  background: #1c1c1e;
   color: #ffffff;
-  border: 3px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
-  font-size: 1.3rem;
-  font-weight: bold;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 1.1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   outline: none;
-  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .fab-main-btn:hover {
-  transform: scale(1.05);
+  transform: scale(1.04);
+  background: #2c2c2e;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .fab-main-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px #000000;
+  transform: scale(0.96);
 }
 
 .fab-main-btn .fab-icon {
   display: inline-block;
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease;
 }
 
 .fab-main-btn.open .fab-icon {
@@ -1468,7 +1454,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   width: 100% !important;
   max-height: calc(60vh - 65px) !important;
   overflow-y: auto !important;
-  overflow-x: hidden !hidden;
+  overflow-x: hidden !important;
   box-sizing: border-box !important;
   gap: 8px !important;
   padding-right: 2px !important;
