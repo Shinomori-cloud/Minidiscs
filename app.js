@@ -952,111 +952,132 @@ function openMD(index, pushState = true) {
   const allMdGenres = getMDAllGenres(md);
   const borderColor = getBorderColor(allMdGenres);
 
-  // FAB HTML pour la vue détail d'un MiniDisc
-  const fabHTML = `
-    <div id="md-detail-floating-actions" class="fab-container">
-      <div id="md-detail-fab-menu" class="fab-menu hidden">
-        <button type="button" class="fab-item" onclick="openAdminModal(${index});">
-          ✏️ Modifier
-        </button>
-        <button type="button" class="fab-item" onclick="deleteMD(${index});">
-          🗑️ Supprimer
-        </button>
-      </div>
-      
-      <button type="button" id="md-detail-fab-main-btn" class="fab-main-btn" onclick="toggleMdDetailFabMenu();" title="Actions MiniDisc">
-        <span class="fab-icon">🎚️</span>
+/* ==========================================
+   FAB HTML & GESTION VUE DÉTAIL MINIDISC
+   ========================================== */
+
+// FAB HTML restructuré avec titres de section et styles harmonisés
+const fabHTML = `
+  <div id="md-detail-floating-actions" class="fab-container">
+    <div id="md-detail-fab-menu" class="fab-menu hidden">
+      <!-- Section Options -->
+      <div class="fab-section-title">Options</div>
+      <button type="button" class="fab-item accent" onclick="openAdminModal(${index});">
+        ✏️ Modifier
+      </button>
+
+      <!-- Section Actions -->
+      <hr class="fab-divider">
+      <div class="fab-section-title">Actions</div>
+      <button type="button" class="fab-item danger" onclick="deleteMD(${index});">
+        🗑️ Supprimer
       </button>
     </div>
-  `;
+    
+    <button type="button" id="md-detail-fab-main-btn" class="fab-main-btn" onclick="toggleMdDetailFabMenu();" title="Actions MiniDisc">
+      <span class="fab-icon">🎚️</span>
+    </button>
+  </div>
+`;
 
-  // CAS 1 : MINIDISC SIMPLE / COMPILATION (SANS ALBUMS)
-  if (!md.albums || md.albums.length === 0) {
-    if (headerTitle) headerTitle.textContent = "TITRES";
+// CAS 1 : MINIDISC SIMPLE / COMPILATION (SANS ALBUMS)
+if (!md.albums || md.albums.length === 0) {
+  if (headerTitle) headerTitle.textContent = "TITRES";
 
-    let tracksHTML = '';
-    if (md.tracks && md.tracks.length > 0) {
-      md.tracks.forEach((track) => {
-        const match = track.match(/^(\d+\.)\s*(.*)$/);
-        tracksHTML += match 
-          ? `<li class="track-item"><strong class="track-num">${match[1]}</strong> ${match[2]}</li>`
-          : `<li class="track-item">${track}</li>`;
-      });
-    } else {
-      tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
-    }
-
-    const badgeCompilHTML = md.toRecord 
-      ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
-      : '';
-
-    const coverHTML = createLoadingCoverHTML(md.md_cover, 'album-cover-large', '💽');
-
-    app.innerHTML = `
-      <div class="track-container" style="padding-bottom: 90px;">
-        <div class="album-header">
-          ${coverHTML}
-          <div>
-            ${badgeCompilHTML}
-            <h2 style="font-size: 1.2rem; font-weight: 800;">${md.title || 'Compilation'}</h2>
-            <p style="color: var(--text-sub); font-size: 0.95rem;">${md.artist || 'Artistes divers'}</p>
-            <p style="color: ${borderColor}; font-size: 0.8rem; font-weight: 800;">${allMdGenres.join(' / ')}</p>
-          </div>
-        </div>
-        <ul class="track-list">${tracksHTML}</ul>
-        ${fabHTML}
-      </div>
-    `;
-    window.scrollTo(0, 0);
-    return;
+  let tracksHTML = '';
+  if (md.tracks && md.tracks.length > 0) {
+    md.tracks.forEach((track) => {
+      const match = track.match(/^(\d+\.)\s*(.*)$/);
+      tracksHTML += match 
+        ? `<li class="track-item"><strong class="track-num">${match[1]}</strong> ${match[2]}</li>`
+        : `<li class="track-item">${track}</li>`;
+    });
+  } else {
+    tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
   }
 
-  // CAS 2 : SÉRIE D'ALBUMS
-  if (headerTitle) headerTitle.textContent = "ALBUMS";
+  const badgeCompilHTML = md.toRecord 
+    ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
+    : '';
 
-  let html = `<div class="list-container" style="padding-bottom: 90px;">`;
-  md.albums.forEach((album, aIndex) => {
-    const albumGenres = getAlbumGenres(album, md);
-    const albumColor = getBorderColor(albumGenres);
-    
-    const badgeAlbumHTML = album.toRecord 
-      ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
-      : '';
+  const coverHTML = createLoadingCoverHTML(md.md_cover, 'album-cover-large', '💽');
 
-    const coverHTML = createLoadingCoverHTML(album.cover, 'album-thumb', '🎵');
-
-    html += `
-      <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px; position: relative;" onclick="openAlbum(${index}, ${aIndex})">
-        <div class="album-cover-container" style="margin-right: 15px; display: inline-block;">
-          ${coverHTML}
+  app.innerHTML = `
+    <div class="track-container" style="padding-bottom: 90px;">
+      <div class="album-header">
+        ${coverHTML}
+        <div>
+          ${badgeCompilHTML}
+          <h2 style="font-size: 1.2rem; font-weight: 800;">${md.title || 'Compilation'}</h2>
+          <p style="color: var(--text-sub); font-size: 0.95rem;">${md.artist || 'Artistes divers'}</p>
+          <p style="color: ${borderColor}; font-size: 0.8rem; font-weight: 800;">${allMdGenres.join(' / ')}</p>
         </div>
-        <div class="item-details">
-          <div class="item-tag" style="color: ${albumColor};">${albumGenres.join(' / ')}</div>
-          <div class="item-title" style="font-weight: 700;">${album.title || 'Album sans titre'}</div>
-          <div class="item-sub">${album.artist || 'Artiste inconnu'}</div>
-          ${album.year ? `<div class="item-sub" style="font-size:0.78rem;">${album.year}</div>` : ''}
-        </div>
-        ${badgeAlbumHTML}
       </div>
-    `;
-  });
-  html += `${fabHTML}</div>`;
-  app.innerHTML = html;
+      <ul class="track-list">${tracksHTML}</ul>
+      ${fabHTML}
+    </div>
+  `;
   window.scrollTo(0, 0);
+  return;
 }
 
-/* BASCULE LE MENU FAB DE LA VUE DÉTAIL MINIDISC */
+// CAS 2 : SÉRIE D'ALBUMS
+if (headerTitle) headerTitle.textContent = "ALBUMS";
+
+let html = `<div class="list-container" style="padding-bottom: 90px;">`;
+md.albums.forEach((album, aIndex) => {
+  const albumGenres = getAlbumGenres(album, md);
+  const albumColor = getBorderColor(albumGenres);
+  
+  const badgeAlbumHTML = album.toRecord 
+    ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
+    : '';
+
+  const coverHTML = createLoadingCoverHTML(album.cover, 'album-thumb', '🎵');
+
+  html += `
+    <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px; position: relative;" onclick="openAlbum(${index}, ${aIndex})">
+      <div class="album-cover-container" style="margin-right: 15px; display: inline-block;">
+        ${coverHTML}
+      </div>
+      <div class="item-details">
+        <div class="item-tag" style="color: ${albumColor};">${albumGenres.join(' / ')}</div>
+        <div class="item-title" style="font-weight: 700;">${album.title || 'Album sans titre'}</div>
+        <div class="item-sub">${album.artist || 'Artiste inconnu'}</div>
+        ${album.year ? `<div class="item-sub" style="font-size:0.78rem;">${album.year}</div>` : ''}
+      </div>
+      ${badgeAlbumHTML}
+    </div>
+  `;
+});
+html += `${fabHTML}</div>`;
+app.innerHTML = html;
+window.scrollTo(0, 0);
+}
+
+/* GESTION DU MENU FAB DÉTAIL MINIDISC */
 function toggleMdDetailFabMenu() {
   const menu = document.getElementById('md-detail-fab-menu');
   const btn = document.getElementById('md-detail-fab-main-btn');
   if (!menu) return;
 
-  const isHidden = menu.classList.toggle('hidden');
+  const isOpening = menu.classList.contains('hidden');
+  menu.classList.toggle('hidden');
 
   if (btn) {
-    btn.classList.toggle('open', !isHidden);
+    btn.classList.toggle('open', isOpening);
   }
 }
+
+// Fermeture du menu si clic en dehors (sécurisé)
+document.addEventListener('click', (e) => {
+  const container = document.getElementById('md-detail-floating-actions');
+  const menu = document.getElementById('md-detail-fab-menu');
+  if (container && menu && !container.contains(e.target)) {
+    menu.classList.add('hidden');
+    document.getElementById('md-detail-fab-main-btn')?.classList.remove('open');
+  }
+});
 
 /* 4. VUE TRACKLIST ALBUM SPÉCIFIQUE */
 function openAlbum(mdIndex, albumIndex, pushState = true) {
