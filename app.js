@@ -1769,10 +1769,16 @@ function renderCompilPlanner(pushState = true) {
 
 function togglePlannerFabMenu() {
   const menu = document.getElementById('planner-fab-menu');
+  const btn = document.getElementById('planner-fab-main-btn');
   if (!menu) return;
   
   const isOpening = menu.classList.contains('hidden');
   menu.classList.toggle('hidden');
+
+  // Animation de rotation du bouton
+  if (btn) {
+    btn.classList.toggle('open', isOpening);
+  }
 
   if (!isOpening) {
     window.isPlannerGenreDropdownOpen = false;
@@ -1837,7 +1843,10 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
     const btn = document.createElement('div');
     btn.className = `fab-genre-item ${isSelected ? 'active' : ''}`;
     btn.innerHTML = `<span>${text}</span>${isSelected ? '<span>✓</span>' : ''}`;
-    btn.onclick = onClick;
+    btn.onclick = (e) => {
+      e.stopPropagation(); // Empêche la fermeture du menu FAB
+      onClick(e);
+    };
     return btn;
   };
 
