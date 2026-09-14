@@ -2051,6 +2051,9 @@ function populateFormDatalists() {
   }
 }
 
+/* =======================
+   CONNEXION A GITHUB
+   =======================*/
 // Sauvegarder le token sur le téléphone
 function saveGithubToken(token) {
   localStorage.setItem('github_token', token.trim());
@@ -2168,8 +2171,8 @@ async function handleImageUpload(fileInput) {
   const filePath = `images/${fileName}`;
 
   // Remplace par tes véritables identifiants
-  const USERNAME = 'TON_PSEUDO_GITHUB';
-  const REPO = 'TON_NOM_DE_REPO';
+  const USERNAME = 'Shinomori-cloud';
+  const REPO = 'Minidiscs';
   const url = `https://api.github.com/repos/${USERNAME}/${REPO}/contents/${filePath}`;
 
   try {
