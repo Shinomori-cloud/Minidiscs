@@ -1201,30 +1201,11 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-end !important;
+  gap: 12px !important;
 }
 
 .fab-container.hidden {
   display: none !important;
-}
-
-/* Bouton principal rond */
-.fab-main-btn {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 2px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
-  font-size: 1.4rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s ease, background-color 0.15s;
-}
-
-.fab-main-btn:active {
-  transform: scale(0.92);
 }
 
 /* Menu déroulant au-dessus du bouton */
@@ -1234,60 +1215,113 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   right: 0;
   display: flex !important;
   flex-direction: column !important;
-  gap: 2px;
+  gap: 8px;
   background: #ffffff;
-  padding: 8px;
-  border-radius: 12px;
-  border: 2px solid #000000;
+  padding: 12px;
+  border-radius: 16px;
+  border: 3px solid #000000;
   box-shadow: 4px 4px 0px #000000;
-  min-width: 190px;
+  min-width: 200px;
+  max-width: 280px;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .fab-menu.hidden {
   display: none !important;
 }
 
-/* Éléments du menu */
-.fab-item {
-  background: transparent;
-  border: none;
-  padding: 10px 12px;
-  text-align: left;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #333;
-  cursor: pointer;
-  border-radius: 6px;
-  white-space: nowrap;
-  transition: background 0.15s ease;
-}
-
-.fab-item:hover:not(:disabled) {
-  background-color: #f0f4f8;
-}
-
-.fab-item:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+/* Titres / En-têtes de section dans le menu */
+.fab-section-title {
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #666666;
+  margin: 6px 0 2px 4px;
 }
 
 /* Ligne de séparation dans le menu */
 .fab-divider {
   border: 0;
-  height: 1px;
-  background: #e0e0e0;
+  border-top: 2px solid #000000;
   margin: 4px 0;
+  opacity: 0.15;
+}
+
+/* Éléments / Boutons d'action du menu */
+.fab-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  height: 40px;
+  border: 2px solid #000000;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #000000;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0 12px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 2px 2px 0px #000000;
+  transition: transform 0.05s ease, box-shadow 0.05s ease, background-color 0.1s ease;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.fab-item:hover:not(:disabled) {
+  background-color: #f8f9fa;
+}
+
+.fab-item:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #000000;
+}
+
+.fab-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: 2px 2px 0px #000000;
+  transform: none;
+}
+
+/* Variations de couleur pour les actions */
+.fab-item.danger {
+  color: #e63946;
+  background: #fff5f5;
+}
+.fab-item.danger:hover:not(:disabled) {
+  background: #ffe3e3;
+}
+
+.fab-item.accent {
+  background: #ff007f;
+  color: #ffffff;
+}
+.fab-item.accent:hover:not(:disabled) {
+  background: #e00070;
+}
+
+.fab-item.success {
+  background: #06d6a0;
+  color: #000000;
+}
+.fab-item.success:hover:not(:disabled) {
+  background: #05be8d;
 }
 
 /* Sous-menus */
 .fab-submenu {
   display: flex !important;
   flex-direction: column !important;
-  padding-left: 16px;
+  padding-left: 12px;
   margin-top: 2px;
   margin-bottom: 4px;
-  border-left: 2px solid #e0e0e0;
-  gap: 2px;
+  border-left: 2px solid #000000;
+  gap: 4px;
 }
 
 .fab-submenu.hidden {
@@ -1296,9 +1330,10 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .fab-item.sub-item {
   font-size: 0.8rem;
-  padding: 6px 12px;
-  font-weight: 500;
-  color: #555;
+  height: 34px;
+  padding: 0 10px;
+  font-weight: 700;
+  color: #333;
 }
 
 .fab-item.sub-item:hover:not(:disabled) {
@@ -1317,8 +1352,78 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .fab-scrollable-submenu::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: #000000;
   border-radius: 4px;
+}
+
+/* Liste des genres harmonisée */
+.fab-genre-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.fab-genre-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: #f8f9fa;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 1px 1px 0px #000000;
+  transition: all 0.1s ease;
+}
+
+.fab-genre-item:hover {
+  background: #e9ecef;
+}
+
+.fab-genre-item.active {
+  background: #ff007f;
+  color: #ffffff;
+}
+
+/* Bouton principal rond */
+.fab-main-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #ff007f;
+  color: #ffffff;
+  border: 3px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+}
+
+.fab-main-btn:hover {
+  transform: scale(1.05);
+}
+
+.fab-main-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+.fab-main-btn .fab-icon {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.fab-main-btn.open .fab-icon {
+  transform: rotate(45deg);
 }
 
 /* ==========================================
