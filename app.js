@@ -1782,7 +1782,7 @@ function renderCompilPlanner(pushState = true) {
             <div class="fab-section-title">Recherche</div>
             <div style="padding: 2px 4px;">
               <input 
-                type="text" 
+                type="search" 
                 id="planner-search-input" 
                 class="fab-search-input" 
                 placeholder="Chercher une idée..." 
