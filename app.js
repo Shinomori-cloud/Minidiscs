@@ -829,6 +829,9 @@ function renderDashboard(pushState = true) {
 function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
 
+  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+  if (fa) fa.style.display = 'flex';
+
   // Mise à jour explicite des variables globales avec fallback
   currentGenreFilter = filters.genre !== undefined ? filters.genre : currentGenreFilter;
   currentTypeFilter = filters.type !== undefined ? filters.type : currentTypeFilter;
@@ -924,50 +927,7 @@ function renderMDList(filters = {}, pushState = true) {
     });
   }
   html += '</div>';
-
-  // INJECTION DU HTML DYNAMIQUE DU FAB CATALOGUE
-  const fabHTML = `
-    <div id="floating-actions" class="fab-container">
-      <div id="fab-menu" class="fab-menu hidden">
-        
-        <!-- Section Filtres -->
-        <div class="fab-section-title">Filtres</div>
-        <button type="button" class="fab-item" onclick="toggleFabSubmenu('genres-submenu');">
-          <span>🎵 Genres</span>
-        </button>
-        <div id="genres-submenu" class="fab-submenu fab-genre-submenu hidden"></div>
-
-        <button type="button" class="fab-item" onclick="toggleFabSubmenu('status-submenu');">
-          <span>🎚️ Statut</span>
-        </button>
-        <div id="status-submenu" class="fab-submenu hidden">
-          <div class="fab-genre-item" onclick="applyStatusFilter('all', event)"><span>Tous</span></div>
-          <div class="fab-genre-item" onclick="applyStatusFilter('torecord', event)"><span>À enregistrer</span></div>
-          <div class="fab-genre-item" onclick="applyStatusFilter('recorded', event)"><span>Enregistrés</span></div>
-        </div>
-
-        <!-- Section Recherche -->
-        <hr class="fab-divider">
-        <div class="fab-section-title">Recherche</div>
-        <div style="padding: 2px 4px;">
-          <input type="text" class="fab-search-input" placeholder="Rechercher un MD..." value="${currentSearchQuery || ''}" oninput="if(typeof handleCatalogSearch==='function'){ handleCatalogSearch(this.value); } else if(typeof filterMDList==='function'){ filterMDList(this.value); }" />
-        </div>
-
-        <!-- Section Options -->
-        <hr class="fab-divider">
-        <div class="fab-section-title">Options</div>
-        <button type="button" class="fab-item accent" onclick="if(typeof openAddMDModal==='function') openAddMDModal();">
-          <span>+ Ajouter un MD</span>
-        </button>
-      </div>
-
-      <button type="button" id="fab-main-btn" class="fab-main-btn" onclick="toggleFabMenu();" title="Menu catalogue">
-        <span class="fab-icon">⚙️</span>
-      </button>
-    </div>
-  `;
-
-  app.innerHTML = html + fabHTML;
+  app.innerHTML = html;
   window.scrollTo(0, 0);
 }
 
