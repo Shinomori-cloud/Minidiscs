@@ -2832,6 +2832,52 @@
         "01. Test"
       ],
       "toRecord": false
+    },
+    {
+      "genre": [
+        "GRUNGE",
+        "ORCHESTRAL",
+        "RAP"
+      ],
+      "type": [
+        "Chausettes"
+      ],
+      "md_cover": "images/img_1789389439835.jpg",
+      "albums": [
+        {
+          "title": "Chausette",
+          "artist": "Chausette",
+          "year": "",
+          "cover": "images/img_1789389442112.jpg",
+          "tracks": [
+            "01. Gkkdkzz"
+          ],
+          "toRecord": false,
+          "genre": [
+            "GRUNGE"
+          ],
+          "type": [
+            "ALBUMS"
+          ]
+        },
+        {
+          "title": "Pull",
+          "artist": "Pull",
+          "year": "",
+          "cover": "images/img_1789389443546.jpg",
+          "tracks": [
+            "02. Nfjdka"
+          ],
+          "toRecord": false,
+          "genre": [
+            "ORCHESTRAL",
+            "RAP"
+          ],
+          "type": [
+            "COMPILATIONS"
+          ]
+        }
+      ]
     }
   ],
   "ideaAlbums": [
