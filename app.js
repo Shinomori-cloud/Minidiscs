@@ -2104,18 +2104,22 @@ function convertSelectedToMD() {
 function handlePlannerSearch(query) {
   const searchTerm = query ? query.toLowerCase().trim() : '';
   
-  // Slectionne toutes les cartes ou lignes d'idées dans le planificateur
-  const plannerItems = document.querySelectorAll('#planner-container .planner-card, #planner-container .planner-item, .planner-idea-card');
+  // Sélectionne toutes les cartes d'idées générées par renderCompilPlanner (.idea-card)
+  const ideaCards = document.querySelectorAll('#ideas-grid-container .idea-card');
 
-  plannerItems.forEach(item => {
-    const text = item.textContent.toLowerCase();
-    if (text.includes(searchTerm)) {
-      item.style.display = '';
+  ideaCards.forEach(card => {
+    // Récupère le titre et l'artiste présents dans la carte
+    const title = card.querySelector('.idea-title')?.textContent.toLowerCase() || '';
+    const artist = card.querySelector('.idea-artist')?.textContent.toLowerCase() || '';
+    
+    // Si la recherche correspond au titre ou à l'artiste, on affiche la carte
+    if (title.includes(searchTerm) || artist.includes(searchTerm)) {
+      card.style.display = 'flex';
     } else {
-      item.style.display = 'none';
+      card.style.display = 'none';
     }
   });
-}
+}   
 
 /* ==========================================
    GESTION DU BOUTON RETOUR (ANCRAGE HASH)
