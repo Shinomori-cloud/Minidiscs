@@ -230,25 +230,3 @@
   <script src="app.js"></script>
 </body>
 </html>
-
-// Au chargement de la page, réaffiche le token s'il existe déjà
-document.addEventListener('DOMContentLoaded', () => {
-  const tokenInput = document.getElementById('gh-token-input');
-  const saveBtn = document.getElementById('save-token-btn');
-
-  if (tokenInput) {
-    // Récupère la clé enregistrée pour l'afficher
-    tokenInput.value = getGithubToken() || '';
-
-    // Action du bouton
-    saveBtn.addEventListener('click', () => {
-      const val = tokenInput.value;
-      if (val) {
-        saveGithubToken(val);
-      } else {
-        localStorage.removeItem('github_token');
-        alert('Token supprimé.');
-      }
-    });
-  }
-});
