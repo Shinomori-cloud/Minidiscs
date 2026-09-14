@@ -2817,24 +2817,6 @@
     },
     {
       "genre": [
-        "PUNK ROCK",
-        "METAL",
-        "POP ROCK"
-      ],
-      "type": [
-        "ALBUMS",
-        "LIVE"
-      ],
-      "md_cover": "images/",
-      "title": "Test",
-      "artist": "Test",
-      "tracks": [
-        "01. Test"
-      ],
-      "toRecord": false
-    },
-    {
-      "genre": [
         "GRUNGE",
         "ORCHESTRAL",
         "RAP"
