@@ -47,34 +47,18 @@ function clearLocalBackup() {
 }
 
 /* ==========================================
-   GESTION DU BOUTON ET DE LA BARRE DE RECHERCHE
+   GESTION DE LA RECHERCHE CATALOGUE VIA FAB
    ========================================== */
-function toggleSearch() {
-  const topSearch = document.getElementById('search-bar');
-  const searchInput = document.getElementById('search-input');
-  const fabBtn = document.getElementById('btn-search');
+function handleCatalogSearch(query) {
+  // Met à jour la variable globale de recherche
+  currentSearchQuery = query ? query.trim() : '';
 
-  if (!topSearch) return;
-
-  const isClosed = topSearch.classList.contains('closed');
-
-  if (!isClosed) {
-    topSearch.classList.add('closed');
-    if (fabBtn) fabBtn.textContent = '🔍';
-    if (currentSearchQuery !== '') {
-      currentSearchQuery = '';
-      if (searchInput) searchInput.value = '';
-      renderMDList({ 
-        genre: currentGenreFilter, 
-        type: currentTypeFilter, 
-        record: currentRecordFilter 
-      }, false);
-    }
-  } else {
-    topSearch.classList.remove('closed');
-    if (fabBtn) fabBtn.textContent = '✕';
-    if (searchInput) searchInput.focus();
-  }
+  // Relance le rendu du catalogue avec les filtres actifs et la recherche
+  renderMDList({ 
+    genre: currentGenreFilter, 
+    type: currentTypeFilter, 
+    record: currentRecordFilter 
+  }, false);
 }
 
 // Ouvre et ferme le sous-menu des genres dans le FAB et génère sa liste
