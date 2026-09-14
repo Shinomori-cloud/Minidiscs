@@ -1864,12 +1864,7 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
 
   const subMenu = document.createElement('div');
   subMenu.id = 'planner-genre-submenu';
-  // On utilise exactement les mêmes classes que pour la vue MiniDisc
   subMenu.className = 'fab-submenu fab-genre-submenu';
-
-  const scrollArea = document.createElement('div');
-  scrollArea.id = 'planner-genre-scroll-area';
-  scrollArea.className = 'fab-scrollable-submenu fab-genre-list';
 
   const activeFilters = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters : new Set();
 
@@ -1878,15 +1873,22 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
     btn.className = `fab-genre-item ${isSelected ? 'active' : ''}`;
     btn.innerHTML = `<span>${text}</span>${isSelected ? '<span>✓</span>' : ''}`;
     btn.onclick = (e) => {
-      e.stopPropagation(); // Empêche la fermeture du menu FAB
+      e.stopPropagation();
       onClick(e);
     };
     return btn;
   };
 
-  scrollArea.appendChild(createGenreBtn('Tous les genres', activeFilters.size === 0, () => {
+  // 1. Bouton "Tous les genres" FIXE en haut du sous-menu
+  const allBtn = createGenreBtn('Tous les genres', activeFilters.size === 0, () => {
     if (typeof clearPlannerGenreFilters === 'function') clearPlannerGenreFilters();
-  }));
+  });
+  subMenu.appendChild(allBtn);
+
+  // 2. Zone défilante pour le reste des genres
+  const scrollArea = document.createElement('div');
+  scrollArea.id = 'planner-genre-scroll-area';
+  scrollArea.className = 'fab-scrollable-submenu fab-genre-list';
 
   genres.forEach(g => {
     scrollArea.appendChild(createGenreBtn(g, activeFilters.has(g), () => {
