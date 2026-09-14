@@ -2814,22 +2814,6 @@
         "03. Reunion",
         "04. L'Internet"
       ]
-    },
-    {
-      "genre": [
-        "HUMOUR",
-        "ORCHESTRAL"
-      ],
-      "type": [
-        "F y r"
-      ],
-      "md_cover": "images/default.jpg",
-      "title": "Hh",
-      "artist": "Jj",
-      "tracks": [
-        "01. Jj"
-      ],
-      "toRecord": false
     }
   ],
   "ideaAlbums": [
