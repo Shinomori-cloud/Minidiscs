@@ -145,13 +145,13 @@ function renderGenreDropdownContent() {
 
 // Application du filtre sélectionné et rafraîchissement de la liste
 function selectGenreFilter(genre) {
-  currentGenreFilter = genre === 'ALL' ? '' : genre;
+  currentGenreFilter = (genre === 'ALL' || !genre) ? '' : genre.toUpperCase().trim();
 
   const dropdown = document.getElementById('genre-filter-dropdown');
   if (dropdown) dropdown.classList.add('hidden');
 
   // Met à jour l'affichage du badge sous le header
-  updateGenreBadge();
+  if (typeof updateGenreBadge === 'function') updateGenreBadge();
 
   // Rafraîchit l'état actif et la coche dans le menu FAB des genres
   populateFabGenreMenu();
@@ -1467,7 +1467,7 @@ function populateFabGenreMenu() {
 
   const allGenres = new Set();
 
-  // 1. Extraction des genres depuis catalogData
+  // 1. Extraction des genres
   catalogData.forEach(md => {
     let genres = [];
     if (typeof getMDAllGenres === 'function') {
@@ -1490,26 +1490,28 @@ function populateFabGenreMenu() {
     return;
   }
 
-  // Fonction helper pour créer les items identiques au planificateur
-  const createGenreBtn = (text, isSelected, onClick) => {
+  const activeGenreNorm = currentGenreFilter ? currentGenreFilter.toUpperCase().trim() : '';
+
+  // Helper pour créer chaque item de genre
+  const createGenreBtn = (text, isSelected, genreValue) => {
     const btn = document.createElement('div');
     btn.className = `fab-genre-item ${isSelected ? 'active' : ''}`;
     btn.innerHTML = `<span>${text}</span>${isSelected ? '<span>✓</span>' : ''}`;
     btn.onclick = (e) => {
       e.stopPropagation(); // Empêche la fermeture du FAB
-      onClick();
+      selectGenreFilter(genreValue);
     };
     return btn;
   };
 
   // 2. Option "TOUS"
-  const isAllActive = !currentGenreFilter || currentGenreFilter === 'ALL';
-  container.appendChild(createGenreBtn('TOUS', isAllActive, () => selectGenreFilter('ALL')));
+  const isAllActive = !activeGenreNorm || activeGenreNorm === 'ALL';
+  container.appendChild(createGenreBtn('TOUS', isAllActive, 'ALL'));
 
-  // 3. Génération des boutons de chaque genre
+  // 3. Boutons par genre
   Array.from(allGenres).sort().forEach(genre => {
-    const isSelected = currentGenreFilter === genre;
-    container.appendChild(createGenreBtn(genre, isSelected, () => selectGenreFilter(genre)));
+    const isSelected = activeGenreNorm === genre;
+    container.appendChild(createGenreBtn(genre, isSelected, genre));
   });
 }
 
