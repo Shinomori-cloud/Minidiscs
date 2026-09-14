@@ -490,8 +490,6 @@ fetch('data.json')
       try {
         const parsedBackup = JSON.parse(savedBackup);
         processLoadedData(parsedBackup);
-        hasUnsavedChanges = true;
-        setTimeout(() => showToast("⚡ Session restaurée : modifications non exportées !"), 500);
       } catch (e) {
         processLoadedData(data);
       }
@@ -508,8 +506,6 @@ fetch('data.json')
       try {
         const parsedBackup = JSON.parse(savedBackup);
         processLoadedData(parsedBackup);
-        hasUnsavedChanges = true;
-        showToast("⚡ Données chargées depuis la sauvegarde locale !");
         handleRoute();
         return;
       } catch (e) {}
