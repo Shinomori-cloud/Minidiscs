@@ -2814,22 +2814,6 @@
         "03. Reunion",
         "04. L'Internet"
       ]
-    },
-    {
-      "genre": [
-        "ACOUSTIC",
-        "METAL"
-      ],
-      "type": [
-        "Test"
-      ],
-      "md_cover": "images/default.jpg",
-      "title": "Fjdjj",
-      "artist": "Jfkdu",
-      "tracks": [
-        "01. Djdjd"
-      ],
-      "toRecord": false
     }
   ],
   "ideaAlbums": [
