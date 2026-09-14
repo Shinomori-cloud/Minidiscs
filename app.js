@@ -164,37 +164,27 @@ function selectGenreFilter(genre) {
 }
 
 // Change le filtre à chaque clic (Tous -> À enregistrer -> Enregistrés)
-function cycleRecordFilter() {
-  if (currentRecordFilter === 'all') {
+function applyStatusFilter(filterValue) {
+  if (filterValue === 'torecord') {
     currentRecordFilter = 'toRecord';
-  } else if (currentRecordFilter === 'toRecord') {
+  } else if (filterValue === 'recorded') {
     currentRecordFilter = 'recorded';
   } else {
     currentRecordFilter = 'all';
   }
 
-  updateFilterIcon();
-  renderMDList({ 
-    genre: currentGenreFilter, 
-    type: currentTypeFilter, 
-    record: currentRecordFilter 
-  }, false);
-}
+  // Masque le sous-menu après la sélection
+  const statusSubmenu = document.getElementById('status-submenu');
+  if (statusSubmenu) {
+    statusSubmenu.classList.add('hidden');
+  }
 
-// Met à jour l'icône du bouton selon le filtre actif
-function updateFilterIcon() {
-  const filterBtn = document.getElementById('filter-fab-btn');
-  if (!filterBtn) return;
-
-  if (currentRecordFilter === 'toRecord') {
-    filterBtn.textContent = '🔴';
-    filterBtn.classList.add('active');
-  } else if (currentRecordFilter === 'recorded') {
-    filterBtn.textContent = '✅';
-    filterBtn.classList.add('active');
-  } else {
-    filterBtn.textContent = '💿';
-    filterBtn.classList.remove('active');
+  if (typeof renderMDList === 'function') {
+    renderMDList({ 
+      genre: typeof currentGenreFilter !== 'undefined' ? currentGenreFilter : '', 
+      type: typeof currentTypeFilter !== 'undefined' ? currentTypeFilter : '', 
+      record: currentRecordFilter 
+    }, false);
   }
 }
 
