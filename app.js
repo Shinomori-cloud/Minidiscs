@@ -153,6 +153,9 @@ function selectGenreFilter(genre) {
   // Met à jour l'affichage du badge sous le header
   updateGenreBadge();
 
+  // Rafraîchit l'état actif et la coche dans le menu FAB des genres
+  populateFabGenreMenu();
+
   renderMDList({ 
     genre: currentGenreFilter, 
     type: currentTypeFilter, 
@@ -1457,7 +1460,7 @@ function applyStatusFilter(status) {
   }
 }
 
-// Remplit le sous-menu FAB avec la liste exacte de tes genres
+// Remplit le sous-menu FAB avec le style exact du Planificateur (Bleu + coche)
 function populateFabGenreMenu() {
   const container = document.getElementById('genres-submenu');
   if (!container || !catalogData) return;
@@ -1487,22 +1490,26 @@ function populateFabGenreMenu() {
     return;
   }
 
+  // Fonction helper pour créer les items identiques au planificateur
+  const createGenreBtn = (text, isSelected, onClick) => {
+    const btn = document.createElement('div');
+    btn.className = `fab-genre-item ${isSelected ? 'active' : ''}`;
+    btn.innerHTML = `<span>${text}</span>${isSelected ? '<span>✓</span>' : ''}`;
+    btn.onclick = (e) => {
+      e.stopPropagation(); // Empêche la fermeture du FAB
+      onClick();
+    };
+    return btn;
+  };
+
   // 2. Option "TOUS"
-  const allBtn = document.createElement('button');
-  allBtn.type = 'button';
-  allBtn.className = `fab-item sub-item ${!currentGenreFilter || currentGenreFilter === 'ALL' ? 'active' : ''}`;
-  allBtn.textContent = 'TOUS';
-  allBtn.onclick = () => selectGenreFilter('ALL');
-  container.appendChild(allBtn);
+  const isAllActive = !currentGenreFilter || currentGenreFilter === 'ALL';
+  container.appendChild(createGenreBtn('TOUS', isAllActive, () => selectGenreFilter('ALL')));
 
   // 3. Génération des boutons de chaque genre
   Array.from(allGenres).sort().forEach(genre => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = `fab-item sub-item ${currentGenreFilter === genre ? 'active' : ''}`;
-    btn.textContent = genre;
-    btn.onclick = () => selectGenreFilter(genre);
-    container.appendChild(btn);
+    const isSelected = currentGenreFilter === genre;
+    container.appendChild(createGenreBtn(genre, isSelected, () => selectGenreFilter(genre)));
   });
 }
 
