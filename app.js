@@ -447,8 +447,9 @@ function handleRoute() {
     const urlParams = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
     const genre = urlParams.get('genre');
     const type = urlParams.get('type');
+    const record = urlParams.get('record');
     if (typeof renderMDList === 'function') {
-      renderMDList({ genre, type }, false);
+      renderMDList({ genre, type, record }, false);
     }
   } else if (hash.startsWith('#md-')) {
     const mdIndex = parseInt(hash.replace('#md-', ''), 10);
@@ -701,7 +702,14 @@ function renderMDList(filters = {}, pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'flex';
 
-  const { genre = currentGenreFilter, type = currentTypeFilter, record = currentRecordFilter } = filters;
+  // Mise à jour explicite des variables globales avec fallback
+  currentGenreFilter = filters.genre !== undefined ? filters.genre : currentGenreFilter;
+  currentTypeFilter = filters.type !== undefined ? filters.type : currentTypeFilter;
+  currentRecordFilter = filters.record !== undefined ? filters.record : currentRecordFilter;
+
+  const genre = currentGenreFilter;
+  const type = currentTypeFilter;
+  const record = currentRecordFilter;
 
   if (pushState) {
     window.location.hash = '#md-list';
@@ -709,9 +717,6 @@ function renderMDList(filters = {}, pushState = true) {
   
   currentMD = null;
   currentAlbum = null;
-  currentGenreFilter = genre;
-  currentTypeFilter = type;
-  currentRecordFilter = record;
 
   if (backBtn) backBtn.classList.remove('hidden');
 
@@ -1460,15 +1465,26 @@ function toggleFabSubmenu(id) {
 }
 
 // Applique le filtre de statut directement au clic
-function applyStatusFilter(status) {
-  // Si tu as déjà une variable de filtre globale (ex: currentRecordFilter)
-  // tu peux l'affecter directement ici, ou utiliser ton switcher :
-  if (typeof setRecordFilter === 'function') {
-    setRecordFilter(status);
-  } else if (typeof cycleRecordFilter === 'function') {
-    // Si tu n'as que cycleRecordFilter, on la déclenche
-    cycleRecordFilter();
+function applyStatusFilter(filterValue) {
+  let targetRecord = 'all';
+  if (filterValue === 'torecord') {
+    targetRecord = 'toRecord';
+  } else if (filterValue === 'recorded') {
+    targetRecord = 'recorded';
   }
+
+  // Masque le sous-menu après sélection
+  const statusSubmenu = document.getElementById('status-submenu');
+  if (statusSubmenu) {
+    statusSubmenu.classList.add('hidden');
+  }
+
+  // Application explicite du filtre
+  renderMDList({ 
+    genre: currentGenreFilter, 
+    type: currentTypeFilter, 
+    record: targetRecord 
+  }, false);
 }
 
 // Remplit le sous-menu FAB avec le style exact du Planificateur (Bleu + coche)
