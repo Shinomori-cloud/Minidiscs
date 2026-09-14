@@ -2093,6 +2093,25 @@ function convertSelectedToMD() {
 }
 
 /* ==========================================
+   GESTION DE LA RECHERCHE PLANIFICATEUR VIA FAB
+   ========================================== */
+function handlePlannerSearch(query) {
+  const searchTerm = query ? query.toLowerCase().trim() : '';
+  
+  // Slectionne toutes les cartes ou lignes d'idées dans le planificateur
+  const plannerItems = document.querySelectorAll('#planner-container .planner-card, #planner-container .planner-item, .planner-idea-card');
+
+  plannerItems.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    if (text.includes(searchTerm)) {
+      item.style.display = '';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
+
+/* ==========================================
    GESTION DU BOUTON RETOUR (ANCRAGE HASH)
    ========================================== */
 
