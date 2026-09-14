@@ -1708,26 +1708,26 @@ function renderCompilPlanner(pushState = true) {
           ${cardsHTML}
         </div>
 
-        <div style="position: fixed; bottom: 30px; right: 22px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
-          <div id="planner-fab-menu" style="display: none; flex-direction: column; gap: 10px; background: #ffffff; border: 3px solid #000000; border-radius: 16px; padding: 12px; box-shadow: 4px 4px 0px #000000; min-width: 180px;">
-            <button type="button" id="planner-btn-add" onclick="if(typeof openIdeaModal==='function') openIdeaModal();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ff007f; color: #ffffff; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000;">
+        <div id="planner-floating-actions" class="fab-container">
+          <div id="planner-fab-menu" class="fab-menu hidden">
+            <button type="button" id="planner-btn-add" class="fab-item" onclick="if(typeof openIdeaModal==='function') openIdeaModal();">
               💽 Ajouter
             </button>
-            <button type="button" id="planner-btn-convert" onclick="if(typeof convertSelectedToMD==='function') convertSelectedToMD(); else if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''} style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #06d6a0; color: #000000; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: ${countSelect === 0 ? 'not-allowed' : 'pointer'}; opacity: ${countSelect === 0 ? '0.6' : '1'}; text-align: left; box-shadow: 2px 2px 0px #000000;">
+            <button type="button" id="planner-btn-convert" class="fab-item" onclick="if(typeof convertSelectedToMD==='function') convertSelectedToMD(); else if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''}>
               💾 Convertir (${countSelect})
             </button>
-            <button type="button" id="planner-btn-reset" onclick="if(typeof clearIdeaSelection==='function') clearIdeaSelection(); else if(typeof resetPlannerSelections==='function') resetPlannerSelections();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #f8f9fa; color: #e63946; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000;">
+            <button type="button" id="planner-btn-reset" class="fab-item" onclick="if(typeof clearIdeaSelection==='function') clearIdeaSelection(); else if(typeof resetPlannerSelections==='function') resetPlannerSelections();">
               🔄 Réinitialiser
             </button>
           
-            <div style="border-top: 2px solid #000000; margin: 2px 6px; opacity: 0.15;"></div>
+            <hr class="fab-divider">
           
-            <button type="button" id="planner-btn-genre-toggle" onclick="if(typeof togglePlannerGenreDropdown==='function') togglePlannerGenreDropdown();" style="height: 40px; border: 2px solid #000000; border-radius: 10px; background: #ffffff; color: #000000; font-weight: 800; font-size: 0.85rem; padding: 0 12px; cursor: pointer; text-align: left; box-shadow: 2px 2px 0px #000000;">
+            <button type="button" id="planner-btn-genre-toggle" class="fab-item" onclick="if(typeof togglePlannerGenreDropdown==='function') togglePlannerGenreDropdown();">
               🎵 Genres ${activeGenreCount > 0 ? '(' + activeGenreCount + ')' : ''}
             </button>
           </div>
           
-          <button type="button" onclick="togglePlannerFabMenu();" style="width: 50px; height: 50px; border-radius: 50%; background: #ff007f; color: #ffffff; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; font-size: 1.4rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; outline: none;">
+          <button type="button" id="planner-fab-main-btn" class="fab-main-btn" onclick="togglePlannerFabMenu();" title="Menu planificateur">
             ⚡
           </button>
         </div>
