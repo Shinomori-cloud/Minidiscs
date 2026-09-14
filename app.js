@@ -163,29 +163,19 @@ function selectGenreFilter(genre) {
   }, false);
 }
 
-// Change le filtre à chaque clic (Tous -> À enregistrer -> Enregistrés)
 function applyStatusFilter(filterValue) {
+  let targetRecord = 'all';
   if (filterValue === 'torecord') {
-    currentRecordFilter = 'toRecord';
+    targetRecord = 'toRecord';
   } else if (filterValue === 'recorded') {
-    currentRecordFilter = 'recorded';
-  } else {
-    currentRecordFilter = 'all';
+    targetRecord = 'recorded';
   }
 
-  // Masque le sous-menu après la sélection
-  const statusSubmenu = document.getElementById('status-submenu');
-  if (statusSubmenu) {
-    statusSubmenu.classList.add('hidden');
-  }
-
-  if (typeof renderMDList === 'function') {
-    renderMDList({ 
-      genre: typeof currentGenreFilter !== 'undefined' ? currentGenreFilter : '', 
-      type: typeof currentTypeFilter !== 'undefined' ? currentTypeFilter : '', 
-      record: currentRecordFilter 
-    }, false);
-  }
+  renderMDList({ 
+    genre: currentGenreFilter, 
+    type: currentTypeFilter, 
+    record: targetRecord 
+  }, false);
 }
 
 function mdMatchesSearch(md, query) {
