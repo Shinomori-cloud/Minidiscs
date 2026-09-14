@@ -317,9 +317,9 @@
     },
     {
       "genre": [
-        "Alternative Rock",
-        "Pop Rock",
-        "Experimental"
+        "ALTERNATIVE ROCK",
+        "EXPERIMENTAL",
+        "POP ROCK"
       ],
       "type": [
         "Albums"
@@ -349,7 +349,7 @@
             "15. Blank Page",
             "16. 17"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Alternative Rock",
             "Experimental"
@@ -376,7 +376,7 @@
             "26. Pick Up If You're There",
             "27. Delta Sun Bottleneck Stomp"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "genre": [
             "Pop Rock",
             "Experimental"
