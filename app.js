@@ -1097,6 +1097,10 @@ function openAdminModal(indexToEdit = null) {
   if (albumsContainer) albumsContainer.innerHTML = '';
   adminAlbumCount = 0;
 
+  // Réinitialiser le champ fichier principal avec une chaîne vide
+  const mdCoverInput = document.getElementById('md-cover');
+  if (mdCoverInput) mdCoverInput.value = '';
+
   if (editingMDIndex !== null) {
     // ==========================================
     // MODE ÉDITION
@@ -1108,7 +1112,6 @@ function openAdminModal(indexToEdit = null) {
     if (document.getElementById('md-type-tags')) {
       document.getElementById('md-type-tags').value = Array.isArray(md.type) ? md.type.join(', ') : (md.type || '');
     }
-    document.getElementById('md-cover').value = md.md_cover || 'images/';
 
     const isCompil = !md.albums || md.albums.length === 0;
     
@@ -1136,7 +1139,6 @@ function openAdminModal(indexToEdit = null) {
         if (block.querySelector('.album-type')) block.querySelector('.album-type').value = Array.isArray(album.type) ? album.type.join(', ') : (album.type || '');
         block.querySelector('.album-genre').value = Array.isArray(album.genre) ? album.genre.join(', ') : (album.genre || '');
         block.querySelector('.album-year').value = album.year || '';
-        block.querySelector('.album-cover').value = album.cover || 'images/';
         block.querySelector('.album-tracks').value = album.tracks ? album.tracks.map(t => t.replace(/^\d+\.\s*/, '')).join('\n') : '';
         if (block.querySelector('.album-to-record')) {
           block.querySelector('.album-to-record').checked = !!album.toRecord;
@@ -1159,7 +1161,6 @@ function openAdminModal(indexToEdit = null) {
     // Réinitialisation des champs spécifiques
     if (document.getElementById('md-genre')) document.getElementById('md-genre').value = '';
     if (document.getElementById('md-type-tags')) document.getElementById('md-type-tags').value = '';
-    if (document.getElementById('md-cover')) document.getElementById('md-cover').value = "images/";
     
     if (document.getElementById('compil-title')) document.getElementById('compil-title').value = '';
     if (document.getElementById('compil-artist')) document.getElementById('compil-artist').value = '';
