@@ -840,8 +840,8 @@ function openMD(index, pushState = true) {
         </button>
       </div>
       
-      <button type="button" class="fab-main-btn" onclick="toggleMdDetailFabMenu();" title="Actions MiniDisc">
-        ⚡
+      <button type="button" id="md-detail-fab-main-btn" class="fab-main-btn" onclick="toggleMdDetailFabMenu();" title="Actions MiniDisc">
+        <span class="fab-icon">🎚️</span>
       </button>
     </div>
   `;
