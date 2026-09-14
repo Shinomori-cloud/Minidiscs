@@ -3093,13 +3093,6 @@
       "genre": "METAL",
       "duration": "1:18:59",
       "cover": "images/load.jpg"
-    },
-    {
-      "title": "Test",
-      "artist": "Test",
-      "genre": "ACOUSTIC, FRANÇAIS",
-      "duration": "1:01:01",
-      "cover": "images/"
     }
   ]
 }
