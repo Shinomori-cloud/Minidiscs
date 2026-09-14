@@ -709,7 +709,6 @@ function renderDashboard(pushState = true) {
 function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
 
-  // 1. Afficher la barre d'actions UNIQUEMENT sur la liste
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'flex';
 
@@ -740,7 +739,6 @@ function renderMDList(filters = {}, pushState = true) {
     filteredCatalog = filteredCatalog.filter(({ md }) => getMDAllTypes(md).includes(type.toUpperCase().trim()));
   }
 
-  // Application du filtre de statut
   if (record === 'toRecord') {
     filteredCatalog = filteredCatalog.filter(({ md }) => 
       md.toRecord || (md.albums && md.albums.some(a => a.toRecord))
@@ -759,7 +757,6 @@ function renderMDList(filters = {}, pushState = true) {
   const seedSuffix = genre ? `-genre-${genre}` : (type ? `-type-${type}` : '-all');
   const shuffledCatalog = dailyShuffle(filteredCatalog, seedSuffix);
 
-  // 2. Génération du HTML pur de la liste (sans reinjecter de barre flottante)
   let html = '<div class="list-container">';
   
   if (shuffledCatalog.length === 0) {
@@ -791,11 +788,11 @@ function renderMDList(filters = {}, pushState = true) {
         ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
         : '';
 
-      const defaultCover = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='68'><rect width='100%' height='100%' fill='%23e5e7eb'/><text x='50%' y='50%' font-size='20' text-anchor='middle' dominant-baseline='central'>💽</text></svg>";
+      const coverHTML = createLoadingCoverHTML(md.md_cover, 'md-thumb', '💽');
 
       html += `
         <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px; position: relative;" onclick="openMD(${originalIndex})">
-          <img class="md-thumb" src="${md.md_cover || ''}" onerror="this.src='${defaultCover}'">
+          ${coverHTML}
           <div class="item-details">
             <div class="item-tag" style="color: ${borderColor};">${allGenres.join(' / ')}</div>
             <div class="md-albums-list">${albumsContent}</div>
@@ -858,11 +855,13 @@ function openMD(index, pushState = true) {
       ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
       : '';
 
+    const coverHTML = createLoadingCoverHTML(md.md_cover, 'album-cover-large', '💽');
+
     app.innerHTML = `
       <div class="track-container">
         ${adminControls}
         <div class="album-header">
-          <img class="album-cover-large" src="${md.md_cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+          ${coverHTML}
           <div>
             ${badgeCompilHTML}
             <h2 style="font-size: 1.2rem; font-weight: 800;">${md.title || 'Compilation'}</h2>
@@ -889,10 +888,12 @@ function openMD(index, pushState = true) {
       ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
       : '';
 
+    const coverHTML = createLoadingCoverHTML(album.cover, 'album-thumb', '🎵');
+
     html += `
       <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px; position: relative;" onclick="openAlbum(${index}, ${aIndex})">
         <div class="album-cover-container" style="margin-right: 15px; display: inline-block;">
-          <img class="album-thumb" style="margin-right: 0;" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'24\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
+          ${coverHTML}
         </div>
         <div class="item-details">
           <div class="item-tag" style="color: ${albumColor};">${albumGenres.join(' / ')}</div>
@@ -947,10 +948,12 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
     : '';
 
+  const coverHTML = createLoadingCoverHTML(album.cover, 'album-cover-large', '🎵');
+
   app.innerHTML = `
     <div class="track-container">
       <div class="album-header">
-        <img class="album-cover-large" src="${album.cover || ''}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'150\\' height=\\'150\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'36\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>🎵</text></svg>'">
+        ${coverHTML}
         <div>
           ${badgeAlbumHTML}
           <h2 style="font-size: 1.2rem; font-weight: 800;">${album.title || 'Album sans titre'}</h2>
