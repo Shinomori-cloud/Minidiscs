@@ -29,13 +29,6 @@ const featuredContainer = document.getElementById('featured-container');
 /* ==========================================
    PROTECTION ANTI-FERMETURE ET STOCKAGE LOCAL
    ========================================== */
-window.addEventListener('beforeunload', (e) => {
-  if (hasUnsavedChanges) {
-    e.preventDefault();
-    e.returnValue = '';
-  }
-});
-
 function saveLocalBackup() {
   const payload = {
     minidiscs: catalogData || [],
@@ -43,8 +36,6 @@ function saveLocalBackup() {
   };
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    hasUnsavedChanges = true;
-
     syncCollectionToGithub(payload);
   } catch (err) {
     console.error("Erreur de sauvegarde locale:", err);
@@ -53,7 +44,6 @@ function saveLocalBackup() {
 
 function clearLocalBackup() {
   localStorage.removeItem(STORAGE_KEY);
-  hasUnsavedChanges = false;
 }
 
 /* ==========================================
@@ -702,17 +692,14 @@ function renderDashboard(pushState = true) {
       </button>
 
       <div class="dashboard-actions-row">
-        <button class="action-btn-wide" onclick="window.location.hash = '#planner'">
-          Créer une compilation
-        </button>
-        <button class="action-btn-wide" onclick="openAdminModal()">
-          ＋ Ajouter un MD
-        </button>
-        <button class="action-btn-json" style="${jsonBtnStyle}" onclick="event.preventDefault(); downloadUpdatedJSON();" title="Télécharger data.json">
-          💾 JSON
-        </button>
-      </div>
-    </div>
+  <button class="action-btn-wide" onclick="window.location.hash = '#planner'">
+    Créer une compilation
+  </button>
+  <button class="action-btn-wide" onclick="openAdminModal()">
+    ＋ Ajouter un MD
+  </button>
+</div>
+</div>
   `;
 
   if (typeof renderFeatured === 'function') renderFeatured();
@@ -1374,36 +1361,6 @@ function submitNewMD(e) {
 
   saveLocalBackup();
   closeAdminModal();
-  renderDashboard(false);
-}
-
-function downloadUpdatedJSON() {
-  if ((!catalogData || catalogData.length === 0) && (!window.ideaAlbums || window.ideaAlbums.length === 0)) {
-    showToast("⚠️ Le catalogue est vide !");
-    return;
-  }
-
-  const exportPayload = {
-    minidiscs: catalogData || [],
-    ideaAlbums: window.ideaAlbums || []
-  };
-
-  const jsonString = JSON.stringify(exportPayload, null, 2);
-  const blob = new Blob([jsonString], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  
-  const downloadAnchor = document.createElement('a');
-  downloadAnchor.href = url;
-  downloadAnchor.download = "data.json";
-  
-  document.body.appendChild(downloadAnchor);
-  downloadAnchor.click();
-  document.body.removeChild(downloadAnchor);
-
-  setTimeout(() => URL.revokeObjectURL(url), 100);
-  
-  clearLocalBackup();
-  showToast("✅ Téléchargement réussi ! Sauvegarde réinitialisée.");
   renderDashboard(false);
 }
 
