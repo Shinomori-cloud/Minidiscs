@@ -198,7 +198,12 @@
       <hr class="fab-divider">
       <div class="fab-section-title">Recherche</div>
       <div style="padding: 2px 4px;">
-        <input type="text" class="fab-search-input" placeholder="Rechercher un MD..." oninput="if(typeof filterMDList==='function'){ filterMDList(this.value); } else if(typeof handleCatalogSearch==='function'){ handleCatalogSearch(this.value); }" />
+        <input 
+          type="text" 
+          class="fab-search-input" 
+          placeholder="Rechercher un MD..." 
+          oninput="handleCatalogSearch(this.value);" 
+        />
       </div>
 
       <!-- Section Options -->
