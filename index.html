@@ -178,40 +178,40 @@
     <!-- Menu déroulant avec toutes les actions -->
     <div id="fab-menu" class="fab-menu hidden">
       
-      <!-- 1. Filtre par statut avec sous-menu -->
-      <button type="button" class="fab-item" onclick="toggleFabSubmenu('status-submenu')">
-        🔴 Filtrer par statut ▾
+      <!-- Section Filtres -->
+      <div class="fab-section-title">Filtres</div>
+      <button type="button" class="fab-item" onclick="toggleFabSubmenu('genres-submenu');">
+        <span>🎵 Genres</span>
+      </button>
+      <div id="genres-submenu" class="fab-submenu fab-genre-submenu hidden"></div>
+
+      <button type="button" class="fab-item" onclick="toggleFabSubmenu('status-submenu');">
+        <span>🎚️ Statut</span>
       </button>
       <div id="status-submenu" class="fab-submenu hidden">
-        <button type="button" class="fab-item sub-item" onclick="applyStatusFilter('all', event)">Tous</button>
-        <button type="button" class="fab-item sub-item" onclick="applyStatusFilter('torecord', event)">À enregistrer</button>
-        <button type="button" class="fab-item sub-item" onclick="applyStatusFilter('recorded', event)">Enregistrés</button>
+        <div class="fab-genre-item" onclick="applyStatusFilter('all', event)"><span>Tous</span></div>
+        <div class="fab-genre-item" onclick="applyStatusFilter('torecord', event)"><span>À enregistrer</span></div>
+        <div class="fab-genre-item" onclick="applyStatusFilter('recorded', event)"><span>Enregistrés</span></div>
       </div>
 
-      <!-- 2. Recherche (ne ferme plus le menu) -->
-      <button type="button" class="fab-item" onclick="toggleSearch();">
-        🧐 Rechercher
-      </button>
-
-      <!-- 3. Filtre par genre avec sous-menu dynamique -->
-      <button type="button" class="fab-item" onclick="toggleGenreDropdown()">
-        📻 Filtrer par genre ▾
-      </button>
-      <div id="genres-submenu" class="fab-submenu hidden fab-scrollable-submenu">
-        <!-- Les genres seront injectés ici par JS -->
-      </div>
-      
+      <!-- Section Recherche -->
       <hr class="fab-divider">
-      
-      <!-- 4. Administration -->
-      <button type="button" class="fab-item" onclick="openAdminModal(); toggleFabMenu();">
-        💽 Ajouter un MD
+      <div class="fab-section-title">Recherche</div>
+      <div style="padding: 2px 4px;">
+        <input type="text" class="fab-search-input" placeholder="Rechercher un MD..." oninput="if(typeof filterMDList==='function'){ filterMDList(this.value); } else if(typeof handleCatalogSearch==='function'){ handleCatalogSearch(this.value); }" />
+      </div>
+
+      <!-- Section Options -->
+      <hr class="fab-divider">
+      <div class="fab-section-title">Options</div>
+      <button type="button" class="fab-item accent" onclick="if(typeof openAddMDModal==='function') openAddMDModal(); else if(typeof openAdminModal==='function') openAdminModal(); toggleFabMenu();">
+        <span>+ Ajouter un MD</span>
       </button>
     </div>
     
     <!-- Le bouton déclencheur unique -->
     <button type="button" id="fab-main-btn" class="fab-main-btn" onclick="toggleFabMenu()" title="Menu principal">
-      <span class="fab-icon">🎚️</span>
+      <span class="fab-icon">⚙️</span>
     </button>
   </div>
 
