@@ -3121,6 +3121,13 @@
       "genre": "METAL",
       "duration": "1:18:59",
       "cover": "images/load.jpg"
+    },
+    {
+      "title": "Weezer",
+      "artist": "Weezer",
+      "genre": "ALTERNATIVE ROCK, GRUNGE",
+      "duration": "41:17",
+      "cover": "images/img_1789390640391.jpg"
     }
   ]
 }
