@@ -1286,10 +1286,12 @@ async function submitNewMD(e) {
   showToast("⏳ Traitement et envoi de l'image...");
 
   // Upload de l'image principale du MiniDisc si un fichier est sélectionné
-  let mdCoverPath = 'images/';
+  let mdCoverPath = 'images/default.jpg';
   if (mdCoverInput && mdCoverInput.files && mdCoverInput.files.length > 0) {
     const uploadedPath = await handleImageUpload(mdCoverInput);
-    if (uploadedPath) mdCoverPath = uploadedPath;
+    if (uploadedPath) {
+      mdCoverPath = uploadedPath;
+    }
   } else if (editingMDIndex !== null && catalogData[editingMDIndex].md_cover) {
     // Conservation de l'ancienne image si aucune nouvelle n'a été choisie en édition
     mdCoverPath = catalogData[editingMDIndex].md_cover;
@@ -1326,7 +1328,7 @@ async function submitNewMD(e) {
       return;
     }
 
-    // Boucle for standard pour permettre l'usage d'await sur l'upload d'image de chaque album
+    // Boucle pour l'upload d'image de chaque album
     for (let i = 0; i < albumBlocks.length; i++) {
       const block = albumBlocks[i];
       const rawTracks = block.querySelector('.album-tracks').value.split('\n');
@@ -1346,13 +1348,15 @@ async function submitNewMD(e) {
 
       // Gestion de l'upload d'image pour l'album
       const albumCoverInput = block.querySelector('.album-cover');
-      let albumCoverPath = 'images/';
+      let albumCoverPath = 'images/default.jpg';
       
       if (albumCoverInput && albumCoverInput.files && albumCoverInput.files.length > 0) {
         const uploadedPath = await handleImageUpload(albumCoverInput);
-        if (uploadedPath) albumCoverPath = uploadedPath;
+        if (uploadedPath) {
+          albumCoverPath = uploadedPath;
+        }
       } else if (editingMDIndex !== null && catalogData[editingMDIndex].albums && catalogData[editingMDIndex].albums[i]) {
-        albumCoverPath = catalogData[editingMDIndex].albums[i].cover || 'images/';
+        albumCoverPath = catalogData[editingMDIndex].albums[i].cover || 'images/default.jpg';
       }
 
       const albumObj = {
@@ -2072,10 +2076,9 @@ async function syncCollectionToGithub(dataArray) {
     return;
   }
 
-  // Remplace par tes informations
   const USERNAME = 'Shinomori-cloud';
   const REPO = 'Minidiscs';
-  const FILE_PATH = 'data.json'; // Chemin vers ton fichier JSON dans le repo
+  const FILE_PATH = 'data.json'; // Chemin vers le fichier JSON dans le repo
 
   const url = `https://api.github.com/repos/${USERNAME}/${REPO}/contents/${FILE_PATH}`;
 
@@ -2170,7 +2173,6 @@ async function handleImageUpload(fileInput) {
   const fileName = `img_${Date.now()}.${extension}`;
   const filePath = `images/${fileName}`;
 
-  // Remplace par tes véritables identifiants
   const USERNAME = 'Shinomori-cloud';
   const REPO = 'Minidiscs';
   const url = `https://api.github.com/repos/${USERNAME}/${REPO}/contents/${filePath}`;
