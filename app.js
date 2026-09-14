@@ -1748,20 +1748,30 @@ function renderCompilPlanner(pushState = true) {
 
         <div id="planner-floating-actions" class="fab-container">
           <div id="planner-fab-menu" class="fab-menu hidden">
-            <button type="button" id="planner-btn-add" class="fab-item" onclick="if(typeof openIdeaModal==='function') openIdeaModal();">
-              💽 Ajouter
-            </button>
-            <button type="button" id="planner-btn-convert" class="fab-item" onclick="if(typeof convertSelectedToMD==='function') convertSelectedToMD(); else if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''}>
-              💾 Convertir (${countSelect})
-            </button>
-            <button type="button" id="planner-btn-reset" class="fab-item" onclick="if(typeof clearIdeaSelection==='function') clearIdeaSelection(); else if(typeof resetPlannerSelections==='function') resetPlannerSelections();">
-              🔄 Réinitialiser
-            </button>
-          
-            <hr class="fab-divider">
-          
+            <!-- Section Filtres -->
+            <div class="fab-section-title">Filtres</div>
             <button type="button" id="planner-btn-genre-toggle" class="fab-item" onclick="if(typeof togglePlannerGenreDropdown==='function') togglePlannerGenreDropdown();">
               🎵 Genres ${activeGenreCount > 0 ? '(' + activeGenreCount + ')' : ''}
+            </button>
+
+            <!-- Section Recherche -->
+            <hr class="fab-divider">
+            <div class="fab-section-title">Recherche</div>
+            <div style="padding: 2px 4px;">
+              <input type="text" id="planner-search-input" class="fab-search-input" placeholder="Chercher une idée..." oninput="if(typeof filterPlannerBySearch==='function') filterPlannerBySearch(this.value);" />
+            </div>
+
+            <!-- Section Options -->
+            <hr class="fab-divider">
+            <div class="fab-section-title">Options</div>
+            <button type="button" id="planner-btn-add" class="fab-item accent" onclick="if(typeof openIdeaModal==='function') openIdeaModal();">
+              💽 Ajouter
+            </button>
+            <button type="button" id="planner-btn-convert" class="fab-item success" onclick="if(typeof convertSelectedToMD==='function') convertSelectedToMD(); else if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''}>
+              💾 Convertir (${countSelect})
+            </button>
+            <button type="button" id="planner-btn-reset" class="fab-item danger" onclick="if(typeof clearIdeaSelection==='function') clearIdeaSelection(); else if(typeof resetPlannerSelections==='function') resetPlannerSelections();">
+              🔄 Réinitialiser
             </button>
           </div>
           
@@ -1897,7 +1907,14 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   });
 
   subMenu.appendChild(scrollArea);
-  fabMenu.appendChild(subMenu);
+  
+  // Insertion directe après le bouton de bascule de genre
+  const genreToggleBtn = document.getElementById('planner-btn-genre-toggle');
+  if (genreToggleBtn && genreToggleBtn.nextSibling) {
+    fabMenu.insertBefore(subMenu, genreToggleBtn.nextSibling);
+  } else {
+    fabMenu.appendChild(subMenu);
+  }
 
   if (savedScrollTop > 0) {
     scrollArea.scrollTop = savedScrollTop;
