@@ -1160,7 +1160,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   10. TOAST & FAB
+   10. TOAST & FAB GENERIQUES
    ========================================== */
 .toast {
   position: fixed;
@@ -1178,11 +1178,9 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   z-index: 9999;
   transition: opacity 0.25s ease, transform 0.25s ease;
   text-align: center;
-
-   /* MODIFICATIONS POUR LA LARGEUR */
-  max-width: 260px; /* Limite la largeur globale */
-  width: max-content; /* S'adapte au texte court sans être trop large */
-  white-space: normal; /* Autorise le retour à la ligne */
+  max-width: 260px;
+  width: max-content;
+  white-space: normal;
 }
 
 .toast.hidden,
@@ -1191,11 +1189,11 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 /* ==========================================
-   BOUTON FLOTTANT UNIQUE & MENU DÉROULANT
+   BOUTONS FLOTTANTS (FAB) ET MENUS DEROULANTS
    ========================================== */
 
 /* Conteneur fixe en bas à droite */
-#floating-actions.fab-container {
+.fab-container {
   position: fixed !important;
   bottom: 20px !important;
   right: 20px !important;
@@ -1205,13 +1203,12 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   align-items: flex-end !important;
 }
 
-/* Règle stricte : masque le bouton s'il a la classe hidden */
-#floating-actions.fab-container.hidden {
+.fab-container.hidden {
   display: none !important;
 }
 
-/* Bouton principal rond ⚙️ */
-#floating-actions .fab-main-btn {
+/* Bouton principal rond */
+.fab-main-btn {
   width: 52px;
   height: 52px;
   border-radius: 50%;
@@ -1226,12 +1223,12 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   transition: transform 0.15s ease, background-color 0.15s;
 }
 
-#floating-actions .fab-main-btn:active {
+.fab-main-btn:active {
   transform: scale(0.92);
 }
 
 /* Menu déroulant au-dessus du bouton */
-#floating-actions #fab-menu {
+.fab-menu {
   position: absolute;
   bottom: 62px;
   right: 0;
@@ -1246,12 +1243,12 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   min-width: 190px;
 }
 
-#floating-actions #fab-menu.hidden {
+.fab-menu.hidden {
   display: none !important;
 }
 
 /* Éléments du menu */
-#floating-actions .fab-item {
+.fab-item {
   background: transparent;
   border: none;
   padding: 10px 12px;
@@ -1265,16 +1262,63 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   transition: background 0.15s ease;
 }
 
-#floating-actions .fab-item:hover {
+.fab-item:hover:not(:disabled) {
   background-color: #f0f4f8;
 }
 
+.fab-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Ligne de séparation dans le menu */
-#floating-actions .fab-divider {
+.fab-divider {
   border: 0;
   height: 1px;
   background: #e0e0e0;
   margin: 4px 0;
+}
+
+/* Sous-menus */
+.fab-submenu {
+  display: flex !important;
+  flex-direction: column !important;
+  padding-left: 16px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+  border-left: 2px solid #e0e0e0;
+  gap: 2px;
+}
+
+.fab-submenu.hidden {
+  display: none !important;
+}
+
+.fab-item.sub-item {
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  font-weight: 500;
+  color: #555;
+}
+
+.fab-item.sub-item:hover:not(:disabled) {
+  background-color: #e9ecef;
+  color: #000;
+}
+
+.fab-scrollable-submenu {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-right: 4px;
+}
+
+.fab-scrollable-submenu::-webkit-scrollbar {
+  width: 4px;
+}
+
+.fab-scrollable-submenu::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
 }
 
 /* ==========================================
@@ -1288,9 +1332,9 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: flex !important;
   flex-direction: column !important;
   position: fixed !important;
-  bottom: 82px !important; /* Positionné juste au-dessus de la barre flottante */
+  bottom: 82px !important;
   left: 50% !important;
-  transform: translateX(-50%) !important; /* Centré au-dessus de la barre */
+  transform: translateX(-50%) !important;
   width: 240px !important;
   max-height: 60vh !important;
   background: #ffffff !important;
@@ -1325,7 +1369,6 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   padding-right: 2px !important;
 }
 
-/* Boutons de la fenêtre de filtre */
 #genre-filter-dropdown .md-filter-btn {
   display: block !important;
   width: 100% !important;
@@ -1365,133 +1408,6 @@ html, body {
   overscroll-behavior-y: none;
 }
 
-/* ==========================================
-   BOUTON FLOTTANT UNIQUE & MENU DÉROULANT (MAIN FAB)
-   ========================================== */
-
-/* Conteneur fixe ciblé pour ne pas impacter le planificateur */
-#floating-actions.fab-container {
-  position: fixed !important;
-  bottom: 20px !important;
-  right: 20px !important;
-  z-index: 9999 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-end !important;
-}
-
-/* Bouton principal rond ⚙️ */
-#floating-actions .fab-main-btn {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 2px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
-  font-size: 1.4rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s ease, background-color 0.15s;
-}
-
-#floating-actions .fab-main-btn:active {
-  transform: scale(0.92);
-}
-
-/* Menu déroulant au-dessus du bouton */
-#floating-actions #fab-menu {
-  position: absolute;
-  bottom: 62px;
-  right: 0;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 2px;
-  background: #ffffff;
-  padding: 8px;
-  border-radius: 12px;
-  border: 2px solid #000000;
-  box-shadow: 4px 4px 0px #000000;
-  min-width: 190px;
-}
-
-#floating-actions #fab-menu.hidden {
-  display: none !important;
-}
-
-/* Éléments du menu */
-#floating-actions .fab-item {
-  background: transparent;
-  border: none;
-  padding: 10px 12px;
-  text-align: left;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #333;
-  cursor: pointer;
-  border-radius: 6px;
-  white-space: nowrap;
-  transition: background 0.15s ease;
-}
-
-#floating-actions .fab-item:hover {
-  background-color: #f0f4f8;
-}
-
-/* Ligne de séparation dans le menu */
-#floating-actions .fab-divider {
-  border: 0;
-  height: 1px;
-  background: #e0e0e0;
-  margin: 4px 0;
-}
-
-/* Style du sous-menu (Statut) */
-#floating-actions .fab-submenu {
-  display: flex !important;
-  flex-direction: column !important;
-  padding-left: 16px; /* Décalage pour montrer que c'est un sous-menu */
-  margin-top: 2px;
-  margin-bottom: 4px;
-  border-left: 2px solid #e0e0e0;
-  gap: 2px;
-}
-
-#floating-actions .fab-submenu.hidden {
-  display: none !important;
-}
-
-/* Style spécifique pour les boutons du sous-menu */
-#floating-actions .fab-item.sub-item {
-  font-size: 0.8rem;
-  padding: 6px 12px;
-  font-weight: 500;
-  color: #555;
-}
-
-#floating-actions .fab-item.sub-item:hover {
-  background-color: #e9ecef;
-  color: #000;
-}
-
-/* Défilement fluide pour le sous-menu des genres s'il y en a beaucoup */
-#floating-actions .fab-scrollable-submenu {
-  max-height: 200px;
-  overflow-y: auto;
-  margin-right: 4px;
-}
-
-/* Scrollbar discrète pour le sous-menu */
-#floating-actions .fab-scrollable-submenu::-webkit-scrollbar {
-  width: 4px;
-}
-
-#floating-actions .fab-scrollable-submenu::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 4px;
-}
-
 .active-genre-badge {
   text-align: center;
   margin: -6px auto 10px auto;
@@ -1511,7 +1427,6 @@ html, body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Now Loading Images */
 @keyframes pulseLoading {
   0% { opacity: 0.3; }
   50% { opacity: 1; }
