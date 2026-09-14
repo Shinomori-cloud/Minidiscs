@@ -965,10 +965,6 @@ const fabHTML = `
       <button type="button" class="fab-item accent" onclick="openAdminModal(${index});">
         ✏️ Modifier
       </button>
-
-      <!-- Section Actions -->
-      <hr class="fab-divider">
-      <div class="fab-section-title">Actions</div>
       <button type="button" class="fab-item danger" onclick="deleteMD(${index});">
         🗑️ Supprimer
       </button>
