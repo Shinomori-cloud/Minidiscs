@@ -1880,7 +1880,7 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
   };
 
   // 1. Bouton "Tous les genres" FIXE en haut du sous-menu
-  const allBtn = createGenreBtn('Tous les genres', activeFilters.size === 0, () => {
+  const allBtn = createGenreBtn('TOUS', activeFilters.size === 0, () => {
     if (typeof clearPlannerGenreFilters === 'function') clearPlannerGenreFilters();
   });
   subMenu.appendChild(allBtn);
