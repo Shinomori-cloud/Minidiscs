@@ -1109,9 +1109,8 @@
     },
     {
       "genre": [
-        "Alternative Rock",
-        "Pop Rock",
-        "Experimental"
+        "ALTERNATIVE ROCK",
+        "POP ROCK"
       ],
       "type": [
         "Albums"
@@ -1137,6 +1136,7 @@
             "11. Untitled 2",
             "12. Champagne Supernova"
           ],
+          "toRecord": false,
           "genre": [
             "Alternative Rock",
             "Pop Rock"
@@ -1165,6 +1165,7 @@
             "24. Old Woman",
             "25. Something Wrong (Live)"
           ],
+          "toRecord": false,
           "genre": [
             "Alternative Rock",
             "Pop Rock"
@@ -1191,10 +1192,10 @@
             "35. My Lover's Box",
             "36. Milk"
           ],
+          "toRecord": false,
           "genre": [
             "Alternative Rock",
-            "Pop Rock",
-            "Experimental"
+            "Pop Rock"
           ],
           "type": [
             "Albums"
