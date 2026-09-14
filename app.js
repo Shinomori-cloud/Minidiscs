@@ -980,7 +980,7 @@ function deleteMD(index) {
   if (confirm(`Voulez-vous vraiment supprimer définitivement "${title}" ?`)) {
     catalogData.splice(index, 1);
     saveLocalBackup();
-    showToast("🗑️ MiniDisc supprimé ! Pensez à exporter votre JSON.");
+    showToast("🗑️ MiniDisc supprimé !");
     renderDashboard(true);
   }
 }
