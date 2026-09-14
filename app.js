@@ -163,7 +163,11 @@ function selectGenreFilter(genre) {
   }, false);
 }
 
-function applyStatusFilter(filterValue) {
+function applyStatusFilter(filterValue, event) {
+  if (event) {
+    event.stopPropagation(); // Empêche la fermeture du sous-menu FAB
+  }
+
   let targetRecord = 'all';
   if (filterValue === 'torecord') {
     targetRecord = 'toRecord';
