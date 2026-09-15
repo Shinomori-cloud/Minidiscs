@@ -750,7 +750,9 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   position: sticky;
   top: 100px;
   z-index: 100;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 2px solid #000000;
   border-radius: 12px;
   padding: 10px 14px;
@@ -782,6 +784,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   flex-wrap: wrap;
 }
 
+/* Alignement uniformisé des boutons d'actions */
 .compil-actions button {
   padding: 6px 12px !important;
   font-size: 0.8rem !important;
@@ -790,10 +793,14 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   border-radius: 8px !important;
   border: 2px solid #000000 !important;
   box-shadow: 2px 2px 0px #000000 !important;
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #ffffff !important;
+  color: #000000 !important;
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+}
+
+.compil-actions button:hover {
+  background-color: #f0f0f0 !important;
 }
 
 .compil-actions button:active {
@@ -804,31 +811,30 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 .ideas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 12px;
-  margin-top: -130px; /* Alignement corrigé */
+  gap: 16px;
+  margin-top: -130px;
 }
 
+/* Carte transparente : accent mis uniquement sur la pochette */
 .idea-card {
-  background: #ffffff !important;
-  border: 2px solid #000000 !important;
-  border-radius: 12px;
-  padding: 8px;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0;
+  padding: 0;
   cursor: pointer;
   position: relative;
-  box-shadow: 3px 3px 0px #000000;
+  box-shadow: none !important;
   user-select: none;
   color: #000000;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease;
 }
 
 .idea-card:active {
   transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px #000000;
 }
 
-.idea-card.selected {
-  background-color: #ffffff !important;
-  border-color: #000000 !important;
+/* Contour de sélection appliqué directement sur le bloc sans carte lourde */
+.idea-card.selected .idea-cover {
   outline: 3px solid #06d6a0;
   box-shadow: 4px 4px 0px #000000;
 }
@@ -836,8 +842,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 .idea-card.selected::after {
   content: "✓";
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 4px;
+  right: 4px;
   background: #06d6a0;
   color: #000000;
   font-weight: 900;
@@ -850,12 +856,13 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   justify-content: center;
   font-size: 0.75rem;
   box-shadow: 1px 1px 0px #000000;
+  z-index: 3;
 }
 
 .idea-delete-btn {
   position: absolute;
-  bottom: 6px;
-  right: 6px;
+  top: 4px;
+  left: 4px;
   background: #ff007f;
   color: #ffffff;
   border: 1.5px solid #000000;
@@ -867,17 +874,20 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
+  z-index: 3;
   box-shadow: 1.5px 1.5px 0px #000000;
 }
 
+/* Pochette d'album mise en valeur style boîtier CD/MD */
 .idea-cover {
   width: 100%;
   aspect-ratio: 1/1;
   object-fit: cover;
   border-radius: 8px;
-  border: 1.5px solid #000000;
+  border: 2px solid #000000;
   background: #eee;
+  box-shadow: 3px 3px 0px #000000;
+  display: block;
 }
 
 .idea-title {
@@ -908,20 +918,12 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 .idea-card.disabled-card {
   opacity: 0.4 !important;
   filter: grayscale(100%) !important;
-  border-color: #888888 !important;
-  box-shadow: none !important;
   cursor: not-allowed !important;
   pointer-events: none !important;
 }
 
 .idea-card.disabled-card .idea-delete-btn {
   pointer-events: auto !important;
-}
-
-/* Ciblage du tout premier bouton dans la barre d'actions du planificateur */
-.compil-actions button:first-child {
-  background-color: #ff007f !important; /* Ta couleur ici */
-  color: #ffffff !important;
 }
 
 /* ==========================================
