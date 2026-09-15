@@ -24,7 +24,9 @@ body {
   max-width: 600px;
   margin: 0 auto;
 
-  background-image: url('/Minidiscs/images/pattern.jpg');
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
+    url('/Minidiscs/images/pattern.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
