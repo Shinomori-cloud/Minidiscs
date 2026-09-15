@@ -1,5 +1,5 @@
 /* ==========================================
-   1. VARIABLES & DESIGN DE BASE
+   1. VARIABLES & DESIGN DE BASE (LUMINEUX)
    ========================================== */
 :root {
   --bg-color: #f8fafc;
@@ -29,14 +29,14 @@ body {
   max-width: 600px;
   margin: 0 auto;
 
-  /* Image de fond assombrie par une superposition noire (40%) */
+  /* Image de fond adoucie par un voile blanc lumineux (70%) */
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.40)),
+    linear-gradient(rgba(255, 255, 255, 0.70), rgba(255, 255, 255, 0.70)),
     url('/Minidiscs/images/pattern.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  background-color: #0d0614; /* Fond de secours sombre */
+  background-color: var(--bg-color); /* Fond de secours clair */
   background-attachment: fixed;
 }
 
