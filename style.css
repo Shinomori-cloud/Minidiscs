@@ -784,7 +784,6 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   flex-wrap: wrap;
 }
 
-/* Alignement uniformisé des boutons d'actions */
 .compil-actions button {
   padding: 6px 12px !important;
   font-size: 0.8rem !important;
@@ -815,104 +814,122 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   margin-top: -130px;
 }
 
-/* Carte transparente : accent mis uniquement sur la pochette */
+/* Carte conteneur de la pochette */
 .idea-card {
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0;
-  padding: 0;
-  cursor: pointer;
   position: relative;
-  box-shadow: none !important;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  cursor: pointer;
   user-select: none;
-  color: #000000;
-  transition: transform 0.15s ease;
+  aspect-ratio: 1/1;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .idea-card:active {
   transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
 }
 
-/* Contour de sélection appliqué directement sur le bloc sans carte lourde */
-.idea-card.selected .idea-cover {
+/* Sélection avec contour vert néon interne/externe */
+.idea-card.selected {
   outline: 3px solid #06d6a0;
-  box-shadow: 4px 4px 0px #000000;
 }
 
 .idea-card.selected::after {
   content: "✓";
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 6px;
+  left: 6px;
   background: #06d6a0;
   color: #000000;
   font-weight: 900;
   border: 1.5px solid #000000;
   border-radius: 50%;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   box-shadow: 1px 1px 0px #000000;
-  z-index: 3;
+  z-index: 4;
 }
 
+/* Bouton corbeille discret en haut à droite */
 .idea-delete-btn {
   position: absolute;
-  top: 4px;
-  left: 4px;
-  background: #ff007f;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.5);
   color: #ffffff;
-  border: 1.5px solid #000000;
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 6px;
-  width: 24px;
-  height: 24px;
-  font-size: 0.75rem;
+  width: 20px;
+  height: 20px;
+  font-size: 0.65rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3;
-  box-shadow: 1.5px 1.5px 0px #000000;
+  z-index: 4;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-/* Pochette d'album mise en valeur style boîtier CD/MD */
+.idea-delete-btn:hover {
+  background: #ff007f;
+  border-color: #000000;
+}
+
+/* Image de la pochette */
 .idea-cover {
   width: 100%;
-  aspect-ratio: 1/1;
+  height: 100%;
   object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid #000000;
-  background: #eee;
-  box-shadow: 3px 3px 0px #000000;
   display: block;
+}
+
+/* Overlay / Bandeau d'infos superposé en bas */
+.idea-info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 6px 8px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 70%, transparent 100%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  z-index: 3;
 }
 
 .idea-title {
   font-weight: 800;
-  font-size: 0.8rem;
-  margin-top: 6px;
+  font-size: 0.75rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #000000;
+  color: #ffffff;
 }
 
 .idea-artist {
-  font-size: 0.7rem;
-  color: #444444;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.8);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .idea-duration {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 800;
-  color: #ff007f;
-  margin-top: 2px;
+  color: #06d6a0; /* Vert néon pour faire ressortir la durée sur le noir */
+  margin-top: 1px;
 }
 
 .idea-card.disabled-card {
