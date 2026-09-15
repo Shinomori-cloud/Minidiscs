@@ -1,5 +1,5 @@
 /* ==========================================
-   1. VARIABLES & DESIGN DE BASE (LUMINEUX)
+   1. VARIABLES & DESIGN DE BASE
    ========================================== */
 :root {
   --bg-color: #f8fafc;
@@ -9,11 +9,6 @@
   --border-color: #e2e8f0;
   --accent-color: #7b2cbf;
   --export-color: #06d6a0;
-
-  /* Nouveau style Rétro-Moderne : Ombre plus fine et bordure nette */
-  --shadow-neubrutalism: 2px 2px 0px #000000;
-  --shadow-card: 3px 3px 0px #000000;
-  --border-neubrutalism: 1.5px solid #000000;
 }
 
 * {
@@ -29,14 +24,11 @@ body {
   max-width: 600px;
   margin: 0 auto;
 
-  /* Image de fond adoucie par un voile blanc lumineux (70%) */
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.70), rgba(255, 255, 255, 0.70)),
-    url('/Minidiscs/images/pattern.jpg');
+  background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  background-color: var(--bg-color); /* Fond de secours clair */
+  background-color: #f8fafc;
   background-attachment: fixed;
 }
 
@@ -50,15 +42,11 @@ body::before {
   left: 0;
   width: 100%;
   height: 240px;
-  
-  /* Même fond assombri pour la continuité du scroll */
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.40)),
-    url('/Minidiscs/images/pattern.jpg');
+  background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  background-color: #0d0614;
+  background-color: #f8fafc;
   background-attachment: fixed;
   z-index: 800;
   pointer-events: none;
@@ -374,7 +362,7 @@ body:has(.dashboard-container) .title-90s {
 }
 
 /* ==========================================
-   5. SÉLECTION DU JOUR (VERSION AÉRÉE & CLAIRE)
+   5. SÉLECTION DU JOUR
    ========================================== */
 .featured-container,
 .featured-container-inline {
@@ -438,9 +426,9 @@ body:has(.dashboard-container) .featured-container {
   margin: 0 auto 14px auto;
 
   background: #ffffff;
-  border: var(--border-neubrutalism);
+  border: 1.5px solid #ff007f;
   border-radius: 8px;
-  box-shadow: var(--shadow-neubrutalism);
+  box-shadow: 2px 2px 0px #000;
   width: 87%;
   max-width: 504px;
   box-sizing: border-box;
@@ -482,23 +470,22 @@ body:has(.dashboard-container) .featured-container {
   gap: 12px;
 }
 
-/* Modification majeure : fond clair + bordure ultra-subtile */
 .featured-item {
   flex: 0 1 auto;
   height: 160px;
-  border-radius: 10px;
+  border-radius: 6px;
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.12); /* Contour discret au lieu de 2px noir */
+  border: 1.5px solid #000;
   cursor: pointer;
-  box-shadow: var(--shadow-card) !important;
+  box-shadow: 4px 4px 0px #000000 !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  background: #ffffff; /* Fond blanc à la place du fond noir */
+  background: #000;
 }
 
 .featured-item:hover,
 .featured-item:active {
   transform: translateY(-2px);
-  box-shadow: 4px 4px 0px #000000 !important;
+  box-shadow: 6px 6px 0px #000000 !important;
 }
 
 .featured-thumb {
@@ -547,15 +534,15 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   margin-bottom: 14px;
   cursor: pointer;
   
-  border: var(--border-neubrutalism);
+  border: 2px solid #000000;
   border-left-width: 6px;
-  box-shadow: var(--shadow-card);
+  box-shadow: 4px 4px 0px #000000;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .list-item:active {
   transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px #000000;
+  box-shadow: 2px 2px 0px #000000;
 }
 
 .md-thumb {
@@ -564,8 +551,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   object-fit: cover;
   border-radius: 10px;
   flex-shrink: 0;
-  border: var(--border-neubrutalism);
-  box-shadow: var(--shadow-neubrutalism);
+  border: 1.5px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
 }
 
 .album-thumb {
@@ -574,8 +561,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   object-fit: cover;
   border-radius: 10px;
   flex-shrink: 0;
-  border: var(--border-neubrutalism);
-  box-shadow: var(--shadow-neubrutalism);
+  border: 1.5px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
 }
 
 .item-details {
@@ -637,10 +624,10 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 /* Vue Titres / Pistes */
 .track-container {
   background: #ffffff;
-  border: var(--border-neubrutalism);
+  border: 2px solid #000000;
   border-radius: 16px;
   padding: 16px;
-  box-shadow: var(--shadow-card);
+  box-shadow: 4px 4px 0px #000000;
   margin-top: 0px;
 }
 
@@ -659,8 +646,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   max-height: 140px !important;
   object-fit: cover;
   border-radius: 10px;
-  border: var(--border-neubrutalism);
-  box-shadow: var(--shadow-neubrutalism);
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
   flex-shrink: 0;
 }
 
@@ -737,7 +724,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   
   background-color: #ffb703 !important;
   color: #000 !important;
-  border: var(--border-neubrutalism) !important;
+  border: 2px solid #000 !important;
   border-radius: 20px !important;
   padding: 8px 16px !important;
   font-size: 0.95rem !important;
@@ -746,7 +733,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   align-items: center !important;
   justify-content: space-between !important;
   gap: 12px !important;
-  box-shadow: var(--shadow-card) !important;
+  box-shadow: 4px 4px 0px #000 !important;
   
   width: calc(100% - 32px) !important;
   max-width: 568px !important;
@@ -762,11 +749,11 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   top: 100px;
   z-index: 100;
   background: #ffffff;
-  border: var(--border-neubrutalism);
+  border: 2px solid #000000;
   border-radius: 12px;
   padding: 10px 14px;
   margin: 10px 0 15px 0;
-  box-shadow: var(--shadow-card);
+  box-shadow: 4px 4px 0px #000000;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -799,8 +786,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   font-weight: 800 !important;
   margin: 0 !important;
   border-radius: 8px !important;
-  border: var(--border-neubrutalism) !important;
-  box-shadow: var(--shadow-neubrutalism) !important;
+  border: 2px solid #000000 !important;
+  box-shadow: 2px 2px 0px #000000 !important;
   background-color: #ffffff;
   color: #000000;
   cursor: pointer;
@@ -821,12 +808,12 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .idea-card {
   background: #ffffff !important;
-  border: var(--border-neubrutalism) !important;
+  border: 2px solid #000000 !important;
   border-radius: 12px;
   padding: 8px;
   cursor: pointer;
   position: relative;
-  box-shadow: var(--shadow-neubrutalism);
+  box-shadow: 3px 3px 0px #000000;
   user-select: none;
   color: #000000;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -841,7 +828,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   background-color: #ffffff !important;
   border-color: #000000 !important;
   outline: 3px solid #06d6a0;
-  box-shadow: var(--shadow-card);
+  box-shadow: 4px 4px 0px #000000;
 }
 
 .idea-card.selected::after {
@@ -852,7 +839,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   background: #06d6a0;
   color: #000000;
   font-weight: 900;
-  border: var(--border-neubrutalism);
+  border: 1.5px solid #000000;
   border-radius: 50%;
   width: 22px;
   height: 22px;
@@ -869,7 +856,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   right: 6px;
   background: #ff007f;
   color: #ffffff;
-  border: var(--border-neubrutalism);
+  border: 1.5px solid #000000;
   border-radius: 6px;
   width: 24px;
   height: 24px;
@@ -887,7 +874,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   aspect-ratio: 1/1;
   object-fit: cover;
   border-radius: 8px;
-  border: var(--border-neubrutalism);
+  border: 1.5px solid #000000;
   background: #eee;
 }
 
@@ -956,13 +943,13 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .tag-btn {
   background: #ffffff;
-  border: var(--border-neubrutalism);
+  border: 2px solid #000000;
   padding: 4px 8px;
   font-size: 0.75rem;
   font-weight: bold;
   cursor: pointer;
   border-radius: 4px;
-  box-shadow: var(--shadow-neubrutalism);
+  box-shadow: 2px 2px 0px #000000;
   user-select: none;
 }
 
@@ -983,10 +970,10 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   font-weight: bold;
   font-size: 0.88rem;
   padding: 10px;
-  border: var(--border-neubrutalism);
+  border: 2px solid #000;
   border-radius: 10px;
   cursor: pointer;
-  box-shadow: var(--shadow-neubrutalism);
+  box-shadow: 2px 2px 0px #000;
   transition: transform 0.1s ease;
   touch-action: manipulation;
 }
@@ -1009,13 +996,13 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  border: var(--border-neubrutalism) !important;
+  border: 2px solid #000000 !important;
   padding: 8px 14px;
   border-radius: 8px;
   font-weight: 800;
   font-size: 0.85rem;
   cursor: pointer;
-  box-shadow: var(--shadow-card) !important;
+  box-shadow: 3px 3px 0px #000000 !important;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
@@ -1054,8 +1041,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   max-width: 500px;
   margin: 40px auto;
   color: var(--text-main);
-  border: var(--border-neubrutalism);
-  box-shadow: var(--shadow-card);
+  border: 3px solid #000000;
+  box-shadow: 6px 6px 0px #000000;
 }
 
 .modal-header {
@@ -1099,7 +1086,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   width: 100%;
   padding: 10px;
   background: #f8fafc;
-  border: var(--border-neubrutalism);
+  border: 1.5px solid #000;
   color: var(--text-main);
   border-radius: 8px;
   font-family: inherit;
@@ -1156,12 +1143,12 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 .btn-secondary {
   background: #f1f5f9;
   color: var(--text-main);
-  border: var(--border-neubrutalism);
+  border: 2px solid #000;
   padding: 10px 14px;
   border-radius: 10px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: var(--shadow-neubrutalism);
+  box-shadow: 2px 2px 0px #000;
 }
 
 /* Formulaires */
@@ -1186,8 +1173,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   border-radius: 10px;
   font-size: 0.88rem;
   font-weight: 700;
-  border: var(--border-neubrutalism);
-  box-shadow: var(--shadow-neubrutalism);
+  border: 4px solid #d60611;
+  box-shadow: 3px 3px 0px #000;
   z-index: 9999;
   transition: opacity 0.25s ease, transform 0.25s ease;
   text-align: center;
@@ -1397,8 +1384,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   border-radius: 14px;
   background-color: #ffffff;
   color: #000000;
-  border: var(--border-neubrutalism);
-  box-shadow: var(--shadow-neubrutalism), 0 0 12px rgba(0, 240, 255, 0.3);
+  border: 2px solid #000000;
+  box-shadow: 0 4px 0 #000000, 0 0 12px rgba(0, 240, 255, 0.3);
   font-size: 1.2rem;
   cursor: pointer;
   display: flex;
@@ -1410,13 +1397,13 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .fab-main-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 3px 3px 0px #000000, 0 0 16px rgba(0, 240, 255, 0.5);
+  box-shadow: 0 6px 0 #000000, 0 0 16px rgba(0, 240, 255, 0.5);
 }
 
 .fab-main-btn:active,
 .fab-main-btn.open {
   transform: translateY(2px);
-  box-shadow: 1px 1px 0px #000000, 0 0 14px rgba(255, 0, 128, 0.5);
+  box-shadow: 0 2px 0 #000000, 0 0 14px rgba(255, 0, 128, 0.5);
 }
 
 .fab-main-btn .fab-icon {
@@ -1470,10 +1457,10 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   width: 240px !important;
   max-height: 60vh !important;
   background: #ffffff !important;
-  border: var(--border-neubrutalism) !important;
+  border: 3px solid #000000 !important;
   border-radius: 16px !important;
   padding: 10px !important;
-  box-shadow: var(--shadow-card) !important;
+  box-shadow: 4px 4px 0px #000000 !important;
   z-index: 1400 !important;
   box-sizing: border-box !important;
   overflow: hidden !important;
@@ -1508,14 +1495,14 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   padding: 8px 10px !important;
   background: #f0f0f0 !important;
   color: #000000 !important;
-  border: var(--border-neubrutalism) !important;
+  border: 2px solid #000000 !important;
   border-radius: 8px !important;
   font-family: inherit !important;
   font-size: 0.75rem !important;
   font-weight: 800 !important;
   text-align: center !important;
   cursor: pointer !important;
-  box-shadow: var(--shadow-neubrutalism) !important;
+  box-shadow: 2px 2px 0px #000000 !important;
   box-sizing: border-box !important;
   transition: transform 0.1s, background-color 0.15s !important;
   flex-shrink: 0 !important;
