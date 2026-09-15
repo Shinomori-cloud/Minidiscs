@@ -9,6 +9,11 @@
   --border-color: #e2e8f0;
   --accent-color: #7b2cbf;
   --export-color: #06d6a0;
+
+  /* Nouveau style Rétro-Moderne : Ombre plus fine et bordure nette */
+  --shadow-neubrutalism: 2px 2px 0px #000000;
+  --shadow-card: 3px 3px 0px #000000;
+  --border-neubrutalism: 1.5px solid #000000;
 }
 
 * {
@@ -24,11 +29,14 @@ body {
   max-width: 600px;
   margin: 0 auto;
 
-  background-image: url('/Minidiscs/images/pattern.jpg');
+  /* Image de fond assombrie par une superposition noire (40%) */
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.40)),
+    url('/Minidiscs/images/pattern.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  background-color: #f8fafc;
+  background-color: #0d0614; /* Fond de secours sombre */
   background-attachment: fixed;
 }
 
@@ -42,11 +50,15 @@ body::before {
   left: 0;
   width: 100%;
   height: 240px;
-  background-image: url('/Minidiscs/images/pattern.jpg');
+  
+  /* Même fond assombri pour la continuité du scroll */
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.40)),
+    url('/Minidiscs/images/pattern.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  background-color: #f8fafc;
+  background-color: #0d0614;
   background-attachment: fixed;
   z-index: 800;
   pointer-events: none;
