@@ -3139,6 +3139,13 @@
       "genre": "ROCK",
       "duration": "38:29",
       "cover": "images/img_1789505905370.jpg"
+    },
+    {
+      "title": "Master of Puppets",
+      "artist": "Metallica",
+      "genre": "METAL",
+      "duration": "54:25",
+      "cover": "images/img_1789506522530.jpg"
     }
   ]
 }
