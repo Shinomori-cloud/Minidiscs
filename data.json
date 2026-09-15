@@ -3104,6 +3104,13 @@
       "genre": "Electro",
       "duration": "01:01:50",
       "cover": "images/img_1789423312317.jpg"
+    },
+    {
+      "title": "Gorillaz",
+      "artist": "Gorillaz",
+      "genre": "ALTERNATIVE ROCK, SOUL FUNK",
+      "duration": "56:56",
+      "cover": "images/img_1789504889636.webp"
     }
   ]
 }
