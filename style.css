@@ -825,7 +825,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 4px 4px 0px #000000;
   user-select: none;
   aspect-ratio: 1/1;
-  padding: 0;
+  padding: 8px !important;
+  box-sizing: border-box;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -848,8 +849,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 .idea-card.selected::after {
   content: "✓";
   position: absolute;
-  top: 6px;
-  left: 6px;
+  top: 12px;
+  left: 12px;
   background: #ff007f;
   color: #ffffff;
   font-weight: 900;
@@ -868,8 +869,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 /* Bouton corbeille discret en haut à droite */
 .idea-delete-btn {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 12px;
+  right: 12px;
   background: #ffffff;
   color: #000000;
   border: 2px solid #000000;
@@ -898,15 +899,17 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 1px 1px 0px #000000;
 }
 
-/* Image de la pochette remplissant la carte */
+/* Image de la pochette encadrée */
 .idea-cover {
   width: 100%;
   height: 100%;
   aspect-ratio: 1/1;
   object-fit: cover;
-  border: none;
+  border: 2px solid #000000;
+  border-radius: 8px;
   background: #eee;
   display: block;
+  box-sizing: border-box;
 }
 
 /* Repositionnement absolu des métadonnées directement sur l'image */
@@ -914,8 +917,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 .idea-artist,
 .idea-duration {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 8px;
+  right: 8px;
   padding: 0 8px;
   z-index: 3;
   white-space: nowrap;
@@ -925,7 +928,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .idea-title {
-  bottom: 26px;
+  bottom: 34px;
   font-weight: 800;
   font-size: 0.75rem;
   color: #ffffff;
@@ -933,13 +936,13 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .idea-artist {
-  bottom: 14px;
+  bottom: 22px;
   font-size: 0.65rem;
   color: rgba(255, 255, 255, 0.85);
 }
 
 .idea-duration {
-  bottom: 2px;
+  bottom: 10px;
   font-size: 0.65rem;
   font-weight: 800;
   color: #06d6a0;
@@ -950,10 +953,11 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 .idea-card::before {
   content: "";
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
   height: 50%;
+  border-radius: 0 0 6px 6px;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
   z-index: 2;
   pointer-events: none;
