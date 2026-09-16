@@ -3244,6 +3244,13 @@
       "genre": "PUNK ROCK, ROCK",
       "duration": "1:05:03",
       "cover": "images/img_1789588079906.jpg"
+    },
+    {
+      "title": "Kid A",
+      "artist": "Radiohead",
+      "genre": "Electro",
+      "duration": "49:51",
+      "cover": "images/img_1789588972351.png"
     }
   ]
 }
