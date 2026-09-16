@@ -3181,6 +3181,20 @@
       "genre": "ROCK",
       "duration": "56:28",
       "cover": "images/img_1789582700642.png"
+    },
+    {
+      "title": "What's going on",
+      "artist": "Marvin Gaye",
+      "genre": "SOUL FUNK",
+      "duration": "35:28",
+      "cover": "images/img_1789585991607.jpg"
+    },
+    {
+      "title": "What's going on",
+      "artist": "Marvin Gaye",
+      "genre": "SOUL FUNK",
+      "duration": "35:28",
+      "cover": "images/img_1789585997974.jpg"
     }
   ]
 }
