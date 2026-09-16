@@ -3258,6 +3258,13 @@
       "genre": "ROCK",
       "duration": "39:22",
       "cover": "images/img_1789589106448.jpg"
+    },
+    {
+      "title": "Tapestry",
+      "artist": "Carole King",
+      "genre": "Rock",
+      "duration": "44:31",
+      "cover": "images/img_1789589357639.jpg"
     }
   ]
 }
