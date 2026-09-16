@@ -3265,6 +3265,13 @@
       "genre": "Rock",
       "duration": "44:31",
       "cover": "images/img_1789589357639.jpg"
+    },
+    {
+      "title": "Are you experienced",
+      "artist": "Jimmy Hendrix",
+      "genre": "Rock, BLUES",
+      "duration": "40:12",
+      "cover": "images/img_1789589719355.jpg"
     }
   ]
 }
