@@ -3209,6 +3209,13 @@
       "genre": "SOUL, Pop",
       "duration": "1:25:43",
       "cover": "images/img_1789586397147.jpg"
+    },
+    {
+      "title": "Abbey Road",
+      "artist": "The Beatles",
+      "genre": "POP ROCK",
+      "duration": "47:00",
+      "cover": "images/img_1789586664247.jpg"
     }
   ]
 }
