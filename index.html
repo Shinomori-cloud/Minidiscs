@@ -47,50 +47,53 @@
   <main id="app">
   </main>
 
-  <!-- MODALE FORMULAIRE ADMIN -->
+<!-- MODALE FORMULAIRE ADMIN -->
   <div id="admin-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main, #333);">＋ Ajouter un MiniDisc</h3>
+        <h3 id="admin-modal-title" style="margin: 0; font-size: 1.1rem; color: var(--text-main, #333);">＋ Ajouter un MiniDisc</h3>
         <button class="close-btn" type="button" onclick="closeAdminModal()">&times;</button>
       </div>
 
-      <form id="admin-form">
+      <form id="admin-form" onsubmit="submitNewMD(event)">
+        <!-- Genre principal & Tags globaux du MiniDisc -->
         <div class="form-group">
-          <label>Genre(s)</label>
-          <input type="text" id="md-genre" list="genres-list" placeholder="ex: ROCK, SYNTHWAVE" required>
+          <label for="md-genre">Genre principal (main_genre)</label>
+          <input type="text" id="md-genre" list="genres-list" placeholder="ex: HIP-HOP, ROCK, ELECTRONIC" required>
         </div>
 
         <div class="form-group">
-          <label>Type(s) de MiniDisc</label>
-          <input type="text" id="md-type-tags" list="types-list" placeholder="ex: ALBUM, LIVE, COMPILATION">
+          <label for="md-type-tags">Tags globaux (séparés par des virgules)</label>
+          <input type="text" id="md-type-tags" list="types-list" placeholder="ex: COMPILATION, 90S, LIVE">
         </div>
 
         <div class="form-group">
-          <label>Pochette MiniDisc</label>
+          <label for="md-cover">Pochette MiniDisc</label>
           <input type="file" id="md-cover" accept="image/*">
         </div>
 
+        <!-- Choix du type de structure -->
         <div class="form-group">
           <label>Structure du MiniDisc :</label>
           <div class="radio-group">
-            <label><input type="radio" name="md-type" value="compil" checked onchange="toggleAdminType()"> Compilation</label>
+            <label><input type="radio" name="md-type" value="compil" checked onchange="toggleAdminType()"> Compilation unique</label>
             <label><input type="radio" name="md-type" value="albums" onchange="toggleAdminType()"> Série d'albums</label>
           </div>
         </div>
 
+        <!-- SECTION COMPILATION UNIQUE -->
         <div id="section-compil">
           <div class="form-group">
-            <label>Titre de la compilation</label>
-            <input type="text" id="compil-title" placeholder="ex: Best of 90s">
+            <label for="compil-title">Titre de la compilation</label>
+            <input type="text" id="compil-title" placeholder="ex: Sad Hill">
           </div>
           <div class="form-group">
-            <label>Artiste(s)</label>
-            <input type="text" id="compil-artist" placeholder="ex: Artistes Divers">
+            <label for="compil-artist">Artiste(s)</label>
+            <input type="text" id="compil-artist" placeholder="ex: Kheops / Artistes Divers">
           </div>
           <div class="form-group">
-            <label>Pistes (une par ligne, sans numéro)</label>
-            <textarea id="compil-tracks" placeholder="Piste A&#10;Piste B"></textarea>
+            <label for="compil-tracks">Pistes (une par ligne)</label>
+            <textarea id="compil-tracks" rows="4" placeholder="Piste 1&#10;Piste 2"></textarea>
           </div>
           <div class="form-group" style="margin-top: 10px;">
             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">
@@ -100,11 +103,13 @@
           </div>
         </div>
 
+        <!-- SECTION SÉRIE D'ALBUMS (DYNAMIQUE) -->
         <div id="section-albums" class="hidden">
           <div id="albums-container"></div>
           <button type="button" class="btn-sub" onclick="addAdminAlbumBlock()">+ Ajouter un album</button>
         </div>
 
+        <!-- ACTIONS -->
         <div class="form-actions" style="display: flex; gap: 8px; margin-top: 15px;">
           <button type="submit" class="btn-primary" style="flex: 1; margin-bottom: 0;">Enregistrer</button>
           <button type="button" class="btn-secondary" onclick="closeAdminModal()">Annuler</button>
