@@ -1606,6 +1606,19 @@ html, body {
   100% { opacity: 0.3; }
 }
 
+<!-- Section Recherche -->
+<hr class="fab-divider">
+<div class="fab-section-title">Recherche</div>
+<div style="padding: 2px 4px;">
+  <input 
+    type="search" 
+    id="planner-search-input" 
+    class="fab-search-input" 
+    placeholder="Chercher une idée..." 
+    oninput="handlePlannerSearch(this.value);" 
+  />
+</div>
+
 /* Croix d'effacement pour les FABs */
 .fab-search-input::-webkit-search-cancel-button {
   -webkit-appearance: none;
