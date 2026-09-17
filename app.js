@@ -1164,9 +1164,6 @@ function deleteMD(index) {
    GESTION DE LA MODALE ADMIN
    ========================================== */
 
-let editingMDIndex = null;
-let adminAlbumCount = 0;
-
 // Reconstitution du champ genre/tags pour l'affichage de la collection
 function genreFieldValue(item) {
   if (!item) return '';
@@ -1178,7 +1175,7 @@ function genreFieldValue(item) {
   return list.join(', ');
 }
 
-// Maintien pour éviter toute erreur de référence si appelée ailleurs
+// Maintien pour éviter toute erreur de référence
 function setupMultiSelectContainer(inputId, datalistId) {
   const input = document.getElementById(inputId);
   if (input) input.removeAttribute('list');
@@ -1201,7 +1198,7 @@ function openAdminModal(indexToEdit = null) {
   const modalTitle = document.querySelector('#admin-modal h3');
   const albumsContainer = document.getElementById('albums-container');
   if (albumsContainer) albumsContainer.innerHTML = '';
-  adminAlbumCount = 0;
+  if (typeof adminAlbumCount !== 'undefined') adminAlbumCount = 0;
 
   const mdCoverInput = document.getElementById('md-cover');
   if (mdCoverInput) mdCoverInput.value = '';
@@ -1289,7 +1286,7 @@ function closeAdminModal() {
 }
 
 function toggleAdminType(isInit = false) {
-  const checkedRadio = document.querySelector('input[name="md-type"]:checked');
+  const checkedRadio = document.querySelector('input[name="md-type"][value="compil"]:checked, input[name="md-type"][value="albums"]:checked, input[name="md-type"]:checked');
   const isCompil = checkedRadio ? checkedRadio.value === 'compil' : true;
   
   const secCompil = document.getElementById('section-compil');
@@ -1305,7 +1302,7 @@ function toggleAdminType(isInit = false) {
 }
 
 function addAdminAlbumBlock() {
-  adminAlbumCount++;
+  if (typeof adminAlbumCount !== 'undefined') adminAlbumCount++;
   const container = document.getElementById('albums-container');
   if (!container) return;
 
