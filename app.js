@@ -1186,7 +1186,7 @@ function setupMultiSelectContainer(inputId, datalistId) {
           input.value = parts.join(', ') + ', ';
           renderBadges(); // Met à jour les puces restantes
           
-          // NOUVEAU : Si c'est un champ de genre d'album, mettre à jour les genres globaux
+          // Si c'est un champ de genre d'album, mettre à jour les genres globaux
           if (input.classList.contains('album-genre')) {
             updateGlobalGenresFromAlbums();
           }
@@ -1198,10 +1198,10 @@ function setupMultiSelectContainer(inputId, datalistId) {
     });
   }
 
-  // Mettre à jour si l'utilisateur retape du texte à la main
+  // Mettre à jour si l'utilisateur retape du texte à la hand
   input.oninput = () => {
     renderBadges();
-    // NOUVEAU : Synchronisation en temps réel si modification manuelle
+    // Synchronisation en temps réel si modification manuelle
     if (input.classList.contains('album-genre')) {
       updateGlobalGenresFromAlbums();
     }
@@ -1211,7 +1211,7 @@ function setupMultiSelectContainer(inputId, datalistId) {
 }
 
 /* ==========================================
-   NOUVEAU : SYNCHRONISATION AUTOMATIQUE DES GENRES
+   SYNCHRONISATION AUTOMATIQUE DES GENRES
    ========================================== */
 function updateGlobalGenresFromAlbums() {
   const checkedRadio = document.querySelector('input[name="md-type"]:checked');
@@ -1228,8 +1228,7 @@ function updateGlobalGenresFromAlbums() {
     rawValues.forEach(val => {
       const trimmed = val.trim();
       if (trimmed) {
-        // Normalisation en majuscules pour éviter "Rock" et "ROCK"
-        collectedGenres.add(trimmed.toUpperCase());
+        collectedGenres.add(trimmed);
       }
     });
   });
@@ -1247,7 +1246,9 @@ function updateGlobalGenresFromAlbums() {
 
 function openAdminModal(indexToEdit = null) {
   // Rafraîchir les listes de suggestions (genres / types)
-  populateFormDatalists();
+  if (typeof populateFormDatalists === 'function') {
+    populateFormDatalists();
+  }
 
   setupMultiSelectContainer('md-genre', 'genres-list');
   setupMultiSelectContainer('md-type-tags', 'types-list');
@@ -1269,9 +1270,13 @@ function openAdminModal(indexToEdit = null) {
     const md = catalogData[editingMDIndex];
     if (modalTitle) modalTitle.textContent = "✏️ Modifier le MiniDisc";
 
-    document.getElementById('md-genre').value = Array.isArray(md.genre) ? md.genre.join(', ') : (md.genre || '');
+    // Genre global (support du nouveau champ main_genre ou de l'ancien genre)
+    const globalGenreVal = md.main_genre || (Array.isArray(md.genre) ? md.genre.join(', ') : (md.genre || ''));
+    document.getElementById('md-genre').value = globalGenreVal;
+
     if (document.getElementById('md-type-tags')) {
-      document.getElementById('md-type-tags').value = Array.isArray(md.type) ? md.type.join(', ') : (md.type || '');
+      const globalTagsVal = Array.isArray(md.tags) ? md.tags.join(', ') : (Array.isArray(md.type) ? md.type.join(', ') : (md.type || ''));
+      document.getElementById('md-type-tags').value = globalTagsVal;
     }
 
     const isCompil = !md.albums || md.albums.length === 0;
@@ -1287,7 +1292,16 @@ function openAdminModal(indexToEdit = null) {
     if (isCompil) {
       document.getElementById('compil-title').value = md.title || '';
       document.getElementById('compil-artist').value = md.artist || '';
-      document.getElementById('compil-tracks').value = md.tracks ? md.tracks.map(t => t.replace(/^\d+\.\s*/, '')).join('\n') : '';
+      
+      // Extraction des pistes (compatibilité objets {title, duration} ou simple tableau de chaînes)
+      if (md.tracks) {
+        document.getElementById('compil-tracks').value = md.tracks
+          .map(t => typeof t === 'object' ? t.title : t.replace(/^\d+\.\s*/, ''))
+          .join('\n');
+      } else {
+        document.getElementById('compil-tracks').value = '';
+      }
+
       if (document.getElementById('compil-to-record')) {
         document.getElementById('compil-to-record').checked = !!md.toRecord;
       }
@@ -1297,10 +1311,24 @@ function openAdminModal(indexToEdit = null) {
         const block = albumsContainer.lastElementChild;
         block.querySelector('.album-title').value = album.title || '';
         block.querySelector('.album-artist').value = album.artist || '';
-        if (block.querySelector('.album-type')) block.querySelector('.album-type').value = Array.isArray(album.type) ? album.type.join(', ') : (album.type || '');
-        block.querySelector('.album-genre').value = Array.isArray(album.genre) ? album.genre.join(', ') : (album.genre || '');
-        block.querySelector('.album-year').value = album.year || '';
-        block.querySelector('.album-tracks').value = album.tracks ? album.tracks.map(t => t.replace(/^\d+\.\s*/, '')).join('\n') : '';
+        
+        if (block.querySelector('.album-type')) {
+          const albumTags = Array.isArray(album.tags) ? album.tags.join(', ') : (Array.isArray(album.type) ? album.type.join(', ') : (album.type || ''));
+          block.querySelector('.album-type').value = albumTags;
+        }
+        
+        block.querySelector('.album-genre').value = album.main_genre || (Array.isArray(album.genre) ? album.genre.join(', ') : (album.genre || ''));
+        block.querySelector('.album-year').value = album.release_year || album.year || '';
+        
+        // Formatage des pistes
+        if (album.tracks) {
+          block.querySelector('.album-tracks').value = album.tracks
+            .map(t => typeof t === 'object' ? t.title : t.replace(/^\d+\.\s*/, ''))
+            .join('\n');
+        } else {
+          block.querySelector('.album-tracks').value = '';
+        }
+
         if (block.querySelector('.album-to-record')) {
           block.querySelector('.album-to-record').checked = !!album.toRecord;
         }
@@ -1440,97 +1468,113 @@ async function submitNewMD(e) {
   const mdCoverInput = document.getElementById('md-cover');
 
   if (!rawGenreInput) {
-    showToast("⚠️ Veuillez renseigner au moins un genre");
+    if (typeof showToast === 'function') showToast("⚠️ Veuillez renseigner au moins un genre");
     return;
   }
 
-  showToast("⏳ Traitement et envoi de l'image...");
+  if (typeof showToast === 'function') showToast("⏳ Traitement et envoi de l'image...");
 
   // Upload de l'image principale du MiniDisc si un fichier est sélectionné
   let mdCoverPath = 'images/default.jpg';
   if (mdCoverInput && mdCoverInput.files && mdCoverInput.files.length > 0) {
-    const uploadedPath = await handleImageUpload(mdCoverInput);
-    if (uploadedPath) {
-      mdCoverPath = uploadedPath;
+    if (typeof handleImageUpload === 'function') {
+      const uploadedPath = await handleImageUpload(mdCoverInput);
+      if (uploadedPath) mdCoverPath = uploadedPath;
     }
-  } else if (editingMDIndex !== null && catalogData[editingMDIndex].md_cover) {
-    // Conservation de l'ancienne image si aucune nouvelle n'a été choisie en édition
-    mdCoverPath = catalogData[editingMDIndex].md_cover;
+  } else if (editingMDIndex !== null) {
+    mdCoverPath = catalogData[editingMDIndex].cover_url || catalogData[editingMDIndex].md_cover || 'images/default.jpg';
   }
 
-  const parsedMDGenres = rawGenreInput.includes(',') 
-    ? rawGenreInput.split(',').map(g => g.trim()).filter(g => g !== '')
-    : [rawGenreInput];
+  // Génération ou réutilisation de l'ID MD
+  const mdId = editingMDIndex !== null && catalogData[editingMDIndex].id 
+    ? catalogData[editingMDIndex].id 
+    : `md-${Date.now()}`;
 
-  const parsedMDTypes = rawTypeInput 
-    ? (rawTypeInput.includes(',') ? rawTypeInput.split(',').map(t => t.trim()).filter(t => t !== '') : [rawTypeInput])
-    : ['ALBUM'];
-
-  let globalTrackCounter = 1;
-  const targetMD = { genre: parsedMDGenres, type: parsedMDTypes, md_cover: mdCoverPath };
+  const targetMD = { id: mdId };
 
   if (typeFormat === 'compil') {
     targetMD.title = document.getElementById('compil-title').value.trim();
     targetMD.artist = document.getElementById('compil-artist').value.trim();
+    targetMD.main_genre = rawGenreInput;
+
+    const parsedTypes = rawTypeInput 
+      ? rawTypeInput.split(',').map(t => t.trim()).filter(Boolean) 
+      : ['Compilation'];
     
+    targetMD.tags = parsedTypes;
+    targetMD.cover_url = mdCoverPath;
+
+    // Transformation des pistes du textarea en tableau d'objets { title, duration }
     const rawTracks = document.getElementById('compil-tracks').value.split('\n');
     targetMD.tracks = rawTracks
       .filter(t => t.trim() !== '')
-      .map(t => `${String(globalTrackCounter++).padStart(2, '0')}. ${t.trim()}`);
+      .map(t => ({ title: t.replace(/^\d+\.\s*/, '').trim(), duration: "Unknow" }));
 
     const compilCheckbox = document.getElementById('compil-to-record');
-    targetMD.toRecord = compilCheckbox ? compilCheckbox.checked : false;
+    if (compilCheckbox) targetMD.toRecord = compilCheckbox.checked;
+
   } else {
+    // Mode Série d'albums
     targetMD.albums = [];
     const albumBlocks = document.querySelectorAll('.album-block');
     
     if (albumBlocks.length === 0) {
-      showToast("⚠️ Veuillez ajouter au moins un album.");
+      if (typeof showToast === 'function') showToast("⚠️ Veuillez ajouter au moins un album.");
       return;
     }
 
-    // Boucle pour l'upload d'image et la création de chaque album
+    // Titre global combiné du MiniDisc (ex: "Titre 1 / Titre 2")
+    const albumTitles = Array.from(albumBlocks)
+      .map(b => b.querySelector('.album-title').value.trim())
+      .filter(Boolean);
+    targetMD.title = albumTitles.join(' / ');
+
+    // Traitement de chaque bloc album
     for (let i = 0; i < albumBlocks.length; i++) {
       const block = albumBlocks[i];
+      
       const rawTracks = block.querySelector('.album-tracks').value.split('\n');
       const formattedTracks = rawTracks
         .filter(t => t.trim() !== '')
-        .map(t => `${String(globalTrackCounter++).padStart(2, '0')}. ${t.trim()}`);
+        .map(t => ({ title: t.replace(/^\d+\.\s*/, '').trim(), duration: "Unknow" }));
 
-      const rawAlbumGenre = block.querySelector('.album-genre').value.trim();
-      const parsedAlbumGenres = rawAlbumGenre 
-        ? (rawAlbumGenre.includes(',') ? rawAlbumGenre.split(',').map(g => g.trim()).filter(g => g !== '') : [rawAlbumGenre])
-        : [];
-
+      const rawAlbumGenre = block.querySelector('.album-genre').value.trim() || rawGenreInput;
       const rawAlbumType = block.querySelector('.album-type-tags') ? block.querySelector('.album-type-tags').value.trim() : (block.querySelector('.album-type') ? block.querySelector('.album-type').value.trim() : '');
-      const parsedAlbumTypes = rawAlbumType 
-        ? (rawAlbumType.includes(',') ? rawAlbumType.split(',').map(t => t.trim()).filter(t => t !== '') : [rawAlbumType])
-        : [];
+      
+      // Construction de la liste des tags (fusion genre secondaire + types + "Albums")
+      const tagsList = [];
+      if (rawAlbumGenre) tagsList.push(...rawAlbumGenre.split(',').map(g => g.trim()).filter(Boolean));
+      if (rawAlbumType) tagsList.push(...rawAlbumType.split(',').map(t => t.trim()).filter(Boolean));
+      if (!tagsList.includes('Albums')) tagsList.push('Albums');
 
       // Gestion de l'upload d'image pour l'album
       const albumCoverInput = block.querySelector('.album-cover');
       let albumCoverPath = 'images/default.jpg';
       
       if (albumCoverInput && albumCoverInput.files && albumCoverInput.files.length > 0) {
-        const uploadedPath = await handleImageUpload(albumCoverInput);
-        if (uploadedPath) {
-          albumCoverPath = uploadedPath;
+        if (typeof handleImageUpload === 'function') {
+          const uploadedPath = await handleImageUpload(albumCoverInput);
+          if (uploadedPath) albumCoverPath = uploadedPath;
         }
       } else if (editingMDIndex !== null && catalogData[editingMDIndex].albums && catalogData[editingMDIndex].albums[i]) {
-        albumCoverPath = catalogData[editingMDIndex].albums[i].cover || 'images/default.jpg';
+        albumCoverPath = catalogData[editingMDIndex].albums[i].cover_url || catalogData[editingMDIndex].albums[i].cover || 'images/default.jpg';
       }
 
+      // Extraction de l'ID numérique du MD pour dériver l'ID de l'album
+      const rawMdNum = mdId.replace('md-', '');
+
       const albumObj = {
-        title: block.querySelector('.album-title').value.trim(),
+        id: `alb-${rawMdNum}-${i + 1}`,
         artist: block.querySelector('.album-artist').value.trim(),
-        year: block.querySelector('.album-year').value.trim(),
-        cover: albumCoverPath,
+        title: block.querySelector('.album-title').value.trim(),
+        main_genre: rawAlbumGenre,
+        tags: Array.from(new Set(tagsList)),
+        release_year: block.querySelector('.album-year').value.trim() || "Unknow",
+        duration: "Unknow",
+        cover_url: albumCoverPath,
         tracks: formattedTracks,
         toRecord: block.querySelector('.album-to-record') ? block.querySelector('.album-to-record').checked : false
       };
-
-      if (parsedAlbumGenres.length > 0) albumObj.genre = parsedAlbumGenres;
-      if (parsedAlbumTypes.length > 0) albumObj.type = parsedAlbumTypes;
 
       targetMD.albums.push(albumObj);
     }
@@ -1540,16 +1584,16 @@ async function submitNewMD(e) {
   if (editingMDIndex !== null) {
     catalogData[editingMDIndex] = targetMD;
     editingMDIndex = null;
-    showToast("✅ MiniDisc modifié !");
+    if (typeof showToast === 'function') showToast("✅ MiniDisc modifié !");
   } else {
     catalogData.push(targetMD);
-    showToast("✅ MiniDisc ajouté !");
+    if (typeof showToast === 'function') showToast("✅ MiniDisc ajouté !");
   }
 
   if (typeof saveLocalBackup === 'function') saveLocalBackup();
   if (typeof closeAdminModal === 'function') closeAdminModal();
 
-  // Rechargement de la vue Catalogue active
+  // Rechargement de la vue active
   if (typeof renderMDList === 'function') {
     renderMDList({ 
       genre: typeof currentGenreFilter !== 'undefined' ? currentGenreFilter : '', 
