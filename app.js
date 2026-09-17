@@ -422,21 +422,36 @@ function getNormalizedGenres(genreData) {
 }
 
 function getMDAllGenres(md) {
-  const genresSet = new Set(getNormalizedGenres(md.genre));
+  if (!md) return ['AUTRE'];
+  const genresSet = new Set();
+
+  // Lecture du nouveau champ main_genre ou de l'ancien genre
+  if (md.main_genre) genresSet.add(md.main_genre.toUpperCase().trim());
+  getNormalizedGenres(md.genre).forEach(g => genresSet.add(g));
+
+  // Extraction depuis les albums
   if (md.albums && md.albums.length > 0) {
     md.albums.forEach(album => {
+      if (album.main_genre) genresSet.add(album.main_genre.toUpperCase().trim());
       getNormalizedGenres(album.genre).forEach(g => genresSet.add(g));
     });
   }
+
   const result = Array.from(genresSet);
   return result.length > 0 ? result : ['AUTRE'];
 }
 
 function getAlbumGenres(album, parentMd) {
-  const albumGenres = getNormalizedGenres(album.genre);
-  if (albumGenres.length > 0) return albumGenres;
-  const parentGenres = getNormalizedGenres(parentMd ? parentMd.genre : null);
-  return parentGenres.length > 0 ? parentGenres : ['AUTRE'];
+  if (!album) return ['AUTRE'];
+  const genresSet = new Set();
+
+  if (album.main_genre) genresSet.add(album.main_genre.toUpperCase().trim());
+  getNormalizedGenres(album.genre).forEach(g => genresSet.add(g));
+
+  if (genresSet.size > 0) return Array.from(genresSet);
+
+  // Fallback sur le MiniDisc parent
+  return getMDAllGenres(parentMd);
 }
 
 function getNormalizedTypes(typeData) {
@@ -444,12 +459,22 @@ function getNormalizedTypes(typeData) {
 }
 
 function getMDAllTypes(md) {
-  const typesSet = new Set(getNormalizedTypes(md.type));
+  if (!md) return ['ALBUM'];
+  const typesSet = new Set();
+
+  // Prise en charge des champs tags, typeTags et type
+  getNormalizedTypes(md.tags).forEach(t => typesSet.add(t));
+  getNormalizedTypes(md.typeTags).forEach(t => typesSet.add(t));
+  getNormalizedTypes(md.type).forEach(t => typesSet.add(t));
+
   if (md.albums && md.albums.length > 0) {
     md.albums.forEach(album => {
+      getNormalizedTypes(album.tags).forEach(t => typesSet.add(t));
+      getNormalizedTypes(album.typeTags).forEach(t => typesSet.add(t));
       getNormalizedTypes(album.type).forEach(t => typesSet.add(t));
     });
   }
+
   const result = Array.from(typesSet);
   return result.length > 0 ? result : ['ALBUM'];
 }
