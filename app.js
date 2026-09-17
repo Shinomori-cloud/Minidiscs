@@ -2254,23 +2254,47 @@ function populateFormDatalists() {
   const typesSet = new Set();
 
   catalogData.forEach(md => {
-    // Récupération sécurisée des genres
+    // 1. Récupération des genres / main_genre
     if (typeof getMDAllGenres === 'function') {
       getMDAllGenres(md).forEach(g => genresSet.add(g));
-    } else if (md.genre) {
-      const gList = Array.isArray(md.genre) ? md.genre : md.genre.split(',');
-      gList.forEach(g => genresSet.add(g.trim()));
+    } else {
+      if (md.main_genre) genresSet.add(md.main_genre.trim());
+      if (md.genre) {
+        const gList = Array.isArray(md.genre) ? md.genre : md.genre.split(',');
+        gList.forEach(g => genresSet.add(g.trim()));
+      }
     }
 
-    // Récupération sécurisée des types
+    // 2. Récupération des tags / types
     if (typeof getMDAllTypes === 'function') {
       getMDAllTypes(md).forEach(t => typesSet.add(t));
-    } else if (md.type) {
-      const tList = Array.isArray(md.type) ? md.type : md.type.split(',');
-      tList.forEach(t => typesSet.add(t.trim()));
+    } else {
+      // Tags au niveau global
+      if (Array.isArray(md.tags)) {
+        md.tags.forEach(t => typesSet.add(t.trim()));
+      }
+      if (md.type) {
+        const tList = Array.isArray(md.type) ? md.type : md.type.split(',');
+        tList.forEach(t => typesSet.add(t.trim()));
+      }
+    }
+
+    // 3. Extraction depuis la liste d'albums si présente
+    if (Array.isArray(md.albums)) {
+      md.albums.forEach(album => {
+        if (album.main_genre) genresSet.add(album.main_genre.trim());
+        if (Array.isArray(album.tags)) {
+          album.tags.forEach(t => typesSet.add(t.trim()));
+        }
+        if (album.type) {
+          const tList = Array.isArray(album.type) ? album.type : album.type.split(',');
+          tList.forEach(t => typesSet.add(t.trim()));
+        }
+      });
     }
   });
 
+  // Remplissage des <datalist> HTML
   const genresDatalist = document.getElementById('genres-list');
   const typesDatalist = document.getElementById('types-list');
 
