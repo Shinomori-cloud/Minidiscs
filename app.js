@@ -1313,13 +1313,14 @@ function updateGlobalGenresFromAlbums() {
 }
 
 function openAdminModal(indexToEdit = null) {
-  // Rafraîchir les listes de suggestions (genres / types / tags)
+  // Rafraîchir les listes de suggestions
   if (typeof populateFormDatalists === 'function') {
     populateFormDatalists();
   }
 
-  setupMultiSelectContainer('md-genre', 'genres-list');
-  setupMultiSelectContainer('md-type-tags', 'types-list');
+  // Brancher les conteneurs de tags dynamiques avec la nouvelle signature à 4 arguments
+  setupMultiSelectContainer('md-genre-input', 'genres-list', 'md-genre', 'genres-tags-container');
+  setupMultiSelectContainer('md-type-tags-input', 'types-list', 'md-type-tags', 'types-tags-container');
 
   editingMDIndex = indexToEdit;
   const modalTitle = document.querySelector('#admin-modal h3');
@@ -1338,14 +1339,20 @@ function openAdminModal(indexToEdit = null) {
     const md = catalogData[editingMDIndex];
     if (modalTitle) modalTitle.textContent = "✏️ Modifier le MiniDisc";
 
-    // Genre/Tags globaux
-    const globalGenreVal = md.main_genre || (Array.isArray(md.tags) ? md.tags.join(', ') : (Array.isArray(md.genre) ? md.genre.join(', ') : (md.genre || '')));
-    if (document.getElementById('md-genre')) document.getElementById('md-genre').value = globalGenreVal;
+    // Genre/Tags globaux (remplit le champ caché et reconstruit les badges)
+    const globalGenreVal = md.main_genre || (Array.isArray(md.tags) ? md.tags.join(',') : (Array.isArray(md.genre) ? md.genre.join(',') : (md.genre || '')));
+    if (document.getElementById('md-genre')) {
+      document.getElementById('md-genre').value = globalGenreVal;
+    }
 
     if (document.getElementById('md-type-tags')) {
-      const globalTagsVal = Array.isArray(md.tags) ? md.tags.join(', ') : (Array.isArray(md.type) ? md.type.join(', ') : (md.type || ''));
+      const globalTagsVal = Array.isArray(md.tags) ? md.tags.join(',') : (Array.isArray(md.type) ? md.type.join(',') : (md.type || ''));
       document.getElementById('md-type-tags').value = globalTagsVal;
     }
+
+    // Réinitialisation pour régénérer le rendu des badges visuels
+    setupMultiSelectContainer('md-genre-input', 'genres-list', 'md-genre', 'genres-tags-container');
+    setupMultiSelectContainer('md-type-tags-input', 'types-list', 'md-type-tags', 'types-tags-container');
 
     const isCompil = !md.albums || md.albums.length === 0;
     
@@ -1361,7 +1368,7 @@ function openAdminModal(indexToEdit = null) {
       if (document.getElementById('compil-title')) document.getElementById('compil-title').value = md.title || '';
       if (document.getElementById('compil-artist')) document.getElementById('compil-artist').value = md.artist || '';
       
-      // Extraction des pistes (objets ou chaînes)
+      // Extraction des pistes
       if (md.tracks && document.getElementById('compil-tracks')) {
         document.getElementById('compil-tracks').value = md.tracks
           .map(t => typeof t === 'object' ? t.title : t.replace(/^\d+\.\s*/, ''))
@@ -1415,6 +1422,10 @@ function openAdminModal(indexToEdit = null) {
     if (document.getElementById('md-genre')) document.getElementById('md-genre').value = '';
     if (document.getElementById('md-type-tags')) document.getElementById('md-type-tags').value = '';
     
+    // Réinitialisation de l'affichage des badges
+    setupMultiSelectContainer('md-genre-input', 'genres-list', 'md-genre', 'genres-tags-container');
+    setupMultiSelectContainer('md-type-tags-input', 'types-list', 'md-type-tags', 'types-tags-container');
+
     if (document.getElementById('compil-title')) document.getElementById('compil-title').value = '';
     if (document.getElementById('compil-artist')) document.getElementById('compil-artist').value = '';
     if (document.getElementById('compil-tracks')) document.getElementById('compil-tracks').value = '';
@@ -1431,103 +1442,6 @@ function openAdminModal(indexToEdit = null) {
 
   const modal = document.getElementById('admin-modal');
   if (modal) modal.classList.remove('hidden');
-}
-
-function closeAdminModal() {
-  const modal = document.getElementById('admin-modal');
-  if (modal) modal.classList.add('hidden');
-  editingMDIndex = null;
-}
-
-function toggleAdminType(isInit = false) {
-  const checkedRadio = document.querySelector('input[name="md-type"]:checked');
-  const isCompil = checkedRadio ? checkedRadio.value === 'compil' : true;
-  
-  const secCompil = document.getElementById('section-compil');
-  const secAlbums = document.getElementById('section-albums');
-  const mdGenreInput = document.getElementById('md-genre');
-
-  if (secCompil) secCompil.classList.toggle('hidden', !isCompil);
-  if (secAlbums) secAlbums.classList.toggle('hidden', isCompil);
-
-  if (mdGenreInput) {
-    mdGenreInput.readOnly = !isCompil;
-    mdGenreInput.style.backgroundColor = !isCompil ? '#f0f0f0' : '';
-    if (!isCompil) {
-      updateGlobalGenresFromAlbums();
-    }
-  }
-
-  const albumsContainer = document.getElementById('albums-container');
-  if (!isCompil && !isInit && albumsContainer && albumsContainer.children.length === 0) {
-    addAdminAlbumBlock();
-  }
-}
-
-function addAdminAlbumBlock() {
-  adminAlbumCount++;
-  const container = document.getElementById('albums-container');
-  if (!container) return;
-
-  const genreInputId = `album-genre-${adminAlbumCount}`;
-  const typeInputId = `album-type-${adminAlbumCount}`;
-
-  const div = document.createElement('div');
-  div.className = 'album-block';
-  div.style.cssText = "border: 1px solid var(--border-color, #ccc); padding: 12px; margin-bottom: 12px; border-radius: 6px; background: rgba(0,0,0,0.02); position: relative;";
-  
-  div.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-      <h4 style="margin: 0; font-size: 0.95rem;">Album #${adminAlbumCount}</h4>
-      <button type="button" onclick="removeAdminAlbumBlock(this)" style="background: #e63946; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">🗑️ Supprimer</button>
-    </div>
-    
-    <div class="form-group">
-      <label style="font-size: 0.8rem;">Titre de l'album</label>
-      <input type="text" class="album-title" placeholder="ex: Sad Hill" required>
-    </div>
-    
-    <div class="form-group">
-      <label style="font-size: 0.8rem;">Artiste</label>
-      <input type="text" class="album-artist" placeholder="ex: Kheops" required>
-    </div>
-
-    <div class="form-group">
-      <label style="font-size: 0.8rem;">Genre principal (main_genre)</label>
-      <input type="text" id="${genreInputId}" class="album-genre" list="genres-list" placeholder="ex: HIP-HOP">
-    </div>
-
-    <div class="form-group">
-      <label style="font-size: 0.8rem;">Tags de l'album (séparés par des virgules)</label>
-      <input type="text" id="${typeInputId}" class="album-type-tags" list="types-list" placeholder="ex: RAP, 90S, ALBUM">
-    </div>
-
-    <div class="form-group">
-      <label style="font-size: 0.8rem;">Année de sortie</label>
-      <input type="text" class="album-year" placeholder="ex: 1997">
-    </div>
-
-    <div class="form-group">
-      <label style="font-size: 0.8rem; font-weight: bold;">Pochette de l'album</label>
-      <input type="file" class="album-cover" accept="image/*">
-    </div>
-
-    <div class="form-group">
-      <label style="font-size: 0.8rem;">Pistes (une par ligne)</label>
-      <textarea class="album-tracks" rows="3" placeholder="Piste 1&#10;Piste 2"></textarea>
-    </div>
-
-    <div class="form-group" style="margin-top: 8px;">
-      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">
-        <input type="checkbox" class="album-to-record" style="width: 16px; height: 16px;">
-        🎙️ À enregistrer
-      </label>
-    </div>
-  `;
-  container.appendChild(div);
-
-  setupMultiSelectContainer(genreInputId, 'genres-list');
-  setupMultiSelectContainer(typeInputId, 'types-list');
 }
 
 function removeAdminAlbumBlock(button) {
