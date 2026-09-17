@@ -47,7 +47,7 @@
   <main id="app">
   </main>
 
-<!-- MODALE FORMULAIRE ADMIN -->
+  <!-- MODALE FORMULAIRE ADMIN -->
   <div id="admin-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
@@ -56,15 +56,25 @@
       </div>
 
       <form id="admin-form" onsubmit="submitNewMD(event)">
-        <!-- Genre principal & Tags globaux du MiniDisc -->
+        
+        <!-- Genre principal avec conteneur d'étiquettes dynamiques -->
         <div class="form-group">
-          <label for="md-genre">Genre principal (main_genre)</label>
-          <input type="text" id="md-genre" list="genres-list" placeholder="ex: HIP-HOP, ROCK, ELECTRONIC" required>
+          <label for="md-genre-input">Genre principal (main_genre)</label>
+          <div class="multi-select-container">
+            <input type="text" id="md-genre-input" list="genres-list" placeholder="ex: HIP-HOP, ROCK...">
+            <input type="hidden" id="md-genre" name="genre" required>
+            <div id="genres-tags-container" class="tags-preview-box"></div>
+          </div>
         </div>
 
+        <!-- Tags globaux avec conteneur d'étiquettes dynamiques -->
         <div class="form-group">
-          <label for="md-type-tags">Tags globaux (séparés par des virgules)</label>
-          <input type="text" id="md-type-tags" list="types-list" placeholder="ex: COMPILATION, 90S, LIVE">
+          <label for="md-type-tags-input">Tags globaux</label>
+          <div class="multi-select-container">
+            <input type="text" id="md-type-tags-input" list="types-list" placeholder="ex: COMPILATION, 90S...">
+            <input type="hidden" id="md-type-tags" name="tags">
+            <div id="types-tags-container" class="tags-preview-box"></div>
+          </div>
         </div>
 
         <div class="form-group">
