@@ -1167,7 +1167,28 @@ function deleteMD(index) {
 let editingMDIndex = null;
 let adminAlbumCount = 0;
 
-// Transforme une chaîne "tag1, tag2" en tableau ["tag1", "tag2"]
+// Reconstitution du champ genre/tags pour l'affichage de la collection
+function genreFieldValue(item) {
+  if (!item) return '';
+  const list = [];
+  if (item.main_genre) list.push(item.main_genre);
+  if (item.tags) {
+    (Array.isArray(item.tags) ? item.tags : [item.tags]).forEach(t => list.push(t));
+  }
+  return list.join(', ');
+}
+
+// Maintien pour éviter toute erreur de référence si appelée ailleurs
+function setupMultiSelectContainer(inputId, datalistId) {
+  const input = document.getElementById(inputId);
+  if (input) input.removeAttribute('list');
+}
+
+function updateGlobalGenresFromAlbums() {
+  // Conservation pour compatibilité
+}
+
+// Transforme "tag1, tag2" en ["tag1", "tag2"]
 function parseTags(raw) {
   if (!raw) return [];
   return raw.split(',').map(t => t.trim()).filter(t => t !== '');
