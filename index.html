@@ -92,6 +92,26 @@
     </div>
   </div>
 
+  <!-- BOUTON FLOTTANT (FAB) ET SON MENU -->
+  <div id="floating-actions" class="fab-container">
+    <div id="fab-menu" class="fab-menu hidden">
+      <hr class="fab-divider">
+      <div class="fab-section-title">Recherche</div>
+      <div style="padding: 2px 4px;">
+        <input 
+          type="search" 
+          class="fab-search-input" 
+          placeholder="Rechercher un MD..." 
+          oninput="handleCatalogSearch(this.value);" 
+        />
+      </div>
+    </div>
+    
+    <button type="button" id="fab-main-btn" class="fab-main-btn" onclick="toggleFabMenu()" title="Menu principal">
+      <span class="fab-icon">🎚️</span>
+    </button>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
