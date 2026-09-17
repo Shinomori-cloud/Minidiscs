@@ -1164,119 +1164,17 @@ function deleteMD(index) {
    GESTION DE LA MODALE ADMIN
    ========================================== */
 
-/* ==========================================
-   UTILITAIRE : SÉLECTION MULTIPLE PAR SUGGESTIONS
-   ========================================== */
-function setupMultiSelectContainer(inputId, datalistId) {
-  const input = document.getElementById(inputId);
-  const datalist = document.getElementById(datalistId);
-  if (!input || !datalist) return;
+let editingMDIndex = null;
+let adminAlbumCount = 0;
 
-  // Retirer l'attribut list pour empêcher le menu déroulant natif du navigateur de s'ouvrir au clic
-  input.removeAttribute('list');
-
-  // Éviter de réattacher le conteneur plusieurs fois
-  let container = input.parentElement.querySelector('.tag-suggestions');
-  if (!container) {
-    container = document.createElement('div');
-    container.className = 'tag-suggestions';
-    container.style.cssText = "display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;";
-    input.parentElement.appendChild(container);
-  }
-
-  // Fonction pour afficher les badges des options disponibles
-  function renderBadges() {
-    container.innerHTML = '';
-    const currentValues = input.value.split(',').map(v => v.trim().toLowerCase());
-    const options = Array.from(datalist.options).map(opt => opt.value);
-
-    options.forEach(optValue => {
-      // Si l'option n'est pas encore ajoutée dans le champ
-      if (!currentValues.includes(optValue.toLowerCase())) {
-        const badge = document.createElement('span');
-        badge.textContent = `+ ${optValue}`;
-        badge.style.cssText = "background: #e9ecef; color: #212529; border: 1px solid #ced4da; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; user-select: none;";
-        
-        badge.onclick = () => {
-          const parts = input.value.split(',').map(p => p.trim()).filter(p => p !== '');
-          parts.push(optValue);
-          input.value = parts.join(', ') + ', ';
-          renderBadges(); // Met à jour les puces restantes
-          
-          // NOUVEAU : Si c'est un champ de genre d'album, mettre à jour les genres globaux
-          if (input.classList.contains('album-genre')) {
-            updateGlobalGenresFromAlbums();
-          }
-          
-          input.focus();
-        };
-        container.appendChild(badge);
-      }
-    });
-  }
-
-  // Mettre à jour si l'utilisateur retape du texte à la main
-  input.oninput = () => {
-    renderBadges();
-    // NOUVEAU : Synchronisation en temps réel si modification manuelle
-    if (input.classList.contains('album-genre')) {
-      updateGlobalGenresFromAlbums();
-    }
-  };
-  
-  renderBadges();
-}
-
-/* ==========================================
-   NOUVEAU : SYNCHRONISATION AUTOMATIQUE DES GENRES
-   ========================================== */
-function updateGlobalGenresFromAlbums() {
-  const checkedRadio = document.querySelector('input[name="md-type"]:checked');
-  const isCompil = checkedRadio ? checkedRadio.value === 'compil' : true;
-
-  // On ne synchronise que si nous sommes en mode Série d'albums
-  if (isCompil) return;
-
-  const albumGenreInputs = document.querySelectorAll('.album-block .album-genre');
-  const collectedGenres = new Set();
-
-  albumGenreInputs.forEach(input => {
-    const rawValues = input.value.split(',');
-    rawValues.forEach(val => {
-      const trimmed = val.trim();
-      if (trimmed) {
-        // Normalisation en majuscules pour éviter "Rock" et "ROCK"
-        collectedGenres.add(trimmed.toUpperCase());
-      }
-    });
-  });
-
-  const globalGenreInput = document.getElementById('md-genre');
-  if (globalGenreInput) {
-    globalGenreInput.value = Array.from(collectedGenres).join(', ');
-    // Mettre à jour les puces de suggestions du champ global si existantes
-    const globalContainer = globalGenreInput.parentElement.querySelector('.tag-suggestions');
-    if (globalContainer) {
-      setupMultiSelectContainer('md-genre', 'genres-list');
-    }
-  }
-}
-
-// Combine main_genre + tags en une seule chaîne "Genre principal, tag1, tag2"
-function genreFieldValue(item) {
-  const list = [];
-  if (item && item.main_genre) list.push(item.main_genre);
-  if (item && item.tags) {
-    (Array.isArray(item.tags) ? item.tags : [item.tags]).forEach(t => list.push(t));
-  }
-  return list.join(', ');
+// Transforme une chaîne "tag1, tag2" en tableau ["tag1", "tag2"]
+function parseTags(raw) {
+  if (!raw) return [];
+  return raw.split(',').map(t => t.trim()).filter(t => t !== '');
 }
 
 function openAdminModal(indexToEdit = null) {
-  // Rafraîchir les listes de suggestions (genres)
-  populateFormDatalists();
-
-  setupMultiSelectContainer('md-genre', 'genres-list');
+  if (typeof populateFormDatalists === 'function') populateFormDatalists();
 
   editingMDIndex = indexToEdit;
   const modalTitle = document.querySelector('#admin-modal h3');
@@ -1284,7 +1182,6 @@ function openAdminModal(indexToEdit = null) {
   if (albumsContainer) albumsContainer.innerHTML = '';
   adminAlbumCount = 0;
 
-  // Réinitialiser le champ fichier principal avec une chaîne vide
   const mdCoverInput = document.getElementById('md-cover');
   if (mdCoverInput) mdCoverInput.value = '';
 
@@ -1297,10 +1194,6 @@ function openAdminModal(indexToEdit = null) {
 
     const isCompil = !md.albums || md.albums.length === 0;
 
-    // Pour une compilation, le champ Genre(s) vient directement du MiniDisc.
-    // Pour une série d'albums, il sera recalculé juste après à partir des albums.
-    document.getElementById('md-genre').value = isCompil ? genreFieldValue(md) : '';
-
     const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
     const radioAlbums = document.querySelector('input[name="md-type"][value="albums"]') || document.querySelector('input[name="md-type"][value="album"]');
     
@@ -1312,6 +1205,8 @@ function openAdminModal(indexToEdit = null) {
     if (isCompil) {
       document.getElementById('compil-title').value = md.title || '';
       document.getElementById('compil-artist').value = md.artist || '';
+      if (document.getElementById('compil-main-genre')) document.getElementById('compil-main-genre').value = md.main_genre || '';
+      if (document.getElementById('compil-tags')) document.getElementById('compil-tags').value = md.tags ? md.tags.join(', ') : '';
       if (document.getElementById('compil-year')) document.getElementById('compil-year').value = md.release_year || '';
       if (document.getElementById('compil-duration')) document.getElementById('compil-duration').value = md.duration || '';
       document.getElementById('compil-tracks').value = md.tracks ? md.tracks.join('\n') : '';
@@ -1324,7 +1219,8 @@ function openAdminModal(indexToEdit = null) {
         const block = albumsContainer.lastElementChild;
         block.querySelector('.album-title').value = album.title || '';
         block.querySelector('.album-artist').value = album.artist || '';
-        block.querySelector('.album-genre').value = genreFieldValue(album);
+        if (block.querySelector('.album-main-genre')) block.querySelector('.album-main-genre').value = album.main_genre || '';
+        if (block.querySelector('.album-tags')) block.querySelector('.album-tags').value = album.tags ? album.tags.join(', ') : '';
         block.querySelector('.album-year').value = album.release_year || '';
         if (block.querySelector('.album-duration')) block.querySelector('.album-duration').value = album.duration || '';
         block.querySelector('.album-tracks').value = album.tracks ? album.tracks.join('\n') : '';
@@ -1332,8 +1228,6 @@ function openAdminModal(indexToEdit = null) {
           block.querySelector('.album-to-record').checked = !!album.toRecord;
         }
       });
-      // Recalculer les genres globaux au chargement de l'édition
-      updateGlobalGenresFromAlbums();
     }
 
   } else {
@@ -1342,15 +1236,13 @@ function openAdminModal(indexToEdit = null) {
     // ==========================================
     if (modalTitle) modalTitle.textContent = "＋ Ajouter un MiniDisc";
     
-    // Remise à zéro du formulaire HTML (admin-form)
     const form = document.getElementById('admin-form');
     if (form) form.reset();
 
-    // Réinitialisation des champs spécifiques
-    if (document.getElementById('md-genre')) document.getElementById('md-genre').value = '';
-    
     if (document.getElementById('compil-title')) document.getElementById('compil-title').value = '';
     if (document.getElementById('compil-artist')) document.getElementById('compil-artist').value = '';
+    if (document.getElementById('compil-main-genre')) document.getElementById('compil-main-genre').value = '';
+    if (document.getElementById('compil-tags')) document.getElementById('compil-tags').value = '';
     if (document.getElementById('compil-year')) document.getElementById('compil-year').value = '';
     if (document.getElementById('compil-duration')) document.getElementById('compil-duration').value = '';
     if (document.getElementById('compil-tracks')) document.getElementById('compil-tracks').value = '';
@@ -1359,14 +1251,12 @@ function openAdminModal(indexToEdit = null) {
       document.getElementById('compil-to-record').checked = false;
     }
 
-    // Cocher l'option compilation par défaut et basculer l'affichage
     const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
     if (radioCompil) radioCompil.checked = true;
     
     toggleAdminType(false);
   }
 
-  // Affichage de la modale
   const modal = document.getElementById('admin-modal');
   if (modal) modal.classList.remove('hidden');
 }
@@ -1383,19 +1273,9 @@ function toggleAdminType(isInit = false) {
   
   const secCompil = document.getElementById('section-compil');
   const secAlbums = document.getElementById('section-albums');
-  const mdGenreInput = document.getElementById('md-genre');
 
   if (secCompil) secCompil.classList.toggle('hidden', !isCompil);
   if (secAlbums) secAlbums.classList.toggle('hidden', isCompil);
-
-  // Bascule du champ global "Genre" en lecture seule quand on est en mode "albums"
-  if (mdGenreInput) {
-    mdGenreInput.readOnly = !isCompil;
-    mdGenreInput.style.backgroundColor = !isCompil ? '#f0f0f0' : '';
-    if (!isCompil) {
-      updateGlobalGenresFromAlbums();
-    }
-  }
 
   const albumsContainer = document.getElementById('albums-container');
   if (!isCompil && !isInit && albumsContainer && albumsContainer.children.length === 0) {
@@ -1408,8 +1288,6 @@ function addAdminAlbumBlock() {
   const container = document.getElementById('albums-container');
   if (!container) return;
 
-  const genreInputId = `album-genre-${adminAlbumCount}`;
-
   const div = document.createElement('div');
   div.className = 'album-block';
   div.style.cssText = "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px; position: relative;";
@@ -1420,7 +1298,8 @@ function addAdminAlbumBlock() {
     </div>
     <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album" required></div>
     <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste" required></div>
-    <div class="form-group"><input type="text" id="${genreInputId}" class="album-genre" list="genres-list" placeholder="Genre(s) (le 1er = genre principal, séparés par virgule)"></div>
+    <div class="form-group"><input type="text" class="album-main-genre" list="genres-list" placeholder="Genre principal"></div>
+    <div class="form-group"><input type="text" class="album-tags" placeholder="Tags / Sous-genres (séparés par virgule)"></div>
     <div class="form-group"><input type="text" class="album-year" placeholder="Année de sortie (ex: 1998)"></div>
     <div class="form-group"><input type="text" class="album-duration" placeholder="Durée (ex: 45:30)"></div>
     <div class="form-group">
@@ -1436,122 +1315,104 @@ function addAdminAlbumBlock() {
     </div>
   `;
   container.appendChild(div);
-
-  // Activer la sélection par puces pour le nouvel album
-  setupMultiSelectContainer(genreInputId, 'genres-list');
 }
 
 function removeAdminAlbumBlock(button) {
   const block = button.closest('.album-block');
-  if (block) {
-    block.remove();
-    // Mettre à jour les genres globaux si un album est supprimé
-    updateGlobalGenresFromAlbums();
-  }
+  if (block) block.remove();
 }
 
 async function submitNewMD(e) {
   if (e) e.preventDefault();
-  if (catalogData === null) return;
+  if (typeof catalogData === 'undefined' || catalogData === null) return;
 
-  // S'assurer que le champ global contient bien tous les genres des albums avant enregistrement
   const checkedRadio = document.querySelector('input[name="md-type"]:checked');
   const typeFormat = checkedRadio ? checkedRadio.value : 'compil';
-  if (typeFormat !== 'compil') {
-    updateGlobalGenresFromAlbums();
-  }
-
-  const rawGenreInput = document.getElementById('md-genre').value.trim();
   const mdCoverInput = document.getElementById('md-cover');
   const existingMD = editingMDIndex !== null ? catalogData[editingMDIndex] : null;
-
-  if (!rawGenreInput) {
-    showToast("⚠️ Veuillez renseigner au moins un genre");
-    return;
-  }
-
-  // Sépare "Genre principal, tag1, tag2" en main_genre (le premier) + tags (le reste)
-  function splitGenreInput(raw) {
-    const parts = raw.split(',').map(g => g.trim()).filter(g => g !== '');
-    return { main_genre: parts[0] || '', tags: parts.slice(1) };
-  }
 
   const targetMD = {
     id: (existingMD && existingMD.id) ? existingMD.id : ('md-' + Date.now()),
   };
 
   if (typeFormat === 'compil') {
-    showToast("⏳ Traitement et envoi de l'image...");
+    if (typeof showToast === 'function') showToast("⏳ Traitement et envoi de l'image...");
 
-    // Upload de l'image de la compilation si un fichier est sélectionné
     let mdCoverPath = 'images/default.jpg';
     if (mdCoverInput && mdCoverInput.files && mdCoverInput.files.length > 0) {
-      const uploadedPath = await handleImageUpload(mdCoverInput);
-      if (uploadedPath) mdCoverPath = uploadedPath;
+      if (typeof handleImageUpload === 'function') {
+        const uploadedPath = await handleImageUpload(mdCoverInput);
+        if (uploadedPath) mdCoverPath = uploadedPath;
+      }
     } else if (existingMD && existingMD.md_cover) {
       mdCoverPath = existingMD.md_cover;
     }
 
-    const { main_genre, tags } = splitGenreInput(rawGenreInput);
+    const mainGenre = document.getElementById('compil-main-genre') ? document.getElementById('compil-main-genre').value.trim() : '';
+    const tagsRaw = document.getElementById('compil-tags') ? document.getElementById('compil-tags').value : '';
 
     targetMD.md_cover = mdCoverPath;
     targetMD.title = document.getElementById('compil-title').value.trim();
     targetMD.artist = document.getElementById('compil-artist').value.trim();
-    targetMD.main_genre = main_genre;
-    targetMD.tags = tags;
+    targetMD.main_genre = mainGenre;
+    targetMD.tags = parseTags(tagsRaw);
     targetMD.release_year = document.getElementById('compil-year') ? document.getElementById('compil-year').value.trim() : '';
-    targetMD.duration = document.getElementById('compil-duration') ? document.getElementById('compil-duration').value.trim() : '';
+    targetMD.duration = (document.getElementById('compil-duration') && document.getElementById('compil-duration').value.trim()) 
+      ? document.getElementById('compil-duration').value.trim() 
+      : 'Unknow';
 
     const rawTracks = document.getElementById('compil-tracks').value.split('\n');
     targetMD.tracks = rawTracks.map(t => t.trim()).filter(t => t !== '');
 
     const compilCheckbox = document.getElementById('compil-to-record');
     targetMD.toRecord = compilCheckbox ? compilCheckbox.checked : false;
+
   } else {
-    // Série d'albums : pas de genre/pochette au niveau du MiniDisc, tout vient des albums.
     targetMD.albums = [];
     const albumBlocks = document.querySelectorAll('.album-block');
     
     if (albumBlocks.length === 0) {
-      showToast("⚠️ Veuillez ajouter au moins un album.");
+      if (typeof showToast === 'function') showToast("⚠️ Veuillez ajouter au moins un album.");
       return;
     }
 
-    showToast("⏳ Traitement et envoi des images...");
+    if (typeof showToast === 'function') showToast("⏳ Traitement et envoi des images...");
 
-    // Boucle pour l'upload d'image et la création de chaque album
+    const mdNum = targetMD.id.replace('md-', '');
+
     for (let i = 0; i < albumBlocks.length; i++) {
       const block = albumBlocks[i];
       const rawTracks = block.querySelector('.album-tracks').value.split('\n');
       const formattedTracks = rawTracks.map(t => t.trim()).filter(t => t !== '');
 
-      const rawAlbumGenre = block.querySelector('.album-genre').value.trim();
-      const { main_genre: albumMainGenre, tags: albumTags } = splitGenreInput(rawAlbumGenre);
+      const albumMainGenre = block.querySelector('.album-main-genre') ? block.querySelector('.album-main-genre').value.trim() : '';
+      const albumTagsRaw = block.querySelector('.album-tags') ? block.querySelector('.album-tags').value : '';
 
       const existingAlbum = (existingMD && existingMD.albums && existingMD.albums[i]) ? existingMD.albums[i] : null;
 
-      // Gestion de l'upload d'image pour l'album
       const albumCoverInput = block.querySelector('.album-cover');
       let albumCoverPath = 'images/default.jpg';
       
       if (albumCoverInput && albumCoverInput.files && albumCoverInput.files.length > 0) {
-        const uploadedPath = await handleImageUpload(albumCoverInput);
-        if (uploadedPath) {
-          albumCoverPath = uploadedPath;
+        if (typeof handleImageUpload === 'function') {
+          const uploadedPath = await handleImageUpload(albumCoverInput);
+          if (uploadedPath) albumCoverPath = uploadedPath;
         }
       } else if (existingAlbum) {
         albumCoverPath = existingAlbum.md_cover || 'images/default.jpg';
       }
 
+      const rawDuration = block.querySelector('.album-duration') ? block.querySelector('.album-duration').value.trim() : '';
+
       const albumObj = {
-        id: (existingAlbum && existingAlbum.id) ? existingAlbum.id : (targetMD.id + '-alb-' + (i + 1)),
+        id: (existingAlbum && existingAlbum.id) ? existingAlbum.id : `alb-${mdNum}-${i + 1}`,
         md_cover: albumCoverPath,
         title: block.querySelector('.album-title').value.trim(),
         artist: block.querySelector('.album-artist').value.trim(),
         main_genre: albumMainGenre,
-        tags: albumTags,
+        tags: parseTags(albumTagsRaw),
         release_year: block.querySelector('.album-year').value.trim(),
-        duration: block.querySelector('.album-duration') ? block.querySelector('.album-duration').value.trim() : '',
+        duration: rawDuration || 'Unknow',
         tracks: formattedTracks,
         toRecord: block.querySelector('.album-to-record') ? block.querySelector('.album-to-record').checked : false
       };
@@ -1559,24 +1420,21 @@ async function submitNewMD(e) {
       targetMD.albums.push(albumObj);
     }
 
-    // Le titre global du MiniDisc est calculé à partir des titres des albums
     targetMD.title = targetMD.albums.map(a => a.title).filter(Boolean).join(' / ');
   }
 
-  // Enregistrement dans catalogData
   if (editingMDIndex !== null) {
     catalogData[editingMDIndex] = targetMD;
     editingMDIndex = null;
-    showToast("✅ MiniDisc modifié !");
+    if (typeof showToast === 'function') showToast("✅ MiniDisc modifié !");
   } else {
     catalogData.push(targetMD);
-    showToast("✅ MiniDisc ajouté !");
+    if (typeof showToast === 'function') showToast("✅ MiniDisc ajouté !");
   }
 
   if (typeof saveLocalBackup === 'function') saveLocalBackup();
   if (typeof closeAdminModal === 'function') closeAdminModal();
 
-  // Rechargement de la vue Catalogue active
   if (typeof renderMDList === 'function') {
     renderMDList({ 
       genre: typeof currentGenreFilter !== 'undefined' ? currentGenreFilter : '', 
