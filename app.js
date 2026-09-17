@@ -154,23 +154,44 @@ function mdMatchesSearch(md, query) {
   if (!query) return true;
   const q = query.toLowerCase().trim();
 
+  // Recherche dans le titre et l'artiste du MiniDisc
   if (md.title && md.title.toLowerCase().includes(q)) return true;
   if (md.artist && md.artist.toLowerCase().includes(q)) return true;
 
+  // Genres et Types / Tags
   const genres = getMDAllGenres(md);
   if (genres.some(g => g.toLowerCase().includes(q))) return true;
 
   const types = getMDAllTypes(md);
   if (types.some(t => t.toLowerCase().includes(q))) return true;
 
-  if (md.tracks && md.tracks.some(t => t.toLowerCase().includes(q))) return true;
+  // Recherche dans les pistes directes (compilations)
+  if (md.tracks && Array.isArray(md.tracks)) {
+    const hasTrackMatch = md.tracks.some(t => {
+      const title = typeof t === 'object' && t !== null ? t.title : String(t);
+      return title && title.toLowerCase().includes(q);
+    });
+    if (hasTrackMatch) return true;
+  }
 
+  // Recherche dans les albums contenus
   if (md.albums && md.albums.length > 0) {
     for (const album of md.albums) {
       if (album.title && album.title.toLowerCase().includes(q)) return true;
       if (album.artist && album.artist.toLowerCase().includes(q)) return true;
-      if (album.year && String(album.year).includes(q)) return true;
-      if (album.tracks && album.tracks.some(t => t.toLowerCase().includes(q))) return true;
+      
+      // Ancien champ year ou nouveau champ release_year
+      const year = album.release_year || album.year;
+      if (year && String(year).includes(q)) return true;
+
+      // Pistes de l'album (gestion objet { title, duration } ou chaîne)
+      if (album.tracks && Array.isArray(album.tracks)) {
+        const hasAlbumTrackMatch = album.tracks.some(t => {
+          const title = typeof t === 'object' && t !== null ? t.title : String(t);
+          return title && title.toLowerCase().includes(q);
+        });
+        if (hasAlbumTrackMatch) return true;
+      }
     }
   }
 
