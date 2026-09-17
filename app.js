@@ -1474,22 +1474,49 @@ function addAdminAlbumBlock() {
 
   const div = document.createElement('div');
   div.className = 'album-block';
-  div.style.cssText = "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px; position: relative;";
+  div.style.cssText = "border: 1px solid var(--border-color, #ccc); padding: 12px; margin-bottom: 12px; border-radius: 6px; background: rgba(0,0,0,0.02); position: relative;";
+  
   div.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-      <h4 style="margin: 0;">Album</h4>
-      <button type="button" onclick="removeAdminAlbumBlock(this)" style="background: #e63946; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">🗑️ Supprimer l'album</button>
+      <h4 style="margin: 0; font-size: 0.95rem;">Album #${adminAlbumCount}</h4>
+      <button type="button" onclick="removeAdminAlbumBlock(this)" style="background: #e63946; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">🗑️ Supprimer</button>
     </div>
-    <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album" required></div>
-    <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste" required></div>
-    <div class="form-group"><input type="text" id="${typeInputId}" class="album-type" list="types-list" placeholder="Tags / Types de l'album (ex: Album, Live)"></div>
-    <div class="form-group"><input type="text" id="${genreInputId}" class="album-genre" list="genres-list" placeholder="Tags / Genres de l'album (séparés par virgule)"></div>
-    <div class="form-group"><input type="text" class="album-year" placeholder="Année (ex: 1998)"></div>
+    
     <div class="form-group">
-      <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">Pochette Album</label>
+      <label style="font-size: 0.8rem;">Titre de l'album</label>
+      <input type="text" class="album-title" placeholder="ex: Sad Hill" required>
+    </div>
+    
+    <div class="form-group">
+      <label style="font-size: 0.8rem;">Artiste</label>
+      <input type="text" class="album-artist" placeholder="ex: Kheops" required>
+    </div>
+
+    <div class="form-group">
+      <label style="font-size: 0.8rem;">Genre principal (main_genre)</label>
+      <input type="text" id="${genreInputId}" class="album-genre" list="genres-list" placeholder="ex: HIP-HOP">
+    </div>
+
+    <div class="form-group">
+      <label style="font-size: 0.8rem;">Tags de l'album (séparés par des virgules)</label>
+      <input type="text" id="${typeInputId}" class="album-type-tags" list="types-list" placeholder="ex: RAP, 90S, ALBUM">
+    </div>
+
+    <div class="form-group">
+      <label style="font-size: 0.8rem;">Année de sortie</label>
+      <input type="text" class="album-year" placeholder="ex: 1997">
+    </div>
+
+    <div class="form-group">
+      <label style="font-size: 0.8rem; font-weight: bold;">Pochette de l'album</label>
       <input type="file" class="album-cover" accept="image/*">
     </div>
-    <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne)"></textarea></div>
+
+    <div class="form-group">
+      <label style="font-size: 0.8rem;">Pistes (une par ligne)</label>
+      <textarea class="album-tracks" rows="3" placeholder="Piste 1&#10;Piste 2"></textarea>
+    </div>
+
     <div class="form-group" style="margin-top: 8px;">
       <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">
         <input type="checkbox" class="album-to-record" style="width: 16px; height: 16px;">
