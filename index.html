@@ -30,12 +30,12 @@
     </div>
   </header>
 
-  <!-- Badge affichant le genre filtré (sous l'encart header) -->
+  <!-- Badge affichant le genre filtré -->
   <div id="active-genre-badge" class="active-genre-badge hidden">
     <span id="active-genre-text"></span>
   </div>
 
-  <!-- SELECTION DU MOMENT (ACCUEIL) -->
+  <!-- SÉLECTION DU MOMENT (ACCUEIL) -->
   <div id="featured-container" class="featured-container">
     <div class="featured-header">
       <span class="featured-title">SÉLECTION DU MOMENT</span>
@@ -47,7 +47,7 @@
   <main id="app">
   </main>
 
-<!-- MODALE FORMULAIRE ADMIN (AJOUT ET ÉDITION) -->
+  <!-- MODALE FORMULAIRE ADMIN (AJOUT ET ÉDITION) -->
   <div id="admin-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
@@ -181,7 +181,6 @@
 
   <!-- BOUTON FLOTTANT UNIQUE ET SON MENU -->
   <div id="floating-actions" class="fab-container hidden">
-    <!-- Menu déroulant avec toutes les actions -->
     <div id="fab-menu" class="fab-menu hidden">
       
       <!-- Section Filtres -->
@@ -220,13 +219,12 @@
       </button>
     </div>
     
-    <!-- Le bouton déclencheur unique -->
+    <!-- Bouton déclencheur -->
     <button type="button" id="fab-main-btn" class="fab-main-btn" onclick="toggleFabMenu()" title="Menu principal">
       <span class="fab-icon">🎚️</span>
     </button>
   </div>
 
-  <!-- CHARGEMENT DU SCRIPT À LA FIN POUR ACCÉDER À TOUS LES ÉLÉMENTS DU DOM -->
   <script src="app.js"></script>
 </body>
 </html>
