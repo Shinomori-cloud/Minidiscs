@@ -4,6 +4,7 @@
 let catalogData = null;
 let currentMD = null;
 let currentAlbum = null;
+let currentGenreFilter = '';
 let currentGenreFilters = new Set(); // Gestion multi-genres pour le catalogue principal
 let isGenreDropdownOpen = false;     // État d'ouverture du menu filtre du catalogue
 let currentTypeFilter = null;
@@ -137,11 +138,10 @@ function selectGenreFilter(genre) {
   const dropdown = document.getElementById('genre-filter-dropdown');
   if (dropdown) dropdown.classList.add('hidden');
 
-  // Met à jour l'affichage du badge sous le header
-  if (typeof updateGenreBadge === 'function') updateGenreBadge();
-
-  // Rafraîchit l'état actif et la coche dans le menu FAB des genres
-  populateFabGenreMenu();
+  // Remplace l'appel manquant par la mise à jour visuelle du FAB
+  if (typeof populateFabGenreMenu === 'function') {
+    populateFabGenreMenu();
+  }
 
   renderMDList({ 
     genre: currentGenreFilter, 
@@ -154,41 +154,37 @@ function mdMatchesSearch(md, query) {
   if (!query) return true;
   const q = query.toLowerCase().trim();
 
-  // Recherche dans le titre et l'artiste du MiniDisc
   if (md.title && md.title.toLowerCase().includes(q)) return true;
   if (md.artist && md.artist.toLowerCase().includes(q)) return true;
 
-  // Genres et Types / Tags
   const genres = getMDAllGenres(md);
   if (genres.some(g => g.toLowerCase().includes(q))) return true;
 
   const types = getMDAllTypes(md);
   if (types.some(t => t.toLowerCase().includes(q))) return true;
 
-  // Recherche dans les pistes directes (compilations)
+  // Pistes directes (compilations)
   if (md.tracks && Array.isArray(md.tracks)) {
     const hasTrackMatch = md.tracks.some(t => {
-      const title = typeof t === 'object' && t !== null ? t.title : String(t);
-      return title && title.toLowerCase().includes(q);
+      const trackTitle = typeof t === 'object' && t !== null ? t.title : String(t);
+      return trackTitle && trackTitle.toLowerCase().includes(q);
     });
     if (hasTrackMatch) return true;
   }
 
-  // Recherche dans les albums contenus
+  // Albums
   if (md.albums && md.albums.length > 0) {
     for (const album of md.albums) {
       if (album.title && album.title.toLowerCase().includes(q)) return true;
       if (album.artist && album.artist.toLowerCase().includes(q)) return true;
       
-      // Ancien champ year ou nouveau champ release_year
       const year = album.release_year || album.year;
       if (year && String(year).includes(q)) return true;
 
-      // Pistes de l'album (gestion objet { title, duration } ou chaîne)
       if (album.tracks && Array.isArray(album.tracks)) {
         const hasAlbumTrackMatch = album.tracks.some(t => {
-          const title = typeof t === 'object' && t !== null ? t.title : String(t);
-          return title && title.toLowerCase().includes(q);
+          const trackTitle = typeof t === 'object' && t !== null ? t.title : String(t);
+          return trackTitle && trackTitle.toLowerCase().includes(q);
         });
         if (hasAlbumTrackMatch) return true;
       }
