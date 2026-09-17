@@ -681,7 +681,7 @@ function renderFeatured() {
 function renderDashboard(pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'none';
-   
+    
   if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
 
   currentMD = null;
@@ -719,11 +719,11 @@ function renderDashboard(pushState = true) {
   sourceData.forEach(md => {
     const genres = typeof getMDAllGenres === 'function' 
       ? getMDAllGenres(md) 
-      : (md.genre ? (Array.isArray(md.genre) ? md.genre : md.genre.split(',')) : []);
+      : (md.main_genre ? [md.main_genre] : (md.genre ? (Array.isArray(md.genre) ? md.genre : md.genre.split(',')) : []));
 
     const types = typeof getMDAllTypes === 'function' 
       ? getMDAllTypes(md) 
-      : (md.typeTags || md.type ? (Array.isArray(md.typeTags || md.type) ? (md.typeTags || md.type) : (md.typeTags || md.type).split(',')) : []);
+      : (md.typeTags || md.tags || md.type ? (Array.isArray(md.typeTags || md.tags || md.type) ? (md.typeTags || md.tags || md.type) : (md.typeTags || md.tags || md.type).split(',')) : []);
 
     genres.forEach(g => {
       const cleanG = g.trim().toUpperCase();
@@ -759,7 +759,7 @@ function renderDashboard(pushState = true) {
     `;
   });
 
-   app.innerHTML = `
+  app.innerHTML = `
     <div class="dashboard-container" style="padding-top: 20px; padding-bottom: 90px;">
       
       <div class="dashboard-card" style="margin-bottom: 36px;">
@@ -788,14 +788,14 @@ function renderDashboard(pushState = true) {
       </button>
 
       <div class="dashboard-actions-row">
-  <button class="action-btn-wide" onclick="window.location.hash = '#planner'">
-    Créer une compilation
-  </button>
-  <button class="action-btn-wide" onclick="openAdminModal()">
-    ＋ Ajouter un MD
-  </button>
-</div>
-</div>
+        <button class="action-btn-wide" onclick="window.location.hash = '#planner'">
+          Créer une compilation
+        </button>
+        <button class="action-btn-wide" onclick="openAdminModal()">
+          ＋ Ajouter un MD
+        </button>
+      </div>
+    </div>
   `;
 
   if (typeof renderFeatured === 'function') renderFeatured();
@@ -876,12 +876,15 @@ function renderMDList(filters = {}, pushState = true) {
       
       let albumsContent = '';
       if (md.albums && md.albums.length > 0) {
-        albumsContent = md.albums.map(album => `
-          <div class="md-album-item">
-            <div class="md-album-title">${album.title || ''}</div>
-            <div class="md-album-artist">${album.artist || ''}</div>
-          </div>
-        `).join('');
+        albumsContent = md.albums.map(album => {
+          const yearStr = album.release_year || album.year ? ` (${album.release_year || album.year})` : '';
+          return `
+            <div class="md-album-item">
+              <div class="md-album-title">${album.title || ''}${yearStr}</div>
+              <div class="md-album-artist">${album.artist || ''}</div>
+            </div>
+          `;
+        }).join('');
       } else {
         albumsContent = `
           <div class="md-album-item">
@@ -896,7 +899,8 @@ function renderMDList(filters = {}, pushState = true) {
         ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
         : '';
 
-      const coverHTML = createLoadingCoverHTML(md.md_cover, 'md-thumb', '💽');
+      const coverSrc = md.cover_url || md.md_cover;
+      const coverHTML = createLoadingCoverHTML(coverSrc, 'md-thumb', '💽');
 
       html += `
         <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px; position: relative;" onclick="openMD(${originalIndex})">
@@ -966,11 +970,19 @@ if (!md.albums || md.albums.length === 0) {
 
   let tracksHTML = '';
   if (md.tracks && md.tracks.length > 0) {
-    md.tracks.forEach((track) => {
-      const match = track.match(/^(\d+\.)\s*(.*)$/);
-      tracksHTML += match 
-        ? `<li class="track-item"><strong class="track-num">${match[1]}</strong> ${match[2]}</li>`
-        : `<li class="track-item">${track}</li>`;
+    md.tracks.forEach((track, tIdx) => {
+      if (typeof track === 'object' && track !== null) {
+        const trackNum = String(tIdx + 1).padStart(2, '0') + '.';
+        const durationStr = (track.duration && track.duration !== 'Unknow') 
+          ? `<span class="track-duration" style="float: right; color: var(--text-sub); font-size: 0.85rem;">${track.duration}</span>` 
+          : '';
+        tracksHTML += `<li class="track-item"><strong class="track-num">${trackNum}</strong> ${track.title || 'Piste sans titre'} ${durationStr}</li>`;
+      } else {
+        const match = String(track).match(/^(\d+\.)\s*(.*)$/);
+        tracksHTML += match 
+          ? `<li class="track-item"><strong class="track-num">${match[1]}</strong> ${match[2]}</li>`
+          : `<li class="track-item">${track}</li>`;
+      }
     });
   } else {
     tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
@@ -980,7 +992,8 @@ if (!md.albums || md.albums.length === 0) {
     ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
     : '';
 
-  const coverHTML = createLoadingCoverHTML(md.md_cover, 'album-cover-large', '💽');
+  const coverSrc = md.cover_url || md.md_cover;
+  const coverHTML = createLoadingCoverHTML(coverSrc, 'album-cover-large', '💽');
 
   app.innerHTML = `
     <div class="track-container" style="padding-bottom: 90px;">
@@ -1013,7 +1026,9 @@ md.albums.forEach((album, aIndex) => {
     ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
     : '';
 
-  const coverHTML = createLoadingCoverHTML(album.cover, 'album-thumb', '🎵');
+  const coverSrc = album.cover_url || album.cover;
+  const yearDisplay = album.release_year || album.year;
+  const coverHTML = createLoadingCoverHTML(coverSrc, 'album-thumb', '🎵');
 
   html += `
     <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px; position: relative;" onclick="openAlbum(${index}, ${aIndex})">
@@ -1024,7 +1039,7 @@ md.albums.forEach((album, aIndex) => {
         <div class="item-tag" style="color: ${albumColor};">${albumGenres.join(' / ')}</div>
         <div class="item-title" style="font-weight: 700;">${album.title || 'Album sans titre'}</div>
         <div class="item-sub">${album.artist || 'Artiste inconnu'}</div>
-        ${album.year ? `<div class="item-sub" style="font-size:0.78rem;">${album.year}</div>` : ''}
+        ${yearDisplay ? `<div class="item-sub" style="font-size:0.78rem;">${yearDisplay}</div>` : ''}
       </div>
       ${badgeAlbumHTML}
     </div>
@@ -1083,11 +1098,19 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
 
   let tracksHTML = '';
   if (album.tracks && album.tracks.length > 0) {
-    album.tracks.forEach((track) => {
-      const match = track.match(/^(\d+\.)\s*(.*)$/);
-      tracksHTML += match 
-        ? `<li class="track-item"><strong class="track-num">${match[1]}</strong> ${match[2]}</li>`
-        : `<li class="track-item">${track}</li>`;
+    album.tracks.forEach((track, tIdx) => {
+      if (typeof track === 'object' && track !== null) {
+        const trackNum = String(tIdx + 1).padStart(2, '0') + '.';
+        const durationStr = (track.duration && track.duration !== 'Unknow') 
+          ? `<span class="track-duration" style="float: right; color: var(--text-sub); font-size: 0.85rem;">${track.duration}</span>` 
+          : '';
+        tracksHTML += `<li class="track-item"><strong class="track-num">${trackNum}</strong> ${track.title || 'Piste sans titre'} ${durationStr}</li>`;
+      } else {
+        const match = String(track).match(/^(\d+\.)\s*(.*)$/);
+        tracksHTML += match 
+          ? `<li class="track-item"><strong class="track-num">${match[1]}</strong> ${match[2]}</li>`
+          : `<li class="track-item">${track}</li>`;
+      }
     });
   } else {
     tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
@@ -1097,7 +1120,9 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
     : '';
 
-  const coverHTML = createLoadingCoverHTML(album.cover, 'album-cover-large', '🎵');
+  const coverSrc = album.cover_url || album.cover;
+  const yearDisplay = album.release_year || album.year;
+  const coverHTML = createLoadingCoverHTML(coverSrc, 'album-cover-large', '🎵');
 
   app.innerHTML = `
     <div class="track-container">
@@ -1108,7 +1133,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
           <h2 style="font-size: 1.2rem; font-weight: 800;">${album.title || 'Album sans titre'}</h2>
           <p style="color: var(--text-sub); font-size: 0.95rem;">${album.artist || 'Artiste inconnu'}</p>
           <p style="color: ${albumColor}; font-size: 0.8rem; font-weight: 800;">${albumGenres.join(' / ')}</p>
-          ${album.year ? `<p style="color: var(--text-sub); font-size: 0.8rem;">${album.year}</p>` : ''}
+          ${yearDisplay ? `<p style="color: var(--text-sub); font-size: 0.8rem;">${yearDisplay}</p>` : ''}
         </div>
       </div>
       <ul class="track-list">${tracksHTML}</ul>
@@ -1116,6 +1141,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   `;
   window.scrollTo(0, 0);
 }
+
 /* ==========================================
    SUPPRESSION ET MODIFICATION
    ========================================== */
