@@ -3,88 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MiniDisc Collection Manager</title>
+  <title>MiniDiscs Collection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- EN-TÊTE PRINCIPAL -->
-  <header class="app-header">
-    <div class="header-content">
-      <h1>💽 MiniDisc Collection</h1>
-      <button class="btn-primary" onclick="openAdminModal()">＋ Ajouter un MiniDisc</button>
+  <!-- BARRE DE RECHERCHE DÉPLOYABLE EN HAUT -->
+  <div id="search-bar" class="search-bar top-search closed">
+    <input 
+      type="search" 
+      id="search-input" 
+      placeholder="Rechercher (artiste, titre, piste...)" 
+      oninput="onSearchInput(this.value)"
+    >
+  </div>
+
+  <!-- HEADER FIXE RETRO 90S -->
+  <header>
+    <button id="back-btn" class="back-btn hidden">&larr;</button>
+    <div class="header-title-container">
+      <div class="header-subtitle">COLLECTION</div>
+      <div id="header-title" class="title-90s">MINIDISCS</div>
     </div>
   </header>
 
-  <!-- CONTENU PRINCIPAL / LISTE DES MINIDISCS -->
-  <main class="app-main">
-    <!-- FILTRES DE GENRE -->
-    <section class="filters-section">
-      <div id="genre-badges" class="genre-badges">
-        <!-- Généré dynamiquement en JS -->
-      </div>
-    </section>
+  <!-- Badge affichant le genre filtré -->
+  <div id="active-genre-badge" class="active-genre-badge hidden">
+    <span id="active-genre-text"></span>
+  </div>
 
-    <!-- GRILLE / LISTE DE CARTES -->
-    <section id="minidisc-grid" class="minidisc-grid">
-      <!-- Les cartes MiniDisc seront injectées ici par app.js -->
-    </section>
+  <!-- SÉLECTION DU MOMENT -->
+  <div id="featured-container" class="featured-container">
+    <div class="featured-header">
+      <span class="featured-title">SÉLECTION DU MOMENT</span>
+    </div>
+    <div id="featured-grid" class="featured-grid"></div>
+  </div>
+
+  <!-- APPLICATION PRINCIPALE (Là où JS injecte les cartes) -->
+  <main id="app">
   </main>
 
-  <!-- LISTE DE SUGGESTIONS POUR LES GENRES -->
-  <datalist id="genres-list">
-    <option value="Hip-Hop"></option>
-    <option value="Rap"></option>
-    <option value="Rock"></option>
-    <option value="Electronic"></option>
-    <option value="Pop"></option>
-    <option value="Jazz"></option>
-    <option value="Reggae"></option>
-    <option value="Funk / Soul"></option>
-    <option value="Metal"></option>
-  </datalist>
-
-  <!-- MODALE FORMULAIRE ADMIN (AJOUT ET ÉDITION) -->
+  <!-- MODALE FORMULAIRE ADMIN -->
   <div id="admin-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="admin-modal-title" style="margin: 0; font-size: 1.1rem; color: var(--text-main, #333);">＋ Ajouter un MiniDisc</h3>
+        <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main, #333);">＋ Ajouter un MiniDisc</h3>
         <button class="close-btn" type="button" onclick="closeAdminModal()">&times;</button>
       </div>
 
       <form id="admin-form">
-        <!-- CHAMPS GLOBAUX DU MINIDISC -->
         <div class="form-group">
-          <label for="md-title">Titre global du MiniDisc / Compilation</label>
-          <input type="text" id="md-title" placeholder="ex: Sad Hill / Compilation Maison" required>
+          <label>Genre(s)</label>
+          <input type="text" id="md-genre" list="genres-list" placeholder="ex: ROCK, SYNTHWAVE" required>
         </div>
 
         <div class="form-group">
-          <label for="md-status">Statut d'enregistrement</label>
-          <div class="checkbox-group" style="margin-top: 5px;">
+          <label>Type(s) de MiniDisc</label>
+          <input type="text" id="md-type-tags" list="types-list" placeholder="ex: ALBUM, LIVE, COMPILATION">
+        </div>
+
+        <div class="form-group">
+          <label>Pochette MiniDisc</label>
+          <input type="file" id="md-cover" accept="image/*">
+        </div>
+
+        <div class="form-group">
+          <label>Structure du MiniDisc :</label>
+          <div class="radio-group">
+            <label><input type="radio" name="md-type" value="compil" checked onchange="toggleAdminType()"> Compilation</label>
+            <label><input type="radio" name="md-type" value="albums" onchange="toggleAdminType()"> Série d'albums</label>
+          </div>
+        </div>
+
+        <div id="section-compil">
+          <div class="form-group">
+            <label>Titre de la compilation</label>
+            <input type="text" id="compil-title" placeholder="ex: Best of 90s">
+          </div>
+          <div class="form-group">
+            <label>Artiste(s)</label>
+            <input type="text" id="compil-artist" placeholder="ex: Artistes Divers">
+          </div>
+          <div class="form-group">
+            <label>Pistes (une par ligne, sans numéro)</label>
+            <textarea id="compil-tracks" placeholder="Piste A&#10;Piste B"></textarea>
+          </div>
+          <div class="form-group" style="margin-top: 10px;">
             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">
-              <input type="checkbox" id="md-to-record" style="width: 16px; height: 16px;">
+              <input type="checkbox" id="compil-to-record" style="width: 16px; height: 16px;">
               🎙️ À enregistrer
             </label>
           </div>
         </div>
 
-        <hr style="border: none; border-top: 1px dashed var(--border-color, #ccc); margin: 15px 0;">
-
-        <!-- CONTENEUR DYNAMIQUE DES ALBUMS -->
-        <div class="form-group">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <label style="font-weight: bold; margin: 0;">Albums sur ce MiniDisc</label>
-            <button type="button" class="btn-sub" onclick="addAdminAlbumBlock()">+ Ajouter un album</button>
-          </div>
-
-          <div id="albums-container" style="display: flex; flex-direction: column; gap: 15px;">
-            <!-- Les blocs d'albums dynamiques seront insérés ici via JavaScript -->
-          </div>
+        <div id="section-albums" class="hidden">
+          <div id="albums-container"></div>
+          <button type="button" class="btn-sub" onclick="addAdminAlbumBlock()">+ Ajouter un album</button>
         </div>
 
-        <!-- BOUTONS D'ACTION DU FORMULAIRE -->
-        <div class="form-actions" style="display: flex; gap: 8px; margin-top: 20px;">
+        <div class="form-actions" style="display: flex; gap: 8px; margin-top: 15px;">
           <button type="submit" class="btn-primary" style="flex: 1; margin-bottom: 0;">Enregistrer</button>
           <button type="button" class="btn-secondary" onclick="closeAdminModal()">Annuler</button>
         </div>
@@ -92,9 +113,72 @@
     </div>
   </div>
 
-  <!-- BOUTON FLOTTANT (FAB) ET SON MENU -->
+  <!-- MODALE NOUVEL ALBUM IDÉE -->
+  <div id="idea-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main, #333);">＋ Ajouter un album à l'idée de compil</h3>
+        <button class="close-btn" type="button" onclick="closeIdeaModal()">&times;</button>
+      </div>
+
+      <form id="idea-form">
+        <div class="form-group">
+          <label>Titre de l'album</label>
+          <input type="text" id="idea-title" placeholder="ex: Discovery" required>
+        </div>
+        <div class="form-group">
+          <label>Artiste</label>
+          <input type="text" id="idea-artist" placeholder="ex: Daft Punk" required>
+        </div>
+        <div class="form-group">
+          <label>Genre(s)</label>
+          <input type="text" id="idea-genre" list="genres-list" placeholder="ex: ELECTRONIC, HOUSE">
+        </div>
+        <div class="form-group">
+          <label>Durée (ex: 45:30)</label>
+          <input type="text" id="idea-duration" placeholder="mm:ss" required>
+        </div>
+        <div class="form-group">
+          <label>Pochette Album</label>
+          <input type="file" id="idea-cover" accept="image/*">
+        </div>
+        <div class="form-actions" style="display: flex; gap: 8px; margin-top: 15px;">
+          <button type="submit" class="btn-primary" style="flex: 1; margin-bottom: 0;">Enregistrer</button>
+          <button type="button" class="btn-secondary" onclick="closeIdeaModal()">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DROPDOWNS FILTRES -->
+  <div id="genre-filter-dropdown" class="genre-filter-container hidden"></div>
+  <div id="planner-genre-filter" class="genre-filter-container hidden">
+    <div id="planner-tags-list" class="tags-cloud"></div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <datalist id="genres-list"></datalist>
+  <datalist id="types-list"></datalist>
+
+  <!-- BOUTON FLOTTANT (FAB) RESTAURÉ -->
   <div id="floating-actions" class="fab-container">
     <div id="fab-menu" class="fab-menu hidden">
+      <div class="fab-section-title">Filtres</div>
+      <button type="button" class="fab-item" onclick="toggleFabSubmenu('genres-submenu');">
+        <span>🎵 Genres</span>
+      </button>
+      <div id="genres-submenu" class="fab-submenu fab-genre-submenu hidden"></div>
+
+      <button type="button" class="fab-item" onclick="toggleFabSubmenu('status-submenu');">
+        <span>🎚️ Statut</span>
+      </button>
+      <div id="status-submenu" class="fab-submenu hidden">
+        <div class="fab-genre-item" onclick="applyStatusFilter('all', event)"><span>Tous</span></div>
+        <div class="fab-genre-item" onclick="applyStatusFilter('torecord', event)"><span>À enregistrer</span></div>
+        <div class="fab-genre-item" onclick="applyStatusFilter('recorded', event)"><span>Enregistrés</span></div>
+      </div>
+
       <hr class="fab-divider">
       <div class="fab-section-title">Recherche</div>
       <div style="padding: 2px 4px;">
@@ -105,6 +189,12 @@
           oninput="handleCatalogSearch(this.value);" 
         />
       </div>
+
+      <hr class="fab-divider">
+      <div class="fab-section-title">Options</div>
+      <button type="button" class="fab-item accent" onclick="if(typeof openAddMDModal==='function') openAddMDModal(); else if(typeof openAdminModal==='function') openAdminModal(); toggleFabMenu();">
+        <span>+ Ajouter un MD</span>
+      </button>
     </div>
     
     <button type="button" id="fab-main-btn" class="fab-main-btn" onclick="toggleFabMenu()" title="Menu principal">
