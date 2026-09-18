@@ -803,24 +803,29 @@ function renderDashboard(pushState = true) {
     "Ambient & Orchestral"
   ];
 
-  let carouselCardsHTML = '';
-  mainGenres.forEach(genre => {
-    const color = typeof getBorderColor === 'function' ? getBorderColor(genre) : '#ff007f';
-    
-    // Recherche de la clé en MAJUSCULES pour correspondre au FAB
-    const upperGenre = genre.toUpperCase().trim();
-    const count = genreCounts[upperGenre] || 0;
-    
-    // Échappement pour le paramètre onclick
-    const safeGenreUpper = upperGenre.replace(/'/g, "\\'");
+  const generateCards = (genresList) => {
+    return genresList.map(genre => {
+      const color = typeof getBorderColor === 'function' ? getBorderColor(genre) : '#ff007f';
+      const upperGenre = genre.toUpperCase().trim();
+      const count = genreCounts[upperGenre] || 0;
+      const safeGenreUpper = upperGenre.replace(/'/g, "\\'");
 
-    carouselCardsHTML += `
-      <div class="genre-carousel-card" style="border-top-color: ${color};" onclick="if(typeof selectGenreFilter === 'function'){ selectGenreFilter('${safeGenreUpper}'); } else { window.location.hash = '#minidiscs?genre=${encodeURIComponent(safeGenreUpper)}'; }">
-        <div class="carousel-genre-name" style="color: ${color};">${genre}</div>
-        <div class="carousel-genre-count">${count} MD${count > 1 ? 's' : ''}</div>
-      </div>
-    `;
-  });
+      return `
+        <div class="genre-carousel-card" style="border-top-color: ${color};" onclick="if(typeof selectGenreFilter === 'function'){ selectGenreFilter('${safeGenreUpper}'); } else { window.location.hash = '#minidiscs?genre=${encodeURIComponent(safeGenreUpper)}'; }">
+          <div class="carousel-genre-name" style="color: ${color};">${genre}</div>
+          <div class="carousel-genre-count">${count} MD${count > 1 ? 's' : ''}</div>
+        </div>
+      `;
+    }).join('');
+  };
+
+  const initialCards = generateCards(mainGenres);
+  let carouselCardsHTML = `
+    <div class="carousel-track">
+      ${initialCards}
+      ${initialCards}
+    </div>
+  `;
 
   app.innerHTML = `
     <div class="dashboard-container" style="padding-top: 20px; padding-bottom: 90px;">
