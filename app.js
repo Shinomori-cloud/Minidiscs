@@ -83,8 +83,8 @@ function renderGenreDropdownContent() {
     let genres = [];
     if (typeof getMDAllGenres === 'function') {
       genres = getMDAllGenres(md);
-    } else if (md.genre) {
-      genres = typeof md.genre === 'string' ? md.genre.split(',') : md.genre;
+    } else if (main_genre) {
+      genres = typeof main_genre === 'string' ? main_genre.split(',') : main_genre;
     }
 
     genres.forEach(g => {
@@ -337,8 +337,8 @@ function populateFabGenreMenu() {
     let genres = [];
     if (typeof getMDAllGenres === 'function') {
       genres = getMDAllGenres(md);
-    } else if (md.genre) {
-      genres = typeof md.genre === 'string' ? md.genre.split(',') : md.genre;
+    } else if (main_genre) {
+      genres = typeof main_genre === 'string' ? main_genre.split(',') : main_genre;
     }
 
     genres.forEach(g => {
@@ -734,7 +734,7 @@ function renderDashboard(pushState = true) {
   sourceData.forEach(md => {
     const genres = typeof getMDAllGenres === 'function' 
       ? getMDAllGenres(md) 
-      : (md.genre ? (Array.isArray(md.genre) ? md.genre : md.genre.split(',')) : []);
+      : (main_genre ? (Array.isArray(main_genre) ? main_genre : main_genre.split(',')) : []);
 
     const types = typeof getMDAllTypes === 'function' 
       ? getMDAllTypes(md) 
@@ -2070,8 +2070,8 @@ function populateFormDatalists() {
     // Récupération sécurisée des genres
     if (typeof getMDAllGenres === 'function') {
       getMDAllGenres(md).forEach(g => genresSet.add(g));
-    } else if (md.genre) {
-      const gList = Array.isArray(md.genre) ? md.genre : md.genre.split(',');
+    } else if (main_genre) {
+      const gList = Array.isArray(main_genre) ? main_genre : main_genre.split(',');
       gList.forEach(g => genresSet.add(g.trim()));
     }
 
