@@ -601,7 +601,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 /* 4. Sur la page TITRES / PISTES (Vue détail avec badge rose) */
 .badge-to-record-header {
-  font-size: 0.57rem !important;
+  font-size: 0.55rem !important;
 }
 
 .item-title {
