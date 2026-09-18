@@ -1660,7 +1660,8 @@ html, body {
    ========================================== */
 .genre-carousel-container {
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   padding: 4px 6px 12px 6px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -1676,12 +1677,6 @@ html, body {
   flex-wrap: nowrap !important;
   gap: 12px;
   width: max-content;
-  animation: scrollCarousel 25s linear infinite;
-}
-
-.genre-carousel-container:hover .carousel-track,
-.genre-carousel-container:active .carousel-track {
-  animation-play-state: paused;
 }
 
 .genre-carousel-card {
@@ -1723,13 +1718,4 @@ html, body {
   padding: 2px 6px;
   border-radius: 10px;
   border: 1px solid #000000;
-}
-
-@keyframes scrollCarousel {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
 }
