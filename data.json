@@ -2739,729 +2739,729 @@
       "title": "Musique de nuit Vol. 2",
       "artist": "Divers",
       "main_genre": "Ambient & Orchestral",
-      "genre": [
+      "tags": [
         "Ambient",
         "Classique"
       ],
       "duration": "1:11:13",
-      "cover": "images/musiquedenuit2.jpg"
+      "md_cover": "images/musiquedenuit2.jpg"
     },
     {
       "title": "The Best of 1980 - 1990",
       "artist": "U2",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock",
         "Pop Rock"
       ],
       "duration": "1:01:48",
-      "cover": "images/u2bestof.jpg"
+      "md_cover": "images/u2bestof.jpg"
     },
     {
       "title": "From the Muddy Bank of the Wishkah",
       "artist": "Nirvana",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Alternative Rock",
         "Grunge"
       ],
       "duration": "54:01",
-      "cover": "images/wishka.jpg"
+      "md_cover": "images/wishka.jpg"
     },
     {
       "title": "Innuendo",
       "artist": "Queen",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock",
         "Experimental"
       ],
       "duration": "53:48",
-      "cover": "images/innuendo.jpg"
+      "md_cover": "images/innuendo.jpg"
     },
     {
       "title": "Busta Flex",
       "artist": "Busta Flex",
       "main_genre": "Rap, Soul & Reggae",
-      "genre": [
+      "tags": [
         "Rap"
       ],
       "duration": "52:21",
-      "cover": "images/bustaflex.jpg"
+      "md_cover": "images/bustaflex.jpg"
     },
     {
       "title": "Le combat continue",
       "artist": "Idéal J",
       "main_genre": "Rap, Soul & Reggae",
-      "genre": [
+      "tags": [
         "Rap"
       ],
       "duration": "1:15:53",
-      "cover": "images/idealj.jpg"
+      "md_cover": "images/idealj.jpg"
     },
     {
       "title": "Starmania",
       "artist": "Michel Berger",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Français",
         "Rock",
         "Variété"
       ],
       "duration": "1:12:00",
-      "cover": "images/starmania.jpg"
+      "md_cover": "images/starmania.jpg"
     },
     {
       "title": "Le 5eme Element",
       "artist": "Eric Serra",
       "main_genre": "Ambient & Orchestral",
-      "genre": [
+      "tags": [
         "Orchestral"
       ],
       "duration": "1:06:04",
-      "cover": "images/cinqelement.jpg"
+      "md_cover": "images/cinqelement.jpg"
     },
     {
       "title": "Number #1's",
       "artist": "Mariah Carey",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Variété"
       ],
       "duration": "1:13:13",
-      "cover": "images/mariahcarey.jpg"
+      "md_cover": "images/mariahcarey.jpg"
     },
     {
       "title": "Black Market Music",
       "artist": "Placebo",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Alternative Rock",
         "Pop Rock"
       ],
       "duration": "52:40",
-      "cover": "images/Black_market_music.jpg"
+      "md_cover": "images/Black_market_music.jpg"
     },
     {
       "title": "Panique Celtique",
       "artist": "Manau",
       "main_genre": "Rap, Soul & Reggae",
-      "genre": [
+      "tags": [
         "Rap",
         "Français"
       ],
       "duration": "44:51",
-      "cover": "images/manau.jpg"
+      "md_cover": "images/manau.jpg"
     },
     {
       "title": "Stiff Upper Lip",
       "artist": "ACDC",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Punk Rock",
         "Rock"
       ],
       "duration": "46:57",
-      "cover": "images/stiffupperlip.jpg"
+      "md_cover": "images/stiffupperlip.jpg"
     },
     {
       "title": "Sah Hill",
       "artist": "Kheops",
       "main_genre": "Rap, Soul & Reggae",
-      "genre": [
+      "tags": [
         "Rap"
       ],
       "duration": "1:18:31",
-      "cover": "images/sadhill.jpg"
+      "md_cover": "images/sadhill.jpg"
     },
     {
       "title": "Thriller",
       "artist": "Michael Jackson",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Pop Rock",
         "Soul Funk"
       ],
       "duration": "42:19",
-      "cover": "images/thriller.jpeg"
+      "md_cover": "images/thriller.jpeg"
     },
     {
       "title": "The Miseducation of Lauryn Hill",
       "artist": "Lauryn Hill",
       "main_genre": "Rap, Soul & Reggae",
-      "genre": [
+      "tags": [
         "Rap",
         "Soul Funk",
         "Reggae"
       ],
       "duration": "1:17:39",
-      "cover": "images/miseduation.jpg"
+      "md_cover": "images/miseduation.jpg"
     },
     {
       "title": "MTV Unplugged",
       "artist": "Alanis Morissette",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Pop Rock",
         "Folk"
       ],
       "duration": "53:18",
-      "cover": "images/alanisunplugged.jpg"
+      "md_cover": "images/alanisunplugged.jpg"
     },
     {
       "title": "Live à Bercy",
       "artist": "Mylène Farmer",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Pop Rock",
         "Variété",
         "Français"
       ],
       "duration": "1:58:13",
-      "cover": "images/farmerbercy.jpg"
+      "md_cover": "images/farmerbercy.jpg"
     },
     {
       "title": "Le tour de M",
       "artist": "M",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock",
         "Pop Rock",
         "Variété",
         "Français"
       ],
       "duration": "1:50:00",
-      "cover": "images/tourdem.jpg"
+      "md_cover": "images/tourdem.jpg"
     },
     {
       "title": "Superunknown",
       "artist": "Soundgarden",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Alternative Rock",
         "Grunge"
       ],
       "duration": "1:10:19",
-      "cover": "images/Superunknown.jpg"
+      "md_cover": "images/Superunknown.jpg"
     },
     {
       "title": "Fight Club",
       "artist": "The Dust Brothers",
       "main_genre": "Électro, Trip-Hop & Expérimental",
-      "genre": [
+      "tags": [
         "Experimental"
       ],
       "duration": "1:04:00",
-      "cover": "images/fightclub.jpg"
+      "md_cover": "images/fightclub.jpg"
     },
     {
       "title": "666.667 Club",
       "artist": "Noir Désir",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock",
         "Français"
       ],
       "duration": "50:39",
-      "cover": "images/666667club.jpg"
+      "md_cover": "images/666667club.jpg"
     },
     {
       "title": "Incesticide",
       "artist": "Nirvana",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Alternative Rock",
         "Grunge"
       ],
       "duration": "44:44",
-      "cover": "images/incesticide.jpg"
+      "md_cover": "images/incesticide.jpg"
     },
     {
       "title": "Mystery White Boy",
       "artist": "Jeff Buckley",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock",
         "Blues"
       ],
       "duration": "1:23:00",
-      "cover": "images/mysterywhite.jpg"
+      "md_cover": "images/mysterywhite.jpg"
     },
     {
       "title": "Boys don't cry",
       "artist": "The Cure",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock"
       ],
       "duration": "36:00",
-      "cover": "images/Boysdontcry.jpg"
+      "md_cover": "images/Boysdontcry.jpg"
     },
     {
       "title": "High/Low",
       "artist": "Nada Surf",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Alternative Rock"
       ],
       "duration": "36:31",
-      "cover": "images/HighLow.jpg"
+      "md_cover": "images/HighLow.jpg"
     },
     {
       "title": "Rurouni Kenshin: Seisouhen",
       "artist": "Taku Iwasaki",
       "main_genre": "Ambient & Orchestral",
-      "genre": [
+      "tags": [
         "Orchestral"
       ],
       "duration": "50:52",
-      "cover": "images/Kenshin.jpg"
+      "md_cover": "images/Kenshin.jpg"
     },
     {
       "title": "Is this it",
       "artist": "The Strokes",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Alternative Rock"
       ],
       "duration": "36:28",
-      "cover": "images/isthisit.jpg"
+      "md_cover": "images/isthisit.jpg"
     },
     {
       "title": "A kind of magic",
       "artist": "Queen",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock"
       ],
       "duration": "53:37",
-      "cover": "images/akindofmagic.jpg"
+      "md_cover": "images/akindofmagic.jpg"
     },
     {
       "title": "Highly Evolved",
       "artist": "The Vines",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Alternative Rock",
         "Grunge"
       ],
       "duration": "43:40",
-      "cover": "images/higlyevolved.jpg"
+      "md_cover": "images/higlyevolved.jpg"
     },
     {
       "title": "Homogenic",
       "artist": "Björk",
       "main_genre": "Électro, Trip-Hop & Expérimental",
-      "genre": [
+      "tags": [
         "Experimental",
         "Electronic"
       ],
       "duration": "43:35",
-      "cover": "images/homogenic.jpg"
+      "md_cover": "images/homogenic.jpg"
     },
     {
       "title": "The Marshall Mathers LP",
       "artist": "Eminem",
       "main_genre": "Rap, Soul & Reggae",
-      "genre": [
+      "tags": [
         "Rap"
       ],
       "duration": "1:12:17",
-      "cover": "images/marshallmathers.jpg"
+      "md_cover": "images/marshallmathers.jpg"
     },
     {
       "title": "Ready to die",
       "artist": "The Notorious B.I.G.",
       "main_genre": "Rap, Soul & Reggae",
-      "genre": [
+      "tags": [
         "Rap"
       ],
       "duration": "1:16:58",
-      "cover": "images/readytodie.jpg"
+      "md_cover": "images/readytodie.jpg"
     },
     {
       "title": "Rumours",
       "artist": "Fleetwood Mac",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Pop Rock"
       ],
       "duration": "39:03",
-      "cover": "images/rumours.jpg"
+      "md_cover": "images/rumours.jpg"
     },
     {
       "title": "Iowa",
       "artist": "Slipknot",
       "main_genre": "Metal & Hard Rock",
-      "genre": [
+      "tags": [
         "Metal"
       ],
       "duration": "1:06:25",
-      "cover": "images/iowa.jpg"
+      "md_cover": "images/iowa.jpg"
     },
     {
       "title": "Tom McRae",
       "artist": "Tom McRae",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Pop Rock",
         "Folk"
       ],
       "duration": "45:10",
-      "cover": "images/tommcrae.jpg"
+      "md_cover": "images/tommcrae.jpg"
     },
     {
       "title": "Mamagubida",
       "artist": "Tryo",
       "main_genre": "Rap, Soul & Reggae",
-      "genre": [
+      "tags": [
         "Français",
         "Reggae",
         "Folk"
       ],
       "duration": "1:13:53",
-      "cover": "images/tryo.jpg"
+      "md_cover": "images/tryo.jpg"
     },
     {
       "title": "Load",
       "artist": "Metallica",
       "main_genre": "Metal & Hard Rock",
-      "genre": [
+      "tags": [
         "Metal"
       ],
       "duration": "1:18:59",
-      "cover": "images/load.jpg"
+      "md_cover": "images/load.jpg"
     },
     {
       "title": "Weezer",
       "artist": "Weezer",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Alternative Rock",
         "Grunge"
       ],
       "duration": "41:17",
-      "cover": "images/img_1789390640391.jpg"
+      "md_cover": "images/img_1789390640391.jpg"
     },
     {
       "title": "The Velvet Underground & Nico",
       "artist": "The Velvet Underground & Nico",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Experimental",
         "Rock"
       ],
       "duration": "47:51",
-      "cover": "images/img_1789392239454.jpg"
+      "md_cover": "images/img_1789392239454.jpg"
     },
     {
       "title": "Pet Sounds",
       "artist": "The Beach Boys",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Pop Rock",
         "Experimental"
       ],
       "duration": "36:25",
-      "cover": "images/img_1789393851900.jpg"
+      "md_cover": "images/img_1789393851900.jpg"
     },
     {
       "title": "Discovery",
       "artist": "Daft Punk",
       "main_genre": "Électro, Trip-Hop & Expérimental",
-      "genre": [
+      "tags": [
         "Electro"
       ],
       "duration": "01:01:50",
-      "cover": "images/img_1789423312317.jpg"
+      "md_cover": "images/img_1789423312317.jpg"
     },
     {
       "title": "Gorillaz",
       "artist": "Gorillaz",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Alternative Rock",
         "Soul Funk"
       ],
       "duration": "56:56",
-      "cover": "images/img_1789504889636.webp"
+      "md_cover": "images/img_1789504889636.webp"
     },
     {
       "title": "Mezzanine",
       "artist": "Massive Attack",
       "main_genre": "Électro, Trip-Hop & Expérimental",
-      "genre": [
+      "tags": [
         "Électro",
         "Trip hop"
       ],
       "duration": "63:29",
-      "cover": "images/img_1789505259343.jpg"
+      "md_cover": "images/img_1789505259343.jpg"
     },
     {
       "title": "Dummy",
       "artist": "Portishead",
       "main_genre": "Électro, Trip-Hop & Expérimental",
-      "genre": [
+      "tags": [
         "Trip hop"
       ],
       "duration": "49:21",
-      "cover": "images/img_1789505381171.jpg"
+      "md_cover": "images/img_1789505381171.jpg"
     },
     {
       "title": "Ten",
       "artist": "Pearl Jam",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Alternative Rock",
         "Rock"
       ],
       "duration": "53:26",
-      "cover": "images/img_1789505500904.jpg"
+      "md_cover": "images/img_1789505500904.jpg"
     },
     {
       "title": "The Rise and Fall of Ziggy Stardust and the Spiders From Mars",
       "artist": "David Bowie",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock"
       ],
       "duration": "38:29",
-      "cover": "images/img_1789505905370.jpg"
+      "md_cover": "images/img_1789505905370.jpg"
     },
     {
       "title": "Master of Puppets",
       "artist": "Metallica",
       "main_genre": "Metal & Hard Rock",
-      "genre": [
+      "tags": [
         "Metal"
       ],
       "duration": "54:25",
-      "cover": "images/img_1789506522530.jpg"
+      "md_cover": "images/img_1789506522530.jpg"
     },
     {
       "title": "Led Zeppelin IV",
       "artist": "Led Zeppelin",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock",
         "Blues",
         "Folk"
       ],
       "duration": "42:38",
-      "cover": "images/img_1789506696070.jpg"
+      "md_cover": "images/img_1789506696070.jpg"
     },
     {
       "title": "The dark side of the moon",
       "artist": "Pink Floyd",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock",
         "Experimental"
       ],
       "duration": "42:58",
-      "cover": "images/img_1789507107796.jpg"
+      "md_cover": "images/img_1789507107796.jpg"
     },
     {
       "title": "The Doors",
       "artist": "The Doors",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock",
         "Blues"
       ],
       "duration": "44:29",
-      "cover": "images/img_1789507699981.jpg"
+      "md_cover": "images/img_1789507699981.jpg"
     },
     {
       "title": "If you're feeling sinister",
       "artist": "Belle and Sebastian",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Pop",
         "Folk"
       ],
       "duration": "41:17",
-      "cover": "images/img_1789510811738.jpg"
+      "md_cover": "images/img_1789510811738.jpg"
     },
     {
       "title": "Sheryl Crow",
       "artist": "Sheryl Crow",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock"
       ],
       "duration": "56:28",
-      "cover": "images/img_1789582700642.png"
+      "md_cover": "images/img_1789582700642.png"
     },
     {
       "title": "What's going on",
       "artist": "Marvin Gaye",
       "main_genre": "Rap, Soul & Reggae",
-      "genre": [
+      "tags": [
         "Soul Funk"
       ],
       "duration": "35:28",
-      "cover": "images/img_1789585991607.jpg"
+      "md_cover": "images/img_1789585991607.jpg"
     },
     {
       "title": "Blue",
       "artist": "Joni Mitchell",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Pop Rock",
         "Folk"
       ],
       "duration": "35:41",
-      "cover": "images/img_1789586238617.jpg"
+      "md_cover": "images/img_1789586238617.jpg"
     },
     {
       "title": "Songs in the key of life",
       "artist": "Stevie Wonder",
       "main_genre": "Rap, Soul & Reggae",
-      "genre": [
+      "tags": [
         "Soul",
         "Pop"
       ],
       "duration": "1:25:43",
-      "cover": "images/img_1789586397147.jpg"
+      "md_cover": "images/img_1789586397147.jpg"
     },
     {
       "title": "Abbey Road",
       "artist": "The Beatles",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Pop Rock"
       ],
       "duration": "47:00",
-      "cover": "images/img_1789586664247.jpg"
+      "md_cover": "images/img_1789586664247.jpg"
     },
     {
       "title": "Purple rain",
       "artist": "Prince and the Revolution",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Pop Rock",
         "Soul Funk"
       ],
       "duration": "43:55",
-      "cover": "images/img_1789586973261.jpg"
+      "md_cover": "images/img_1789586973261.jpg"
     },
     {
       "title": "Blood on the tracks",
       "artist": "Bob Dylan",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Rock",
         "Folk"
       ],
       "duration": "51:42",
-      "cover": "images/img_1789587426369.jpg"
+      "md_cover": "images/img_1789587426369.jpg"
     },
     {
       "title": "Exile on Main St.",
       "artist": "The Rolling Stones",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock",
         "Punk Rock",
         "Blues"
       ],
       "duration": "1:07:17",
-      "cover": "images/img_1789587858685.jpg"
+      "md_cover": "images/img_1789587858685.jpg"
     },
     {
       "title": "London Calling",
       "artist": "The Clash",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Punk Rock",
         "Rock"
       ],
       "duration": "1:05:03",
-      "cover": "images/img_1789588079906.jpg"
+      "md_cover": "images/img_1789588079906.jpg"
     },
     {
       "title": "Kid A",
       "artist": "Radiohead",
       "main_genre": "Électro, Trip-Hop & Expérimental",
-      "genre": [
+      "tags": [
         "Electro"
       ],
       "duration": "49:51",
-      "cover": "images/img_1789588972351.png"
+      "md_cover": "images/img_1789588972351.png"
     },
     {
       "title": "Born to run",
       "artist": "Bruce Springsteen",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock"
       ],
       "duration": "39:22",
-      "cover": "images/img_1789589106448.jpg"
+      "md_cover": "images/img_1789589106448.jpg"
     },
     {
       "title": "Tapestry",
       "artist": "Carole King",
       "main_genre": "Pop & Folk & Variety",
-      "genre": [
+      "tags": [
         "Rock"
       ],
       "duration": "44:31",
-      "cover": "images/img_1789589357639.jpg"
+      "md_cover": "images/img_1789589357639.jpg"
     },
     {
       "title": "Are you experienced",
       "artist": "Jimi Hendrix",
       "main_genre": "Rock & Blues",
-      "genre": [
+      "tags": [
         "Rock",
         "Blues"
       ],
       "duration": "40:12",
-      "cover": "images/img_1789589719355.jpg"
+      "md_cover": "images/img_1789589719355.jpg"
     },
     {
       "title": "Aquemini",
       "artist": "Outkast",
       "main_genre": "Rap, Soul & Reggae",
-      "genre": [
+      "tags": [
         "Rap",
         "Reggae"
       ],
       "duration": "1:14:47",
-      "cover": "images/img_1789593807423.jpg"
+      "md_cover": "images/img_1789593807423.jpg"
     },
     {
       "title": "Paranoid",
       "artist": "Black Sabbath",
       "main_genre": "Metal & Hard Rock",
-      "genre": [
+      "tags": [
         "Metal"
       ],
       "duration": "42:07",
-      "cover": "images/img_1789594317701.webp"
+      "md_cover": "images/img_1789594317701.webp"
     },
     {
       "title": "Day dream nation",
       "artist": "Sonic Youth",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Rock",
         "Punk Rock"
       ],
       "duration": "1:10:47",
-      "cover": "images/img_1789595091217.png"
+      "md_cover": "images/img_1789595091217.png"
     },
     {
       "title": "Rid of me",
       "artist": "PJ Harvey",
       "main_genre": "Alternative & Grunge 90s",
-      "genre": [
+      "tags": [
         "Alternative Rock"
       ],
       "duration": "47:59",
-      "cover": "images/img_1789595381746.jpg"
+      "md_cover": "images/img_1789595381746.jpg"
     }
   ]
 }
