@@ -546,8 +546,15 @@ if (backBtn) {
       // Si on est dans le détail d'un MiniDisc, retour à la liste
       window.location.hash = '#minidiscs';
     } else {
-      // Sinon, retour au Dashboard
+      // Si on est dans la liste (filtrée ou non), retour au Dashboard
+      currentGenreFilter = null;
+      currentTypeFilter = null;
+      currentRecordFilter = null;
       window.location.hash = '#dashboard';
+      
+      if (typeof renderDashboard === 'function') {
+        renderDashboard(true);
+      }
     }
   });
 }
