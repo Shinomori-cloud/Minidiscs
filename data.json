@@ -3479,6 +3479,38 @@
       ],
       "duration": "47:59",
       "md_cover": "images/img_1789595381746.jpg"
+    },
+    {
+      "id": "idea-1789739971393",
+      "md_cover": "images/img_1789739969765.jpg",
+      "title": "Bleach",
+      "artist": "Nirvana",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [
+        "grunge",
+        "rock",
+        "alternative rock",
+        "noise rock",
+        "sludge metal"
+      ],
+      "release_year": "1989",
+      "duration": "42:43",
+      "tracks": [
+        "Blew",
+        "Floyd the Barber",
+        "About a Girl",
+        "School",
+        "Love Buzz",
+        "Paper Cuts",
+        "Negative Creep",
+        "Scoff",
+        "Swap Meet",
+        "Mr. Moustache",
+        "Sifting",
+        "Big Cheese",
+        "Downer"
+      ],
+      "toRecord": false
     }
   ]
 }
