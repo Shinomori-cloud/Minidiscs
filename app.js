@@ -784,7 +784,7 @@ function renderDashboard(pushState = true) {
     `;
   });
 
-  // Construction du carrousel avec tes 8 genres exacts
+// Construction du carrousel avec tes 8 genres exacts
   const mainGenres = [
     "Alternative & Grunge 90s",
     "Rock & Blues",
@@ -799,13 +799,16 @@ function renderDashboard(pushState = true) {
   let carouselCardsHTML = '';
   mainGenres.forEach(genre => {
     const color = typeof getBorderColor === 'function' ? getBorderColor(genre) : '#ff007f';
-    // Recherche insensible à la casse dans genreCounts
-    const matchedKey = Object.keys(genreCounts).find(k => k.toLowerCase() === genre.toLowerCase());
-    const count = matchedKey ? genreCounts[matchedKey] : 0;
-    const safeGenre = genre.replace(/'/g, "\\'");
+    
+    // Recherche de la clé en MAJUSCULES pour correspondre au FAB
+    const upperGenre = genre.toUpperCase().trim();
+    const count = genreCounts[upperGenre] || 0;
+    
+    // Échappement pour le paramètre onclick
+    const safeGenreUpper = upperGenre.replace(/'/g, "\\'");
 
     carouselCardsHTML += `
-      <div class="genre-carousel-card" style="border-top-color: ${color};" onclick="window.location.hash = '#minidiscs?genre=${safeGenre}'">
+      <div class="genre-carousel-card" style="border-top-color: ${color};" onclick="if(typeof selectGenreFilter === 'function'){ selectGenreFilter('${safeGenreUpper}'); } else { window.location.hash = '#minidiscs?genre=${encodeURIComponent(safeGenreUpper)}'; }">
         <div class="carousel-genre-name" style="color: ${color};">${genre}</div>
         <div class="carousel-genre-count">${count} MD${count > 1 ? 's' : ''}</div>
       </div>
