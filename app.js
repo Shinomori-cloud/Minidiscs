@@ -425,8 +425,29 @@ function getNormalizedGenres(genreData) {
 // (main_genre, un seul des 8 genres fixes) — les tags servent uniquement à un
 // classement plus fin, pas affiché dans les listes ni les filtres.
 function getItemGenreList(item) {
-  if (!item || !item.main_genre) return [];
-  return [item.main_genre];
+  if (!item) return [];
+  
+  const genres = [];
+
+  // 1. Si l'objet a directement un genre (ou main_genre)
+  const directGenre = item.main_genre || item.genre;
+  if (directGenre) {
+    if (Array.isArray(directGenre)) genres.push(...directGenre);
+    else genres.push(directGenre);
+  }
+
+  // 2. Si l'objet est un MiniDisc contenant des albums
+  if (item.albums && Array.isArray(item.albums)) {
+    item.albums.forEach(album => {
+      const albumGenre = album.main_genre || album.genre;
+      if (albumGenre) {
+        if (Array.isArray(albumGenre)) genres.push(...albumGenre);
+        else genres.push(albumGenre);
+      }
+    });
+  }
+
+  return genres;
 }
 
 function getMDAllGenres(md) {
