@@ -2310,6 +2310,12 @@ async function applyItunesResult(index) {
   const g = window.__itunesResults && window.__itunesResults[index];
   if (!g) return;
 
+  // --- FERMETURE DE LA LISTE DE RÉSULTATS ---
+  const resultsBox = document.getElementById('itunes-results');
+  if (resultsBox) {
+    resultsBox.innerHTML = ''; // Vide la liste pour laisser voir le formulaire
+  }
+
   const artistName = g['artist-credit'] ? g['artist-credit'].map(a => a.name).join(', ') : '';
   
   document.getElementById('idea-title').value = g.title || '';
@@ -2320,14 +2326,10 @@ async function applyItunesResult(index) {
 
   // --- GESTION MULTI-TAGS & GENRE PRINCIPAL ---
   if (g.tags && g.tags.length > 0) {
-    // Trier par popularité (nombre de votes)
     const sortedTags = [...g.tags].sort((a, b) => (b.count || 0) - (a.count || 0));
-    
-    // Récupérer jusqu'à 5 tags principaux séparés par une virgule
     const tagNames = sortedTags.slice(0, 5).map(t => t.name);
     document.getElementById('idea-tags').value = tagNames.join(', ');
 
-    // Trouver le meilleur genre principal basé sur le premier tag musical pertinent
     let guessedGenre = '';
     for (const tag of tagNames) {
       guessedGenre = guessMainGenreFromItunes(tag);
