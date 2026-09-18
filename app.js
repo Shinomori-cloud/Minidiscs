@@ -692,11 +692,47 @@ function renderFeatured() {
    VUES DE L'APPLICATION
    ========================================== */
 
+// Fonction utilitaire interne pour extraire proprement genres et tags au nouveau format
+function extractItemGenres(item) {
+  if (!item) return [];
+  const genres = [];
+  if (item.main_genre) genres.push(item.main_genre);
+  if (item.tags) {
+    if (Array.isArray(item.tags)) genres.push(...item.tags);
+    else if (typeof item.tags === 'string') genres.push(...item.tags.split(','));
+  }
+  if (genres.length === 0 && item.genre) {
+    if (Array.isArray(item.genre)) genres.push(...item.genre);
+    else if (typeof item.genre === 'string') genres.push(...item.genre.split(','));
+  }
+  return genres.map(g => g.trim()).filter(Boolean);
+}
+
+function resolveMDGenres(md) {
+  if (typeof getMDAllGenres === 'function') return getMDAllGenres(md);
+  let genres = [];
+  if (md.albums && md.albums.length > 0) {
+    md.albums.forEach(alb => genres.push(...extractItemGenres(alb)));
+  } else {
+    genres = extractItemGenres(md);
+  }
+  return [...new Set(genres)];
+}
+
+function resolveAlbumGenres(album, md) {
+  if (typeof getAlbumGenres === 'function') return getAlbumGenres(album, md);
+  let genres = extractItemGenres(album);
+  if (genres.length === 0 && md) {
+    genres = extractItemGenres(md);
+  }
+  return [...new Set(genres)];
+}
+
 /* 1. DASHBOARD */
 function renderDashboard(pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'none';
-   
+    
   if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
 
   currentMD = null;
@@ -732,9 +768,7 @@ function renderDashboard(pushState = true) {
 
   // Extraction sécurisée des types et genres
   sourceData.forEach(md => {
-    const genres = typeof getMDAllGenres === 'function' 
-      ? getMDAllGenres(md) 
-      : (main_genre ? (Array.isArray(main_genre) ? main_genre : main_genre.split(',')) : []);
+    const genres = resolveMDGenres(md);
 
     const types = typeof getMDAllTypes === 'function' 
       ? getMDAllTypes(md) 
@@ -856,7 +890,7 @@ function renderMDList(filters = {}, pushState = true) {
   let filteredCatalog = catalogData.map((md, originalIndex) => ({ md, originalIndex }));
   
   if (genre && genre !== 'ALL') {
-    filteredCatalog = filteredCatalog.filter(({ md }) => getMDAllGenres(md).includes(genre.toUpperCase().trim()));
+    filteredCatalog = filteredCatalog.filter(({ md }) => resolveMDGenres(md).map(g => g.toUpperCase().trim()).includes(genre.toUpperCase().trim()));
   }
   if (type) {
     filteredCatalog = filteredCatalog.filter(({ md }) => getMDAllTypes(md).includes(type.toUpperCase().trim()));
@@ -886,7 +920,7 @@ function renderMDList(filters = {}, pushState = true) {
     html += `<p style="text-align:center; padding: 40px; color: var(--text-sub);">Aucun MiniDisc trouvé.</p>`;
   } else {
     shuffledCatalog.forEach(({ md, originalIndex }) => {
-      const allGenres = getMDAllGenres(md);
+      const allGenres = resolveMDGenres(md);
       const borderColor = getBorderColor(allGenres);
       
       let albumsContent = '';
@@ -949,7 +983,7 @@ function openMD(index, pushState = true) {
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
   const md = catalogData[index];
-  const allMdGenres = getMDAllGenres(md);
+  const allMdGenres = resolveMDGenres(md);
   const borderColor = getBorderColor(allMdGenres);
 
 /* ==========================================
@@ -1023,7 +1057,7 @@ if (headerTitle) headerTitle.textContent = "ALBUMS";
 
 let html = `<div class="list-container" style="padding-bottom: 90px;">`;
 md.albums.forEach((album, aIndex) => {
-  const albumGenres = getAlbumGenres(album, md);
+  const albumGenres = resolveAlbumGenres(album, md);
   const albumColor = getBorderColor(albumGenres);
   
   const badgeAlbumHTML = album.toRecord 
@@ -1092,7 +1126,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
 
   const md = catalogData[mdIndex];
   const album = md.albums[albumIndex];
-  const albumGenres = getAlbumGenres(album, md);
+  const albumGenres = resolveAlbumGenres(album, md);
   const albumColor = getBorderColor(albumGenres);
 
   if (headerTitle) headerTitle.textContent = "TITRES";
@@ -1133,6 +1167,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   `;
   window.scrollTo(0, 0);
 }
+
 /* ==========================================
    SUPPRESSION ET MODIFICATION
    ========================================== */
