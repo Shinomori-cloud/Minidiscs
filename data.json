@@ -38,7 +38,7 @@
         },
         {
           "id": "alb-23-2",
-          "album.md_cover": "images/ost_cruel_intentions.jpg",
+          "md_cover": "images/ost_cruel_intentions.jpg",
           "title": "Cruel Intentions",
           "artist": "Divers",
           "main_genre": "Alternative & Grunge 90s",
