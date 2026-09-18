@@ -300,7 +300,6 @@
     {
       "id": "md-30",
       "md_cover": "images/smashing_pumpkins_adore.jpg",
-      "title": "Adore / Deserter's Songs",
       "albums": [
         {
           "id": "alb-30-1",
@@ -332,7 +331,7 @@
             "Blank Page",
             "17"
           ],
-          "toRecord": false
+          "toRecord": true
         },
         {
           "id": "alb-30-2",
@@ -359,9 +358,10 @@
             "Pick Up If You're There",
             "Delta Sun Bottleneck Stomp"
           ],
-          "toRecord": false
+          "toRecord": true
         }
-      ]
+      ],
+      "title": "Adore / Deserter's Songs"
     },
     {
       "id": "md-31",
