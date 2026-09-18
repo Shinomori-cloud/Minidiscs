@@ -30,12 +30,12 @@
     </div>
   </header>
 
-  <!-- Badge affichant le genre filtré -->
+  <!-- Badge affichant le genre filtré (sous l'encart header) -->
   <div id="active-genre-badge" class="active-genre-badge hidden">
     <span id="active-genre-text"></span>
   </div>
 
-  <!-- SÉLECTION DU MOMENT (ACCUEIL) -->
+  <!-- SELECTION DU MOMENT (ACCUEIL) -->
   <div id="featured-container" class="featured-container">
     <div class="featured-header">
       <span class="featured-title">SÉLECTION DU MOMENT</span>
@@ -55,8 +55,13 @@
         <button class="close-btn" type="button" onclick="closeAdminModal()">&times;</button>
       </div>
 
-      <form id="admin-form" onsubmit="submitNewMD(event)">
+      <form id="admin-form">
         <div class="form-group">
+          <label>Genre(s)</label>
+          <input type="text" id="md-genre" list="genres-list" placeholder="ex: ROCK, SYNTHWAVE (le 1er = genre principal, séparés par virgule)" required>
+        </div>
+
+        <div class="form-group" id="md-cover-group">
           <label>Pochette MiniDisc</label>
           <input type="file" id="md-cover" accept="image/*">
         </div>
@@ -64,12 +69,12 @@
         <div class="form-group">
           <label>Structure du MiniDisc :</label>
           <div class="radio-group">
-            <label><input type="radio" name="md-type" value="compil" checked onchange="toggleAdminType()"> Compilation / Album unique</label>
+            <label><input type="radio" name="md-type" value="compil" checked onchange="toggleAdminType()"> Compilation</label>
             <label><input type="radio" name="md-type" value="albums" onchange="toggleAdminType()"> Série d'albums</label>
           </div>
         </div>
 
-        <!-- VUE COMPILATION / ALBUM UNIQUE -->
+        <!-- VUE COMPILATION -->
         <div id="section-compil">
           <div class="form-group">
             <label>Titre de la compilation</label>
@@ -80,20 +85,12 @@
             <input type="text" id="compil-artist" placeholder="ex: Artistes Divers">
           </div>
           <div class="form-group">
-            <label>Genre principal</label>
-            <input type="text" id="compil-main-genre" list="genres-list" placeholder="ex: ROCK">
-          </div>
-          <div class="form-group">
-            <label>Tags / Sous-genres</label>
-            <input type="text" id="compil-tags" placeholder="ex: SYNTHWAVE, LIVE (séparés par virgule)">
-          </div>
-          <div class="form-group">
             <label>Année de sortie</label>
             <input type="text" id="compil-year" placeholder="ex: 1998">
           </div>
           <div class="form-group">
             <label>Durée</label>
-            <input type="text" id="compil-duration" placeholder="ex: 45:30">
+            <input type="text" id="compil-duration" placeholder="ex: 1:14:32">
           </div>
           <div class="form-group">
             <label>Pistes (une par ligne, sans numéro)</label>
@@ -175,12 +172,12 @@
   <!-- POP-UP TOAST -->
   <div id="toast" class="toast hidden"></div>
 
-  <!-- LISTES DE SUGGESTIONS DYNAMIQUES -->
+  <!-- LISTE DE SUGGESTIONS DYNAMIQUE POUR LES GENRES -->
   <datalist id="genres-list"></datalist>
-  <datalist id="types-list"></datalist>
 
   <!-- BOUTON FLOTTANT UNIQUE ET SON MENU -->
   <div id="floating-actions" class="fab-container hidden">
+    <!-- Menu déroulant avec toutes les actions -->
     <div id="fab-menu" class="fab-menu hidden">
       
       <!-- Section Filtres -->
@@ -219,12 +216,13 @@
       </button>
     </div>
     
-    <!-- Bouton déclencheur -->
+    <!-- Le bouton déclencheur unique -->
     <button type="button" id="fab-main-btn" class="fab-main-btn" onclick="toggleFabMenu()" title="Menu principal">
       <span class="fab-icon">🎚️</span>
     </button>
   </div>
 
+  <!-- CHARGEMENT DU SCRIPT À LA FIN POUR ACCÉDER À TOUS LES ÉLÉMENTS DU DOM -->
   <script src="app.js"></script>
 </body>
 </html>
