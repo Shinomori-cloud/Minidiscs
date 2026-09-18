@@ -2200,7 +2200,7 @@ function convertSelectedToMD() {
    RECHERCHE AUTOMATIQUE DE MÉTADONNÉES (MusicBrainz)
    ========================================== */
 
-async function searchItunes() { // Garde le même nom de fonction pour ne rien casser ailleurs
+async function searchItunes() {
   const input = document.getElementById('itunes-search-input');
   const resultsBox = document.getElementById('itunes-results');
   if (!input || !resultsBox) return;
@@ -2214,7 +2214,6 @@ async function searchItunes() { // Garde le même nom de fonction pour ne rien c
   resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche sur MusicBrainz...</p>`;
 
   try {
-    // Recherche par mot-clé (album / artiste)
     const url = `https://musicbrainz.org/ws/2/release/?query=${encodeURIComponent(term)}&fmt=json&limit=15`;
     const response = await fetch(url, {
       headers: { 'User-Agent': 'MiniDiscCatalogApp/1.0 (contact@example.com)' }
@@ -2234,9 +2233,13 @@ async function searchItunes() { // Garde le même nom de fonction pour ne rien c
     resultsBox.innerHTML = releases.map((r, i) => {
       const artist = r['artist-credit'] ? r['artist-credit'].map(a => a.name).join(', ') : 'Artiste inconnu';
       const year = r.date ? r.date.slice(0, 4) : '';
+      const coverUrl = `https://coverartarchive.org/release/${r.id}/front-250`;
+
       return `
         <div class="itunes-result-item" data-index="${i}" style="display:flex; align-items:center; gap:8px; padding:6px; border:1px solid #ddd; border-radius:6px; margin-bottom:6px; cursor:pointer;">
-          <div style="width:40px; height:40px; background:#eee; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">💿</div>
+          <img src="${coverUrl}" 
+               onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'40\\' height=\\'40\\' viewBox=\\'0 0 24 24\\'><rect width=\\'24\\' height=\\'24\\' fill=\\'%23eee\\'/><text x=\\'50%\\' y=\\'50%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-size=\\'12\\'>💿</text></svg>';" 
+               style="width:40px; height:40px; border-radius:4px; object-fit:cover; background:#eee;">
           <div style="flex:1; font-size:0.8rem;">
             <div style="font-weight:700;">${r.title}</div>
             <div style="color:#666;">${artist}${year ? ' · ' + year : ''}</div>
