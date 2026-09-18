@@ -56,11 +56,6 @@
       </div>
 
       <form id="admin-form">
-        <div class="form-group">
-          <label>Genre(s)</label>
-          <input type="text" id="md-genre" list="genres-list" placeholder="ex: ROCK, SYNTHWAVE (le 1er = genre principal, séparés par virgule)" required>
-        </div>
-
         <div class="form-group" id="md-cover-group">
           <label>Pochette MiniDisc</label>
           <input type="file" id="md-cover" accept="image/*">
@@ -83,6 +78,24 @@
           <div class="form-group">
             <label>Artiste(s)</label>
             <input type="text" id="compil-artist" placeholder="ex: Artistes Divers">
+          </div>
+          <div class="form-group">
+            <label>Genre</label>
+            <select id="compil-genre" required>
+              <option value="">-- Choisir un genre --</option>
+              <option value="Alternative & Grunge 90s">Alternative &amp; Grunge 90s</option>
+              <option value="Rock & Blues">Rock &amp; Blues</option>
+              <option value="Rap, Soul & Reggae">Rap, Soul &amp; Reggae</option>
+              <option value="Metal & Hard Rock">Metal &amp; Hard Rock</option>
+              <option value="Pop & Folk & Variety">Pop &amp; Folk &amp; Variety</option>
+              <option value="Talks & Humour">Talks &amp; Humour</option>
+              <option value="Électro, Trip-Hop & Expérimental">Électro, Trip-Hop &amp; Expérimental</option>
+              <option value="Ambient & Orchestral">Ambient &amp; Orchestral</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tags (optionnel, pour un classement futur plus fin)</label>
+            <input type="text" id="compil-tags" placeholder="ex: Acoustic, Punk Rock (séparés par virgule)">
           </div>
           <div class="form-group">
             <label>Année de sortie</label>

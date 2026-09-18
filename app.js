@@ -421,18 +421,12 @@ function getNormalizedGenres(genreData) {
   return getNormalizedList(genreData);
 }
 
-// Un item (album ou compilation) porte son genre sur deux champs : main_genre (le genre
-// principal, une seule valeur) et tags (les genres secondaires, une liste). On les combine
-// ici pour obtenir la liste complète des genres d'un item.
+// L'affichage et le filtrage de l'appli ne considèrent que le genre principal
+// (main_genre, un seul des 8 genres fixes) — les tags servent uniquement à un
+// classement plus fin, pas affiché dans les listes ni les filtres.
 function getItemGenreList(item) {
-  if (!item) return [];
-  const list = [];
-  if (item.main_genre) list.push(item.main_genre);
-  if (item.tags) {
-    if (Array.isArray(item.tags)) list.push(...item.tags);
-    else list.push(item.tags);
-  }
-  return list;
+  if (!item || !item.main_genre) return [];
+  return [item.main_genre];
 }
 
 function getMDAllGenres(md) {
@@ -1193,12 +1187,6 @@ function setupMultiSelectContainer(inputId, datalistId) {
           parts.push(optValue);
           input.value = parts.join(', ') + ', ';
           renderBadges(); // Met à jour les puces restantes
-          
-          // NOUVEAU : Si c'est un champ de genre d'album, mettre à jour les genres globaux
-          if (input.classList.contains('album-genre')) {
-            updateGlobalGenresFromAlbums();
-          }
-          
           input.focus();
         };
         container.appendChild(badge);
@@ -1207,68 +1195,34 @@ function setupMultiSelectContainer(inputId, datalistId) {
   }
 
   // Mettre à jour si l'utilisateur retape du texte à la main
-  input.oninput = () => {
-    renderBadges();
-    // NOUVEAU : Synchronisation en temps réel si modification manuelle
-    if (input.classList.contains('album-genre')) {
-      updateGlobalGenresFromAlbums();
-    }
-  };
+  input.oninput = renderBadges;
   
   renderBadges();
 }
 
 /* ==========================================
-   NOUVEAU : SYNCHRONISATION AUTOMATIQUE DES GENRES
+   LISTE FIXE DES 8 GENRES PRINCIPAUX
    ========================================== */
-function updateGlobalGenresFromAlbums() {
-  const checkedRadio = document.querySelector('input[name="md-type"]:checked');
-  const isCompil = checkedRadio ? checkedRadio.value === 'compil' : true;
+const MAIN_GENRES = [
+  'Alternative & Grunge 90s',
+  'Rock & Blues',
+  'Rap, Soul & Reggae',
+  'Metal & Hard Rock',
+  'Pop & Folk & Variety',
+  'Talks & Humour',
+  'Électro, Trip-Hop & Expérimental',
+  'Ambient & Orchestral',
+];
 
-  // On ne synchronise que si nous sommes en mode Série d'albums
-  if (isCompil) return;
-
-  const albumGenreInputs = document.querySelectorAll('.album-block .album-genre');
-  const collectedGenres = new Set();
-
-  albumGenreInputs.forEach(input => {
-    const rawValues = input.value.split(',');
-    rawValues.forEach(val => {
-      const trimmed = val.trim();
-      if (trimmed) {
-        // Normalisation en majuscules pour éviter "Rock" et "ROCK"
-        collectedGenres.add(trimmed.toUpperCase());
-      }
-    });
+function mainGenreOptionsHTML(selected = '') {
+  let html = `<option value="">-- Choisir un genre --</option>`;
+  MAIN_GENRES.forEach(g => {
+    html += `<option value="${g}" ${g === selected ? 'selected' : ''}>${g}</option>`;
   });
-
-  const globalGenreInput = document.getElementById('md-genre');
-  if (globalGenreInput) {
-    globalGenreInput.value = Array.from(collectedGenres).join(', ');
-    // Mettre à jour les puces de suggestions du champ global si existantes
-    const globalContainer = globalGenreInput.parentElement.querySelector('.tag-suggestions');
-    if (globalContainer) {
-      setupMultiSelectContainer('md-genre', 'genres-list');
-    }
-  }
-}
-
-// Combine main_genre + tags en une seule chaîne "Genre principal, tag1, tag2"
-function genreFieldValue(item) {
-  const list = [];
-  if (item && item.main_genre) list.push(item.main_genre);
-  if (item && item.tags) {
-    (Array.isArray(item.tags) ? item.tags : [item.tags]).forEach(t => list.push(t));
-  }
-  return list.join(', ');
+  return html;
 }
 
 function openAdminModal(indexToEdit = null) {
-  // Rafraîchir les listes de suggestions (genres)
-  populateFormDatalists();
-
-  setupMultiSelectContainer('md-genre', 'genres-list');
-
   editingMDIndex = indexToEdit;
   const modalTitle = document.querySelector('#admin-modal h3');
   const albumsContainer = document.getElementById('albums-container');
@@ -1288,10 +1242,6 @@ function openAdminModal(indexToEdit = null) {
 
     const isCompil = !md.albums || md.albums.length === 0;
 
-    // Pour une compilation, le champ Genre(s) vient directement du MiniDisc.
-    // Pour une série d'albums, il sera recalculé juste après à partir des albums.
-    document.getElementById('md-genre').value = isCompil ? genreFieldValue(md) : '';
-
     const radioCompil = document.querySelector('input[name="md-type"][value="compil"]');
     const radioAlbums = document.querySelector('input[name="md-type"][value="albums"]') || document.querySelector('input[name="md-type"][value="album"]');
     
@@ -1303,6 +1253,8 @@ function openAdminModal(indexToEdit = null) {
     if (isCompil) {
       document.getElementById('compil-title').value = md.title || '';
       document.getElementById('compil-artist').value = md.artist || '';
+      if (document.getElementById('compil-genre')) document.getElementById('compil-genre').value = md.main_genre || '';
+      if (document.getElementById('compil-tags')) document.getElementById('compil-tags').value = (md.tags || []).join(', ');
       if (document.getElementById('compil-year')) document.getElementById('compil-year').value = md.release_year || '';
       if (document.getElementById('compil-duration')) document.getElementById('compil-duration').value = md.duration || '';
       document.getElementById('compil-tracks').value = md.tracks ? md.tracks.join('\n') : '';
@@ -1315,7 +1267,8 @@ function openAdminModal(indexToEdit = null) {
         const block = albumsContainer.lastElementChild;
         block.querySelector('.album-title').value = album.title || '';
         block.querySelector('.album-artist').value = album.artist || '';
-        block.querySelector('.album-genre').value = genreFieldValue(album);
+        block.querySelector('.album-genre').value = album.main_genre || '';
+        block.querySelector('.album-tags').value = (album.tags || []).join(', ');
         block.querySelector('.album-year').value = album.release_year || '';
         if (block.querySelector('.album-duration')) block.querySelector('.album-duration').value = album.duration || '';
         block.querySelector('.album-tracks').value = album.tracks ? album.tracks.join('\n') : '';
@@ -1323,8 +1276,6 @@ function openAdminModal(indexToEdit = null) {
           block.querySelector('.album-to-record').checked = !!album.toRecord;
         }
       });
-      // Recalculer les genres globaux au chargement de l'édition
-      updateGlobalGenresFromAlbums();
     }
 
   } else {
@@ -1338,10 +1289,10 @@ function openAdminModal(indexToEdit = null) {
     if (form) form.reset();
 
     // Réinitialisation des champs spécifiques
-    if (document.getElementById('md-genre')) document.getElementById('md-genre').value = '';
-    
     if (document.getElementById('compil-title')) document.getElementById('compil-title').value = '';
     if (document.getElementById('compil-artist')) document.getElementById('compil-artist').value = '';
+    if (document.getElementById('compil-genre')) document.getElementById('compil-genre').value = '';
+    if (document.getElementById('compil-tags')) document.getElementById('compil-tags').value = '';
     if (document.getElementById('compil-year')) document.getElementById('compil-year').value = '';
     if (document.getElementById('compil-duration')) document.getElementById('compil-duration').value = '';
     if (document.getElementById('compil-tracks')) document.getElementById('compil-tracks').value = '';
@@ -1374,19 +1325,9 @@ function toggleAdminType(isInit = false) {
   
   const secCompil = document.getElementById('section-compil');
   const secAlbums = document.getElementById('section-albums');
-  const mdGenreInput = document.getElementById('md-genre');
 
   if (secCompil) secCompil.classList.toggle('hidden', !isCompil);
   if (secAlbums) secAlbums.classList.toggle('hidden', isCompil);
-
-  // Bascule du champ global "Genre" en lecture seule quand on est en mode "albums"
-  if (mdGenreInput) {
-    mdGenreInput.readOnly = !isCompil;
-    mdGenreInput.style.backgroundColor = !isCompil ? '#f0f0f0' : '';
-    if (!isCompil) {
-      updateGlobalGenresFromAlbums();
-    }
-  }
 
   const albumsContainer = document.getElementById('albums-container');
   if (!isCompil && !isInit && albumsContainer && albumsContainer.children.length === 0) {
@@ -1399,8 +1340,6 @@ function addAdminAlbumBlock() {
   const container = document.getElementById('albums-container');
   if (!container) return;
 
-  const genreInputId = `album-genre-${adminAlbumCount}`;
-
   const div = document.createElement('div');
   div.className = 'album-block';
   div.style.cssText = "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px; position: relative;";
@@ -1411,7 +1350,11 @@ function addAdminAlbumBlock() {
     </div>
     <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album" required></div>
     <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste" required></div>
-    <div class="form-group"><input type="text" id="${genreInputId}" class="album-genre" list="genres-list" placeholder="Genre(s) (le 1er = genre principal, séparés par virgule)"></div>
+    <div class="form-group">
+      <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">Genre</label>
+      <select class="album-genre" required>${mainGenreOptionsHTML()}</select>
+    </div>
+    <div class="form-group"><input type="text" class="album-tags" placeholder="Tags (optionnel, ex: Acoustic, Punk Rock)"></div>
     <div class="form-group"><input type="text" class="album-year" placeholder="Année de sortie (ex: 1998)"></div>
     <div class="form-group"><input type="text" class="album-duration" placeholder="Durée (ex: 45:30)"></div>
     <div class="form-group">
@@ -1427,17 +1370,12 @@ function addAdminAlbumBlock() {
     </div>
   `;
   container.appendChild(div);
-
-  // Activer la sélection par puces pour le nouvel album
-  setupMultiSelectContainer(genreInputId, 'genres-list');
 }
 
 function removeAdminAlbumBlock(button) {
   const block = button.closest('.album-block');
   if (block) {
     block.remove();
-    // Mettre à jour les genres globaux si un album est supprimé
-    updateGlobalGenresFromAlbums();
   }
 }
 
@@ -1445,26 +1383,15 @@ async function submitNewMD(e) {
   if (e) e.preventDefault();
   if (catalogData === null) return;
 
-  // S'assurer que le champ global contient bien tous les genres des albums avant enregistrement
   const checkedRadio = document.querySelector('input[name="md-type"]:checked');
   const typeFormat = checkedRadio ? checkedRadio.value : 'compil';
-  if (typeFormat !== 'compil') {
-    updateGlobalGenresFromAlbums();
-  }
 
-  const rawGenreInput = document.getElementById('md-genre').value.trim();
   const mdCoverInput = document.getElementById('md-cover');
   const existingMD = editingMDIndex !== null ? catalogData[editingMDIndex] : null;
 
-  if (!rawGenreInput) {
-    showToast("⚠️ Veuillez renseigner au moins un genre");
-    return;
-  }
-
-  // Sépare "Genre principal, tag1, tag2" en main_genre (le premier) + tags (le reste)
-  function splitGenreInput(raw) {
-    const parts = raw.split(',').map(g => g.trim()).filter(g => g !== '');
-    return { main_genre: parts[0] || '', tags: parts.slice(1) };
+  // Transforme "tag1, tag2" en tableau de tags (liste libre, secondaire au genre principal)
+  function parseTagsInput(raw) {
+    return (raw || '').split(',').map(t => t.trim()).filter(t => t !== '');
   }
 
   const targetMD = {
@@ -1484,12 +1411,17 @@ async function submitNewMD(e) {
   targetMD.md_cover = mdCoverPath;
 
   if (typeFormat === 'compil') {
-    const { main_genre, tags } = splitGenreInput(rawGenreInput);
+    const compilGenreSelect = document.getElementById('compil-genre');
+    const mainGenre = compilGenreSelect ? compilGenreSelect.value : '';
+    if (!mainGenre) {
+      showToast("⚠️ Veuillez choisir un genre");
+      return;
+    }
 
     targetMD.title = document.getElementById('compil-title').value.trim();
     targetMD.artist = document.getElementById('compil-artist').value.trim();
-    targetMD.main_genre = main_genre;
-    targetMD.tags = tags;
+    targetMD.main_genre = mainGenre;
+    targetMD.tags = parseTagsInput(document.getElementById('compil-tags') ? document.getElementById('compil-tags').value : '');
     targetMD.release_year = document.getElementById('compil-year') ? document.getElementById('compil-year').value.trim() : '';
     targetMD.duration = document.getElementById('compil-duration') ? document.getElementById('compil-duration').value.trim() : '';
 
@@ -1514,8 +1446,12 @@ async function submitNewMD(e) {
       const rawTracks = block.querySelector('.album-tracks').value.split('\n');
       const formattedTracks = rawTracks.map(t => t.trim()).filter(t => t !== '');
 
-      const rawAlbumGenre = block.querySelector('.album-genre').value.trim();
-      const { main_genre: albumMainGenre, tags: albumTags } = splitGenreInput(rawAlbumGenre);
+      const albumMainGenre = block.querySelector('.album-genre').value;
+      const albumTags = parseTagsInput(block.querySelector('.album-tags') ? block.querySelector('.album-tags').value : '');
+      if (!albumMainGenre) {
+        showToast("⚠️ Veuillez choisir un genre pour chaque album.");
+        return;
+      }
 
       const existingAlbum = (existingMD && existingMD.albums && existingMD.albums[i]) ? existingMD.albums[i] : null;
 
