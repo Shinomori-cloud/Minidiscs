@@ -2016,21 +2016,23 @@ function clearIdeaSelection() {
 }
 
 /* ==========================================
-   CORRESPONDANCE GENRE ITUNES -> GENRE PRINCIPAL (8 genres fixes)
-   À compléter au fil de l'eau : ajoute une ligne "'Nom iTunes': 'Un des 8 genres',"
-   pour chaque nouveau genre iTunes rencontré et pas encore couvert.
+   CORRESPONDANCE GENRE MUSICBRAINZ -> GENRE PRINCIPAL (8 genres fixes)
    ========================================== */
 const ITUNES_GENRE_TO_MAIN = {
   'Alternative': 'Alternative & Grunge 90s',
+  'Alternative Rock': 'Alternative & Grunge 90s',
   'Grunge': 'Alternative & Grunge 90s',
   'Rock': 'Rock & Blues',
   'Blues': 'Rock & Blues',
-  'Blues/R&B': 'Rock & Blues',
+  'Blues Rock': 'Rock & Blues',
   'Punk': 'Rock & Blues',
+  'Punk Rock': 'Rock & Blues',
   'Metal': 'Metal & Hard Rock',
+  'Heavy Metal': 'Metal & Hard Rock',
   'Hard Rock': 'Metal & Hard Rock',
   'Hip-Hop/Rap': 'Rap, Soul & Reggae',
-  'Hip Hop/Rap': 'Rap, Soul & Reggae',
+  'Hip Hop': 'Rap, Soul & Reggae',
+  'Rap': 'Rap, Soul & Reggae',
   'R&B/Soul': 'Rap, Soul & Reggae',
   'Reggae': 'Rap, Soul & Reggae',
   'Funk': 'Rap, Soul & Reggae',
@@ -2038,7 +2040,8 @@ const ITUNES_GENRE_TO_MAIN = {
   'Folk': 'Pop & Folk & Variety',
   'Singer/Songwriter': 'Pop & Folk & Variety',
   'Vocal': 'Pop & Folk & Variety',
-  'Variété française': 'Pop & Folk & Variety',
+  'Chanson': 'Pop & Folk & Variety',
+  'Chanson française': 'Pop & Folk & Variety',
   'Comedy': 'Talks & Humour',
   'Spoken Word': 'Talks & Humour',
   'Electronic': 'Électro, Trip-Hop & Expérimental',
@@ -2049,21 +2052,20 @@ const ITUNES_GENRE_TO_MAIN = {
   'Soundtrack': 'Ambient & Orchestral',
   'Classical': 'Ambient & Orchestral',
   'Orchestral': 'Ambient & Orchestral',
-  // Genres pas encore vus / pas évidents à classer : Jazz, Country, World, Latin,
-  // Christian & Gospel, Kids, Holiday... à compléter toi-même si besoin.
 };
 
-function guessMainGenreFromItunes(itunesGenreName) {
-  if (!itunesGenreName) return '';
-  if (ITUNES_GENRE_TO_MAIN[itunesGenreName]) return ITUNES_GENRE_TO_MAIN[itunesGenreName];
-  // Recherche insensible à la casse / aux variantes proches
+function guessMainGenreFromItunes(genreName) {
+  if (!genreName) return '';
+  if (ITUNES_GENRE_TO_MAIN[genreName]) return ITUNES_GENRE_TO_MAIN[genreName];
+  
+  // Recherche insensible à la casse
   const found = Object.keys(ITUNES_GENRE_TO_MAIN).find(
-    k => k.toLowerCase() === itunesGenreName.toLowerCase()
+    k => k.toLowerCase() === genreName.toLowerCase()
   );
   return found ? ITUNES_GENRE_TO_MAIN[found] : '';
 }
 
-let pendingItunesCoverUrl = null; // pochette choisie via iTunes, en attente d'upload
+let pendingItunesCoverUrl = null; // Pochette choisie via MusicBrainz, en attente d'upload
 
 function openIdeaModal() {
   const form = document.getElementById('idea-form');
@@ -2102,7 +2104,7 @@ async function saveIdeaAlbum(e) {
 
   showToast("⏳ Traitement et envoi de l'image...");
 
-  // Priorité : un fichier choisi manuellement > une pochette récupérée via iTunes > pochette par défaut
+  // Priorité : fichier choisi manuellement > pochette récupérée via MusicBrainz > pochette par défaut
   let coverPath = 'images/default.jpg';
   if (coverInput && coverInput.files && coverInput.files.length > 0) {
     const uploadedPath = await handleImageUpload(coverInput);
@@ -2124,7 +2126,7 @@ async function saveIdeaAlbum(e) {
     tracks,
     toRecord: false,
   };
-  
+
   if (!window.ideaAlbums) window.ideaAlbums = [];
   window.ideaAlbums.push(newIdea);
 
@@ -2158,9 +2160,18 @@ function convertSelectedToMD() {
   if (albums.length === 1) {
     // Un seul album sélectionné : pas de couche "albums", tout est directement sur le MD.
     const alb = albums[0];
-    newMD = { id: mdId, md_cover: alb.md_cover, title: alb.title, artist: alb.artist,
-      main_genre: alb.main_genre, tags: alb.tags, release_year: alb.release_year,
-      duration: alb.duration, tracks: alb.tracks, toRecord: alb.toRecord };
+    newMD = { 
+      id: mdId, 
+      md_cover: alb.md_cover, 
+      title: alb.title, 
+      artist: alb.artist,
+      main_genre: alb.main_genre, 
+      tags: alb.tags, 
+      release_year: alb.release_year,
+      duration: alb.duration, 
+      tracks: alb.tracks, 
+      toRecord: alb.toRecord 
+    };
   } else {
     newMD = {
       id: mdId,
@@ -2186,52 +2197,10 @@ function convertSelectedToMD() {
 }
 
 /* ==========================================
-   RECHERCHE AUTOMATIQUE DE MÉTADONNÉES (iTunes)
+   RECHERCHE AUTOMATIQUE DE MÉTADONNÉES (MusicBrainz)
    ========================================== */
 
-// L'API iTunes ne renvoie pas toujours les en-têtes nécessaires pour un simple fetch()
-// depuis un site web (CORS), de façon incohérente selon les requêtes. On passe donc par
-// une requête JSONP (via une balise <script>), qui n'est jamais bloquée par le CORS.
-function itunesJSONP(url) {
-  return new Promise((resolve, reject) => {
-    const callbackName = 'itunesCb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-    const script = document.createElement('script');
-    let settled = false;
-
-    const cleanup = () => {
-      delete window[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    };
-
-    window[callbackName] = (data) => {
-      if (settled) return;
-      settled = true;
-      cleanup();
-      resolve(data);
-    };
-
-    script.onerror = () => {
-      if (settled) return;
-      settled = true;
-      cleanup();
-      reject(new Error("Impossible de contacter iTunes."));
-    };
-
-    const separator = url.includes('?') ? '&' : '?';
-    script.src = `${url}${separator}callback=${callbackName}`;
-    document.body.appendChild(script);
-
-    // Sécurité : si iTunes ne répond jamais, on abandonne au bout de 10 secondes
-    setTimeout(() => {
-      if (settled) return;
-      settled = true;
-      cleanup();
-      reject(new Error("Délai dépassé pour la requête iTunes."));
-    }, 10000);
-  });
-}
-
-async function searchItunes() {
+async function searchItunes() { // Garde le même nom de fonction pour ne rien casser ailleurs
   const input = document.getElementById('itunes-search-input');
   const resultsBox = document.getElementById('itunes-results');
   if (!input || !resultsBox) return;
@@ -2242,35 +2211,46 @@ async function searchItunes() {
     return;
   }
 
-  resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche en cours...</p>`;
+  resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche sur MusicBrainz...</p>`;
 
   try {
-    const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&country=FR&limit=15`;
-    const data = await itunesJSONP(url);
+    // Recherche par mot-clé (album / artiste)
+    const url = `https://musicbrainz.org/ws/2/release/?query=${encodeURIComponent(term)}&fmt=json&limit=15`;
+    const response = await fetch(url, {
+      headers: { 'User-Agent': 'MiniDiscCatalogApp/1.0 (contact@example.com)' }
+    });
 
-    if (!data.results || data.results.length === 0) {
-      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat.</p>`;
+    if (!response.ok) throw new Error("Erreur réseau MusicBrainz");
+    const data = await response.json();
+
+    const releases = data.releases || [];
+    if (releases.length === 0) {
+      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat trouvé.</p>`;
       return;
     }
 
-    window.__itunesResults = data.results;
+    window.__itunesResults = releases;
 
-    resultsBox.innerHTML = data.results.map((r, i) => `
-      <div class="itunes-result-item" data-index="${i}" style="display:flex; align-items:center; gap:8px; padding:6px; border:1px solid #ddd; border-radius:6px; margin-bottom:6px; cursor:pointer;">
-        <img src="${r.artworkUrl60 || r.artworkUrl100 || ''}" style="width:40px; height:40px; border-radius:4px; object-fit:cover;">
-        <div style="flex:1; font-size:0.8rem;">
-          <div style="font-weight:700;">${r.collectionName}</div>
-          <div style="color:#666;">${r.artistName}${r.releaseDate ? ' · ' + r.releaseDate.slice(0, 4) : ''}</div>
+    resultsBox.innerHTML = releases.map((r, i) => {
+      const artist = r['artist-credit'] ? r['artist-credit'].map(a => a.name).join(', ') : 'Artiste inconnu';
+      const year = r.date ? r.date.slice(0, 4) : '';
+      return `
+        <div class="itunes-result-item" data-index="${i}" style="display:flex; align-items:center; gap:8px; padding:6px; border:1px solid #ddd; border-radius:6px; margin-bottom:6px; cursor:pointer;">
+          <div style="width:40px; height:40px; background:#eee; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">💿</div>
+          <div style="flex:1; font-size:0.8rem;">
+            <div style="font-weight:700;">${r.title}</div>
+            <div style="color:#666;">${artist}${year ? ' · ' + year : ''}</div>
+          </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
     resultsBox.querySelectorAll('.itunes-result-item').forEach(el => {
       el.addEventListener('click', () => applyItunesResult(parseInt(el.dataset.index, 10)));
     });
   } catch (err) {
     console.error(err);
-    resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#e63946;">Erreur pendant la recherche.</p>`;
+    resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#e63946;">Erreur pendant la recherche MusicBrainz.</p>`;
   }
 }
 
@@ -2278,51 +2258,52 @@ async function applyItunesResult(index) {
   const r = window.__itunesResults && window.__itunesResults[index];
   if (!r) return;
 
-  document.getElementById('idea-title').value = r.collectionName || '';
-  document.getElementById('idea-artist').value = r.artistName || '';
-  if (r.releaseDate) document.getElementById('idea-year').value = r.releaseDate.slice(0, 4);
-  if (r.primaryGenreName) {
-    document.getElementById('idea-tags').value = r.primaryGenreName;
-    const guessedGenre = guessMainGenreFromItunes(r.primaryGenreName);
-    const genreSelect = document.getElementById('idea-genre');
-    if (guessedGenre && genreSelect) {
-      genreSelect.value = guessedGenre;
-    } else if (genreSelect) {
-      showToast(`⚠️ Genre iTunes "${r.primaryGenreName}" pas encore reconnu, choisis-en un manuellement`);
-    }
-  }
+  const artistName = r['artist-credit'] ? r['artist-credit'].map(a => a.name).join(', ') : '';
+  
+  document.getElementById('idea-title').value = r.title || '';
+  document.getElementById('idea-artist').value = artistName;
+  if (r.date) document.getElementById('idea-year').value = r.date.slice(0, 4);
 
-  // Pochette en haute résolution (le lien iTunes standard est en 100x100, on demande plus grand)
-  const hiRes = (r.artworkUrl100 || '').replace('100x100bb', '600x600bb');
-  pendingItunesCoverUrl = hiRes || r.artworkUrl100 || null;
+  // Tentative de récupération de la pochette via Cover Art Archive
   const preview = document.getElementById('idea-cover-preview');
-  if (preview && pendingItunesCoverUrl) {
-    preview.innerHTML = `<img src="${pendingItunesCoverUrl}" style="width:80px; height:80px; border-radius:6px; object-fit:cover;"><div style="font-size:0.7rem; color:#666;">Pochette iTunes sélectionnée (transférée dans images/ à l'enregistrement)</div>`;
+  pendingItunesCoverUrl = `https://coverartarchive.org/release/${r.id}/front-500`;
+  
+  if (preview) {
+    preview.innerHTML = `
+      <img src="${pendingItunesCoverUrl}" 
+           onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:0.7rem; color:#888;\'>Pas de pochette disponible sur Cover Art Archive</div>';" 
+           style="width:80px; height:80px; border-radius:6px; object-fit:cover;">
+      <div style="font-size:0.7rem; color:#666;">Pochette récupérée (transférée à l'enregistrement)</div>
+    `;
   }
 
   showToast("⏳ Récupération des pistes et de la durée...");
 
-  // Récupération de la liste des pistes + durée totale via un second appel (lookup)
+  // Récupération des pistes de l'album
   try {
-    const lookupUrl = `https://itunes.apple.com/lookup?id=${r.collectionId}&entity=song`;
-    const data = await itunesJSONP(lookupUrl);
-    const tracks = (data.results || []).filter(t => t.wrapperType === 'track');
+    const detailUrl = `https://musicbrainz.org/ws/2/release/${r.id}?inc=recordings&fmt=json`;
+    const response = await fetch(detailUrl, {
+      headers: { 'User-Agent': 'MiniDiscCatalogApp/1.0 (contact@example.com)' }
+    });
+    const data = await response.json();
 
-    if (tracks.length > 0) {
+    const media = data.media && data.media[0];
+    if (media && media.tracks) {
+      const tracks = media.tracks;
+      
       document.getElementById('idea-tracks').value = tracks
-        .sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0))
-        .map(t => t.trackName)
+        .map(t => t.title)
         .join('\n');
 
-      const totalMs = tracks.reduce((sum, t) => sum + (t.trackTimeMillis || 0), 0);
+      const totalMs = tracks.reduce((sum, t) => sum + (t.length || 0), 0);
       if (totalMs > 0) {
         document.getElementById('idea-duration').value = formatMillisToDuration(totalMs);
       }
     }
-    showToast("✅ Infos récupérées depuis iTunes !");
+    showToast("✅ Infos récupérées depuis MusicBrainz !");
   } catch (err) {
     console.error(err);
-    showToast("⚠️ Titre/artiste/genre récupérés, mais pas les pistes (erreur iTunes)");
+    showToast("⚠️ Album récupéré, mais erreur sur les pistes");
   }
 }
 
