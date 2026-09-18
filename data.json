@@ -1898,7 +1898,6 @@
     {
       "id": "md-45",
       "md_cover": "images/beatles_1962_1966.jpg",
-      "title": "1962-1966 / The Blues Brothers / Jazz & Blues Collection vol.2",
       "albums": [
         {
           "id": "alb-45-1",
@@ -1938,7 +1937,7 @@
             "Eleanor Rigby",
             "Yellow Submarine"
           ],
-          "toRecord": false
+          "toRecord": true
         },
         {
           "id": "alb-45-2",
@@ -1965,7 +1964,7 @@
             "Sweet Home Chicago",
             "JailHouse Rock"
           ],
-          "toRecord": false
+          "toRecord": true
         },
         {
           "id": "alb-45-3",
@@ -1998,9 +1997,10 @@
             "No Shoes",
             "She Shot Me Down"
           ],
-          "toRecord": false
+          "toRecord": true
         }
-      ]
+      ],
+      "title": "1962-1966 / The Blues Brothers / Jazz & Blues Collection vol.2"
     },
     {
       "id": "md-40",
