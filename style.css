@@ -1654,3 +1654,62 @@ html, body {
   cursor: pointer;
   margin-left: 6px;
 }
+
+/* ==========================================
+   CARROUSEL DE GENRES (DASHBOARD)
+   ========================================== */
+.genre-carousel-container {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 4px 6px 12px 6px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.genre-carousel-container::-webkit-scrollbar {
+  display: none;
+}
+
+.genre-carousel-card {
+  flex: 0 0 130px;
+  height: 95px;
+  scroll-snap-align: start;
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-top: 5px solid #ff007f;
+  border-radius: 12px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px #000000;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.genre-carousel-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+.carousel-genre-name {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.15;
+  word-break: break-word;
+}
+
+.carousel-genre-count {
+  font-size: 0.60rem;
+  font-weight: 700;
+  color: #666666;
+  background: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 1px solid #000000;
+}
