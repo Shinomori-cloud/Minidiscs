@@ -2200,22 +2200,28 @@ function convertSelectedToMD() {
    RECHERCHE AUTOMATIQUE DE MÉTADONNÉES (MusicBrainz)
    ========================================== */
 
+/* ==========================================
+   RECHERCHE AUTOMATIQUE DE MÉTADONNÉES (MusicBrainz)
+   ========================================== */
+
 async function searchItunes() {
   const input = document.getElementById('itunes-search-input');
   const resultsBox = document.getElementById('itunes-results');
   if (!input || !resultsBox) return;
 
-  const term = input.value.trim();
-  if (!term) {
+  const rawTerm = input.value.trim();
+  if (!rawTerm) {
     showToast("⚠️ Tape un artiste et/ou un album à rechercher");
     return;
   }
 
-  resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche sur MusicBrainz...</p>`;
+  resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche ciblée sur MusicBrainz...</p>`;
 
   try {
-    // Recherche par release-group (regroupe les doublons d'un même album)
-    const url = `https://musicbrainz.org/ws/2/release-group/?query=${encodeURIComponent(term)}%20AND%20(primarytype:Album%20OR%20primarytype:EP)&fmt=json&limit=15`;
+    // 1. Requête ciblée excluant les tributes et reprises d'origine
+    const query = `${encodeURIComponent(rawTerm)} AND (primarytype:Album OR primarytype:EP) AND NOT secondarytype:Tribute AND NOT secondarytype:Cover`;
+    const url = `https://musicbrainz.org/ws/2/release-group/?query=${query}&fmt=json&limit=25`;
+
     const response = await fetch(url, {
       headers: { 'User-Agent': 'MiniDiscCatalogApp/1.0 (contact@example.com)' }
     });
@@ -2223,13 +2229,28 @@ async function searchItunes() {
     if (!response.ok) throw new Error("Erreur réseau MusicBrainz");
     const data = await response.json();
 
-    const groups = data['release-groups'] || [];
+    let groups = data['release-groups'] || [];
+
+    // 2. Mots-clés parasites à filtrer côté client
+    const forbiddenKeywords = [
+      'tribute', 'performs', 'cover', 'lullaby', 'played by', 
+      'string quartet', 'karaoke', 'tributo', 'panpipe', 'smooth jazz version'
+    ];
+
+    groups = groups.filter(g => {
+      const title = (g.title || '').toLowerCase();
+      const artist = g['artist-credit'] ? g['artist-credit'].map(a => a.name).join(' ').toLowerCase() : '';
+
+      const isParasite = forbiddenKeywords.some(keyword => title.includes(keyword) || artist.includes(keyword));
+      return !isParasite;
+    });
+
     if (groups.length === 0) {
-      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat trouvé.</p>`;
+      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat officiel trouvé.</p>`;
       return;
     }
 
-    // Tri par date de première sortie
+    // 3. Tri par date de sortie d'origine
     groups.sort((a, b) => {
       const yearA = a['first-release-date'] ? parseInt(a['first-release-date'].slice(0, 4), 10) : 9999;
       const yearB = b['first-release-date'] ? parseInt(b['first-release-date'].slice(0, 4), 10) : 9999;
@@ -2277,13 +2298,26 @@ async function applyItunesResult(index) {
     document.getElementById('idea-year').value = g['first-release-date'].slice(0, 4);
   }
 
-  // Tente d'associer un genre principal à partir des tags de l'album
+  // --- GESTION MULTI-TAGS & GENRE PRINCIPAL ---
   if (g.tags && g.tags.length > 0) {
-    const mainTag = g.tags[0].name;
-    document.getElementById('idea-tags').value = mainTag;
-    const guessedGenre = guessMainGenreFromItunes(mainTag);
+    // Trier par popularité (nombre de votes)
+    const sortedTags = [...g.tags].sort((a, b) => (b.count || 0) - (a.count || 0));
+    
+    // Récupérer jusqu'à 5 tags principaux séparés par une virgule
+    const tagNames = sortedTags.slice(0, 5).map(t => t.name);
+    document.getElementById('idea-tags').value = tagNames.join(', ');
+
+    // Trouver le meilleur genre principal basé sur le premier tag musical pertinent
+    let guessedGenre = '';
+    for (const tag of tagNames) {
+      guessedGenre = guessMainGenreFromItunes(tag);
+      if (guessedGenre) break;
+    }
+
     const genreSelect = document.getElementById('idea-genre');
-    if (guessedGenre && genreSelect) genreSelect.value = guessedGenre;
+    if (guessedGenre && genreSelect) {
+      genreSelect.value = guessedGenre;
+    }
   }
 
   // Pochette via le release-group
@@ -2301,23 +2335,29 @@ async function applyItunesResult(index) {
 
   showToast("⏳ Récupération des pistes et de la durée...");
 
-  // Récupère une édition (release) liée à ce groupe pour extraire la liste des pistes
+  // --- RECHERCHE DES PISTES ET DURÉES ---
   try {
-    const detailUrl = `https://musicbrainz.org/ws/2/release-group/${g.id}?inc=releases+media+recordings&fmt=json`;
-    const response = await fetch(detailUrl, {
+    const relUrl = `https://musicbrainz.org/ws/2/release?release-group=${g.id}&inc=recordings+media&fmt=json&limit=10`;
+    const relResponse = await fetch(relUrl, {
       headers: { 'User-Agent': 'MiniDiscCatalogApp/1.0 (contact@example.com)' }
     });
-    const data = await response.json();
+    
+    if (!relResponse.ok) throw new Error("Erreur récupération releases");
+    const relData = await relResponse.json();
+    const releases = relData.releases || [];
 
-    const releases = data.releases || [];
     let tracks = [];
-
-    // Cherche la première édition qui contient des pistes
+    
     for (const rel of releases) {
-      if (rel.media && rel.media[0] && rel.media[0].tracks && rel.media[0].tracks.length > 0) {
-        tracks = rel.media[0].tracks;
-        break;
+      if (rel.media && rel.media.length > 0) {
+        for (const m of rel.media) {
+          if (m.tracks && m.tracks.length > 0) {
+            tracks = m.tracks;
+            break;
+          }
+        }
       }
+      if (tracks.length > 0) break;
     }
 
     if (tracks.length > 0) {
@@ -2325,15 +2365,24 @@ async function applyItunesResult(index) {
         .map(t => t.title)
         .join('\n');
 
-      const totalMs = tracks.reduce((sum, t) => sum + (t.length || 0), 0);
+      const totalMs = tracks.reduce((sum, t) => {
+        const length = t.length || (t.recording ? t.recording.length : 0) || 0;
+        return sum + length;
+      }, 0);
+
       if (totalMs > 0) {
         document.getElementById('idea-duration').value = formatMillisToDuration(totalMs);
+      } else {
+        document.getElementById('idea-duration').value = '';
       }
+      showToast("✅ Infos et pistes récupérées !");
+    } else {
+      showToast("⚠️ Album trouvé, mais aucune liste de pistes renseignée.");
     }
-    showToast("✅ Infos récupérées depuis MusicBrainz !");
+
   } catch (err) {
     console.error(err);
-    showToast("⚠️ Album récupéré, mais erreur sur les pistes");
+    showToast("⚠️ Erreur lors de la récupération des pistes.");
   }
 }
 
