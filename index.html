@@ -81,7 +81,7 @@
           </div>
           <div class="form-group">
             <label>Genre</label>
-            <select id="compil-genre" required>
+            <select id="compil-genre">
               <option value="">-- Choisir un genre --</option>
               <option value="Alternative & Grunge 90s">Alternative &amp; Grunge 90s</option>
               <option value="Rock & Blues">Rock &amp; Blues</option>
@@ -141,6 +141,15 @@
       </div>
 
       <form id="idea-form">
+        <div class="form-group" style="background:#f0f4ff; padding:10px; border-radius:6px; border:1px dashed #7b8ef0;">
+          <label>🔍 Recherche automatique (iTunes)</label>
+          <div style="display:flex; gap:6px;">
+            <input type="text" id="itunes-search-input" placeholder="Artiste + album (ex: Daft Punk Discovery)" style="flex:1;">
+            <button type="button" class="btn-secondary" style="margin-bottom:0; white-space:nowrap;" onclick="searchItunes()">Rechercher</button>
+          </div>
+          <div id="itunes-results" style="margin-top:8px;"></div>
+        </div>
+
         <div class="form-group">
           <label>Titre de l'album</label>
           <input type="text" id="idea-title" placeholder="ex: Discovery" required>
@@ -152,8 +161,28 @@
         </div>
 
         <div class="form-group">
-          <label>Genre(s)</label>
-          <input type="text" id="idea-genre" list="genres-list" placeholder="ex: ELECTRONIC, HOUSE">
+          <label>Genre</label>
+          <select id="idea-genre" required>
+            <option value="">-- Choisir un genre --</option>
+            <option value="Alternative & Grunge 90s">Alternative &amp; Grunge 90s</option>
+            <option value="Rock & Blues">Rock &amp; Blues</option>
+            <option value="Rap, Soul & Reggae">Rap, Soul &amp; Reggae</option>
+            <option value="Metal & Hard Rock">Metal &amp; Hard Rock</option>
+            <option value="Pop & Folk & Variety">Pop &amp; Folk &amp; Variety</option>
+            <option value="Talks & Humour">Talks &amp; Humour</option>
+            <option value="Électro, Trip-Hop & Expérimental">Électro, Trip-Hop &amp; Expérimental</option>
+            <option value="Ambient & Orchestral">Ambient &amp; Orchestral</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Tags (optionnel, ex: genre iTunes détaillé)</label>
+          <input type="text" id="idea-tags" placeholder="ex: House, Disco">
+        </div>
+
+        <div class="form-group">
+          <label>Année de sortie</label>
+          <input type="text" id="idea-year" placeholder="ex: 2001">
         </div>
 
         <div class="form-group">
@@ -162,8 +191,14 @@
         </div>
 
         <div class="form-group">
+          <label>Pistes (optionnel, une par ligne)</label>
+          <textarea id="idea-tracks" placeholder="Piste A&#10;Piste B"></textarea>
+        </div>
+
+        <div class="form-group">
           <label>Pochette Album</label>
           <input type="file" id="idea-cover" accept="image/*">
+          <div id="idea-cover-preview" style="margin-top:6px;"></div>
         </div>
 
         <div class="form-actions" style="display: flex; gap: 8px; margin-top: 15px;">
@@ -184,9 +219,6 @@
 
   <!-- POP-UP TOAST -->
   <div id="toast" class="toast hidden"></div>
-
-  <!-- LISTE DE SUGGESTIONS DYNAMIQUE POUR LES GENRES -->
-  <datalist id="genres-list"></datalist>
 
   <!-- BOUTON FLOTTANT UNIQUE ET SON MENU -->
   <div id="floating-actions" class="fab-container hidden">

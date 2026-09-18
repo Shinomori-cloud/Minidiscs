@@ -627,12 +627,20 @@ fetch('data.json')
 /* ==========================================
    COULEURS DYNAMIQUES PAR GENRE
    ========================================== */
-const genreColorPalette = [
-  '#e63946', '#ff007f', '#00f0ff', '#ffb703', 
-  '#7b2cbf', '#70e000', '#ff70a6', '#3a86ef', 
-  '#ff9770', '#06d6a0'
-];
-const genreColorMap = {};
+// Une couleur fixe par genre, toujours la même (peu importe l'ordre de chargement).
+const genreColorMap = {
+  'ALTERNATIVE & GRUNGE 90S': '#e63946',
+  'ROCK & BLUES': '#ff007f',
+  'RAP, SOUL & REGGAE': '#ffb703',
+  'METAL & HARD ROCK': '#7b2cbf',
+  'POP & FOLK & VARIETY': '#3a86ef',
+  'TALKS & HUMOUR': '#ff9770',
+  'ÉLECTRO, TRIP-HOP & EXPÉRIMENTAL': '#00f0ff',
+  'AMBIENT & ORCHESTRAL': '#06d6a0',
+  'AUTRE': '#888888',
+};
+// Couleurs de secours si jamais un genre hors de cette liste apparaît (données à corriger)
+const genreColorPalette = ['#e63946', '#ff007f', '#00f0ff', '#ffb703', '#7b2cbf', '#70e000', '#ff70a6', '#3a86ef'];
 
 function getBorderColor(genreData) {
   const genres = getNormalizedGenres(genreData);
@@ -647,6 +655,14 @@ function getBorderColor(genreData) {
   genreColorMap[primaryGenre] = color;
   
   return color;
+}
+
+// Construit un affichage où chaque genre garde sa propre couleur (au lieu de tout
+// écrire dans la couleur du premier genre), utile quand un MiniDisc a plusieurs genres.
+function genreListHTML(genresArray, fontSize = '0.8rem') {
+  return genresArray
+    .map(g => `<span style="color:${getBorderColor([g])}; font-weight:800; font-size:${fontSize};">${g}</span>`)
+    .join(' <span style="color:var(--text-sub); font-weight:400;">/</span> ');
 }
 
 /* ==========================================
@@ -903,7 +919,7 @@ function renderMDList(filters = {}, pushState = true) {
         <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px; position: relative;" onclick="openMD(${originalIndex})">
           ${coverHTML}
           <div class="item-details">
-            <div class="item-tag" style="color: ${borderColor};">${allGenres.join(' / ')}</div>
+            <div class="item-tag" style="font-size: inherit;">${genreListHTML(allGenres, 'inherit')}</div>
             <div class="md-albums-list">${albumsContent}</div>
           </div>
           ${recordBadgeHTML}
@@ -1348,11 +1364,11 @@ function addAdminAlbumBlock() {
       <h4 style="margin: 0;">Album</h4>
       <button type="button" onclick="removeAdminAlbumBlock(this)" style="background: #e63946; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">🗑️ Supprimer l'album</button>
     </div>
-    <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album" required></div>
-    <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste" required></div>
+    <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album"></div>
+    <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste"></div>
     <div class="form-group">
       <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">Genre</label>
-      <select class="album-genre" required>${mainGenreOptionsHTML()}</select>
+      <select class="album-genre">${mainGenreOptionsHTML()}</select>
     </div>
     <div class="form-group"><input type="text" class="album-tags" placeholder="Tags (optionnel, ex: Acoustic, Punk Rock)"></div>
     <div class="form-group"><input type="text" class="album-year" placeholder="Année de sortie (ex: 1998)"></div>
@@ -1377,6 +1393,22 @@ function removeAdminAlbumBlock(button) {
   if (block) {
     block.remove();
   }
+}
+
+// Fusionne un MiniDisc "série" qui ne contient qu'un seul album : plus besoin de la
+// couche "albums", ses champs viennent directement sur le MiniDisc (comme une compilation).
+function flattenSingleAlbum(targetMD) {
+  const alb = targetMD.albums[0];
+  targetMD.md_cover = targetMD.md_cover && targetMD.md_cover !== 'images/default.jpg' ? targetMD.md_cover : (alb.md_cover || targetMD.md_cover);
+  targetMD.title = alb.title;
+  targetMD.artist = alb.artist;
+  targetMD.main_genre = alb.main_genre;
+  targetMD.tags = alb.tags;
+  targetMD.release_year = alb.release_year;
+  targetMD.duration = alb.duration;
+  targetMD.tracks = alb.tracks;
+  targetMD.toRecord = alb.toRecord;
+  delete targetMD.albums;
 }
 
 async function submitNewMD(e) {
@@ -1420,6 +1452,10 @@ async function submitNewMD(e) {
 
     targetMD.title = document.getElementById('compil-title').value.trim();
     targetMD.artist = document.getElementById('compil-artist').value.trim();
+    if (!targetMD.title) {
+      showToast("⚠️ Veuillez renseigner un titre");
+      return;
+    }
     targetMD.main_genre = mainGenre;
     targetMD.tags = parseTagsInput(document.getElementById('compil-tags') ? document.getElementById('compil-tags').value : '');
     targetMD.release_year = document.getElementById('compil-year') ? document.getElementById('compil-year').value.trim() : '';
@@ -1446,8 +1482,14 @@ async function submitNewMD(e) {
       const rawTracks = block.querySelector('.album-tracks').value.split('\n');
       const formattedTracks = rawTracks.map(t => t.trim()).filter(t => t !== '');
 
+      const albumTitle = block.querySelector('.album-title').value.trim();
+      const albumArtist = block.querySelector('.album-artist').value.trim();
       const albumMainGenre = block.querySelector('.album-genre').value;
       const albumTags = parseTagsInput(block.querySelector('.album-tags') ? block.querySelector('.album-tags').value : '');
+      if (!albumTitle || !albumArtist) {
+        showToast("⚠️ Veuillez renseigner un titre et un artiste pour chaque album.");
+        return;
+      }
       if (!albumMainGenre) {
         showToast("⚠️ Veuillez choisir un genre pour chaque album.");
         return;
@@ -1471,8 +1513,8 @@ async function submitNewMD(e) {
       const albumObj = {
         id: (existingAlbum && existingAlbum.id) ? existingAlbum.id : (targetMD.id + '-alb-' + (i + 1)),
         md_cover: albumCoverPath,
-        title: block.querySelector('.album-title').value.trim(),
-        artist: block.querySelector('.album-artist').value.trim(),
+        title: albumTitle,
+        artist: albumArtist,
         main_genre: albumMainGenre,
         tags: albumTags,
         release_year: block.querySelector('.album-year').value.trim(),
@@ -1486,6 +1528,12 @@ async function submitNewMD(e) {
 
     // Le titre global du MiniDisc est calculé à partir des titres des albums
     targetMD.title = targetMD.albums.map(a => a.title).filter(Boolean).join(' / ');
+
+    // S'il n'y a finalement qu'un seul album, pas besoin de la couche "albums" :
+    // on aplatit directement ses infos sur le MiniDisc (comme une compilation).
+    if (targetMD.albums.length === 1) {
+      flattenSingleAlbum(targetMD);
+    }
   }
 
   // Enregistrement dans catalogData
@@ -1693,7 +1741,7 @@ function renderCompilPlanner(pushState = true) {
       cardsHTML = ideas.map(item => {
         const index = item.originalIndex;
         const isSelected = selectedIdeaIndices.has(index);
-        const coverSrc = (item.cover && item.cover !== 'images/' && item.cover !== 'images/default.jpg') ? item.cover : '';
+        const coverSrc = (item.md_cover && item.md_cover !== 'images/' && item.md_cover !== 'images/default.jpg') ? item.md_cover : '';
 
         const coverHTML = coverSrc 
           ? createLoadingCoverHTML(coverSrc, 'idea-cover', '💡') 
@@ -1967,14 +2015,68 @@ function clearIdeaSelection() {
   renderCompilPlanner(false);
 }
 
-function openIdeaModal() {
-  if (typeof populateFormDatalists === 'function') populateFormDatalists();
-  if (typeof setupMultiSelectContainer === 'function') setupMultiSelectContainer('idea-genre', 'genres-list');
+/* ==========================================
+   CORRESPONDANCE GENRE ITUNES -> GENRE PRINCIPAL (8 genres fixes)
+   À compléter au fil de l'eau : ajoute une ligne "'Nom iTunes': 'Un des 8 genres',"
+   pour chaque nouveau genre iTunes rencontré et pas encore couvert.
+   ========================================== */
+const ITUNES_GENRE_TO_MAIN = {
+  'Alternative': 'Alternative & Grunge 90s',
+  'Grunge': 'Alternative & Grunge 90s',
+  'Rock': 'Rock & Blues',
+  'Blues': 'Rock & Blues',
+  'Blues/R&B': 'Rock & Blues',
+  'Punk': 'Rock & Blues',
+  'Metal': 'Metal & Hard Rock',
+  'Hard Rock': 'Metal & Hard Rock',
+  'Hip-Hop/Rap': 'Rap, Soul & Reggae',
+  'Hip Hop/Rap': 'Rap, Soul & Reggae',
+  'R&B/Soul': 'Rap, Soul & Reggae',
+  'Reggae': 'Rap, Soul & Reggae',
+  'Funk': 'Rap, Soul & Reggae',
+  'Pop': 'Pop & Folk & Variety',
+  'Folk': 'Pop & Folk & Variety',
+  'Singer/Songwriter': 'Pop & Folk & Variety',
+  'Vocal': 'Pop & Folk & Variety',
+  'Variété française': 'Pop & Folk & Variety',
+  'Comedy': 'Talks & Humour',
+  'Spoken Word': 'Talks & Humour',
+  'Electronic': 'Électro, Trip-Hop & Expérimental',
+  'Electronica': 'Électro, Trip-Hop & Expérimental',
+  'Dance': 'Électro, Trip-Hop & Expérimental',
+  'Trip-Hop': 'Électro, Trip-Hop & Expérimental',
+  'Ambient': 'Ambient & Orchestral',
+  'Soundtrack': 'Ambient & Orchestral',
+  'Classical': 'Ambient & Orchestral',
+  'Orchestral': 'Ambient & Orchestral',
+  // Genres pas encore vus / pas évidents à classer : Jazz, Country, World, Latin,
+  // Christian & Gospel, Kids, Holiday... à compléter toi-même si besoin.
+};
 
+function guessMainGenreFromItunes(itunesGenreName) {
+  if (!itunesGenreName) return '';
+  if (ITUNES_GENRE_TO_MAIN[itunesGenreName]) return ITUNES_GENRE_TO_MAIN[itunesGenreName];
+  // Recherche insensible à la casse / aux variantes proches
+  const found = Object.keys(ITUNES_GENRE_TO_MAIN).find(
+    k => k.toLowerCase() === itunesGenreName.toLowerCase()
+  );
+  return found ? ITUNES_GENRE_TO_MAIN[found] : '';
+}
+
+let pendingItunesCoverUrl = null; // pochette choisie via iTunes, en attente d'upload
+
+function openIdeaModal() {
   const form = document.getElementById('idea-form');
   if (form) form.reset();
   const coverInput = document.getElementById('idea-cover');
   if (coverInput) coverInput.value = "";
+  const preview = document.getElementById('idea-cover-preview');
+  if (preview) preview.innerHTML = '';
+  const results = document.getElementById('itunes-results');
+  if (results) results.innerHTML = '';
+  const searchInput = document.getElementById('itunes-search-input');
+  if (searchInput) searchInput.value = '';
+  pendingItunesCoverUrl = null;
   document.getElementById('idea-modal')?.classList.remove('hidden');
 }
 
@@ -1986,26 +2088,42 @@ async function saveIdeaAlbum(e) {
   if (e) e.preventDefault();
   const title = document.getElementById('idea-title').value.trim();
   const artist = document.getElementById('idea-artist').value.trim();
-  const rawGenre = document.getElementById('idea-genre').value.trim();
+  const main_genre = document.getElementById('idea-genre').value;
+  const tags = (document.getElementById('idea-tags').value || '').split(',').map(t => t.trim()).filter(Boolean);
+  const release_year = document.getElementById('idea-year').value.trim();
   const duration = document.getElementById('idea-duration').value.trim();
+  const tracks = (document.getElementById('idea-tracks').value || '').split('\n').map(t => t.trim()).filter(Boolean);
   const coverInput = document.getElementById('idea-cover');
 
-  if (typeof showToast === 'function') showToast("⏳ Traitement et envoi de l'image...");
+  if (!main_genre) {
+    showToast("⚠️ Veuillez choisir un genre");
+    return;
+  }
 
-  // Upload de la pochette sur GitHub
+  showToast("⏳ Traitement et envoi de l'image...");
+
+  // Priorité : un fichier choisi manuellement > une pochette récupérée via iTunes > pochette par défaut
   let coverPath = 'images/default.jpg';
   if (coverInput && coverInput.files && coverInput.files.length > 0) {
     const uploadedPath = await handleImageUpload(coverInput);
     if (uploadedPath) coverPath = uploadedPath;
+  } else if (pendingItunesCoverUrl) {
+    const uploadedPath = await handleRemoteImageUpload(pendingItunesCoverUrl);
+    coverPath = uploadedPath || pendingItunesCoverUrl;
   }
 
-  const genre = rawGenre
-    .split(',')
-    .map(g => g.trim())
-    .filter(Boolean)
-    .join(', ');
-
-  const newIdea = { title, artist, genre, duration, cover: coverPath };
+  const newIdea = {
+    id: 'idea-' + Date.now(),
+    md_cover: coverPath,
+    title,
+    artist,
+    main_genre,
+    tags,
+    release_year,
+    duration,
+    tracks,
+    toRecord: false,
+  };
   
   if (!window.ideaAlbums) window.ideaAlbums = [];
   window.ideaAlbums.push(newIdea);
@@ -2022,18 +2140,35 @@ function convertSelectedToMD() {
   const ideas = getIdeaList();
   const selectedAlbums = Array.from(selectedIdeaIndices).map(i => ideas[i]);
 
-  const newMD = {
-    genre: selectedAlbums[0].genre ? [selectedAlbums[0].genre] : ['DIVERS'],
-    type: ['ALBUM'],
-    md_cover: selectedAlbums[0].cover || 'images/',
-    albums: selectedAlbums.map(a => ({
-      title: a.title,
-      artist: a.artist,
-      genre: a.genre ? [a.genre] : [],
-      cover: a.cover,
-      tracks: []
-    }))
-  };
+  const mdId = 'md-' + Date.now();
+  const albums = selectedAlbums.map((a, i) => ({
+    id: mdId + '-alb-' + (i + 1),
+    md_cover: a.md_cover || 'images/default.jpg',
+    title: a.title || '',
+    artist: a.artist || '',
+    main_genre: a.main_genre || '',
+    tags: a.tags || [],
+    release_year: a.release_year || '',
+    duration: a.duration || '',
+    tracks: a.tracks || [],
+    toRecord: false,
+  }));
+
+  let newMD;
+  if (albums.length === 1) {
+    // Un seul album sélectionné : pas de couche "albums", tout est directement sur le MD.
+    const alb = albums[0];
+    newMD = { id: mdId, md_cover: alb.md_cover, title: alb.title, artist: alb.artist,
+      main_genre: alb.main_genre, tags: alb.tags, release_year: alb.release_year,
+      duration: alb.duration, tracks: alb.tracks, toRecord: alb.toRecord };
+  } else {
+    newMD = {
+      id: mdId,
+      md_cover: albums[0].md_cover || 'images/default.jpg',
+      title: albums.map(a => a.title).filter(Boolean).join(' / '),
+      albums,
+    };
+  }
 
   if (Array.isArray(catalogData)) {
     catalogData.push(newMD);
@@ -2048,6 +2183,169 @@ function convertSelectedToMD() {
   if (typeof saveLocalBackup === 'function') saveLocalBackup();
   if (typeof showToast === 'function') showToast("🎉 Albums convertis en MiniDisc avec succès !");
   if (typeof renderDashboard === 'function') renderDashboard(true);
+}
+
+/* ==========================================
+   RECHERCHE AUTOMATIQUE DE MÉTADONNÉES (iTunes)
+   ========================================== */
+async function searchItunes() {
+  const input = document.getElementById('itunes-search-input');
+  const resultsBox = document.getElementById('itunes-results');
+  if (!input || !resultsBox) return;
+
+  const term = input.value.trim();
+  if (!term) {
+    showToast("⚠️ Tape un artiste et/ou un album à rechercher");
+    return;
+  }
+
+  resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche en cours...</p>`;
+
+  try {
+    const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=album&limit=6`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.results || data.results.length === 0) {
+      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat.</p>`;
+      return;
+    }
+
+    window.__itunesResults = data.results;
+
+    resultsBox.innerHTML = data.results.map((r, i) => `
+      <div class="itunes-result-item" data-index="${i}" style="display:flex; align-items:center; gap:8px; padding:6px; border:1px solid #ddd; border-radius:6px; margin-bottom:6px; cursor:pointer;">
+        <img src="${r.artworkUrl60 || r.artworkUrl100 || ''}" style="width:40px; height:40px; border-radius:4px; object-fit:cover;">
+        <div style="flex:1; font-size:0.8rem;">
+          <div style="font-weight:700;">${r.collectionName}</div>
+          <div style="color:#666;">${r.artistName}${r.releaseDate ? ' · ' + r.releaseDate.slice(0, 4) : ''}</div>
+        </div>
+      </div>
+    `).join('');
+
+    resultsBox.querySelectorAll('.itunes-result-item').forEach(el => {
+      el.addEventListener('click', () => applyItunesResult(parseInt(el.dataset.index, 10)));
+    });
+  } catch (err) {
+    console.error(err);
+    resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#e63946;">Erreur pendant la recherche.</p>`;
+  }
+}
+
+async function applyItunesResult(index) {
+  const r = window.__itunesResults && window.__itunesResults[index];
+  if (!r) return;
+
+  document.getElementById('idea-title').value = r.collectionName || '';
+  document.getElementById('idea-artist').value = r.artistName || '';
+  if (r.releaseDate) document.getElementById('idea-year').value = r.releaseDate.slice(0, 4);
+  if (r.primaryGenreName) {
+    document.getElementById('idea-tags').value = r.primaryGenreName;
+    const guessedGenre = guessMainGenreFromItunes(r.primaryGenreName);
+    const genreSelect = document.getElementById('idea-genre');
+    if (guessedGenre && genreSelect) {
+      genreSelect.value = guessedGenre;
+    } else if (genreSelect) {
+      showToast(`⚠️ Genre iTunes "${r.primaryGenreName}" pas encore reconnu, choisis-en un manuellement`);
+    }
+  }
+
+  // Pochette en haute résolution (le lien iTunes standard est en 100x100, on demande plus grand)
+  const hiRes = (r.artworkUrl100 || '').replace('100x100bb', '600x600bb');
+  pendingItunesCoverUrl = hiRes || r.artworkUrl100 || null;
+  const preview = document.getElementById('idea-cover-preview');
+  if (preview && pendingItunesCoverUrl) {
+    preview.innerHTML = `<img src="${pendingItunesCoverUrl}" style="width:80px; height:80px; border-radius:6px; object-fit:cover;"><div style="font-size:0.7rem; color:#666;">Pochette iTunes sélectionnée (transférée dans images/ à l'enregistrement)</div>`;
+  }
+
+  showToast("⏳ Récupération des pistes et de la durée...");
+
+  // Récupération de la liste des pistes + durée totale via un second appel (lookup)
+  try {
+    const lookupUrl = `https://itunes.apple.com/lookup?id=${r.collectionId}&entity=song`;
+    const res = await fetch(lookupUrl);
+    const data = await res.json();
+    const tracks = (data.results || []).filter(t => t.wrapperType === 'track');
+
+    if (tracks.length > 0) {
+      document.getElementById('idea-tracks').value = tracks
+        .sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0))
+        .map(t => t.trackName)
+        .join('\n');
+
+      const totalMs = tracks.reduce((sum, t) => sum + (t.trackTimeMillis || 0), 0);
+      if (totalMs > 0) {
+        document.getElementById('idea-duration').value = formatMillisToDuration(totalMs);
+      }
+    }
+    showToast("✅ Infos récupérées depuis iTunes !");
+  } catch (err) {
+    console.error(err);
+    showToast("⚠️ Titre/artiste/genre récupérés, mais pas les pistes (erreur iTunes)");
+  }
+}
+
+function formatMillisToDuration(ms) {
+  const totalSeconds = Math.round(ms / 1000);
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  const pad = (n) => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
+
+// Tente de transférer une image distante (URL iTunes) vers le dossier images/ du dépôt GitHub,
+// comme pour une pochette uploadée manuellement. Si ça échoue (CORS, pas de token...), on
+// renvoie null : l'appelant gardera alors le lien iTunes d'origine plutôt que de bloquer.
+async function handleRemoteImageUpload(imageUrl) {
+  const token = getGithubToken();
+  if (!token) {
+    console.warn("Pas de token GitHub disponible. La pochette iTunes restera un lien externe.");
+    return null;
+  }
+
+  try {
+    const imgResponse = await fetch(imageUrl);
+    if (!imgResponse.ok) throw new Error("Téléchargement de l'image distante impossible.");
+    const blob = await imgResponse.blob();
+
+    const base64Data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+
+    const extension = (blob.type && blob.type.includes('png')) ? 'png' : 'jpg';
+    const fileName = `img_${Date.now()}.${extension}`;
+    const filePath = `images/${fileName}`;
+
+    const USERNAME = 'Shinomori-cloud';
+    const REPO = 'Minidiscs';
+    const url = `https://api.github.com/repos/${USERNAME}/${REPO}/contents/${filePath}`;
+
+    const putResponse = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        message: `Ajout automatique de la pochette ${fileName} (iTunes)`,
+        content: base64Data
+      })
+    });
+
+    if (putResponse.ok) {
+      return filePath;
+    }
+    console.error("Erreur lors de l'envoi de la pochette iTunes sur GitHub :", await putResponse.json());
+    return null;
+  } catch (err) {
+    console.warn("Transfert de la pochette iTunes impossible (probablement une restriction CORS) :", err);
+    return null;
+  }
 }
 
 /* ==========================================
