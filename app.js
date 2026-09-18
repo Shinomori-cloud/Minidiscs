@@ -983,18 +983,33 @@ function openMD(index, pushState = true) {
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
   const md = catalogData[index];
-  const allMdGenres = resolveMDGenres(md);
+
+  // Extraction directe et sécurisée des genres du MiniDisc
+  let allMdGenres = [];
+  if (md.albums && md.albums.length > 0) {
+    md.albums.forEach(a => {
+      if (a.main_genre) allMdGenres.push(a.main_genre);
+      if (Array.isArray(a.tags)) allMdGenres.push(...a.tags);
+      else if (a.tags) allMdGenres.push(a.tags);
+      if (a.genre) allMdGenres.push(a.genre);
+    });
+  }
+  if (allMdGenres.length === 0) {
+    if (md.main_genre) allMdGenres.push(md.main_genre);
+    if (Array.isArray(md.tags)) allMdGenres.push(...md.tags);
+    else if (md.tags) allMdGenres.push(md.tags);
+    if (md.genre) allMdGenres.push(md.genre);
+  }
+  allMdGenres = [...new Set(allMdGenres.map(g => String(g).trim()).filter(Boolean))];
   const borderColor = getBorderColor(allMdGenres);
 
 /* ==========================================
    FAB HTML & GESTION VUE DÉTAIL MINIDISC
    ========================================== */
 
-// FAB HTML restructuré avec titres de section et styles harmonisés
 const fabHTML = `
   <div id="md-detail-floating-actions" class="fab-container">
     <div id="md-detail-fab-menu" class="fab-menu hidden">
-      <!-- Section Options -->
       <div class="fab-section-title">Options</div>
       <button type="button" class="fab-item accent" onclick="openAdminModal(${index});">
         ✏️ Modifier
@@ -1028,7 +1043,9 @@ if (!md.albums || md.albums.length === 0) {
     ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
     : '';
 
-  const coverHTML = createLoadingCoverHTML(md.md_cover, 'album-cover-large', '💽');
+  // Recherche de pochette avec fallback direct
+  const mdCover = md.md_cover || md.cover || (md.albums && md.albums[0] ? (md.albums[0].md_cover || md.albums[0].cover) : '') || '';
+  const coverHTML = createLoadingCoverHTML(mdCover, 'album-cover-large', '💽');
   const isKnownValue = (v) => v && String(v).trim() && String(v).trim().toLowerCase() !== 'unknow' && String(v).trim().toLowerCase() !== 'unknown';
   const metaLine = [md.release_year, md.duration].filter(isKnownValue).join(' · ');
 
@@ -1057,14 +1074,24 @@ if (headerTitle) headerTitle.textContent = "ALBUMS";
 
 let html = `<div class="list-container" style="padding-bottom: 90px;">`;
 md.albums.forEach((album, aIndex) => {
-  const albumGenres = resolveAlbumGenres(album, md);
+  // 1. Genre de l'album (main_genre + tags -> fallback genre -> fallback MD parent)
+  let albumGenres = [];
+  if (album.main_genre) albumGenres.push(album.main_genre);
+  if (Array.isArray(album.tags)) albumGenres.push(...album.tags);
+  else if (album.tags) albumGenres.push(album.tags);
+  if (albumGenres.length === 0 && album.genre) albumGenres.push(album.genre);
+  if (albumGenres.length === 0) albumGenres = allMdGenres;
+  albumGenres = [...new Set(albumGenres.map(g => String(g).trim()).filter(Boolean))];
+
   const albumColor = getBorderColor(albumGenres);
   
   const badgeAlbumHTML = album.toRecord 
     ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
     : '';
 
-  const coverHTML = createLoadingCoverHTML(album.md_cover, 'album-thumb', '🎵');
+  // 2. Pochette de l'album avec fallback automatique sur la pochette du MiniDisc parent
+  const albumCover = album.md_cover || album.cover || md.md_cover || md.cover || '';
+  const coverHTML = createLoadingCoverHTML(albumCover, 'album-thumb', '🎵');
 
   html += `
     <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px; position: relative;" onclick="openAlbum(${index}, ${aIndex})">
@@ -1084,88 +1111,6 @@ md.albums.forEach((album, aIndex) => {
 html += `${fabHTML}</div>`;
 app.innerHTML = html;
 window.scrollTo(0, 0);
-}
-
-/* GESTION DU MENU FAB DÉTAIL MINIDISC */
-function toggleMdDetailFabMenu() {
-  const menu = document.getElementById('md-detail-fab-menu');
-  const btn = document.getElementById('md-detail-fab-main-btn');
-  if (!menu) return;
-
-  const isOpening = menu.classList.contains('hidden');
-  menu.classList.toggle('hidden');
-
-  if (btn) {
-    btn.classList.toggle('open', isOpening);
-  }
-}
-
-// Fermeture du menu si clic en dehors (sécurisé)
-document.addEventListener('click', (e) => {
-  const container = document.getElementById('md-detail-floating-actions');
-  const menu = document.getElementById('md-detail-fab-menu');
-  if (container && menu && !container.contains(e.target)) {
-    menu.classList.add('hidden');
-    document.getElementById('md-detail-fab-main-btn')?.classList.remove('open');
-  }
-});
-
-/* 4. VUE TRACKLIST ALBUM SPÉCIFIQUE */
-function openAlbum(mdIndex, albumIndex, pushState = true) {
-  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
-  if (fa) fa.style.display = 'none';
-    
-  if (!catalogData || !catalogData[mdIndex] || !catalogData[mdIndex].albums[albumIndex]) return;
-
-  currentMD = mdIndex;
-  currentAlbum = albumIndex;
-  if (backBtn) backBtn.classList.remove('hidden');
-
-  updateSearchVisibility(false);
-  if (featuredContainer) featuredContainer.classList.add('hidden');
-
-  const md = catalogData[mdIndex];
-  const album = md.albums[albumIndex];
-  const albumGenres = resolveAlbumGenres(album, md);
-  const albumColor = getBorderColor(albumGenres);
-
-  if (headerTitle) headerTitle.textContent = "TITRES";
-  if (pushState) history.pushState({ view: 'tracklist', mdIndex, albumIndex }, '', `#md-${mdIndex}-album-${albumIndex}`);
-
-  let tracksHTML = '';
-  if (album.tracks && album.tracks.length > 0) {
-    album.tracks.forEach((track, i) => {
-      const num = String(i + 1).padStart(2, '0');
-      tracksHTML += `<li class="track-item"><strong class="track-num">${num}.</strong> ${track}</li>`;
-    });
-  } else {
-    tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
-  }
-
-  const badgeAlbumHTML = album.toRecord 
-    ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
-    : '';
-
-  const coverHTML = createLoadingCoverHTML(album.md_cover, 'album-cover-large', '🎵');
-  const isKnownAlbumValue = (v) => v && String(v).trim() && String(v).trim().toLowerCase() !== 'unknow' && String(v).trim().toLowerCase() !== 'unknown';
-  const albumMetaLine = [album.release_year, album.duration].filter(isKnownAlbumValue).join(' · ');
-
-  app.innerHTML = `
-    <div class="track-container">
-      <div class="album-header">
-        ${coverHTML}
-        <div>
-          ${badgeAlbumHTML}
-          <h2 style="font-size: 1.2rem; font-weight: 800;">${album.title || 'Album sans titre'}</h2>
-          <p style="color: var(--text-sub); font-size: 0.95rem;">${album.artist || 'Artiste inconnu'}</p>
-          <p style="color: ${albumColor}; font-size: 0.8rem; font-weight: 800;">${albumGenres.join(' / ')}</p>
-          ${albumMetaLine ? `<p style="color: var(--text-sub); font-size: 0.8rem;">${albumMetaLine}</p>` : ''}
-        </div>
-      </div>
-      <ul class="track-list">${tracksHTML}</ul>
-    </div>
-  `;
-  window.scrollTo(0, 0);
 }
 
 /* ==========================================
