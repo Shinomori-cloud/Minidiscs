@@ -1659,10 +1659,8 @@ html, body {
    CARROUSEL DE GENRES (DASHBOARD)
    ========================================== */
 .genre-carousel-container {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
+  width: 100%;
+  overflow-x: hidden;
   padding: 4px 6px 12px 6px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -1672,10 +1670,23 @@ html, body {
   display: none;
 }
 
+.carousel-track {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 12px;
+  width: max-content;
+  animation: scrollCarousel 25s linear infinite;
+}
+
+.genre-carousel-container:hover .carousel-track,
+.genre-carousel-container:active .carousel-track {
+  animation-play-state: paused;
+}
+
 .genre-carousel-card {
-  flex: 0 0 130px;
+  flex: 0 0 130px !important;
   height: 95px;
-  scroll-snap-align: start;
   background: #ffffff;
   border: 2px solid #000000;
   border-top: 5px solid #ff007f;
@@ -1712,4 +1723,13 @@ html, body {
   padding: 2px 6px;
   border-radius: 10px;
   border: 1px solid #000000;
+}
+
+@keyframes scrollCarousel {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
