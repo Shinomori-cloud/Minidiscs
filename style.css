@@ -599,9 +599,9 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   font-size: 0.55rem !important;
 }
 
-/* 4. Sur la page TITRES / PISTES (Vue détail avec badge rose) */
-.badge-to-record-header {
-  font-size: 0.55rem !important;
+/* 4. Sur la page TITRES / PISTES (Genre dans l'en-tête de l'album) */
+.album-header .item-tag {
+  font-size: 0.60rem !important;
 }
 
 .item-title {
