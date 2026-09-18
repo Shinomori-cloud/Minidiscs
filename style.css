@@ -393,8 +393,8 @@ body:has(.dashboard-container) .title-90s {
   content: "";
   position: absolute;
   top: 32px;
-  left: 6px;
-  right: 4px;
+  left: 10px;
+  right: 8px;
   bottom: -6px;
   border-radius: 16px;
   padding: 3px;
@@ -473,9 +473,9 @@ body:has(.dashboard-container) .featured-container {
 }
 
 .featured-item {
-  flex: 0 1 90;
-  max-width: 90px;
-  height: 150px;
+  flex: 0 1 110;
+  max-width: 110px;
+  height: 160px;
   border-radius: 6px;
   overflow: hidden;
   border: 1.5px solid #000;
