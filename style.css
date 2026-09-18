@@ -393,8 +393,8 @@ body:has(.dashboard-container) .title-90s {
   content: "";
   position: absolute;
   top: 32px;
-  left: 8px;
-  right: 6px;
+  left: 6px;
+  right: 4px;
   bottom: -6px;
   border-radius: 16px;
   padding: 3px;
