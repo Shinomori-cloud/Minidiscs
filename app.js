@@ -2188,6 +2188,49 @@ function convertSelectedToMD() {
 /* ==========================================
    RECHERCHE AUTOMATIQUE DE MÉTADONNÉES (iTunes)
    ========================================== */
+
+// L'API iTunes ne renvoie pas toujours les en-têtes nécessaires pour un simple fetch()
+// depuis un site web (CORS), de façon incohérente selon les requêtes. On passe donc par
+// une requête JSONP (via une balise <script>), qui n'est jamais bloquée par le CORS.
+function itunesJSONP(url) {
+  return new Promise((resolve, reject) => {
+    const callbackName = 'itunesCb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+    const script = document.createElement('script');
+    let settled = false;
+
+    const cleanup = () => {
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
+
+    window[callbackName] = (data) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(data);
+    };
+
+    script.onerror = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(new Error("Impossible de contacter iTunes."));
+    };
+
+    const separator = url.includes('?') ? '&' : '?';
+    script.src = `${url}${separator}callback=${callbackName}`;
+    document.body.appendChild(script);
+
+    // Sécurité : si iTunes ne répond jamais, on abandonne au bout de 10 secondes
+    setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(new Error("Délai dépassé pour la requête iTunes."));
+    }, 10000);
+  });
+}
+
 async function searchItunes() {
   const input = document.getElementById('itunes-search-input');
   const resultsBox = document.getElementById('itunes-results');
@@ -2203,8 +2246,7 @@ async function searchItunes() {
 
   try {
     const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=album&limit=6`;
-    const res = await fetch(url);
-    const data = await res.json();
+    const data = await itunesJSONP(url);
 
     if (!data.results || data.results.length === 0) {
       resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat.</p>`;
@@ -2263,8 +2305,7 @@ async function applyItunesResult(index) {
   // Récupération de la liste des pistes + durée totale via un second appel (lookup)
   try {
     const lookupUrl = `https://itunes.apple.com/lookup?id=${r.collectionId}&entity=song`;
-    const res = await fetch(lookupUrl);
-    const data = await res.json();
+    const data = await itunesJSONP(lookupUrl);
     const tracks = (data.results || []).filter(t => t.wrapperType === 'track');
 
     if (tracks.length > 0) {
