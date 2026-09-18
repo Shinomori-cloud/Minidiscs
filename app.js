@@ -2214,7 +2214,8 @@ async function searchItunes() {
   resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche sur MusicBrainz...</p>`;
 
   try {
-    const url = `https://musicbrainz.org/ws/2/release/?query=${encodeURIComponent(term)}&fmt=json&limit=15`;
+    // Recherche par release-group (regroupe les doublons d'un même album)
+    const url = `https://musicbrainz.org/ws/2/release-group/?query=${encodeURIComponent(term)}%20AND%20(primarytype:Album%20OR%20primarytype:EP)&fmt=json&limit=15`;
     const response = await fetch(url, {
       headers: { 'User-Agent': 'MiniDiscCatalogApp/1.0 (contact@example.com)' }
     });
@@ -2222,18 +2223,25 @@ async function searchItunes() {
     if (!response.ok) throw new Error("Erreur réseau MusicBrainz");
     const data = await response.json();
 
-    const releases = data.releases || [];
-    if (releases.length === 0) {
+    const groups = data['release-groups'] || [];
+    if (groups.length === 0) {
       resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat trouvé.</p>`;
       return;
     }
 
-    window.__itunesResults = releases;
+    // Tri par date de première sortie
+    groups.sort((a, b) => {
+      const yearA = a['first-release-date'] ? parseInt(a['first-release-date'].slice(0, 4), 10) : 9999;
+      const yearB = b['first-release-date'] ? parseInt(b['first-release-date'].slice(0, 4), 10) : 9999;
+      return yearA - yearB;
+    });
 
-    resultsBox.innerHTML = releases.map((r, i) => {
-      const artist = r['artist-credit'] ? r['artist-credit'].map(a => a.name).join(', ') : 'Artiste inconnu';
-      const year = r.date ? r.date.slice(0, 4) : '';
-      const coverUrl = `https://coverartarchive.org/release/${r.id}/front-250`;
+    window.__itunesResults = groups;
+
+    resultsBox.innerHTML = groups.map((g, i) => {
+      const artist = g['artist-credit'] ? g['artist-credit'].map(a => a.name).join(', ') : 'Artiste inconnu';
+      const year = g['first-release-date'] ? g['first-release-date'].slice(0, 4) : '';
+      const coverUrl = `https://coverartarchive.org/release-group/${g.id}/front-250`;
 
       return `
         <div class="itunes-result-item" data-index="${i}" style="display:flex; align-items:center; gap:8px; padding:6px; border:1px solid #ddd; border-radius:6px; margin-bottom:6px; cursor:pointer;">
@@ -2241,7 +2249,7 @@ async function searchItunes() {
                onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'40\\' height=\\'40\\' viewBox=\\'0 0 24 24\\'><rect width=\\'24\\' height=\\'24\\' fill=\\'%23eee\\'/><text x=\\'50%\\' y=\\'50%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-size=\\'12\\'>💿</text></svg>';" 
                style="width:40px; height:40px; border-radius:4px; object-fit:cover; background:#eee;">
           <div style="flex:1; font-size:0.8rem;">
-            <div style="font-weight:700;">${r.title}</div>
+            <div style="font-weight:700;">${g.title}</div>
             <div style="color:#666;">${artist}${year ? ' · ' + year : ''}</div>
           </div>
         </div>
@@ -2258,23 +2266,34 @@ async function searchItunes() {
 }
 
 async function applyItunesResult(index) {
-  const r = window.__itunesResults && window.__itunesResults[index];
-  if (!r) return;
+  const g = window.__itunesResults && window.__itunesResults[index];
+  if (!g) return;
 
-  const artistName = r['artist-credit'] ? r['artist-credit'].map(a => a.name).join(', ') : '';
+  const artistName = g['artist-credit'] ? g['artist-credit'].map(a => a.name).join(', ') : '';
   
-  document.getElementById('idea-title').value = r.title || '';
+  document.getElementById('idea-title').value = g.title || '';
   document.getElementById('idea-artist').value = artistName;
-  if (r.date) document.getElementById('idea-year').value = r.date.slice(0, 4);
+  if (g['first-release-date']) {
+    document.getElementById('idea-year').value = g['first-release-date'].slice(0, 4);
+  }
 
-  // Tentative de récupération de la pochette via Cover Art Archive
+  // Tente d'associer un genre principal à partir des tags de l'album
+  if (g.tags && g.tags.length > 0) {
+    const mainTag = g.tags[0].name;
+    document.getElementById('idea-tags').value = mainTag;
+    const guessedGenre = guessMainGenreFromItunes(mainTag);
+    const genreSelect = document.getElementById('idea-genre');
+    if (guessedGenre && genreSelect) genreSelect.value = guessedGenre;
+  }
+
+  // Pochette via le release-group
   const preview = document.getElementById('idea-cover-preview');
-  pendingItunesCoverUrl = `https://coverartarchive.org/release/${r.id}/front-500`;
+  pendingItunesCoverUrl = `https://coverartarchive.org/release-group/${g.id}/front-500`;
   
   if (preview) {
     preview.innerHTML = `
       <img src="${pendingItunesCoverUrl}" 
-           onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:0.7rem; color:#888;\'>Pas de pochette disponible sur Cover Art Archive</div>';" 
+           onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\\'font-size:0.7rem; color:#888;\\'>Pas de pochette disponible sur Cover Art Archive</div>';" 
            style="width:80px; height:80px; border-radius:6px; object-fit:cover;">
       <div style="font-size:0.7rem; color:#666;">Pochette récupérée (transférée à l'enregistrement)</div>
     `;
@@ -2282,18 +2301,26 @@ async function applyItunesResult(index) {
 
   showToast("⏳ Récupération des pistes et de la durée...");
 
-  // Récupération des pistes de l'album
+  // Récupère une édition (release) liée à ce groupe pour extraire la liste des pistes
   try {
-    const detailUrl = `https://musicbrainz.org/ws/2/release/${r.id}?inc=recordings&fmt=json`;
+    const detailUrl = `https://musicbrainz.org/ws/2/release-group/${g.id}?inc=releases+media+recordings&fmt=json`;
     const response = await fetch(detailUrl, {
       headers: { 'User-Agent': 'MiniDiscCatalogApp/1.0 (contact@example.com)' }
     });
     const data = await response.json();
 
-    const media = data.media && data.media[0];
-    if (media && media.tracks) {
-      const tracks = media.tracks;
-      
+    const releases = data.releases || [];
+    let tracks = [];
+
+    // Cherche la première édition qui contient des pistes
+    for (const rel of releases) {
+      if (rel.media && rel.media[0] && rel.media[0].tracks && rel.media[0].tracks.length > 0) {
+        tracks = rel.media[0].tracks;
+        break;
+      }
+    }
+
+    if (tracks.length > 0) {
       document.getElementById('idea-tracks').value = tracks
         .map(t => t.title)
         .join('\n');
