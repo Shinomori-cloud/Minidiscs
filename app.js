@@ -1113,6 +1113,79 @@ app.innerHTML = html;
 window.scrollTo(0, 0);
 }
 
+/* 4. VUE TRACKLIST ALBUM SPÉCIFIQUE */
+function openAlbum(mdIndex, albumIndex, pushState = true) {
+  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+  if (fa) fa.style.display = 'none';
+    
+  if (!catalogData || !catalogData[mdIndex] || !catalogData[mdIndex].albums[albumIndex]) return;
+
+  currentMD = mdIndex;
+  currentAlbum = albumIndex;
+  if (backBtn) backBtn.classList.remove('hidden');
+
+  updateSearchVisibility(false);
+  if (featuredContainer) featuredContainer.classList.add('hidden');
+
+  const md = catalogData[mdIndex];
+  const album = md.albums[albumIndex];
+
+  // 1. Genres de l'album
+  let albumGenres = [];
+  if (album.main_genre) albumGenres.push(album.main_genre);
+  if (Array.isArray(album.tags)) albumGenres.push(...album.tags);
+  else if (album.tags) albumGenres.push(album.tags);
+  if (albumGenres.length === 0 && album.genre) albumGenres.push(album.genre);
+  if (albumGenres.length === 0) {
+    if (md.main_genre) albumGenres.push(md.main_genre);
+    if (Array.isArray(md.tags)) albumGenres.push(...md.tags);
+    else if (md.tags) albumGenres.push(md.tags);
+    if (md.genre) albumGenres.push(md.genre);
+  }
+  albumGenres = [...new Set(albumGenres.map(g => String(g).trim()).filter(Boolean))];
+  const albumColor = getBorderColor(albumGenres);
+
+  if (headerTitle) headerTitle.textContent = "TITRES";
+  if (pushState) history.pushState({ view: 'tracklist', mdIndex, albumIndex }, '', `#md-${mdIndex}-album-${albumIndex}`);
+
+  let tracksHTML = '';
+  if (album.tracks && album.tracks.length > 0) {
+    album.tracks.forEach((track, i) => {
+      const num = String(i + 1).padStart(2, '0');
+      tracksHTML += `<li class="track-item"><strong class="track-num">${num}.</strong> ${track}</li>`;
+    });
+  } else {
+    tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
+  }
+
+  const badgeAlbumHTML = album.toRecord 
+    ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
+    : '';
+
+  // 2. Pochette de l'album avec fallback direct
+  const albumCover = album.md_cover || album.cover || md.md_cover || md.cover || '';
+  const coverHTML = createLoadingCoverHTML(albumCover, 'album-cover-large', '🎵');
+  const isKnownAlbumValue = (v) => v && String(v).trim() && String(v).trim().toLowerCase() !== 'unknow' && String(v).trim().toLowerCase() !== 'unknown';
+  const albumMetaLine = [album.release_year, album.duration].filter(isKnownAlbumValue).join(' · ');
+
+  app.innerHTML = `
+    <div class="track-container">
+      <div class="album-header">
+        ${coverHTML}
+        <div>
+          ${badgeAlbumHTML}
+          <h2 style="font-size: 1.2rem; font-weight: 800;">${album.title || 'Album sans titre'}</h2>
+          <p style="color: var(--text-sub); font-size: 0.95rem;">${album.artist || 'Artiste inconnu'}</p>
+          <p style="color: ${albumColor}; font-size: 0.8rem; font-weight: 800;">${albumGenres.join(' / ')}</p>
+          ${albumMetaLine ? `<p style="color: var(--text-sub); font-size: 0.8rem;">${albumMetaLine}</p>` : ''}
+        </div>
+      </div>
+      <ul class="track-list">${tracksHTML}</ul>
+    </div>
+  `;
+  window.scrollTo(0, 0);
+}
+
 /* ==========================================
    SUPPRESSION ET MODIFICATION
    ========================================== */
