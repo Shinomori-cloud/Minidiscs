@@ -2005,7 +2005,6 @@
     {
       "id": "md-40",
       "md_cover": "images/slipknot.jpg",
-      "title": "Slipknot / Toxicity / White Pony",
       "albums": [
         {
           "id": "alb-40-1",
@@ -2035,7 +2034,7 @@
             "Scissors",
             "Eeyore"
           ],
-          "toRecord": false
+          "toRecord": true
         },
         {
           "id": "alb-40-2",
@@ -2065,7 +2064,7 @@
             "Aerials",
             "Der Voghormia"
           ],
-          "toRecord": false
+          "toRecord": true
         },
         {
           "id": "alb-40-3",
@@ -2092,9 +2091,10 @@
             "Change (In the House of Flies)",
             "Pink Maggit"
           ],
-          "toRecord": false
+          "toRecord": true
         }
-      ]
+      ],
+      "title": "Slipknot / Toxicity / White Pony"
     },
     {
       "id": "md-36",
