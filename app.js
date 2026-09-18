@@ -2245,7 +2245,7 @@ async function searchItunes() {
   resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche en cours...</p>`;
 
   try {
-    const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=album&limit=6`;
+    const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=album&country=FR&limit=15`;
     const data = await itunesJSONP(url);
 
     if (!data.results || data.results.length === 0) {
