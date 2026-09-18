@@ -1802,7 +1802,7 @@
         "Enter Sandman",
         "Battery"
       ],
-      "toRecord": false
+      "toRecord": true
     },
     {
       "id": "md-39",
