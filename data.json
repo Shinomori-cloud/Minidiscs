@@ -2141,7 +2141,6 @@
     {
       "id": "md-16",
       "md_cover": "images/placebo_olympia.jpg",
-      "title": "Live at Paris Olympia / Live at Ancienne Belgique",
       "albums": [
         {
           "id": "alb-16-1",
@@ -2177,7 +2176,7 @@
             "Nancy Boy",
             "Pure Morning"
           ],
-          "toRecord": false
+          "toRecord": true
         },
         {
           "id": "alb-16-2",
@@ -2203,9 +2202,10 @@
             "Taste In Men (Jazz version)",
             "Slave to the Wage (Organ version)"
           ],
-          "toRecord": false
+          "toRecord": true
         }
-      ]
+      ],
+      "title": "Live at Paris Olympia / Live at Ancienne Belgique"
     },
     {
       "id": "md-41",
