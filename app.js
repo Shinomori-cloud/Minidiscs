@@ -791,7 +791,7 @@ function renderDashboard(pushState = true) {
     `;
   });
 
-// Construction du carrousel avec tes 8 genres exacts
+  // Construction du carrousel avec tes 8 genres exacts
   const mainGenres = [
     "Alternative & Grunge 90s",
     "Rock & Blues",
@@ -822,6 +822,7 @@ function renderDashboard(pushState = true) {
   const initialCards = generateCards(mainGenres);
   let carouselCardsHTML = `
     <div class="carousel-track">
+      ${initialCards}
       ${initialCards}
       ${initialCards}
     </div>
@@ -874,6 +875,28 @@ function renderDashboard(pushState = true) {
   const newGrid = document.getElementById('featured-grid-inline');
   if (oldGrid && newGrid) {
     newGrid.innerHTML = oldGrid.innerHTML;
+  }
+
+  // Écouteur pour le scroll infini manuel
+  const carouselContainer = document.querySelector('.genre-carousel-container');
+  const carouselTrack = document.querySelector('.carousel-track');
+
+  if (carouselContainer && carouselTrack) {
+    const setInitialPosition = () => {
+      const singleSetWidth = carouselTrack.scrollWidth / 3;
+      carouselContainer.scrollLeft = singleSetWidth;
+    };
+
+    setInitialPosition();
+
+    carouselContainer.addEventListener('scroll', () => {
+      const singleSetWidth = carouselTrack.scrollWidth / 3;
+      if (carouselContainer.scrollLeft <= 5) {
+        carouselContainer.scrollLeft += singleSetWidth;
+      } else if (carouselContainer.scrollLeft >= singleSetWidth * 2 - 5) {
+        carouselContainer.scrollLeft -= singleSetWidth;
+      }
+    });
   }
 
   window.scrollTo(0, 0);
