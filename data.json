@@ -1313,7 +1313,6 @@
     {
       "id": "md-13",
       "md_cover": "images/placebo_without_you.jpg",
-      "title": "Without You I'm Nothing / Showbiz / Pablo Honey",
       "albums": [
         {
           "id": "alb-13-1",
@@ -1341,7 +1340,7 @@
             "Burger Queen",
             "Evil Dildo"
           ],
-          "toRecord": false
+          "toRecord": true
         },
         {
           "id": "alb-13-2",
@@ -1368,7 +1367,7 @@
             "Overdue",
             "Hate This & I'll Love You"
           ],
-          "toRecord": false
+          "toRecord": true
         },
         {
           "id": "alb-13-3",
@@ -1395,9 +1394,10 @@
             "I Can't",
             "Blow Out"
           ],
-          "toRecord": false
+          "toRecord": true
         }
-      ]
+      ],
+      "title": "Without You I'm Nothing / Showbiz / Pablo Honey"
     },
     {
       "id": "md-14",
