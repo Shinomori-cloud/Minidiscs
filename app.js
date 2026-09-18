@@ -2218,8 +2218,19 @@ async function searchItunes() {
   resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche ciblée sur MusicBrainz...</p>`;
 
   try {
-    // 1. Requête ciblée excluant les tributes et reprises d'origine
-    const query = `${encodeURIComponent(rawTerm)} AND (primarytype:Album OR primarytype:EP) AND NOT secondarytype:Tribute AND NOT secondarytype:Cover`;
+    const terms = rawTerm.split(/\s+/);
+    let luceneQuery = "";
+
+    // Si l'utilisateur tape plusieurs mots, on tente de cibler artist + releasegroup
+    if (terms.length >= 2) {
+      const possibleArtist = terms[0];
+      const possibleAlbum = terms.slice(1).join(' ');
+      luceneQuery = `(artist:"${encodeURIComponent(rawTerm)}" OR (artist:"${encodeURIComponent(possibleArtist)}" AND releasegroup:"${encodeURIComponent(possibleAlbum)}"))`;
+    } else {
+      luceneQuery = encodeURIComponent(rawTerm);
+    }
+
+    const query = `${luceneQuery} AND (primarytype:Album OR primarytype:EP) AND NOT secondarytype:Tribute AND NOT secondarytype:Cover`;
     const url = `https://musicbrainz.org/ws/2/release-group/?query=${query}&fmt=json&limit=25`;
 
     const response = await fetch(url, {
@@ -2231,26 +2242,35 @@ async function searchItunes() {
 
     let groups = data['release-groups'] || [];
 
-    // 2. Mots-clés parasites à filtrer côté client
+    // Mots-clés parasites à filtrer
     const forbiddenKeywords = [
       'tribute', 'performs', 'cover', 'lullaby', 'played by', 
-      'string quartet', 'karaoke', 'tributo', 'panpipe', 'smooth jazz version'
+      'string quartet', 'karaoke', 'tributo', 'panpipe', 'smooth jazz version', 'soundfont'
     ];
 
     groups = groups.filter(g => {
       const title = (g.title || '').toLowerCase();
       const artist = g['artist-credit'] ? g['artist-credit'].map(a => a.name).join(' ').toLowerCase() : '';
 
+      // Exclusion du bruit
       const isParasite = forbiddenKeywords.some(keyword => title.includes(keyword) || artist.includes(keyword));
-      return !isParasite;
+      if (isParasite) return false;
+
+      // Filtrage strict : si plusieurs mots ont été saisis, l'un des mots doit correspondre à l'artiste
+      if (terms.length >= 2) {
+        const matchesArtist = terms.some(term => artist.includes(term.toLowerCase()));
+        return matchesArtist;
+      }
+
+      return true;
     });
 
     if (groups.length === 0) {
-      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat officiel trouvé.</p>`;
+      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat correspondant trouvé.</p>`;
       return;
     }
 
-    // 3. Tri par date de sortie d'origine
+    // Tri par date de sortie d'origine
     groups.sort((a, b) => {
       const yearA = a['first-release-date'] ? parseInt(a['first-release-date'].slice(0, 4), 10) : 9999;
       const yearB = b['first-release-date'] ? parseInt(b['first-release-date'].slice(0, 4), 10) : 9999;
