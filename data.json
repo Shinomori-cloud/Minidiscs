@@ -2,6 +2,7 @@
   "minidiscs": [
     {
       "id": "md-23",
+      "md_cover": "images/ost_me_myself_irene.jpg",
       "title": "Me, Myself & Irene / Cruel Intentions",
       "albums": [
         {
@@ -71,6 +72,7 @@
     },
     {
       "id": "md-24",
+      "md_cover": "images/nirvana_mtv_unplugged.jpg",
       "title": "MTV Unplugged in New York / No Need to Argue / Jagged Little Pill",
       "albums": [
         {
@@ -168,6 +170,7 @@
     },
     {
       "id": "md-26",
+      "md_cover": "images/doc_gyneco_premieres_consultations.jpg",
       "title": "Premières consultations / Liaisons dangereuses",
       "albums": [
         {
@@ -239,6 +242,7 @@
     },
     {
       "id": "md-28",
+      "md_cover": "images/radiohead_ok_computer.jpg",
       "title": "OK Computer / Urban Hymns",
       "albums": [
         {
@@ -305,6 +309,7 @@
     },
     {
       "id": "md-30",
+      "md_cover": "images/smashing_pumpkins_adore.jpg",
       "title": "Adore / Deserter's Songs",
       "albums": [
         {
@@ -372,6 +377,7 @@
     },
     {
       "id": "md-31",
+      "md_cover": "images/smashing_pumpkins_siamese.jpg",
       "title": "Siamese Dream / In Utero / Live Through This",
       "albums": [
         {
@@ -466,6 +472,7 @@
     },
     {
       "id": "md-32",
+      "md_cover": "images/korn_follow_the_leader.jpg",
       "title": "Follow the Leader / Primitive",
       "albums": [
         {
@@ -530,6 +537,7 @@
     },
     {
       "id": "md-33",
+      "md_cover": "images/radiohead_amnesiac.jpg",
       "title": "Amnesiac / Vanilla Sky",
       "albums": [
         {
@@ -599,6 +607,7 @@
     },
     {
       "id": "md-02",
+      "md_cover": "images/les_inconnus_boulversifiant.jpg",
       "title": "Boulversifiant / Sketchs",
       "albums": [
         {
@@ -664,6 +673,7 @@
     },
     {
       "id": "md-03",
+      "md_cover": "images/cranberries_bury.jpg",
       "title": "Bury the Hatchet / Californication / Version 2.0",
       "albums": [
         {
@@ -760,6 +770,7 @@
     },
     {
       "id": "md-04",
+      "md_cover": "images/ost_taxi.jpg",
       "title": "Taxi / Où je vis",
       "albums": [
         {
@@ -833,6 +844,7 @@
     },
     {
       "id": "md-05",
+      "md_cover": "images/iam_ecole_micro_argent.jpg",
       "title": "L'école du micro d'argent / Suprême NTM",
       "albums": [
         {
@@ -902,6 +914,7 @@
     },
     {
       "id": "md-08",
+      "md_cover": "images/louise_attaque.jpg",
       "title": "Louise Attaque / Des visages des figures / Jours étranges",
       "albums": [
         {
@@ -997,6 +1010,7 @@
     },
     {
       "id": "md-09",
+      "md_cover": "images/fugees_the_score.jpg",
       "title": "The Score / Legend, Best of",
       "albums": [
         {
@@ -1071,6 +1085,7 @@
     },
     {
       "id": "md-10",
+      "md_cover": "images/oasis_whats_the_story.jpg",
       "title": "(What's the Story) Morning Glory? / Paradise in Me / Garbage",
       "albums": [
         {
@@ -1164,6 +1179,7 @@
     },
     {
       "id": "md-11",
+      "md_cover": "images/ost_romeo_juliet_vol1.jpg",
       "title": "Romeo + Juliet Volume 1 / Romeo + Juliet Volume 2",
       "albums": [
         {
@@ -1242,6 +1258,7 @@
     },
     {
       "id": "md-12",
+      "md_cover": "images/tracy_chapman.jpg",
       "title": "Tracy Chapman / Greatest Hits / Out of Time",
       "albums": [
         {
@@ -1337,6 +1354,7 @@
     },
     {
       "id": "md-13",
+      "md_cover": "images/placebo_without_you.jpg",
       "title": "Without You I'm Nothing / Showbiz / Pablo Honey",
       "albums": [
         {
@@ -1428,6 +1446,7 @@
     },
     {
       "id": "md-14",
+      "md_cover": "images/muse_origin_of_symmetry.jpg",
       "title": "Origin of Symmetry / The Bends / The Man Who",
       "albums": [
         {
@@ -1517,6 +1536,7 @@
     },
     {
       "id": "md-18",
+      "md_cover": "images/ost_pulp_fiction.jpg",
       "title": "Pulp Fiction / Jackie Brown / Kill Bill Vol. 1",
       "albums": [
         {
@@ -1636,6 +1656,7 @@
     },
     {
       "id": "md-19",
+      "md_cover": "images/offspring_americana.jpg",
       "title": "Americana / Buckcherry / There Is Nothing Left to Lose",
       "albums": [
         {
@@ -1730,6 +1751,7 @@
     },
     {
       "id": "md-34",
+      "md_cover": "images/smashing_pumpkins_machina.jpg",
       "title": "Machina The Machines of God / Holy Wood",
       "albums": [
         {
@@ -1804,6 +1826,7 @@
     },
     {
       "id": "md-38",
+      "md_cover": "images/md_38.jpg",
       "title": "S&M",
       "albums": [
         {
@@ -1847,6 +1870,7 @@
     },
     {
       "id": "md-39",
+      "md_cover": "images/nirvana_nevermind.jpg",
       "title": "Nevermind / Placebo / Cocoon Crash",
       "albums": [
         {
@@ -1940,6 +1964,7 @@
     },
     {
       "id": "md-45",
+      "md_cover": "images/beatles_1962_1966.jpg",
       "title": "1962-1966 / The Blues Brothers / Jazz & Blues Collection vol.2",
       "albums": [
         {
@@ -2050,6 +2075,7 @@
     },
     {
       "id": "md-40",
+      "md_cover": "images/slipknot.jpg",
       "title": "Slipknot / Toxicity / White Pony",
       "albums": [
         {
@@ -2146,6 +2172,7 @@
     },
     {
       "id": "md-36",
+      "md_cover": "images/md_36.jpg",
       "title": "Woodstock",
       "albums": [
         {
@@ -2196,6 +2223,7 @@
     },
     {
       "id": "md-16",
+      "md_cover": "images/placebo_olympia.jpg",
       "title": "Live at Paris Olympia / Live at Ancienne Belgique",
       "albums": [
         {
@@ -2266,6 +2294,7 @@
     },
     {
       "id": "md-41",
+      "md_cover": "images/ost_the_faculty.jpg",
       "title": "The Faculty / Empire Records",
       "albums": [
         {
@@ -2341,6 +2370,7 @@
     },
     {
       "id": "md-21",
+      "md_cover": "images/md_21.jpg",
       "title": "Best of the Beast",
       "albums": [
         {
@@ -2389,6 +2419,7 @@
     },
     {
       "id": "md-20",
+      "md_cover": "images/md_20.jpg",
       "title": "Live from Mars",
       "albums": [
         {
@@ -2437,6 +2468,7 @@
     },
     {
       "id": "md-06",
+      "md_cover": "images/renaud_85_95.jpg",
       "title": "The Meilleur of Renaud 85-95 / Best of France Gall",
       "albums": [
         {
@@ -2557,6 +2589,7 @@
     },
     {
       "id": "md-29",
+      "md_cover": "images/brucelive.jpg",
       "title": "Greatest Hits Live / Harvest / Greatest Hits",
       "albums": [
         {
@@ -2640,6 +2673,7 @@
     },
     {
       "id": "md-37",
+      "md_cover": "images/toto_xx.jpg",
       "title": "XX: 1977-1997 / Best of Rockers'n'Ballads",
       "albums": [
         {
@@ -2703,6 +2737,7 @@
     },
     {
       "id": "md-42",
+      "md_cover": "images/stomy_bugsy_calibre.jpg",
       "title": "Quelques balles de plus pour... le calibre qu'il te faut / Mixomatose",
       "albums": [
         {

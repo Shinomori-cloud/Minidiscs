@@ -602,18 +602,9 @@ fetch('data.json')
     return response.json();
   })
   .then(data => {
-    const savedBackup = localStorage.getItem(STORAGE_KEY);
-    
-    if (savedBackup) {
-      try {
-        const parsedBackup = JSON.parse(savedBackup);
-        processLoadedData(parsedBackup);
-      } catch (e) {
-        processLoadedData(data);
-      }
-    } else {
-      processLoadedData(data);
-    }
+    // data.json (le fichier réel) est désormais toujours prioritaire.
+    // La copie de secours locale ne sert que si le fichier est inaccessible (voir .catch ci-dessous).
+    processLoadedData(data);
 
     // Déclenche l'affichage initial de la vue
     handleRoute();
@@ -1388,10 +1379,6 @@ function toggleAdminType(isInit = false) {
   if (secCompil) secCompil.classList.toggle('hidden', !isCompil);
   if (secAlbums) secAlbums.classList.toggle('hidden', isCompil);
 
-  // La pochette partagée ne sert qu'aux compilations : chaque album a la sienne
-  const mdCoverGroup = document.getElementById('md-cover-group');
-  if (mdCoverGroup) mdCoverGroup.classList.toggle('hidden', !isCompil);
-
   // Bascule du champ global "Genre" en lecture seule quand on est en mode "albums"
   if (mdGenreInput) {
     mdGenreInput.readOnly = !isCompil;
@@ -1484,21 +1471,21 @@ async function submitNewMD(e) {
     id: (existingMD && existingMD.id) ? existingMD.id : ('md-' + Date.now()),
   };
 
+  showToast("⏳ Traitement et envoi de l'image...");
+
+  // Upload de la pochette du MiniDisc lui-même (s'applique aux compilations ET aux séries)
+  let mdCoverPath = 'images/default.jpg';
+  if (mdCoverInput && mdCoverInput.files && mdCoverInput.files.length > 0) {
+    const uploadedPath = await handleImageUpload(mdCoverInput);
+    if (uploadedPath) mdCoverPath = uploadedPath;
+  } else if (existingMD && existingMD.md_cover) {
+    mdCoverPath = existingMD.md_cover;
+  }
+  targetMD.md_cover = mdCoverPath;
+
   if (typeFormat === 'compil') {
-    showToast("⏳ Traitement et envoi de l'image...");
-
-    // Upload de l'image de la compilation si un fichier est sélectionné
-    let mdCoverPath = 'images/default.jpg';
-    if (mdCoverInput && mdCoverInput.files && mdCoverInput.files.length > 0) {
-      const uploadedPath = await handleImageUpload(mdCoverInput);
-      if (uploadedPath) mdCoverPath = uploadedPath;
-    } else if (existingMD && existingMD.md_cover) {
-      mdCoverPath = existingMD.md_cover;
-    }
-
     const { main_genre, tags } = splitGenreInput(rawGenreInput);
 
-    targetMD.md_cover = mdCoverPath;
     targetMD.title = document.getElementById('compil-title').value.trim();
     targetMD.artist = document.getElementById('compil-artist').value.trim();
     targetMD.main_genre = main_genre;
@@ -1512,7 +1499,7 @@ async function submitNewMD(e) {
     const compilCheckbox = document.getElementById('compil-to-record');
     targetMD.toRecord = compilCheckbox ? compilCheckbox.checked : false;
   } else {
-    // Série d'albums : pas de genre/pochette au niveau du MiniDisc, tout vient des albums.
+    // Série d'albums : le genre reste calculé à partir des albums (pas stocké au niveau du MD).
     targetMD.albums = [];
     const albumBlocks = document.querySelectorAll('.album-block');
     
@@ -1520,8 +1507,6 @@ async function submitNewMD(e) {
       showToast("⚠️ Veuillez ajouter au moins un album.");
       return;
     }
-
-    showToast("⏳ Traitement et envoi des images...");
 
     // Boucle pour l'upload d'image et la création de chaque album
     for (let i = 0; i < albumBlocks.length; i++) {
