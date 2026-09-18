@@ -874,11 +874,17 @@ function renderMDList(filters = {}, pushState = true) {
 
   let filteredCatalog = catalogData.map((md, originalIndex) => ({ md, originalIndex }));
   
-  if (genre && genre !== 'ALL') {
-    filteredCatalog = filteredCatalog.filter(({ md }) => getMDAllGenres(md).includes(genre.toUpperCase().trim()));
+if (genre && genre !== 'ALL') {
+    const targetGenre = genre.trim().toLowerCase();
+    filteredCatalog = filteredCatalog.filter(({ md }) => 
+      getMDAllGenres(md).some(g => g.trim().toLowerCase() === targetGenre)
+    );
   }
   if (type) {
-    filteredCatalog = filteredCatalog.filter(({ md }) => getMDAllTypes(md).includes(type.toUpperCase().trim()));
+    const targetType = type.trim().toLowerCase();
+    filteredCatalog = filteredCatalog.filter(({ md }) => 
+      getMDAllTypes(md).some(t => t.trim().toLowerCase() === targetType)
+    );
   }
 
   if (record === 'toRecord') {
