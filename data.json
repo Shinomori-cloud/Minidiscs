@@ -2483,7 +2483,6 @@
     {
       "id": "md-29",
       "md_cover": "images/brucelive.jpg",
-      "title": "Greatest Hits Live / Harvest / Greatest Hits",
       "albums": [
         {
           "id": "alb-29-1",
@@ -2509,7 +2508,7 @@
             "Jungleland",
             "Point Blank"
           ],
-          "toRecord": false
+          "toRecord": true
         },
         {
           "id": "alb-29-2",
@@ -2535,7 +2534,7 @@
             "The Needle and the Damage Done",
             "Words (Between the Lines of Age)"
           ],
-          "toRecord": false
+          "toRecord": true
         },
         {
           "id": "alb-29-3",
@@ -2560,9 +2559,10 @@
             "Positively 4th Street",
             "Just like a Woman"
           ],
-          "toRecord": false
+          "toRecord": true
         }
-      ]
+      ],
+      "title": "Greatest Hits Live / Harvest / Greatest Hits"
     },
     {
       "id": "md-37",
