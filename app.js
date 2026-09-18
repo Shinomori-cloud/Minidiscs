@@ -697,7 +697,7 @@ function renderFeatured() {
 function renderDashboard(pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'none';
-   
+    
   if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
 
   currentMD = null;
@@ -742,7 +742,7 @@ function renderDashboard(pushState = true) {
       : (md.typeTags || md.type ? (Array.isArray(md.typeTags || md.type) ? (md.typeTags || md.type) : (md.typeTags || md.type).split(',')) : []);
 
     genres.forEach(g => {
-      const cleanG = g.trim().toUpperCase();
+      const cleanG = g.trim();
       if (cleanG) genreCounts[cleanG] = (genreCounts[cleanG] || 0) + 1;
     });
 
@@ -763,19 +763,35 @@ function renderDashboard(pushState = true) {
     `;
   });
 
-  let genreBadgesHTML = '';
-  Object.keys(genreCounts).sort((a,b) => genreCounts[b] - genreCounts[a]).forEach(g => {
-    const color = typeof getBorderColor === 'function' ? getBorderColor(g) : '#00f0ff';
-    const safeGenre = g.replace(/'/g, "\\'");
-    genreBadgesHTML += `
-      <div class="genre-badge" style="border-left-color: ${color};" onclick="window.location.hash = '#minidiscs?genre=${safeGenre}'">
-        <span class="genre-name" style="color:${color}">${g}</span>
-        <span class="genre-count">${genreCounts[g]}</span>
+  // Construction du carrousel avec tes 8 genres exacts
+  const mainGenres = [
+    "Alternative & Grunge 90s",
+    "Rock & Blues",
+    "Rap, Soul & Reggae",
+    "Metal & Hard Rock",
+    "Pop & Folk & Variety",
+    "Talks & Humour",
+    "Électro, Trip-Hop & Expérimental",
+    "Ambient & Orchestral"
+  ];
+
+  let carouselCardsHTML = '';
+  mainGenres.forEach(genre => {
+    const color = typeof getBorderColor === 'function' ? getBorderColor(genre) : '#ff007f';
+    // Recherche insensible à la casse dans genreCounts
+    const matchedKey = Object.keys(genreCounts).find(k => k.toLowerCase() === genre.toLowerCase());
+    const count = matchedKey ? genreCounts[matchedKey] : 0;
+    const safeGenre = genre.replace(/'/g, "\\'");
+
+    carouselCardsHTML += `
+      <div class="genre-carousel-card" style="border-top-color: ${color};" onclick="window.location.hash = '#minidiscs?genre=${safeGenre}'">
+        <div class="carousel-genre-name" style="color: ${color};">${genre}</div>
+        <div class="carousel-genre-count">${count} MD${count > 1 ? 's' : ''}</div>
       </div>
     `;
   });
 
-   app.innerHTML = `
+  app.innerHTML = `
     <div class="dashboard-container" style="padding-top: 20px; padding-bottom: 90px;">
       
       <div class="dashboard-card" style="margin-bottom: 36px;">
@@ -796,7 +812,9 @@ function renderDashboard(pushState = true) {
 
       <div class="dashboard-card" style="margin-top: 16px;">
         <div class="dashboard-section-title">MINIDISCS PAR GENRES</div>
-        <div class="genres-grid">${genreBadgesHTML}</div>
+        <div class="genre-carousel-container">
+          ${carouselCardsHTML}
+        </div>
       </div>
 
       <button class="btn-primary" style="margin-top: 16px; margin-bottom: 8px; width: 100%;" onclick="window.location.hash = '#minidiscs'">
@@ -804,14 +822,14 @@ function renderDashboard(pushState = true) {
       </button>
 
       <div class="dashboard-actions-row">
-  <button class="action-btn-wide" onclick="window.location.hash = '#planner'">
-    Créer une compilation
-  </button>
-  <button class="action-btn-wide" onclick="openAdminModal()">
-    ＋ Ajouter un MD
-  </button>
-</div>
-</div>
+        <button class="action-btn-wide" onclick="window.location.hash = '#planner'">
+          Créer une compilation
+        </button>
+        <button class="action-btn-wide" onclick="openAdminModal()">
+          ＋ Ajouter un MD
+        </button>
+      </div>
+    </div>
   `;
 
   if (typeof renderFeatured === 'function') renderFeatured();
