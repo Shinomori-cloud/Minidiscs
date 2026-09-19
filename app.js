@@ -793,14 +793,14 @@ function renderDashboard(pushState = true) {
 
   // Définition des 8 genres avec leurs images d'illustration dans /images
   const genreConfigs = [
-    { name: "Alternative & Grunge 90s", image: "images/genre_alternative.jpg" },
-    { name: "Rock & Blues", image: "images/genre_rock.jpg" },
-    { name: "Rap, Soul & Reggae", image: "images/genre_rap.jpg" },
-    { name: "Metal & Hard Rock", image: "images/genre_metal.jpg" },
-    { name: "Pop & Folk & Variety", image: "images/genre_pop.jpg" },
-    { name: "Talks & Humour", image: "images/genre_talks.jpg" },
-    { name: "Électro, Trip-Hop & Expérimental", image: "images/genre_electro.jpg" },
-    { name: "Ambient & Orchestral", image: "images/genre_ambient.jpg" }
+    { name: "Alternative & Grunge 90s", image: "images/Grunge2.jpg" },
+    { name: "Rock & Blues", image: "images/Blues2.jpg" },
+    { name: "Rap, Soul & Reggae", image: "images/Rap2.jpg" },
+    { name: "Metal & Hard Rock", image: "images/Metal2.jpg" },
+    { name: "Pop & Folk & Variety", image: "images/Pop2.jpg" },
+    { name: "Talks & Humour", image: "images/Talks2.jpg" },
+    { name: "Électro, Trip-Hop & Expérimental", image: "images/Electro2.jpg" },
+    { name: "Ambient & Orchestral", image: "images/ambient2.jpg" }
   ];
 
   const generateCards = (configsList) => {
