@@ -1697,8 +1697,7 @@
     },
     {
       "id": "md-34",
-      "md_cover": "images/smashing_pumpkins_machina.jpg",
-      "title": "Machina The Machines of God / Holy Wood",
+      "md_cover": "images/img_1789839915120.jpg",
       "albums": [
         {
           "id": "alb-34-1",
@@ -1766,7 +1765,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Machina The Machines of God / Holy Wood"
     },
     {
       "id": "md-38",
