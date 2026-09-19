@@ -652,8 +652,7 @@
     },
     {
       "id": "md-03",
-      "md_cover": "images/cranberries_bury.jpg",
-      "title": "Bury the Hatchet / Californication / Version 2.0",
+      "md_cover": "images/img_1789845917464.jpg",
       "albums": [
         {
           "id": "alb-03-1",
@@ -742,7 +741,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Bury the Hatchet / Californication / Version 2.0"
     },
     {
       "id": "md-04",
