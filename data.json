@@ -1488,8 +1488,7 @@
     },
     {
       "id": "md-18",
-      "md_cover": "images/ost_pulp_fiction.jpg",
-      "title": "Pulp Fiction / Jackie Brown / Kill Bill Vol. 1",
+      "md_cover": "images/img_1789839771929.jpg",
       "albums": [
         {
           "id": "alb-18-1",
@@ -1601,7 +1600,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Pulp Fiction / Jackie Brown / Kill Bill Vol. 1"
     },
     {
       "id": "md-19",
