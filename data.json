@@ -886,8 +886,7 @@
     },
     {
       "id": "md-08",
-      "md_cover": "images/louise_attaque.jpg",
-      "title": "Louise Attaque / Des visages des figures / Jours étranges",
+      "md_cover": "images/img_1789845973661.jpg",
       "albums": [
         {
           "id": "alb-08-1",
@@ -975,7 +974,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Louise Attaque / Des visages des figures / Jours étranges"
     },
     {
       "id": "md-09",
