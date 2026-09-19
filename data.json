@@ -2,8 +2,7 @@
   "minidiscs": [
     {
       "id": "md-23",
-      "md_cover": "images/ost_me_myself_irene.jpg",
-      "title": "Me, Myself & Irene / Cruel Intentions",
+      "md_cover": "images/img_1789839288717.jpg",
       "albums": [
         {
           "id": "alb-23-1",
@@ -66,7 +65,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Me, Myself & Irene / Cruel Intentions"
     },
     {
       "id": "md-24",
