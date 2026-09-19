@@ -234,7 +234,8 @@
     },
     {
       "id": "md-28",
-      "md_cover": "images/img_1789845942282.jpg",
+      "md_cover": "images/radiohead_ok_computer.jpg",
+      "title": "OK Computer / Urban Hymns",
       "albums": [
         {
           "id": "alb-28-1",
@@ -294,8 +295,7 @@
           ],
           "toRecord": false
         }
-      ],
-      "title": "OK Computer / Urban Hymns"
+      ]
     },
     {
       "id": "md-30",
@@ -588,7 +588,8 @@
     },
     {
       "id": "md-02",
-      "md_cover": "images/img_1789846055724.jpg",
+      "md_cover": "images/les_inconnus_boulversifiant.jpg",
+      "title": "Boulversifiant / Sketchs",
       "albums": [
         {
           "id": "alb-02-1",
@@ -647,12 +648,11 @@
           ],
           "toRecord": false
         }
-      ],
-      "title": "Boulversifiant / Sketchs"
+      ]
     },
     {
       "id": "md-03",
-      "md_cover": "images/img_1789845917464.jpg",
+      "md_cover": "images/img_1789846407293.jpg",
       "albums": [
         {
           "id": "alb-03-1",
@@ -886,7 +886,8 @@
     },
     {
       "id": "md-08",
-      "md_cover": "images/img_1789845973661.jpg",
+      "md_cover": "images/louise_attaque.jpg",
+      "title": "Louise Attaque / Des visages des figures / Jours étranges",
       "albums": [
         {
           "id": "alb-08-1",
@@ -974,8 +975,7 @@
           ],
           "toRecord": false
         }
-      ],
-      "title": "Louise Attaque / Des visages des figures / Jours étranges"
+      ]
     },
     {
       "id": "md-09",
@@ -2209,7 +2209,7 @@
     },
     {
       "id": "md-41",
-      "md_cover": "images/img_1789846024438.jpg",
+      "md_cover": "images/ost_the_faculty.jpg",
       "albums": [
         {
           "id": "alb-41-1",
