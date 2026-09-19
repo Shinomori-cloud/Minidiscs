@@ -520,8 +520,7 @@
     },
     {
       "id": "md-33",
-      "md_cover": "images/radiohead_amnesiac.jpg",
-      "title": "Amnesiac / Vanilla Sky",
+      "md_cover": "images/img_1789840226247.jpg",
       "albums": [
         {
           "id": "alb-33-1",
@@ -584,7 +583,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Amnesiac / Vanilla Sky"
     },
     {
       "id": "md-02",
