@@ -70,8 +70,7 @@
     },
     {
       "id": "md-24",
-      "md_cover": "images/nirvana_mtv_unplugged.jpg",
-      "title": "MTV Unplugged in New York / No Need to Argue / Jagged Little Pill",
+      "md_cover": "images/img_1789840151767.jpg",
       "albums": [
         {
           "id": "alb-24-1",
@@ -160,7 +159,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "MTV Unplugged in New York / No Need to Argue / Jagged Little Pill"
     },
     {
       "id": "md-26",
