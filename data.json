@@ -1143,8 +1143,7 @@
     },
     {
       "id": "md-11",
-      "md_cover": "images/ost_romeo_juliet_vol1.jpg",
-      "title": "Romeo + Juliet Volume 1 / Romeo + Juliet Volume 2",
+      "md_cover": "images/img_1789839723325.jpg",
       "albums": [
         {
           "id": "alb-11-1",
@@ -1215,7 +1214,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Romeo + Juliet Volume 1 / Romeo + Juliet Volume 2"
     },
     {
       "id": "md-12",
