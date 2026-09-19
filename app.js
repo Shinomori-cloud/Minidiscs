@@ -5,13 +5,12 @@ let catalogData = null;
 let currentMD = null;
 let currentAlbum = null;
 let currentGenreFilters = new Set(); // Gestion multi-genres pour le catalogue principal
-let isGenreDropdownOpen = false;     // État d'ouverture du menu filtre du catalogue
+let currentGenreFilter = null;       // Genre unique filtré sur la page "Minidiscs" (ex: 'ROCK & BLUES')
 let currentTypeFilter = null;
 let currentSearchQuery = '';
 let adminAlbumCount = 0;
 let editingMDIndex = null;
 let toastTimeout = null;
-let hasUnsavedChanges = false;
 let selectedIdeaIndices = new Set();
 let currentRecordFilter = 'all'; // 'all', 'toRecord', 'recorded'
 
@@ -19,7 +18,18 @@ let currentRecordFilter = 'all'; // 'all', 'toRecord', 'recorded'
 let currentPlannerGenreFilters = new Set();
 let isPlannerGenreDropdownOpen = false;
 
-const STORAGE_KEY = 'minidisc_catalog_backup';
+// Dépôt GitHub qui héberge le site et le fichier de données
+const GITHUB_USER = 'Shinomori-cloud';
+const GITHUB_REPO = 'Minidiscs';
+const GITHUB_DATA_PATH = 'data.json';
+const GITHUB_API_BASE = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/`;
+
+// Clés du localStorage
+const STORAGE_KEY = 'minidisc_catalog_backup';               // copie locale des données
+const SYNC_META_KEY = 'minidisc_sync_meta';                   // état de synchro (modifs en attente, version GitHub connue)
+const CONFLICT_BACKUP_KEY = 'minidisc_remote_conflict_backup'; // copie de sécurité si GitHub a changé ailleurs
+
+const REMOTE_WAIT_MS = 2000; // au-delà, on affiche la copie locale en attendant la réponse de GitHub
 
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back-btn');
@@ -27,23 +37,331 @@ const headerTitle = document.getElementById('header-title');
 const featuredContainer = document.getElementById('featured-container');
 
 /* ==========================================
-   PROTECTION ANTI-FERMETURE ET STOCKAGE LOCAL
+   STOCKAGE LOCAL & SYNCHRONISATION GITHUB
+   ------------------------------------------
+   - Toute modification est appliquée et affichée immédiatement (données en mémoire), puis
+     enregistrée sur l'appareil (localStorage) et envoyée à GitHub en arrière-plan.
+   - Tant que l'envoi n'est pas confirmé ("pending"), la copie locale fait foi : elle n'est
+     jamais écrasée par une version distante plus ancienne.
+   - Au chargement, les données sont lues via l'API GitHub (dernier commit, sans le délai de
+     déploiement de GitHub Pages). data.json puis la copie locale servent de solutions de secours.
    ========================================== */
-function saveLocalBackup() {
-  const payload = {
+let changeCounter = 0;      // incrémenté à chaque modification enregistrée
+let syncInFlight = false;   // un envoi GitHub est en cours
+let syncAgain = false;      // une modification est arrivée pendant l'envoi : il faudra renvoyer
+
+function buildPayload() {
+  return {
     minidiscs: catalogData || [],
     ideaAlbums: window.ideaAlbums || []
   };
+}
+
+function readLocalBackup() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    syncCollectionToGithub(payload);
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
   } catch (err) {
-    console.error("Erreur de sauvegarde locale:", err);
+    return null;
   }
 }
 
-function clearLocalBackup() {
-  localStorage.removeItem(STORAGE_KEY);
+function readSyncMeta() {
+  try {
+    return JSON.parse(localStorage.getItem(SYNC_META_KEY)) || {};
+  } catch (err) {
+    return {};
+  }
+}
+
+function writeSyncMeta(patch) {
+  const meta = { ...readSyncMeta(), ...patch };
+  try {
+    localStorage.setItem(SYNC_META_KEY, JSON.stringify(meta));
+  } catch (err) {
+    console.error("Erreur de sauvegarde de l'état de synchro:", err);
+  }
+  return meta;
+}
+
+function utf8ToBase64(str) {
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  const CHUNK = 0x8000; // évite de dépasser la limite d'arguments de String.fromCharCode
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+  }
+  return btoa(binary);
+}
+
+function base64ToUtf8(b64) {
+  const binary = atob(String(b64).replace(/\s/g, ''));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(bytes);
+}
+
+// Appelée après chaque modification : la vue est déjà à jour, on sécurise les données.
+function saveLocalBackup() {
+  changeCounter++;
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(buildPayload()));
+  } catch (err) {
+    console.error("Erreur de sauvegarde locale:", err);
+  }
+
+  // Sans token, la sauvegarde reste locale uniquement.
+  if (getGithubToken()) {
+    writeSyncMeta({ pending: true });
+    syncCollectionToGithub();
+  }
+}
+
+// Envoie la collection à GitHub. Les envois sont mis en file : jamais deux en parallèle,
+// et le dernier état est toujours celui qui part.
+async function syncCollectionToGithub() {
+  const token = getGithubToken();
+  if (!token) {
+    console.warn("Pas de token GitHub configuré. Sauvegarde locale uniquement.");
+    return false;
+  }
+  if (syncInFlight) {
+    syncAgain = true;
+    return false;
+  }
+
+  syncInFlight = true;
+  let success = false;
+  try {
+    do {
+      syncAgain = false;
+      success = await pushCollectionToGithub(token);
+    } while (syncAgain);
+  } finally {
+    syncInFlight = false;
+  }
+
+  if (success) {
+    showToast("☁️ Synchronisé avec GitHub", 2000);
+  } else {
+    showToast("⚠️ Synchro GitHub impossible : modifications gardées sur cet appareil", 4500);
+  }
+  return success;
+}
+
+async function pushCollectionToGithub(token) {
+  const url = GITHUB_API_BASE + GITHUB_DATA_PATH;
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Accept': 'application/vnd.github.v3+json'
+  };
+
+  // Jusqu'à 3 essais : si le fichier a changé entre-temps (SHA périmé), on relit et on renvoie.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      // A. SHA actuel du fichier (nécessaire pour l'écraser)
+      let sha = '';
+      const getResponse = await fetch(url, { headers, cache: 'no-store' });
+      if (getResponse.ok) {
+        const fileData = await getResponse.json();
+        sha = fileData.sha || '';
+        keepCopyIfRemoteChanged(fileData);
+      } else if (getResponse.status !== 404) {
+        console.error("Erreur de lecture GitHub avant synchro :", getResponse.status);
+        return false;
+      }
+
+      // B. Dernière version des données, en JSON puis Base64 (UTF-8)
+      const versionSent = changeCounter;
+      const base64Content = utf8ToBase64(JSON.stringify(buildPayload(), null, 2));
+
+      // C. Envoi
+      const putResponse = await fetch(url, {
+        method: 'PUT',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: 'Mise à jour automatique de la collection MiniDisc',
+          content: base64Content,
+          ...(sha ? { sha } : {})
+        })
+      });
+
+      if (putResponse.ok) {
+        const result = await putResponse.json();
+        const newSha = result && result.content ? result.content.sha : null;
+        // Si l'utilisateur a modifié autre chose pendant l'envoi, ça reste "en attente"
+        writeSyncMeta(versionSent === changeCounter
+          ? { pending: false, baseSha: newSha, syncedAt: Date.now() }
+          : { baseSha: newSha });
+        console.log("Synchronisation GitHub réussie !");
+        return true;
+      }
+
+      if (putResponse.status === 409 || putResponse.status === 422) continue; // SHA périmé : on réessaie
+
+      console.error("Erreur lors de la synchro GitHub :", await putResponse.json().catch(() => ({})));
+      return false;
+    } catch (error) {
+      console.error("Erreur réseau pendant la synchronisation :", error);
+      return false;
+    }
+  }
+  return false;
+}
+
+// Si data.json a changé sur GitHub depuis notre dernière synchro (autre appareil...), la copie locale
+// prime quand même, mais on garde une copie de sécurité de la version distante avant de l'écraser.
+function keepCopyIfRemoteChanged(fileData) {
+  const meta = readSyncMeta();
+  if (!meta.baseSha || !fileData || !fileData.sha || meta.baseSha === fileData.sha) return;
+
+  console.warn("data.json a été modifié sur GitHub depuis la dernière synchro : copie de sécurité conservée.");
+  try {
+    if (fileData.content && fileData.encoding === 'base64') {
+      localStorage.setItem(CONFLICT_BACKUP_KEY, base64ToUtf8(fileData.content));
+    }
+  } catch (err) {
+    console.error("Impossible de conserver la copie de sécurité :", err);
+  }
+}
+
+// Relance l'envoi des modifications restées en attente (retour du réseau, retour sur l'appli...)
+function retryPendingSync() {
+  if (catalogData === null || syncInFlight) return;
+  if (getGithubToken() && readSyncMeta().pending) syncCollectionToGithub();
+}
+
+window.addEventListener('online', retryPendingSync);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') retryPendingSync();
+});
+
+/* ==========================================
+   CHARGEMENT DES DONNÉES
+   ========================================== */
+// Lecture via l'API GitHub : reflète tout de suite le dernier commit.
+async function fetchCollectionFromGithubApi() {
+  const token = getGithubToken();
+  const url = GITHUB_API_BASE + GITHUB_DATA_PATH;
+  const headers = { 'Accept': 'application/vnd.github.v3+json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const response = await fetch(url, { headers, cache: 'no-store' });
+  if (!response.ok) throw new Error(`API GitHub : HTTP ${response.status}`);
+  const file = await response.json();
+
+  let text;
+  if (file.content && file.encoding === 'base64') {
+    text = base64ToUtf8(file.content);
+  } else {
+    // Fichier > 1 Mo : l'API ne fournit pas le contenu encodé, on demande le brut
+    const rawResponse = await fetch(url, {
+      headers: { ...headers, 'Accept': 'application/vnd.github.raw+json' },
+      cache: 'no-store'
+    });
+    if (!rawResponse.ok) throw new Error(`API GitHub (brut) : HTTP ${rawResponse.status}`);
+    text = await rawResponse.text();
+  }
+
+  return { data: JSON.parse(text), sha: file.sha || null };
+}
+
+// GitHub d'abord (à jour), puis data.json tel que publié par GitHub Pages (peut avoir du retard).
+async function fetchRemoteCollection() {
+  try {
+    return await fetchCollectionFromGithubApi();
+  } catch (err) {
+    console.warn("API GitHub indisponible, lecture de data.json :", err);
+  }
+
+  const response = await fetch(`data.json?t=${Date.now()}`, { cache: 'no-store' });
+  if (!response.ok) throw new Error("Erreur de réseau lors du chargement du fichier JSON.");
+  return { data: await response.json(), sha: null };
+}
+
+// La version GitHub devient la référence, et la copie locale la suit (secours si GitHub tombe).
+function adoptRemoteCollection(remote) {
+  processLoadedData(remote.data);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(buildPayload()));
+  } catch (err) {
+    console.error("Erreur de sauvegarde locale:", err);
+  }
+  writeSyncMeta(remote.sha ? { pending: false, baseSha: remote.sha } : { pending: false });
+}
+
+// Réponse GitHub arrivée après l'affichage de la copie locale : mise à jour discrète,
+// sauf si l'utilisateur a déjà modifié quelque chose ou remplit un formulaire.
+function applyLateRemote(remote) {
+  const formOpen = ['admin-modal', 'idea-modal'].some(id => {
+    const modal = document.getElementById(id);
+    return modal && !modal.classList.contains('hidden');
+  });
+  if (changeCounter > 0 || readSyncMeta().pending || formOpen) return;
+
+  const before = JSON.stringify(buildPayload());
+  adoptRemoteCollection(remote);
+  if (JSON.stringify(buildPayload()) !== before) handleRoute();
+}
+
+async function initData() {
+  const backup = readLocalBackup();
+
+  // 1) Des modifications locales attendent encore leur envoi : elles font foi.
+  //    On les affiche tout de suite et on relance l'envoi.
+  if (backup && getGithubToken() && readSyncMeta().pending) {
+    processLoadedData(backup);
+    handleRoute();
+    syncCollectionToGithub();
+    return;
+  }
+
+  // 2) Sinon GitHub fait foi. Si sa réponse tarde, on affiche la copie locale en attendant.
+  const remotePromise = fetchRemoteCollection().catch(err => {
+    console.error(err);
+    return null;
+  });
+
+  let remote;
+  if (backup) {
+    const waited = await Promise.race([
+      remotePromise,
+      new Promise(resolve => setTimeout(() => resolve(undefined), REMOTE_WAIT_MS))
+    ]);
+
+    if (waited === undefined) {
+      processLoadedData(backup);
+      handleRoute();
+      const late = await remotePromise;
+      if (late) applyLateRemote(late);
+      return;
+    }
+    remote = waited;
+  } else {
+    remote = await remotePromise;
+  }
+
+  if (remote) {
+    adoptRemoteCollection(remote);
+    handleRoute();
+    return;
+  }
+
+  // 3) GitHub injoignable : copie locale, ou message d'erreur si on n'a rien.
+  if (backup) {
+    processLoadedData(backup);
+    handleRoute();
+    return;
+  }
+
+  catalogData = [];
+  window.ideaAlbums = [];
+  app.innerHTML = `
+    <div style="text-align:center; padding: 40px; color: var(--text-sub);">
+      <p style="color: #e63946; font-weight: bold; font-size: 1.1rem;">⚠️ Erreur de chargement de data.json</p>
+    </div>
+  `;
 }
 
 /* ==========================================
@@ -61,84 +379,12 @@ function handleCatalogSearch(query) {
   }, false);
 }
 
-// Ouvre et ferme le sous-menu des genres dans le FAB et génère sa liste
-function toggleGenreDropdown() {
-  toggleFabSubmenu('genres-submenu');
-
-  const submenu = document.getElementById('genres-submenu');
-  
-  if (submenu && !submenu.classList.contains('hidden')) {
-    populateFabGenreMenu();
-  }
-}
-
-// Génère le contenu dynamique des filtres avec la nouvelle structure épurée (style Planificateur)
-function renderGenreDropdownContent() {
-  const dropdown = document.getElementById('genre-filter-dropdown');
-  if (!dropdown || !catalogData) return;
-
-  const allGenres = new Set();
-
-  catalogData.forEach(md => {
-    let genres = [];
-    if (typeof getMDAllGenres === 'function') {
-      genres = getMDAllGenres(md);
-    } else if (md.genre) {
-      genres = typeof md.genre === 'string' ? md.genre.split(',') : md.genre;
-    }
-
-    genres.forEach(g => {
-      if (g && typeof g === 'string' && g.trim()) {
-        allGenres.add(g.trim().toUpperCase());
-      }
-    });
-  });
-
-  if (allGenres.size === 0) {
-    dropdown.innerHTML = `<span style="font-size: 0.75rem; color: #666; font-weight: bold; padding: 4px;">Aucun genre</span>`;
-    return;
-  }
-
-  const scrollArea = document.createElement('div');
-  scrollArea.className = 'fab-scrollable-submenu fab-genre-list';
-
-  // 1. Bouton "TOUS"
-  const isAllActive = !currentGenreFilter || currentGenreFilter === 'ALL';
-  const allBtn = document.createElement('div');
-  allBtn.className = `fab-genre-item ${isAllActive ? 'active' : ''}`;
-  allBtn.innerHTML = `<span>TOUS</span>${isAllActive ? '<span>✓</span>' : ''}`;
-  allBtn.onclick = (e) => {
-    e.stopPropagation(); // Empêche la fermeture du FAB
-    if (typeof selectGenreFilter === 'function') selectGenreFilter('ALL');
-  };
-  scrollArea.appendChild(allBtn);
-
-  // 2. Boutons par genre
-  Array.from(allGenres).sort().forEach(genre => {
-    const isActive = currentGenreFilter === genre;
-    const btn = document.createElement('div');
-    btn.className = `fab-genre-item ${isActive ? 'active' : ''}`;
-    btn.innerHTML = `<span>${genre}</span>${isActive ? '<span>✓</span>' : ''}`;
-    btn.onclick = (e) => {
-      e.stopPropagation(); // Empêche la fermeture du FAB
-      if (typeof selectGenreFilter === 'function') selectGenreFilter(genre);
-    };
-    scrollArea.appendChild(btn);
-  });
-
-  dropdown.innerHTML = '';
-  dropdown.appendChild(scrollArea);
-}
-
 // Application du filtre sélectionné et rafraîchissement de la liste
 function selectGenreFilter(genre) {
   currentGenreFilter = (genre === 'ALL' || !genre) ? '' : genre.toUpperCase().trim();
 
   const dropdown = document.getElementById('genre-filter-dropdown');
   if (dropdown) dropdown.classList.add('hidden');
-
-  // Met à jour l'affichage du badge sous le header
-  if (typeof updateGenreBadge === 'function') updateGenreBadge();
 
   // Rafraîchit l'état actif et la coche dans le menu FAB des genres
   populateFabGenreMenu();
@@ -209,40 +455,6 @@ function updateSearchVisibility(show) {
   }
 }
 
-// Fonction pour attacher l'événement au bouton
-function initGithubTokenForm() {
-  const tokenInput = document.getElementById('gh-token-input');
-  const saveBtn = document.getElementById('save-token-btn');
-
-  if (!saveBtn || !tokenInput) {
-    console.warn("Éléments du formulaire Token introuvables.");
-    return;
-  }
-
-  // Affiche le token déjà sauvegardé s'il existe
-  tokenInput.value = getGithubToken() || '';
-
-  // Gestion du clic
-  saveBtn.addEventListener('click', (e) => {
-    e.preventDefault(); // Empêche tout rechargement de formulaire HTML
-    const val = tokenInput.value;
-    if (val) {
-      saveGithubToken(val);
-    } else {
-      localStorage.removeItem('github_token');
-      alert('Token supprimé.');
-    }
-  });
-}
-
-// S'assure que le DOM est prêt avant d'exécuter l'initialisation
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initGithubTokenForm);
-} else {
-  initGithubTokenForm();
-}
-
-
 /* ==========================================
    GESTION DU MENU FLOTTANT (FAB) - CATALOGUE
    ========================================== */
@@ -309,8 +521,6 @@ function applyStatusFilter(filterValue, event) {
   } else if (filterValue === 'recorded') {
     targetRecord = 'recorded';
   }
-
-  window.currentRecordFilter = targetRecord;
 
   renderMDList({ 
     genre: typeof currentGenreFilter !== 'undefined' ? currentGenreFilter : '', 
@@ -405,6 +615,47 @@ function showToast(message, duration = 3000) {
     toast.classList.add('hidden');
   }, duration);
 }
+
+/* ==========================================
+   GENRE(S) FILTRÉ(S) AFFICHÉ(S) SOUS LE TITRE DU HEADER
+   ------------------------------------------
+   L'encart a une taille fixe (voir style.css) : c'est le texte qui rétrécit pour y tenir,
+   afin de ne jamais déformer la page. Il n'apparaît que lorsqu'un filtre par genre est actif.
+   ========================================== */
+const HEADER_GENRE_MAX_FONT = 12; // px : taille normale du texte
+const HEADER_GENRE_MIN_FONT = 7;  // px : en dessous, le texte est tronqué avec "…"
+
+function setHeaderGenreInfo(genres) {
+  const box = document.getElementById('header-genre-info');
+  const text = document.getElementById('header-genre-text');
+  if (!box || !text) return;
+
+  const names = (genres || []).map(g => String(g).trim()).filter(Boolean);
+  if (names.length === 0) {
+    box.classList.add('hidden');
+    text.textContent = '';
+    return;
+  }
+
+  text.textContent = names.join(' · ');
+  box.classList.remove('hidden');
+  fitHeaderGenreText();
+}
+
+function fitHeaderGenreText() {
+  const box = document.getElementById('header-genre-info');
+  const text = document.getElementById('header-genre-text');
+  if (!box || !text || box.classList.contains('hidden')) return;
+
+  let size = HEADER_GENRE_MAX_FONT;
+  text.style.fontSize = size + 'px';
+  while (size > HEADER_GENRE_MIN_FONT && text.scrollWidth > text.clientWidth) {
+    size -= 0.5;
+    text.style.fontSize = size + 'px';
+  }
+}
+
+window.addEventListener('resize', fitHeaderGenreText);
 
 /* ==========================================
    UTILITAIRES MULTI-GENRE & MULTI-TYPE
@@ -618,39 +869,7 @@ function handleRoute() {
 // Écouteur pour réagir aux clics sur les ancres / boutons de navigation
 window.addEventListener('hashchange', handleRoute);
 
-fetch('data.json')
-  .then(response => {
-    if (!response.ok) throw new Error("Erreur de réseau lors du chargement du fichier JSON.");
-    return response.json();
-  })
-  .then(data => {
-    // data.json (le fichier réel) est désormais toujours prioritaire.
-    // La copie de secours locale ne sert que si le fichier est inaccessible (voir .catch ci-dessous).
-    processLoadedData(data);
-
-    // Déclenche l'affichage initial de la vue
-    handleRoute();
-  })
-  .catch(err => {
-    const savedBackup = localStorage.getItem(STORAGE_KEY);
-    if (savedBackup) {
-      try {
-        const parsedBackup = JSON.parse(savedBackup);
-        processLoadedData(parsedBackup);
-        handleRoute();
-        return;
-      } catch (e) {}
-    }
-
-    catalogData = [];
-    window.ideaAlbums = [];
-    app.innerHTML = `
-      <div style="text-align:center; padding: 40px; color: var(--text-sub);">
-        <p style="color: #e63946; font-weight: bold; font-size: 1.1rem;">⚠️ Erreur de chargement de data.json</p>
-      </div>
-    `;
-    console.error(err);
-  });
+// Le chargement des données est lancé tout en bas du fichier (voir initData).
 
 /* ==========================================
    COULEURS DYNAMIQUES PAR GENRE
@@ -710,7 +929,7 @@ function renderFeatured() {
     const mdCover = md.md_cover || (md.albums && md.albums[0] ? md.albums[0].md_cover : '') || '';
     html += `
       <div class="featured-item" onclick="openMD(${originalIndex})">
-        <img class="featured-thumb" src="${mdCover}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
+        <img class="featured-thumb" src="${resolveImageSrc(mdCover)}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
       </div>
     `;
   });
@@ -734,6 +953,7 @@ function renderDashboard(pushState = true) {
   currentTypeFilter = null;
   if (backBtn) backBtn.classList.add('hidden');
   if (headerTitle) headerTitle.textContent = "MINIDISCS";
+  setHeaderGenreInfo([]);
 
   if (typeof updateSearchVisibility === 'function') {
     updateSearchVisibility(false);
@@ -756,23 +976,13 @@ function renderDashboard(pushState = true) {
   }
 
   const totalMD = sourceData.length;
-  const genreCounts = {};
   const typeCounts = {};
 
-  // Extraction sécurisée des types et genres
+  // Extraction sécurisée des types
   sourceData.forEach(md => {
-    const genres = typeof getMDAllGenres === 'function' 
-      ? getMDAllGenres(md) 
-      : (md.genre ? (Array.isArray(md.genre) ? md.genre : md.genre.split(',')) : []);
-
     const types = typeof getMDAllTypes === 'function' 
       ? getMDAllTypes(md) 
       : (md.typeTags || md.type ? (Array.isArray(md.typeTags || md.type) ? (md.typeTags || md.type) : (md.typeTags || md.type).split(',')) : []);
-
-    genres.forEach(g => {
-      const cleanG = g.trim();
-      if (cleanG) genreCounts[cleanG] = (genreCounts[cleanG] || 0) + 1;
-    });
 
     types.forEach(t => {
       const cleanT = t.trim().toUpperCase();
@@ -807,22 +1017,20 @@ function renderDashboard(pushState = true) {
     return configsList.map(item => {
       const genre = item.name;
       const imageUrl = item.image;
-      const color = typeof getBorderColor === 'function' ? getBorderColor(genre) : '#ff007f';
       const upperGenre = genre.toUpperCase().trim();
-      const count = genreCounts[upperGenre] || 0;
       const safeGenreUpper = upperGenre.replace(/'/g, "\\'");
 
+      // Image bien visible : seul le bas est assombri (dégradé qui disparaît au milieu de la vignette)
       return `
-        <div class="genre-carousel-card" style="border-top-color: ${color}; background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${imageUrl}');" onclick="if(typeof selectGenreFilter === 'function'){ selectGenreFilter('${safeGenreUpper}'); } else { window.location.hash = '#minidiscs?genre=${encodeURIComponent(safeGenreUpper)}'; }">
+        <div class="genre-carousel-card" style="background-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%), url('${imageUrl}');" onclick="if(typeof selectGenreFilter === 'function'){ selectGenreFilter('${safeGenreUpper}'); } else { window.location.hash = '#minidiscs?genre=${encodeURIComponent(safeGenreUpper)}'; }">
           <div class="carousel-genre-name">${genre}</div>
-          <div class="carousel-genre-count">${count} MD${count > 1 ? 's' : ''}</div>
         </div>
       `;
     }).join('');
   };
 
   const initialCards = generateCards(genreConfigs);
-  let carouselCardsHTML = `
+  const carouselCardsHTML = `
     <div class="carousel-track">
       ${initialCards}
       ${initialCards}
@@ -831,9 +1039,9 @@ function renderDashboard(pushState = true) {
   `;
 
   app.innerHTML = `
-    <div class="dashboard-container" style="padding-top: 20px; padding-bottom: 90px;">
+    <div class="dashboard-container" style="padding-top: 16px; padding-bottom: 90px;">
       
-      <div class="dashboard-card" style="margin-bottom: 36px;">
+      <div class="dashboard-card" style="margin-bottom: 32px;">
         <div class="dashboard-stat-main" style="padding: 4px 0 8px 0;">
          <span class="stat-label" style="font-size: 0.75rem;">Collections de</span>
          <span class="stat-number" style="font-size: 1.2rem; line-height: 1;">${totalMD}</span>
@@ -849,16 +1057,16 @@ function renderDashboard(pushState = true) {
         <div class="featured-grid" id="featured-grid-inline"></div>
       </div>
 
-      <div class="dashboard-card" style="margin-top: 16px;">
+      <button class="btn-primary btn-view-all" onclick="window.location.hash = '#minidiscs'">
+        VOIR TOUS LES MINIDISCS &rarr;
+      </button>
+
+      <div class="dashboard-card">
         <div class="dashboard-section-title">MINIDISCS PAR GENRES</div>
         <div class="genre-carousel-container">
           ${carouselCardsHTML}
         </div>
       </div>
-
-      <button class="btn-primary" style="margin-top: 16px; margin-bottom: 8px; width: 100%;" onclick="window.location.hash = '#minidiscs'">
-        VOIR TOUS LES MINIDISCS &rarr;
-      </button>
 
       <div class="dashboard-actions-row">
         <button class="action-btn-wide" onclick="window.location.hash = '#planner'">
@@ -883,15 +1091,11 @@ function renderDashboard(pushState = true) {
   const carouselContainer = document.querySelector('.genre-carousel-container');
   const carouselTrack = document.querySelector('.carousel-track');
 
-  if (carouselContainer && carouselTrack) {
-    const cardWidthWithGap = 142; // Largeur carte (130px) + gap (12px)
-    const singleSetWidth = cardWidthWithGap * 8; // 1136px exacts pour un lot de 8 cartes
+  if (carouselContainer && carouselTrack && carouselTrack.children.length > genreConfigs.length) {
+    // Largeur exacte d'un lot de vignettes (mesurée : suit la taille définie en CSS)
+    const singleSetWidth = carouselTrack.children[genreConfigs.length].offsetLeft - carouselTrack.children[0].offsetLeft;
 
-    const setInitialPosition = () => {
-      carouselContainer.scrollLeft = singleSetWidth;
-    };
-
-    setInitialPosition();
+    carouselContainer.scrollLeft = singleSetWidth;
 
     carouselContainer.addEventListener('scroll', () => {
       if (carouselContainer.scrollLeft <= 10) {
@@ -932,6 +1136,7 @@ function renderMDList(filters = {}, pushState = true) {
 
   updateSearchVisibility(true);
   if (headerTitle) headerTitle.textContent = "MINIDISCS";
+  setHeaderGenreInfo(genre && genre !== 'ALL' ? [genre] : []);
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
   let filteredCatalog = catalogData.map((md, originalIndex) => ({ md, originalIndex }));
@@ -1032,6 +1237,7 @@ function openMD(index, pushState = true) {
   currentMD = catalogData[index];
   currentAlbum = null;
   if (backBtn) backBtn.classList.remove('hidden');
+  setHeaderGenreInfo([]);
   updateSearchVisibility(false);
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
@@ -1174,6 +1380,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   currentAlbum = albumIndex;
   if (backBtn) backBtn.classList.remove('hidden');
 
+  setHeaderGenreInfo([]);
   updateSearchVisibility(false);
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
@@ -1796,6 +2003,7 @@ function renderCompilPlanner(pushState = true) {
     
     const headerTitle = document.getElementById('header-title') || document.querySelector('.header-title');
     if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
+    setHeaderGenreInfo(Array.from(currentPlannerGenreFilters));
 
     document.getElementById('featured-container')?.classList.add('hidden');
 
@@ -2284,11 +2492,182 @@ function convertSelectedToMD() {
 
 /* ==========================================
    RECHERCHE AUTOMATIQUE DE MÉTADONNÉES (MusicBrainz)
-   ========================================== */
+   ------------------------------------------
+   Objectif : retrouver l'album d'origine (pas les rééditions, remixes, bootlegs, hommages...)
+   sans noyer l'utilisateur sous des résultats sans rapport.
 
-/* ==========================================
-   RECHERCHE AUTOMATIQUE DE MÉTADONNÉES (MusicBrainz)
+   1. Recherche stricte : chaque mot saisi doit se trouver dans l'artiste OU dans le titre,
+      dans n'importe quel ordre ("daft punk discovery" comme "discovery daft punk").
+   2. Si rien n'est trouvé : recherche tolérante (fautes de frappe, début de mot).
+   3. Si rien encore : recherche large (au moins la moitié des mots).
+   Chaque réponse est ensuite filtrée (hommages, reprises...), dédoublonnée (une seule version
+   par album, la plus ancienne) et classée (albums studio d'abord, puis par date de sortie).
    ========================================== */
+const MB_API = 'https://musicbrainz.org/ws/2';
+const MB_HEADERS = { 'User-Agent': 'MiniDiscCatalogApp/1.0 (contact@example.com)' };
+const MB_MAX_RESULTS = 12;
+const MB_MIN_DELAY_MS = 1100; // MusicBrainz limite à environ 1 requête par seconde
+
+// Mots ignorés dans la saisie (ils n'aident pas à identifier un album)
+const MB_STOPWORDS = new Set(['the', 'a', 'an', 'of', 'and', 'et', 'le', 'la', 'les', 'de', 'du', 'des', 'un', 'une']);
+
+// Hommages, reprises, karaoké... Mots entiers uniquement : "Discovery" ne doit pas être bloqué par "cover".
+const MB_PARASITE_REGEX = /\b(tributes?|tributo|performs|performed by|covers?|cover versions?|lullab(?:y|ies)|played by|string quartet|karaoke|panpipes?|smooth jazz version|soundfont|made famous by|in the style of|originally performed|bootlegs?|unofficial|remix(?:es|ed)?)\b/i;
+
+// Marqueurs de réédition : ces résultats passent après l'édition d'origine
+const MB_REISSUE_REGEX = /\b(deluxe|remaster(?:ed)?|anniversary|expanded|re-?issue|special edition|collector'?s?|legacy edition|bonus (?:tracks?|disc|cd)|edition)\b/i;
+
+let mbLastCallAt = 0;
+
+async function mbFetchJson(url) {
+  const wait = mbLastCallAt + MB_MIN_DELAY_MS - Date.now();
+  if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
+  mbLastCallAt = Date.now();
+
+  const response = await fetch(url, { headers: MB_HEADERS });
+  if (response.status === 503 || response.status === 429) {
+    const err = new Error("MusicBrainz limite le nombre de requêtes");
+    err.rateLimited = true;
+    throw err;
+  }
+  if (!response.ok) throw new Error(`Erreur réseau MusicBrainz (${response.status})`);
+  return response.json();
+}
+
+// minuscules, sans accents ni ponctuation
+function mbNormalize(str) {
+  return String(str || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim();
+}
+
+// Mots utiles de la saisie (sans mots vides ni lettres isolées, sauf s'il ne reste rien)
+function mbQueryTokens(rawTerm) {
+  const all = mbNormalize(rawTerm).split(' ').filter(Boolean);
+  const useful = all.filter(t => t.length > 1 && !MB_STOPWORDS.has(t));
+  return useful.length > 0 ? useful : all;
+}
+
+function mbEditDistance(a, b) {
+  const prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    let diagonal = prev[0];
+    prev[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const temp = prev[j];
+      prev[j] = Math.min(prev[j] + 1, prev[j - 1] + 1, diagonal + (a[i - 1] === b[j - 1] ? 0 : 1));
+      diagonal = temp;
+    }
+  }
+  return prev[b.length];
+}
+
+// Le mot saisi se retrouve-t-il dans le texte (tolérance d'une ou deux fautes pour les mots longs) ?
+function mbTokenMatches(token, hayWords, hayText) {
+  if (token.length <= 2) return hayWords.includes(token);
+  if (token.length > 3 && hayText.includes(token)) return true;
+  if (token.length === 3 && hayWords.includes(token)) return true;
+  const maxDistance = token.length >= 8 ? 2 : 1;
+  return hayWords.some(w => Math.abs(w.length - token.length) <= maxDistance && mbEditDistance(w, token) <= maxDistance);
+}
+
+function mbBuildQuery(tokens, mode) {
+  let core;
+  if (mode === 'or') {
+    const anyToken = tokens.join(' OR ');
+    core = `(artist:(${anyToken}) OR releasegroup:(${anyToken}))`;
+  } else {
+    core = tokens.map(t => {
+      const forms = (mode === 'fuzzy' && t.length >= 3) ? `${t}~ OR ${t}*` : t;
+      return `(artist:(${forms}) OR releasegroup:(${forms}))`;
+    }).join(' AND ');
+  }
+
+  // Albums et EP uniquement, hors remixes, DJ-mix, démos, livres audio et interviews.
+  // Live / compilations / bandes originales restent autorisés (ils seront simplement classés après).
+  return `${core} AND (primarytype:Album OR primarytype:EP)` +
+    ` AND NOT (secondarytype:Remix OR secondarytype:"DJ-mix" OR secondarytype:Demo OR secondarytype:Audiobook OR secondarytype:"Audio drama" OR secondarytype:Interview)`;
+}
+
+async function mbSearchReleaseGroups(tokens, mode) {
+  const query = mbBuildQuery(tokens, mode);
+  const url = `${MB_API}/release-group/?query=${encodeURIComponent(query)}&fmt=json&limit=50`;
+  const data = await mbFetchJson(url);
+  return data['release-groups'] || [];
+}
+
+function mbArtistName(group, separator = ' ') {
+  return group['artist-credit'] ? group['artist-credit'].map(a => a.name).join(separator) : '';
+}
+
+// Titre sans les mentions d'édition, pour reconnaître "Nevermind" et "Nevermind (Deluxe Edition)" comme un seul album
+function mbBaseTitle(title) {
+  return mbNormalize(
+    String(title || '')
+      .replace(/[(\[][^)\]]*(?:deluxe|remaster|anniversary|expanded|re-?issue|edition|bonus)[^)\]]*[)\]]/gi, ' ')
+      .replace(/\s[-–:]\s.*(?:deluxe|remaster|anniversary|expanded|re-?issue|edition|bonus).*$/i, ' ')
+  );
+}
+
+function mbTypeRank(group) {
+  const secondary = (group['secondary-types'] || []).map(t => t.toLowerCase());
+  let rank = 0;
+  if (secondary.length > 0) rank = (secondary.includes('live') || secondary.includes('mixtape/street')) ? 2 : 1;
+  if (group['primary-type'] === 'EP') rank += 1;
+  return rank;
+}
+
+// Filtre, dédoublonne et classe les résultats bruts. minRatio = part des mots saisis qui doit être retrouvée.
+function mbFilterAndRank(rawGroups, tokens, minRatio) {
+  const candidates = [];
+
+  rawGroups.forEach(g => {
+    const title = g.title || '';
+    const artist = mbArtistName(g);
+    if (MB_PARASITE_REGEX.test(title) || MB_PARASITE_REGEX.test(artist)) return;
+
+    const hayText = mbNormalize(`${artist} ${title}`);
+    const hayWords = hayText.split(' ');
+    const matched = tokens.filter(t => mbTokenMatches(t, hayWords, hayText)).length;
+    const ratio = tokens.length > 0 ? matched / tokens.length : 1;
+    if (ratio < minRatio) return;
+
+    candidates.push({
+      group: g,
+      ratio,
+      reissue: MB_REISSUE_REGEX.test(title) ? 1 : 0,
+      rank: mbTypeRank(g),
+      year: g['first-release-date'] ? (parseInt(g['first-release-date'].slice(0, 4), 10) || 9999) : 9999,
+      score: g.score || 0,
+      key: `${mbNormalize(artist)}|${mbBaseTitle(title)}`
+    });
+  });
+
+  candidates.sort((a, b) =>
+    (b.ratio - a.ratio) ||
+    (a.reissue - b.reissue) ||
+    (a.rank - b.rank) ||
+    (a.year - b.year) ||
+    (b.score - a.score)
+  );
+
+  // Une seule version par album : la première du classement (originale, la plus ancienne)
+  const seen = new Set();
+  const unique = candidates.filter(c => {
+    if (seen.has(c.key)) return false;
+    seen.add(c.key);
+    return true;
+  });
+
+  return unique.slice(0, MB_MAX_RESULTS).map(c => c.group);
+}
+
+function mbEscapeHTML(str) {
+  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
 async function searchItunes() {
   const input = document.getElementById('itunes-search-input');
@@ -2296,79 +2675,43 @@ async function searchItunes() {
   if (!input || !resultsBox) return;
 
   const rawTerm = input.value.trim();
-  if (!rawTerm) {
+  const tokens = mbQueryTokens(rawTerm);
+  if (!rawTerm || tokens.length === 0) {
     showToast("⚠️ Tape un artiste et/ou un album à rechercher");
     return;
   }
 
-  resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche ciblée sur MusicBrainz...</p>`;
+  resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche sur MusicBrainz...</p>`;
 
   try {
-    const terms = rawTerm.split(/\s+/);
-    let luceneQuery = "";
-
-    // Si l'utilisateur tape plusieurs mots, on tente de cibler artist + releasegroup
-    if (terms.length >= 2) {
-      const possibleArtist = terms[0];
-      const possibleAlbum = terms.slice(1).join(' ');
-      luceneQuery = `(artist:"${encodeURIComponent(rawTerm)}" OR (artist:"${encodeURIComponent(possibleArtist)}" AND releasegroup:"${encodeURIComponent(possibleAlbum)}"))`;
-    } else {
-      luceneQuery = encodeURIComponent(rawTerm);
-    }
-
-    const query = `${luceneQuery} AND (primarytype:Album OR primarytype:EP) AND NOT secondarytype:Tribute AND NOT secondarytype:Cover`;
-    const url = `https://musicbrainz.org/ws/2/release-group/?query=${query}&fmt=json&limit=25`;
-
-    const response = await fetch(url, {
-      headers: { 'User-Agent': 'MiniDiscCatalogApp/1.0 (contact@example.com)' }
-    });
-
-    if (!response.ok) throw new Error("Erreur réseau MusicBrainz");
-    const data = await response.json();
-
-    let groups = data['release-groups'] || [];
-
-    // Mots-clés parasites à filtrer
-    const forbiddenKeywords = [
-      'tribute', 'performs', 'cover', 'lullaby', 'played by', 
-      'string quartet', 'karaoke', 'tributo', 'panpipe', 'smooth jazz version', 'soundfont'
+    // Du plus strict au plus souple : on ne passe au niveau suivant que s'il n'y a aucun résultat
+    const attempts = [
+      { mode: 'and', minRatio: 1, label: '' },
+      { mode: 'fuzzy', minRatio: 1, label: 'Recherche élargie (fautes de frappe)...' },
+      { mode: 'or', minRatio: 0.5, label: 'Recherche élargie (mots en moins)...' }
     ];
 
-    groups = groups.filter(g => {
-      const title = (g.title || '').toLowerCase();
-      const artist = g['artist-credit'] ? g['artist-credit'].map(a => a.name).join(' ').toLowerCase() : '';
-
-      // Exclusion du bruit
-      const isParasite = forbiddenKeywords.some(keyword => title.includes(keyword) || artist.includes(keyword));
-      if (isParasite) return false;
-
-      // Filtrage strict : si plusieurs mots ont été saisis, l'un des mots doit correspondre à l'artiste
-      if (terms.length >= 2) {
-        const matchesArtist = terms.some(term => artist.includes(term.toLowerCase()));
-        return matchesArtist;
-      }
-
-      return true;
-    });
-
-    if (groups.length === 0) {
-      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat correspondant trouvé.</p>`;
-      return;
+    let groups = [];
+    for (const attempt of attempts) {
+      if (attempt.label) resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">${attempt.label}</p>`;
+      const rawGroups = await mbSearchReleaseGroups(tokens, attempt.mode);
+      groups = mbFilterAndRank(rawGroups, tokens, attempt.minRatio);
+      if (groups.length > 0) break;
     }
 
-    // Tri par date de sortie d'origine
-    groups.sort((a, b) => {
-      const yearA = a['first-release-date'] ? parseInt(a['first-release-date'].slice(0, 4), 10) : 9999;
-      const yearB = b['first-release-date'] ? parseInt(b['first-release-date'].slice(0, 4), 10) : 9999;
-      return yearA - yearB;
-    });
+    if (groups.length === 0) {
+      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat correspondant trouvé. Essaie avec moins de mots (ex : juste l'artiste).</p>`;
+      return;
+    }
 
     window.__itunesResults = groups;
 
     resultsBox.innerHTML = groups.map((g, i) => {
-      const artist = g['artist-credit'] ? g['artist-credit'].map(a => a.name).join(', ') : 'Artiste inconnu';
+      const artist = mbArtistName(g, ', ') || 'Artiste inconnu';
       const year = g['first-release-date'] ? g['first-release-date'].slice(0, 4) : '';
+      const secondary = (g['secondary-types'] || []).join(', ');
       const coverUrl = `https://coverartarchive.org/release-group/${g.id}/front-250`;
+      const details = [year, secondary].filter(Boolean).join(' · ');
 
       return `
         <div class="itunes-result-item" data-index="${i}" style="display:flex; align-items:center; gap:8px; padding:6px; border:1px solid #ddd; border-radius:6px; margin-bottom:6px; cursor:pointer;">
@@ -2376,8 +2719,8 @@ async function searchItunes() {
                onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'40\\' height=\\'40\\' viewBox=\\'0 0 24 24\\'><rect width=\\'24\\' height=\\'24\\' fill=\\'%23eee\\'/><text x=\\'50%\\' y=\\'50%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-size=\\'12\\'>💿</text></svg>';" 
                style="width:40px; height:40px; border-radius:4px; object-fit:cover; background:#eee;">
           <div style="flex:1; font-size:0.8rem;">
-            <div style="font-weight:700;">${g.title}</div>
-            <div style="color:#666;">${artist}${year ? ' · ' + year : ''}</div>
+            <div style="font-weight:700;">${mbEscapeHTML(g.title)}</div>
+            <div style="color:#666;">${mbEscapeHTML(artist)}${details ? ' · ' + mbEscapeHTML(details) : ''}</div>
           </div>
         </div>
       `;
@@ -2388,8 +2731,19 @@ async function searchItunes() {
     });
   } catch (err) {
     console.error(err);
-    resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#e63946;">Erreur pendant la recherche MusicBrainz.</p>`;
+    resultsBox.innerHTML = err.rateLimited
+      ? `<p style="font-size:0.8rem; color:#e63946;">MusicBrainz limite le nombre de requêtes : réessaie dans quelques secondes.</p>`
+      : `<p style="font-size:0.8rem; color:#e63946;">Erreur pendant la recherche MusicBrainz.</p>`;
   }
+}
+
+// Ordre de préférence des éditions d'un album pour récupérer la liste de pistes :
+// officielle, sans mention de réédition, puis la plus ancienne.
+function mbCompareReleases(a, b) {
+  const official = r => (r.status === 'Official' ? 0 : 1);
+  const reissue = r => (MB_REISSUE_REGEX.test(`${r.title || ''} ${r.disambiguation || ''}`) ? 1 : 0);
+  const date = r => (r.date && r.date.length >= 4 ? r.date : '9999');
+  return (official(a) - official(b)) || (reissue(a) - reissue(b)) || date(a).localeCompare(date(b));
 }
 
 async function applyItunesResult(index) {
@@ -2402,8 +2756,8 @@ async function applyItunesResult(index) {
     resultsBox.innerHTML = ''; // Vide la liste pour laisser voir le formulaire
   }
 
-  const artistName = g['artist-credit'] ? g['artist-credit'].map(a => a.name).join(', ') : '';
-  
+  const artistName = mbArtistName(g, ', ');
+
   document.getElementById('idea-title').value = g.title || '';
   document.getElementById('idea-artist').value = artistName;
   if (g['first-release-date']) {
@@ -2445,14 +2799,10 @@ async function applyItunesResult(index) {
 
   // --- RECHERCHE DES PISTES ET DURÉES ---
   try {
-    const relUrl = `https://musicbrainz.org/ws/2/release?release-group=${g.id}&inc=recordings+media&fmt=json&limit=10`;
-    const relResponse = await fetch(relUrl, {
-      headers: { 'User-Agent': 'MiniDiscCatalogApp/1.0 (contact@example.com)' }
-    });
-    
-    if (!relResponse.ok) throw new Error("Erreur récupération releases");
-    const relData = await relResponse.json();
-    const releases = relData.releases || [];
+    const relUrl = `${MB_API}/release?release-group=${g.id}&inc=recordings+media&fmt=json&limit=25`;
+    const relData = await mbFetchJson(relUrl);
+    // Édition d'origine en premier : c'est sa liste de pistes et sa durée qu'on veut
+    const releases = (relData.releases || []).slice().sort(mbCompareReleases);
 
     let tracks = [];
     
@@ -2490,7 +2840,9 @@ async function applyItunesResult(index) {
 
   } catch (err) {
     console.error(err);
-    showToast("⚠️ Erreur lors de la récupération des pistes.");
+    showToast(err.rateLimited
+      ? "⚠️ MusicBrainz est saturé : rouvre l'album dans quelques secondes."
+      : "⚠️ Erreur lors de la récupération des pistes.");
   }
 }
 
@@ -2529,9 +2881,7 @@ async function handleRemoteImageUpload(imageUrl) {
     const fileName = `img_${Date.now()}.${extension}`;
     const filePath = `images/${fileName}`;
 
-    const USERNAME = 'Shinomori-cloud';
-    const REPO = 'Minidiscs';
-    const url = `https://api.github.com/repos/${USERNAME}/${REPO}/contents/${filePath}`;
+    const url = `${GITHUB_API_BASE}${filePath}`;
 
     const putResponse = await fetch(url, {
       method: 'PUT',
@@ -2547,6 +2897,7 @@ async function handleRemoteImageUpload(imageUrl) {
     });
 
     if (putResponse.ok) {
+      localImageOverrides.set(filePath, URL.createObjectURL(blob)); // affichage immédiat, sans attendre GitHub Pages
       return filePath;
     }
     console.error("Erreur lors de l'envoi de la pochette iTunes sur GitHub :", await putResponse.json());
@@ -2652,65 +3003,6 @@ function getGithubToken() {
   return localStorage.getItem('github_token');
 }
 
-async function syncCollectionToGithub(dataArray) {
-  const token = getGithubToken();
-  if (!token) {
-    console.warn("Pas de token GitHub configuré. Sauvegarde locale uniquement.");
-    return;
-  }
-
-  const USERNAME = 'Shinomori-cloud';
-  const REPO = 'Minidiscs';
-  const FILE_PATH = 'data.json'; // Chemin vers le fichier JSON dans le repo
-
-  const url = `https://api.github.com/repos/${USERNAME}/${REPO}/contents/${FILE_PATH}`;
-
-  try {
-    // Étape A : Récupérer le SHA actuel du fichier
-    const getResponse = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-
-    let sha = '';
-    if (getResponse.ok) {
-      const fileData = await getResponse.json();
-      sha = fileData.sha;
-    }
-
-    // Étape B : Convertir les données en JSON puis en Base64 (UTF-8 compatible)
-    const jsonString = JSON.stringify(dataArray, null, 2);
-    const bytes = new TextEncoder().encode(jsonString);
-    const base64Content = btoa(String.fromCharCode(...bytes));
-
-    // Étape C : Pousser la mise à jour sur GitHub
-    const putResponse = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/vnd.github.v3+json'
-      },
-      body: JSON.stringify({
-        message: 'Mise à jour automatique de la collection MiniDisc',
-        content: base64Content,
-        sha: sha // Nécessaire pour écraser le fichier existant
-      })
-    });
-
-    if (putResponse.ok) {
-      console.log("Synchronisation GitHub réussie !");
-    } else {
-      console.error("Erreur lors de la synchro GitHub :", await putResponse.json());
-    }
-
-  } catch (error) {
-    console.error("Erreur réseau pendant la synchronisation :", error);
-  }
-}
-
 // Gestion du token GitHub dans app.js
 function initGithubTokenForm() {
   const tokenInput = document.getElementById('gh-token-input');
@@ -2756,9 +3048,7 @@ async function handleImageUpload(fileInput) {
   const fileName = `img_${Date.now()}.${extension}`;
   const filePath = `images/${fileName}`;
 
-  const USERNAME = 'Shinomori-cloud';
-  const REPO = 'Minidiscs';
-  const url = `https://api.github.com/repos/${USERNAME}/${REPO}/contents/${filePath}`;
+  const url = `${GITHUB_API_BASE}${filePath}`;
 
   try {
     // Lecture du fichier local en Base64
@@ -2785,6 +3075,7 @@ async function handleImageUpload(fileInput) {
 
     if (putResponse.ok) {
       console.log(`Image envoyée sur GitHub : ${filePath}`);
+      localImageOverrides.set(filePath, URL.createObjectURL(file)); // affichage immédiat, sans attendre GitHub Pages
       return filePath;
     } else {
       console.error("Erreur lors de l'envoi de l'image sur GitHub :", await putResponse.json());
@@ -2799,6 +3090,35 @@ async function handleImageUpload(fileInput) {
 /* ==========================================
    HELPER D'AFFICHAGE DES IMAGES (NOW LOADING)
    ========================================== */
+// Pochettes envoyées pendant cette session : on les affiche tout de suite depuis l'appareil,
+// sans attendre que GitHub Pages ait publié le fichier (quelques dizaines de secondes).
+const localImageOverrides = new Map();
+
+function resolveImageSrc(path) {
+  return localImageOverrides.get(path) || path;
+}
+
+function rawGithubUrl(path) {
+  return `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/HEAD/${encodeURI(path)}`;
+}
+
+// Si l'image n'est pas (encore) publiée sur le site, on tente une fois de la lire directement
+// dans le dépôt GitHub ; sinon on garde l'affichage "NOW LOADING...".
+function handleCoverError(img) {
+  const path = img.dataset.path || '';
+  if (!img.dataset.rawTried && /^images\//.test(path)) {
+    img.dataset.rawTried = '1';
+    img.src = rawGithubUrl(path);
+    return;
+  }
+  img.style.opacity = '0';
+  const label = img.previousElementSibling;
+  if (label) {
+    label.style.display = 'block';
+    label.textContent = 'NOW LOADING...';
+  }
+}
+
 function createLoadingCoverHTML(srcPath, cssClass = '') {
   // S'il n'y a vraiment aucun chemin renseigné
   if (!srcPath || srcPath.trim() === '' || srcPath === 'images/' || srcPath === 'images/default.jpg') {
@@ -2814,12 +3134,26 @@ function createLoadingCoverHTML(srcPath, cssClass = '') {
     <div class="cover-wrapper ${cssClass}" style="position: relative; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #333;">
       <span class="now-loading-text" style="color: #00ff66; font-family: monospace; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; animation: pulseLoading 1.2s infinite; text-shadow: 0 0 5px rgba(0,255,102,0.6); pointer-events: none; text-align: center; padding: 4px;">NOW LOADING...</span>
       <img 
-        src="${srcPath}" 
+        src="${resolveImageSrc(srcPath)}" 
+        data-path="${srcPath}"
         alt="Cover"
         onload="this.previousElementSibling.style.display='none'; this.style.opacity='1';"
-        onerror="this.style.opacity='0'; this.previousElementSibling.style.display='block'; this.previousElementSibling.textContent='NOW LOADING...';"
+        onerror="handleCoverError(this)"
         style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; opacity: 0; transition: opacity 0.4s ease;"
       >
     </div>
   `;
 }
+
+/* ==========================================
+   DÉMARRAGE
+   ========================================== */
+// Entrée : évite d'envoyer le formulaire "idée" par erreur, lance la recherche à la place
+document.getElementById('itunes-search-input')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    searchItunes();
+  }
+});
+
+initData();

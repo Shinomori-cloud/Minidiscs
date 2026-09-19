@@ -9,6 +9,13 @@
   --border-color: #e2e8f0;
   --accent-color: #7b2cbf;
   --export-color: #06d6a0;
+
+  /* Encombrement ajouté au header quand un genre filtré y est affiché (encart 20px + 4px d'espace) */
+  --header-genre-h: 24px;
+
+  /* Accueil : tailles des vignettes du carrousel et des boutons carrés */
+  --carousel-card-size: 100px;
+  --action-btn-size: 80px;
 }
 
 * {
@@ -321,44 +328,46 @@ body:has(.dashboard-container) .title-90s {
   color: var(--text-main);
 }
 
+/* Bouton "Voir tous les minidiscs" (au-dessus du carrousel) */
+.btn-primary.btn-view-all {
+  display: block;
+  margin: 12px 0 12px 0;
+  padding: 15px 10px;
+}
+
+/* Boutons carrés "Créer une compilation" / "Ajouter un MD", écartés des bords */
 .dashboard-actions-row {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 14px;
+  padding: 0 12px;
   width: 100%;
 }
 
 .action-btn-wide {
-  flex: 2;
+  flex: 0 0 var(--action-btn-size);
+  width: var(--action-btn-size);
+  height: var(--action-btn-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #ffffff;
   color: var(--text-main);
   border: 2px solid #000;
-  padding: 8px 6px;
-  border-radius: 20px;
+  padding: 6px;
+  border-radius: 16px;
   font-size: 0.72rem;
   font-weight: 800;
+  line-height: 1.25;
   cursor: pointer;
   box-shadow: 2px 2px 0px #000;
   text-align: center;
   transition: transform 0.1s ease;
-  white-space: nowrap;
+  white-space: normal;
 }
 
-.action-btn-json {
-  flex: 1;
-  border: 2px solid #000;
-  padding: 8px 4px;
-  border-radius: 20px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 2px 2px 0px #000;
-  text-align: center;
-  transition: transform 0.1s ease, background-color 0.2s ease;
-  white-space: nowrap;
-}
-
-.action-btn-wide:active, .action-btn-json:active {
+.action-btn-wide:active {
   transform: translate(1px, 1px);
   box-shadow: 0px 0px 0px #000;
 }
@@ -1603,23 +1612,66 @@ html, body {
   overscroll-behavior-y: none;
 }
 
-.active-genre-badge {
-  text-align: center;
-  margin: -6px auto 10px auto;
+/* ==========================================
+   GENRE(S) FILTRÉ(S) DANS LE HEADER
+   Encart de taille fixe : c'est le texte qui rétrécit (voir fitHeaderGenreText dans app.js).
+   ========================================== */
+.header-genre-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 20px;
+  margin-top: 4px;
+  padding: 0 8px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #ff007f;
+  border: 1.5px solid #000;
+  border-radius: 10px;
+  box-shadow: 1px 1px 0px #000;
   pointer-events: none;
 }
 
-.active-genre-badge span {
-  display: inline-block;
-  background: #ff007f;
-  color: #ffffff;
-  font-size: 0.75rem;
-  font-weight: bold;
-  padding: 3px 10px;
-  border-radius: 12px;
+.header-genre-text {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Le header grandit de --header-genre-h : le reste de la page se décale d'autant */
+body:has(.header-genre-info:not(.hidden)):not(:has(.dashboard-container)):not(:has(#header-planner-badge))::before {
+  height: calc(160px + var(--header-genre-h));
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black calc(135px + var(--header-genre-h)), transparent calc(160px + var(--header-genre-h)));
+  mask-image: linear-gradient(to bottom, black 0px, black calc(135px + var(--header-genre-h)), transparent calc(160px + var(--header-genre-h)));
+}
+
+body:has(.header-genre-info:not(.hidden)):not(:has(.dashboard-container)):not(:has(#header-planner-badge)) main#app {
+  margin-top: calc(150px + var(--header-genre-h));
+}
+
+/* Planificateur */
+body:has(#header-planner-badge):has(.header-genre-info:not(.hidden))::before {
+  height: calc(240px + var(--header-genre-h)) !important;
+  -webkit-mask-image: linear-gradient(to bottom, black 0px, black calc(210px + var(--header-genre-h)), transparent calc(240px + var(--header-genre-h))) !important;
+  mask-image: linear-gradient(to bottom, black 0px, black calc(210px + var(--header-genre-h)), transparent calc(240px + var(--header-genre-h))) !important;
+}
+
+body:has(#header-planner-badge):has(.header-genre-info:not(.hidden)) main#app {
+  margin-top: calc(130px + var(--header-genre-h)) !important;
+}
+
+body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
+  top: calc(150px + var(--header-genre-h)) !important;
 }
 
 @keyframes pulseLoading {
@@ -1680,18 +1732,18 @@ html, body {
 }
 
 .genre-carousel-card {
-  flex: 0 0 130px !important;
-  height: 95px;
+  flex: 0 0 var(--carousel-card-size) !important;
+  width: var(--carousel-card-size);
+  height: var(--carousel-card-size);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   border: 2px solid #000000;
-  border-top: 5px solid #ff007f;
   border-radius: 12px;
-  padding: 10px 8px;
+  padding: 6px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   text-align: center;
   cursor: pointer;
@@ -1705,22 +1757,11 @@ html, body {
 }
 
 .carousel-genre-name {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 800;
   text-transform: uppercase;
   line-height: 1.15;
-  word-break: break-word;
+  overflow-wrap: anywhere;
   color: #ffffff !important;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
-}
-
-.carousel-genre-count {
-  font-size: 0.60rem;
-  font-weight: 700;
-  color: #ffffff;
-  background: rgba(0, 0, 0, 0.65);
-  padding: 2px 6px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(2px);
 }
