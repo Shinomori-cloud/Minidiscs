@@ -1662,7 +1662,7 @@ html, body {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 4px 6px 12px 6px;
+  padding: 4px 0px 12px 0px; /* Aligné à 0px sur les côtés pour éviter le trait/espace parasite */
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
@@ -1682,7 +1682,9 @@ html, body {
 .genre-carousel-card {
   flex: 0 0 130px !important;
   height: 95px;
-  background: #ffffff;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border: 2px solid #000000;
   border-top: 5px solid #ff007f;
   border-radius: 12px;
@@ -1708,14 +1710,17 @@ html, body {
   text-transform: uppercase;
   line-height: 1.15;
   word-break: break-word;
+  color: #ffffff !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 .carousel-genre-count {
   font-size: 0.60rem;
   font-weight: 700;
-  color: #666666;
-  background: #f0f0f0;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.65);
   padding: 2px 6px;
   border-radius: 10px;
-  border: 1px solid #000000;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(2px);
 }
