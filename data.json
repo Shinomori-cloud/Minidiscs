@@ -979,8 +979,7 @@
     },
     {
       "id": "md-09",
-      "md_cover": "images/fugees_the_score.jpg",
-      "title": "The Score / Legend, Best of",
+      "md_cover": "images/img_1789839897383.jpg",
       "albums": [
         {
           "id": "alb-09-1",
@@ -1048,7 +1047,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "The Score / Legend, Best of"
     },
     {
       "id": "md-10",
