@@ -1401,8 +1401,7 @@
     },
     {
       "id": "md-14",
-      "md_cover": "images/muse_origin_of_symmetry.jpg",
-      "title": "Origin of Symmetry / The Bends / The Man Who",
+      "md_cover": "images/img_1789839260064.jpg",
       "albums": [
         {
           "id": "alb-14-1",
@@ -1484,7 +1483,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Origin of Symmetry / The Bends / The Man Who"
     },
     {
       "id": "md-18",
