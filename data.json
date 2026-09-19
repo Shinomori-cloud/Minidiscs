@@ -1605,8 +1605,7 @@
     },
     {
       "id": "md-19",
-      "md_cover": "images/offspring_americana.jpg",
-      "title": "Americana / Buckcherry / There Is Nothing Left to Lose",
+      "md_cover": "images/img_1789840084741.jpg",
       "albums": [
         {
           "id": "alb-19-1",
@@ -1693,7 +1692,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Americana / Buckcherry / There Is Nothing Left to Lose"
     },
     {
       "id": "md-34",
