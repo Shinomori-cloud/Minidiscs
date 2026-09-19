@@ -234,8 +234,7 @@
     },
     {
       "id": "md-28",
-      "md_cover": "images/radiohead_ok_computer.jpg",
-      "title": "OK Computer / Urban Hymns",
+      "md_cover": "images/img_1789839550245.jpg",
       "albums": [
         {
           "id": "alb-28-1",
@@ -295,7 +294,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "OK Computer / Urban Hymns"
     },
     {
       "id": "md-30",
