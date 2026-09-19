@@ -1052,8 +1052,7 @@
     },
     {
       "id": "md-10",
-      "md_cover": "images/oasis_whats_the_story.jpg",
-      "title": "(What's the Story) Morning Glory? / Paradise in Me / Garbage",
+      "md_cover": "images/img_1789839232877.jpg",
       "albums": [
         {
           "id": "alb-10-1",
@@ -1139,7 +1138,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "(What's the Story) Morning Glory? / Paradise in Me / Garbage"
     },
     {
       "id": "md-11",
