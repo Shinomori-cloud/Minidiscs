@@ -588,8 +588,7 @@
     },
     {
       "id": "md-02",
-      "md_cover": "images/les_inconnus_boulversifiant.jpg",
-      "title": "Boulversifiant / Sketchs",
+      "md_cover": "images/img_1789846537199.jpg",
       "albums": [
         {
           "id": "alb-02-1",
@@ -648,7 +647,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Boulversifiant / Sketchs"
     },
     {
       "id": "md-03",
