@@ -940,6 +940,48 @@ function renderFeatured() {
    VUES DE L'APPLICATION
    ========================================== */
 
+/* ==========================================
+   TAILLE DES VIGNETTES DE L'ACCUEIL
+   ------------------------------------------
+   L'accueil est en position fixe (il ne défile pas) : les vignettes du carrousel et les boutons du bas
+   prennent toute la hauteur d'écran disponible, entre DASH_TILE_MIN et DASH_TILE_MAX.
+   La taille est stockée dans la variable CSS --dash-tile.
+   ========================================== */
+const DASH_TILE_MIN = 80;   // px
+const DASH_TILE_MAX = 140;  // px
+const DASH_BOTTOM_GAP = 22; // px laissés libres sous les boutons (ombre + respiration)
+
+// Largeur d'un lot de vignettes du carrousel (mesurée dans le DOM)
+function getCarouselSetWidth() {
+  const track = document.querySelector('.carousel-track');
+  if (!track || track.children.length < 6) return 0;
+  const setCount = track.children.length / 3;
+  return track.children[setCount].offsetLeft - track.children[0].offsetLeft;
+}
+
+function fitDashboardSize() {
+  const lastRow = document.querySelector('.dashboard-actions-row');
+  if (!lastRow) return;
+
+  const root = document.documentElement;
+  const carousel = document.querySelector('.genre-carousel-container');
+  const oldSetWidth = getCarouselSetWidth();
+  const ratio = carousel && oldSetWidth ? carousel.scrollLeft / oldSetWidth : null;
+
+  const current = parseFloat(getComputedStyle(root).getPropertyValue('--dash-tile')) || 110;
+  const free = window.innerHeight - DASH_BOTTOM_GAP - lastRow.getBoundingClientRect().bottom;
+  // La taille compte deux fois dans la hauteur (vignettes + boutons du bas)
+  const next = Math.max(DASH_TILE_MIN, Math.min(DASH_TILE_MAX, Math.floor(current + free / 2)));
+
+  if (next !== Math.round(current)) {
+    root.style.setProperty('--dash-tile', next + 'px');
+    const newSetWidth = getCarouselSetWidth();
+    if (carousel && ratio !== null && newSetWidth) carousel.scrollLeft = ratio * newSetWidth;
+  }
+}
+
+window.addEventListener('resize', fitDashboardSize);
+
 /* 1. DASHBOARD */
 function renderDashboard(pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
@@ -1061,7 +1103,7 @@ function renderDashboard(pushState = true) {
         VOIR TOUS LES MINIDISCS &rarr;
       </button>
 
-      <div class="dashboard-card">
+      <div class="dashboard-card genres-banner">
         <div class="dashboard-section-title">MINIDISCS PAR GENRES</div>
         <div class="genre-carousel-container">
           ${carouselCardsHTML}
@@ -1069,10 +1111,10 @@ function renderDashboard(pushState = true) {
       </div>
 
       <div class="dashboard-actions-row">
-        <button class="action-btn-wide" onclick="window.location.hash = '#planner'">
+        <button class="action-btn-wide action-btn-create" onclick="window.location.hash = '#planner'">
           Créer une compilation
         </button>
-        <button class="action-btn-wide" onclick="openAdminModal()">
+        <button class="action-btn-wide action-btn-add" onclick="openAdminModal()">
           ＋ Ajouter un MD
         </button>
       </div>
@@ -1088,20 +1130,23 @@ function renderDashboard(pushState = true) {
   }
 
   // Écouteur pour le scroll infini manuel avec calage précis des vignettes
+  // Taille des vignettes adaptée à la hauteur de l'écran (avant de positionner le carrousel)
+  fitDashboardSize();
+  fitDashboardSize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitDashboardSize);
+
   const carouselContainer = document.querySelector('.genre-carousel-container');
-  const carouselTrack = document.querySelector('.carousel-track');
 
-  if (carouselContainer && carouselTrack && carouselTrack.children.length > genreConfigs.length) {
-    // Largeur exacte d'un lot de vignettes (mesurée : suit la taille définie en CSS)
-    const singleSetWidth = carouselTrack.children[genreConfigs.length].offsetLeft - carouselTrack.children[0].offsetLeft;
-
-    carouselContainer.scrollLeft = singleSetWidth;
+  if (carouselContainer && getCarouselSetWidth() > 0) {
+    // Carrousel infini : 3 lots identiques, on reste toujours sur le lot du milieu
+    carouselContainer.scrollLeft = getCarouselSetWidth();
 
     carouselContainer.addEventListener('scroll', () => {
+      const setWidth = getCarouselSetWidth();
       if (carouselContainer.scrollLeft <= 10) {
-        carouselContainer.scrollLeft += singleSetWidth;
-      } else if (carouselContainer.scrollLeft >= singleSetWidth * 2 - 10) {
-        carouselContainer.scrollLeft -= singleSetWidth;
+        carouselContainer.scrollLeft += setWidth;
+      } else if (carouselContainer.scrollLeft >= setWidth * 2 - 10) {
+        carouselContainer.scrollLeft -= setWidth;
       }
     });
   }
@@ -1264,7 +1309,7 @@ const fabHTML = `
     </div>
     
     <button type="button" id="md-detail-fab-main-btn" class="fab-main-btn" onclick="toggleMdDetailFabMenu();" title="Actions MiniDisc">
-      <span class="fab-icon">🎚️</span>
+      <span class="fab-icon" aria-hidden="true"></span>
     </button>
   </div>
 `;
@@ -1651,11 +1696,10 @@ function addAdminAlbumBlock() {
 
   const div = document.createElement('div');
   div.className = 'album-block';
-  div.style.cssText = "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px; position: relative;";
   div.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-      <h4 style="margin: 0;">Album</h4>
-      <button type="button" onclick="removeAdminAlbumBlock(this)" style="background: #e63946; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">🗑️ Supprimer l'album</button>
+    <div class="album-block-header">
+      <h4>Album</h4>
+      <button type="button" class="btn-remove-album" onclick="removeAdminAlbumBlock(this)">🗑️ Supprimer l'album</button>
     </div>
     <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album"></div>
     <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste"></div>
@@ -2099,7 +2143,7 @@ function renderCompilPlanner(pushState = true) {
           </div>
           
           <button type="button" id="planner-fab-main-btn" class="fab-main-btn" onclick="togglePlannerFabMenu();" title="Menu planificateur">
-            <span class="fab-icon">🎚️</span>
+            <span class="fab-icon" aria-hidden="true"></span>
           </button>
         </div>
       </div>
@@ -2714,7 +2758,7 @@ async function searchItunes() {
       const details = [year, secondary].filter(Boolean).join(' · ');
 
       return `
-        <div class="itunes-result-item" data-index="${i}" style="display:flex; align-items:center; gap:8px; padding:6px; border:1px solid #ddd; border-radius:6px; margin-bottom:6px; cursor:pointer;">
+        <div class="itunes-result-item" data-index="${i}">
           <img src="${coverUrl}" 
                onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'40\\' height=\\'40\\' viewBox=\\'0 0 24 24\\'><rect width=\\'24\\' height=\\'24\\' fill=\\'%23eee\\'/><text x=\\'50%\\' y=\\'50%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-size=\\'12\\'>💿</text></svg>';" 
                style="width:40px; height:40px; border-radius:4px; object-fit:cover; background:#eee;">

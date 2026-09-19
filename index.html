@@ -50,7 +50,7 @@
   <div id="admin-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main, #333);">＋ Ajouter un MiniDisc</h3>
+        <h3>＋ Ajouter un MiniDisc</h3>
         <button class="close-btn" type="button" onclick="closeAdminModal()">&times;</button>
       </div>
 
@@ -135,13 +135,13 @@
   <div id="idea-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main, #333);">＋ Ajouter un album à l'idée de compil</h3>
+        <h3>＋ Ajouter un album à l'idée de compil</h3>
         <button class="close-btn" type="button" onclick="closeIdeaModal()">&times;</button>
       </div>
 
       <form id="idea-form">
-        <div class="form-group" style="background:#f0f4ff; padding:10px; border-radius:6px; border:1px dashed #7b8ef0;">
-          <label>🔍 Recherche automatique (iTunes)</label>
+        <div class="form-group md-search-box">
+          <label>🔍 Recherche automatique (MusicBrainz)</label>
           <div style="display:flex; gap:6px;">
             <input type="text" id="itunes-search-input" placeholder="Artiste + album (ex: Daft Punk Discovery)" style="flex:1;">
             <button type="button" class="btn-secondary" style="margin-bottom:0; white-space:nowrap;" onclick="searchItunes()">Rechercher</button>
@@ -262,7 +262,7 @@
     
     <!-- Le bouton déclencheur unique -->
     <button type="button" id="fab-main-btn" class="fab-main-btn" onclick="toggleFabMenu()" title="Menu principal">
-      <span class="fab-icon">🎚️</span>
+      <span class="fab-icon" aria-hidden="true"></span>
     </button>
   </div>
 
