@@ -791,35 +791,37 @@ function renderDashboard(pushState = true) {
     `;
   });
 
-  // Construction du carrousel avec tes 8 genres exacts
-  const mainGenres = [
-    "Alternative & Grunge 90s",
-    "Rock & Blues",
-    "Rap, Soul & Reggae",
-    "Metal & Hard Rock",
-    "Pop & Folk & Variety",
-    "Talks & Humour",
-    "Électro, Trip-Hop & Expérimental",
-    "Ambient & Orchestral"
+  // Définition des 8 genres avec leurs images d'illustration dans /images
+  const genreConfigs = [
+    { name: "Alternative & Grunge 90s", image: "images/genre_alternative.jpg" },
+    { name: "Rock & Blues", image: "images/genre_rock.jpg" },
+    { name: "Rap, Soul & Reggae", image: "images/genre_rap.jpg" },
+    { name: "Metal & Hard Rock", image: "images/genre_metal.jpg" },
+    { name: "Pop & Folk & Variety", image: "images/genre_pop.jpg" },
+    { name: "Talks & Humour", image: "images/genre_talks.jpg" },
+    { name: "Électro, Trip-Hop & Expérimental", image: "images/genre_electro.jpg" },
+    { name: "Ambient & Orchestral", image: "images/genre_ambient.jpg" }
   ];
 
-  const generateCards = (genresList) => {
-    return genresList.map(genre => {
+  const generateCards = (configsList) => {
+    return configsList.map(item => {
+      const genre = item.name;
+      const imageUrl = item.image;
       const color = typeof getBorderColor === 'function' ? getBorderColor(genre) : '#ff007f';
       const upperGenre = genre.toUpperCase().trim();
       const count = genreCounts[upperGenre] || 0;
       const safeGenreUpper = upperGenre.replace(/'/g, "\\'");
 
       return `
-        <div class="genre-carousel-card" style="border-top-color: ${color};" onclick="if(typeof selectGenreFilter === 'function'){ selectGenreFilter('${safeGenreUpper}'); } else { window.location.hash = '#minidiscs?genre=${encodeURIComponent(safeGenreUpper)}'; }">
-          <div class="carousel-genre-name" style="color: ${color};">${genre}</div>
+        <div class="genre-carousel-card" style="border-top-color: ${color}; background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${imageUrl}');" onclick="if(typeof selectGenreFilter === 'function'){ selectGenreFilter('${safeGenreUpper}'); } else { window.location.hash = '#minidiscs?genre=${encodeURIComponent(safeGenreUpper)}'; }">
+          <div class="carousel-genre-name">${genre}</div>
           <div class="carousel-genre-count">${count} MD${count > 1 ? 's' : ''}</div>
         </div>
       `;
     }).join('');
   };
 
-  const initialCards = generateCards(mainGenres);
+  const initialCards = generateCards(genreConfigs);
   let carouselCardsHTML = `
     <div class="carousel-track">
       ${initialCards}
@@ -877,23 +879,24 @@ function renderDashboard(pushState = true) {
     newGrid.innerHTML = oldGrid.innerHTML;
   }
 
-  // Écouteur pour le scroll infini manuel
+  // Écouteur pour le scroll infini manuel avec calage précis des vignettes
   const carouselContainer = document.querySelector('.genre-carousel-container');
   const carouselTrack = document.querySelector('.carousel-track');
 
   if (carouselContainer && carouselTrack) {
+    const cardWidthWithGap = 142; // Largeur carte (130px) + gap (12px)
+    const singleSetWidth = cardWidthWithGap * 8; // 1136px exacts pour un lot de 8 cartes
+
     const setInitialPosition = () => {
-      const singleSetWidth = carouselTrack.scrollWidth / 3;
       carouselContainer.scrollLeft = singleSetWidth;
     };
 
     setInitialPosition();
 
     carouselContainer.addEventListener('scroll', () => {
-      const singleSetWidth = carouselTrack.scrollWidth / 3;
-      if (carouselContainer.scrollLeft <= 5) {
+      if (carouselContainer.scrollLeft <= 10) {
         carouselContainer.scrollLeft += singleSetWidth;
-      } else if (carouselContainer.scrollLeft >= singleSetWidth * 2 - 5) {
+      } else if (carouselContainer.scrollLeft >= singleSetWidth * 2 - 10) {
         carouselContainer.scrollLeft -= singleSetWidth;
       }
     });
