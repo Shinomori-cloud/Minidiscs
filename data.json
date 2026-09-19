@@ -1219,8 +1219,7 @@
     },
     {
       "id": "md-12",
-      "md_cover": "images/tracy_chapman.jpg",
-      "title": "Tracy Chapman / Greatest Hits / Out of Time",
+      "md_cover": "images/img_1789840411622.jpg",
       "albums": [
         {
           "id": "alb-12-1",
@@ -1308,7 +1307,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Tracy Chapman / Greatest Hits / Out of Time"
     },
     {
       "id": "md-13",
