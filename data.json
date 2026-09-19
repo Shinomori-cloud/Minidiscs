@@ -2363,8 +2363,7 @@
     },
     {
       "id": "md-06",
-      "md_cover": "images/renaud_85_95.jpg",
-      "title": "The Meilleur of Renaud 85-95 / Best of France Gall",
+      "md_cover": "images/img_1789840254189.jpg",
       "albums": [
         {
           "id": "alb-06-1",
@@ -2425,7 +2424,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "The Meilleur of Renaud 85-95 / Best of France Gall"
     },
     {
       "id": "md-27",
