@@ -1806,8 +1806,7 @@
     },
     {
       "id": "md-39",
-      "md_cover": "images/nirvana_nevermind.jpg",
-      "title": "Nevermind / Placebo / Cocoon Crash",
+      "md_cover": "images/img_1789846558050.jpg",
       "albums": [
         {
           "id": "alb-39-1",
@@ -1893,7 +1892,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Nevermind / Placebo / Cocoon Crash"
     },
     {
       "id": "md-45",
