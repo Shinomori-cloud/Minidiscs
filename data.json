@@ -818,8 +818,7 @@
     },
     {
       "id": "md-05",
-      "md_cover": "images/iam_ecole_micro_argent.jpg",
-      "title": "L'école du micro d'argent / Suprême NTM",
+      "md_cover": "images/img_1789840192780.jpg",
       "albums": [
         {
           "id": "alb-05-1",
@@ -882,7 +881,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "L'école du micro d'argent / Suprême NTM"
     },
     {
       "id": "md-08",
