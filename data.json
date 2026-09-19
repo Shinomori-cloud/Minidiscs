@@ -164,8 +164,7 @@
     },
     {
       "id": "md-26",
-      "md_cover": "images/doc_gyneco_premieres_consultations.jpg",
-      "title": "Premières consultations / Liaisons dangereuses",
+      "md_cover": "images/img_1789839873886.jpg",
       "albums": [
         {
           "id": "alb-26-1",
@@ -230,7 +229,8 @@
           ],
           "toRecord": false
         }
-      ]
+      ],
+      "title": "Premières consultations / Liaisons dangereuses"
     },
     {
       "id": "md-28",
