@@ -486,7 +486,7 @@
             "My Gift to You",
             "Earache My Eye"
           ],
-          "toRecord": false
+          "toRecord": true
         },
         {
           "id": "alb-32-2",
@@ -513,7 +513,7 @@
             "In Memory of...",
             "Flyhigh"
           ],
-          "toRecord": false
+          "toRecord": true
         }
       ],
       "title": "Follow the Leader / Primitive"
