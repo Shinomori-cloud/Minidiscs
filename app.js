@@ -3344,11 +3344,13 @@ function createLoadingCoverHTML(srcPath, cssClass = '') {
 /* ==========================================
    DÉCOUVERTE : « Si tu as aimé X, tu aimeras Y »
    ------------------------------------------
-   Last.fm      -> artistes similaires, albums les plus écoutés (popularité), tags
-   MusicBrainz  -> dates de sortie, types d'album, recherche par genre + période
-   Deux modes :
-   - avec un artiste : artistes similaires (Last.fm) -> leurs albums phares, enrichis par MusicBrainz
-   - sans artiste    : albums MusicBrainz du genre/tag et de la période, classés par popularité Last.fm
+   Les résultats sont des ARTISTES, tous issus de Last.fm :
+   - avec un artiste de départ : ses artistes similaires (avec un pourcentage de similarité)
+   - sans artiste de départ    : les artistes les plus écoutés du genre / tag choisi
+   Chaque artiste est évalué (auditeurs, tags), puis toute la liste est classée d'un seul coup : la popularité est donc
+   "absolue" et « Voir plus » ne fait que révéler la suite, sans jamais faire remonter un artiste dans la partie déjà lue.
+   MusicBrainz n'intervient que pour dater les albums dans la discographie et, si une période est demandée,
+   pour vérifier les années d'activité des artistes.
    ========================================== */
 const LASTFM_API_KEY = '';   // (facultatif) clé en dur ici ; sinon elle se saisit dans la page et reste sur l'appareil
 const LASTFM_API_URL = 'https://ws.audioscrobbler.com/2.0/';
@@ -3356,13 +3358,19 @@ const LASTFM_KEY_STORAGE = 'lastfm_api_key';
 const LASTFM_MIN_DELAY_MS = 230;          // Last.fm tolère environ 5 requêtes par seconde
 const LASTFM_PLACEHOLDER_HASH = '2a96cbd8b46e442fc41c2b86b821562f'; // image "vide" de Last.fm
 
-const DISCOVER_BATCH_ARTISTS = 10;        // artistes similaires analysés à chaque étape (1 album retenu par artiste)
-const DISCOVER_ALBUMS_PER_ARTIST = 1;     // un seul album proposé par artiste
-const DISCOVER_TAG_BATCH = 12;            // albums dont on récupère la popularité à chaque étape (mode sans artiste)
-const DISCOVER_MIN_RESULTS = 8;           // on enchaîne une 2e étape automatiquement s'il y a moins de résultats
+const DISCOVER_POOL_SIZE = 40;            // artistes candidats évalués par recherche
+const DISCOVER_PAGE_SIZE = 10;            // artistes révélés à chaque « Voir plus »
+const DISCOVER_INFO_CONCURRENCY = 4;
+// Qualité minimale pour figurer dans la liste principale : les artistes en dessous ne sont proposés que
+// s'il n'y a pas assez de résultats (ou sur demande, en fin de liste)
+const DISCOVER_MIN_MATCH = 0.35;          // similarité minimale (35 %)
+const DISCOVER_MIN_LISTENERS = 50000;     // auditeurs Last.fm minimum
+// Classement "Recommandés" : poids de la popularité et de la similarité (mesurées en rang, de 0 à 1)
+const DISCOVER_WEIGHT_POP = 0.6;
+const DISCOVER_WEIGHT_SIM = 0.4;
 const DISCOVER_MB_EXCLUDED = 'secondarytype:Remix OR secondarytype:"DJ-mix" OR secondarytype:Demo OR secondarytype:Audiobook OR secondarytype:"Audio drama" OR secondarytype:Interview';
 
-// Tags Last.fm / MusicBrainz correspondant à chacun des 8 genres de l'appli
+// Tags Last.fm correspondant à chacun des 8 genres de l'appli
 const DISCOVER_GENRE_TAGS = {
   'Alternative & Grunge 90s': ['grunge', 'alternative rock', 'alternative'],
   'Rock & Blues': ['rock', 'blues', 'blues rock', 'punk rock'],
@@ -3376,25 +3384,26 @@ const DISCOVER_GENRE_TAGS = {
 
 const VARIOUS_ARTISTS_REGEX = /^(divers|various|various artists|artistes? divers|va|compilation)$/i;
 
-const DISCOVER_DEFAULTS = { artist: '', genre: '', tag: '', yearFrom: '', yearTo: '', sort: 'popularity', hideOwned: true };
+const DISCOVER_DEFAULTS = { artist: '', genre: '', tag: '', yearFrom: '', yearTo: '', sort: 'recommended', hideOwned: true };
 
 const discoverState = {
   criteria: { ...DISCOVER_DEFAULTS },
   chips: [],            // autres artistes du MiniDisc d'origine (raccourcis)
-  results: [],
+  candidates: [],       // tous les artistes évalués par la dernière recherche
+  shown: 0,             // nombre d'artistes actuellement révélés dans la liste classée
+  extraShown: false,    // les artistes moins proches / moins connus ont été demandés
   mode: null,           // 'similar' | 'tag'
-  queue: [],            // artistes (mode similar) ou albums MusicBrainz (mode tag) restant à analyser
-  processed: 0,
-  total: 0,
   started: false,
   running: false,
   runId: 0,
   status: '',
+  lifespanNote: '',
   showKeyCard: false,
   pendingAuto: false,
   startArtist: '',
+  formOpen: true,       // le formulaire se replie une fois la recherche lancée
   view: 'results',      // 'results' | 'disco' (discographie complète d'un artiste)
-  disco: null,          // { artist, mbid, items, loading }
+  disco: null,          // { artist, mbid, items, showOthers, loading, status }
 };
 let discoverBackHash = '#create';
 const discoverCache = new Map();
@@ -3425,7 +3434,7 @@ function getLastfmKey() {
   return (localStorage.getItem(LASTFM_KEY_STORAGE) || LASTFM_API_KEY || '').trim();
 }
 
-/* ---------- Appels Last.fm (file d'attente : jamais plus de ~4 requêtes / seconde) ---------- */
+/* Appels Last.fm : file d'attente (jamais plus de ~4 requêtes par seconde) */
 let lfmChain = Promise.resolve();
 function lfmSlot() {
   const slot = lfmChain.then(() => discoverWait(LASTFM_MIN_DELAY_MS));
@@ -3481,7 +3490,6 @@ function lfmImage(images) {
   return '';
 }
 
-/* ---------- MusicBrainz : discographie d'un artiste (pour les dates et les types) ---------- */
 async function discoverMbArtistGroups(artist, maxPages = 1) {
   const cacheKey = `mb:${artist.mbid || mbNormalize(artist.name)}:${maxPages}`;
   if (discoverCache.has(cacheKey)) return discoverCache.get(cacheKey);
@@ -3545,7 +3553,6 @@ function discoverGroupTags(group) {
     .map(t => t.name);
 }
 
-/* ---------- Critères ---------- */
 function discoverRequiredTags(criteria) {
   if (criteria.tag && criteria.tag.trim()) return [criteria.tag.trim().toLowerCase()];
   if (criteria.genre && DISCOVER_GENRE_TAGS[criteria.genre]) return DISCOVER_GENRE_TAGS[criteria.genre];
@@ -3557,465 +3564,12 @@ function discoverTagsMatch(tags, required) {
   return tags.some(t => required.some(r => t === r || t.includes(r)));
 }
 
-function discoverYearOk(year, criteria) {
-  const from = parseInt(criteria.yearFrom, 10);
-  const to = parseInt(criteria.yearTo, 10);
-  if (!from && !to) return true;
-  if (!year) return false;
-  return (!from || year >= from) && (!to || year <= to);
-}
-
 function discoverGuessGenre(tags) {
   for (const tag of tags) {
     const guessed = guessMainGenreFromItunes(tag);
     if (guessed) return guessed;
   }
   return '';
-}
-
-/* ---------- Ce que je possède déjà / mes idées ---------- */
-function discoverOwnedSets() {
-  const owned = new Set();
-  const ideas = new Set();
-  const add = (set, artist, title) => {
-    if (artist && title) set.add(`${mbNormalize(artist)}|${mbBaseTitle(title)}`);
-  };
-  (catalogData || []).forEach(md => {
-    add(owned, md.artist, md.title);
-    (md.albums || []).forEach(a => add(owned, a.artist, a.title));
-  });
-  (window.ideaAlbums || []).forEach(i => add(ideas, i.artist, i.title));
-  return { owned, ideas };
-}
-
-/* ---------- Lancement d'une recherche ---------- */
-function discoverAlive(runId) {
-  return runId === discoverState.runId && !!document.getElementById('discover-page');
-}
-
-function readDiscoverCriteria() {
-  const val = id => {
-    const el = document.getElementById(id);
-    return el ? el.value : '';
-  };
-  const c = discoverState.criteria;
-  c.artist = val('dc-artist').trim();
-  c.genre = val('dc-genre');
-  c.tag = val('dc-tag').trim();
-  c.yearFrom = val('dc-year-from').trim();
-  c.yearTo = val('dc-year-to').trim();
-  readDiscoverViewOptions();
-}
-
-function readDiscoverViewOptions() {
-  const c = discoverState.criteria;
-  const sort = document.getElementById('dc-sort');
-  const hide = document.getElementById('dc-hide-owned');
-  if (sort) c.sort = sort.value;
-  if (hide) c.hideOwned = hide.checked;
-}
-
-async function startDiscoverSearch() {
-  const s = discoverState;
-  readDiscoverCriteria();
-  const c = s.criteria;
-
-  if (!getLastfmKey()) {
-    s.showKeyCard = true;
-    s.status = '<span class="dc-warn">🔑 Ajoute d\'abord ta clé API Last.fm ci-dessus.</span>';
-    s.pendingAuto = true;
-    refreshDiscoverPage();
-    return;
-  }
-  if (!c.artist && !c.genre && !c.tag.trim()) {
-    showToast("⚠️ Indique un artiste, un genre ou un tag");
-    return;
-  }
-
-  s.runId++;
-  const runId = s.runId;
-  s.results = [];
-  s.queue = [];
-  s.processed = 0;
-  s.total = 0;
-  s.started = true;
-  s.running = true;
-  s.pendingAuto = false;
-  s.view = 'results';
-  s.disco = null;
-  s.mode = c.artist ? 'similar' : 'tag';
-  s.status = '';
-  refreshDiscoverPage();
-
-  try {
-    if (s.mode === 'similar') await discoverStartSimilar(runId);
-    else await discoverStartTag(runId);
-  } catch (err) {
-    if (runId === s.runId) discoverHandleError(err);
-  } finally {
-    if (runId === s.runId) {
-      s.running = false;
-      discoverFinishStatus();
-      renderDiscoverResults();
-    }
-  }
-}
-
-async function discoverLoadMore() {
-  const s = discoverState;
-  if (s.running || s.queue.length === 0) return;
-  s.running = true;
-  const runId = s.runId;
-  s.status = '';
-  renderDiscoverResults();
-  try {
-    if (s.mode === 'similar') await discoverProcessSimilarBatch(runId);
-    else await discoverProcessTagBatch(runId);
-  } catch (err) {
-    if (runId === s.runId) discoverHandleError(err);
-  } finally {
-    if (runId === s.runId) {
-      s.running = false;
-      discoverFinishStatus();
-      renderDiscoverResults();
-    }
-  }
-}
-
-function discoverHandleError(err) {
-  const s = discoverState;
-  console.error(err);
-  let message;
-  if (err.code === 'nokey' || err.code === 10 || err.code === 26) {
-    s.showKeyCard = true;
-    message = '🔑 Clé API Last.fm absente, invalide ou refusée. Vérifie-la ci-dessus.';
-  } else if (err.code === 29 || err.rateLimited) {
-    message = '⏳ Le service limite le nombre de requêtes : réessaie dans une minute.';
-  } else if (err.code === 6) {
-    message = `Artiste « ${mbEscapeHTML(s.criteria.artist)} » introuvable sur Last.fm : vérifie l'orthographe.`;
-  } else if (isNetworkError(err)) {
-    message = '📡 Impossible de joindre Last.fm (connexion coupée ou requête bloquée par le navigateur).';
-  } else {
-    message = `⚠️ Une erreur est survenue (${mbEscapeHTML(err.message || 'inconnue')}).`;
-  }
-  s.status = `<span class="dc-warn">${message}</span>`;
-  refreshDiscoverPage();
-}
-
-// Message de fin de recherche
-function discoverFinishStatus() {
-  const s = discoverState;
-  if (s.status && s.status.includes('dc-warn')) return;
-  const visible = discoverVisibleResults().list.length;
-  if (s.results.length === 0) {
-    const c = s.criteria;
-    const relaxable = c.genre || c.tag || c.yearFrom || c.yearTo;
-    s.status = `<span class="dc-warn">Aucun résultat avec ces critères.</span>` +
-      (relaxable ? ` <button type="button" class="dc-link-btn" onclick="discoverRelax()">Relancer sans genre ni période</button>` : '');
-  } else if (visible === 0) {
-    s.status = 'Tous les résultats sont masqués par tes filtres (collection, popularité).';
-  } else {
-    s.status = '';
-  }
-}
-
-function discoverRelax() {
-  const c = discoverState.criteria;
-  c.genre = '';
-  c.tag = '';
-  c.yearFrom = '';
-  c.yearTo = '';
-  if (!c.artist) {
-    showToast("⚠️ Indique un artiste pour élargir la recherche");
-    refreshDiscoverPage();
-    return;
-  }
-  refreshDiscoverPage();
-  startDiscoverSearch();
-}
-
-/* ---------- Mode « similaire à » ---------- */
-async function discoverStartSimilar(runId) {
-  const s = discoverState;
-  const c = s.criteria;
-  const data = await lastfmCall('artist.getSimilar', { artist: c.artist, limit: 40 });
-  if (!discoverAlive(runId)) return;
-
-  const block = data.similarartists || {};
-  s.startArtist = (block['@attr'] && block['@attr'].artist) || c.artist;
-  const startNorm = mbNormalize(s.startArtist);
-
-  s.queue = asArray(block.artist)
-    .filter(a => mbNormalize(a.name) !== startNorm)
-    .map(a => ({ name: a.name, mbid: a.mbid || '', match: parseFloat(a.match) || 0 }));
-  s.total = s.queue.length;
-
-  if (s.queue.length === 0) {
-    s.status = `<span class="dc-warn">Last.fm ne connaît aucun artiste similaire à « ${mbEscapeHTML(s.startArtist)} ».</span>`;
-    return;
-  }
-
-  let rounds = 0;
-  do {
-    await discoverProcessSimilarBatch(runId);
-    rounds++;
-  } while (discoverAlive(runId) && rounds < 2 && s.queue.length > 0 && discoverVisibleResults().list.length < DISCOVER_MIN_RESULTS);
-}
-
-async function discoverProcessSimilarBatch(runId) {
-  const s = discoverState;
-  for (let i = 0; i < DISCOVER_BATCH_ARTISTS && s.queue.length > 0; i++) {
-    if (!discoverAlive(runId)) return;
-
-    const artist = s.queue[0];
-
-    let items = [];
-    try {
-      items = await discoverAnalyzeArtist(artist);
-    } catch (err) {
-      if (isFatalDiscoverError(err)) throw err;
-      console.warn('Artiste ignoré :', artist.name, err);
-    }
-    if (!discoverAlive(runId)) return;
-
-    s.queue.shift();
-    s.processed++;
-    items.forEach(item => {
-      item.idx = s.results.length;
-      s.results.push(item);
-    });
-  }
-}
-
-// Albums phares d'un artiste similaire, filtrés (genre, période) et enrichis (dates MusicBrainz)
-async function discoverAnalyzeArtist(artist) {
-  const c = discoverState.criteria;
-  const required = discoverRequiredTags(c);
-
-  const [albumsData, tagsData, mb] = await Promise.all([
-    lastfmCall('artist.getTopAlbums', { artist: artist.name, limit: 20 }),
-    lastfmCall('artist.getTopTags', { artist: artist.name }).catch(err => {
-      if (isFatalDiscoverError(err)) throw err;
-      return null;
-    }),
-    discoverMbArtistGroups(artist),
-  ]);
-
-  const artistTags = asArray(tagsData && tagsData.toptags && tagsData.toptags.tag)
-    .slice(0, 8)
-    .map(t => String(t.name).toLowerCase());
-  if (!discoverTagsMatch(artistTags, required)) return [];
-
-  const groups = discoverIndexGroups(mb.groups);
-  const found = new Map(); // dédoublonnage par titre de base
-
-  asArray(albumsData.topalbums && albumsData.topalbums.album).forEach(album => {
-    const title = album.name;
-    if (!title || title === '(null)' || MB_PARASITE_REGEX.test(title)) return;
-
-    const baseKey = mbBaseTitle(title);
-    const entry = groups.get(baseKey);
-    const group = entry ? entry.g : null;
-    const year = discoverYearOf(group);
-
-    // Année demandée : on écarte ce dont la date est hors période, et ce que MusicBrainz ne connaît pas
-    // (sauf si MusicBrainz n'a pas répondu : on ne peut alors pas trancher)
-    const hasYearFilter = !!(parseInt(c.yearFrom, 10) || parseInt(c.yearTo, 10));
-    if (hasYearFilter && mb.ok && !discoverYearOk(year, c)) return;
-    if (hasYearFilter && !mb.ok && year && !discoverYearOk(year, c)) return;
-
-    const playcount = parseInt(album.playcount, 10) || 0;
-    const reissue = MB_REISSUE_REGEX.test(title) ? 1 : 0;
-    const current = found.get(baseKey);
-    if (current && (current.reissue < reissue || (current.reissue === reissue && current.playcount >= playcount))) return;
-
-    found.set(baseKey, {
-      key: `${mbNormalize(artist.name)}|${baseKey}`,
-      artist: artist.name,
-      title,
-      year,
-      date: group ? (group['first-release-date'] || '') : '',
-      mbGroup: group,
-      mbid: group ? group.id : '',
-      primary: group ? group['primary-type'] : '',
-      secondary: group ? asArray(group['secondary-types']) : [],
-      playcount,
-      image: lfmImage(album.image),
-      lastfmUrl: album.url || '',
-      match: artist.match,
-      tags: artistTags,
-      mainGenre: discoverGuessGenre(artistTags),
-      reissue,
-      artistMbid: artist.mbid || discoverArtistMbid(group),
-    });
-  });
-
-  return discoverPickAlbums(Array.from(found.values()));
-}
-
-// Un album par artiste : le plus écouté des albums studio (les live, compilations et EP ne passent
-// que s'il n'y a rien d'autre).
-function discoverPickAlbums(items) {
-  const isStudio = i => i.secondary.length === 0 && i.primary !== 'EP';
-  const studio = items.filter(isStudio);
-  const pool = (studio.length > 0 ? studio : items).slice().sort((a, b) => b.playcount - a.playcount);
-  return pool.slice(0, DISCOVER_ALBUMS_PER_ARTIST);
-}
-
-/* ---------- Mode « genre / tag + période » ---------- */
-async function discoverStartTag(runId) {
-  const s = discoverState;
-  const c = s.criteria;
-  const tags = discoverRequiredTags(c).slice(0, 4);
-  if (tags.length === 0) return;
-
-  const from = parseInt(c.yearFrom, 10);
-  const to = parseInt(c.yearTo, 10);
-  let dateClause = '';
-  if (from || to) dateClause = ` AND firstreleasedate:[${from || 1900} TO ${to || (new Date().getFullYear() + 1)}-12-31]`;
-
-  const tagClause = tags.map(t => `tag:"${t.replace(/["\\]/g, ' ')}"`).join(' OR ');
-  const query = `(${tagClause}) AND primarytype:Album${dateClause} AND NOT (${DISCOVER_MB_EXCLUDED})`;
-  const data = await mbFetchJson(`${MB_API}/release-group/?query=${encodeURIComponent(query)}&fmt=json&limit=100`);
-  if (!discoverAlive(runId)) return;
-
-  // Filtre (hommages, reprises...), dédoublonnage (une édition par album) et période
-  const seen = new Set();
-  const candidates = (data['release-groups'] || [])
-    .filter(g => !MB_PARASITE_REGEX.test(g.title || '') && !MB_PARASITE_REGEX.test(mbArtistName(g)))
-    .filter(g => discoverYearOk(discoverYearOf(g), c))
-    .filter(g => {
-      const key = `${mbNormalize(mbArtistName(g))}|${mbBaseTitle(g.title)}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .sort((a, b) =>
-      (mbTypeRank(a) - mbTypeRank(b)) ||
-      ((MB_REISSUE_REGEX.test(a.title) ? 1 : 0) - (MB_REISSUE_REGEX.test(b.title) ? 1 : 0)) ||
-      ((b.score || 0) - (a.score || 0)));
-
-  // Un seul album par artiste
-  const perArtist = new Map();
-  const limited = candidates.filter(g => {
-    const artistKey = mbNormalize(mbArtistName(g));
-    const count = perArtist.get(artistKey) || 0;
-    if (count >= DISCOVER_ALBUMS_PER_ARTIST) return false;
-    perArtist.set(artistKey, count + 1);
-    return true;
-  });
-
-  s.queue = limited;
-  s.total = limited.length;
-
-  if (limited.length === 0) return;
-
-  let rounds = 0;
-  do {
-    await discoverProcessTagBatch(runId);
-    rounds++;
-  } while (discoverAlive(runId) && rounds < 2 && s.queue.length > 0 && discoverVisibleResults().list.length < DISCOVER_MIN_RESULTS);
-}
-
-async function discoverLastfmAlbumInfo(artist, title) {
-  try {
-    const data = await lastfmCall('album.getInfo', { artist, album: title });
-    const album = data.album || {};
-    return {
-      playcount: parseInt(album.playcount, 10) || 0,
-      listeners: parseInt(album.listeners, 10) || 0,
-      image: lfmImage(album.image),
-      url: album.url || '',
-    };
-  } catch (err) {
-    if (isFatalDiscoverError(err)) throw err;
-    return { playcount: 0, listeners: 0, image: '', url: '' }; // album inconnu de Last.fm : très confidentiel
-  }
-}
-
-async function discoverProcessTagBatch(runId) {
-  const s = discoverState;
-  const batch = s.queue.slice(0, DISCOVER_TAG_BATCH);
-
-  for (let i = 0; i < batch.length; i += 4) {
-    if (!discoverAlive(runId)) return;
-
-    const chunk = batch.slice(i, i + 4);
-
-    const infos = await Promise.all(chunk.map(g => discoverLastfmAlbumInfo(mbArtistName(g), g.title)));
-    if (!discoverAlive(runId)) return;
-
-    chunk.forEach((g, k) => {
-      const info = infos[k];
-      const tags = discoverGroupTags(g);
-      const artist = mbArtistName(g);
-      s.results.push({
-        idx: s.results.length,
-        key: `${mbNormalize(artist)}|${mbBaseTitle(g.title)}`,
-        artist,
-        title: g.title,
-        year: discoverYearOf(g),
-        date: g['first-release-date'] || '',
-        mbGroup: g,
-        mbid: g.id,
-        primary: g['primary-type'],
-        secondary: asArray(g['secondary-types']),
-        playcount: info.playcount,
-        image: info.image,
-        lastfmUrl: info.url,
-        match: null,
-        mbScore: g.score || 0,
-        tags,
-        mainGenre: discoverGuessGenre(tags) || s.criteria.genre,
-        reissue: MB_REISSUE_REGEX.test(g.title) ? 1 : 0,
-        artistMbid: discoverArtistMbid(g),
-      });
-    });
-
-    s.queue.splice(0, chunk.length);
-    s.processed += chunk.length;
-  }
-}
-
-/* ---------- Affichage des résultats ---------- */
-// Tri commun aux résultats et à la discographie. Par défaut : du plus populaire au moins populaire.
-function discoverSortList(list, sort) {
-  const byYear = (x, y, dir) => ((x.year || (dir > 0 ? 9999 : 0)) - (y.year || (dir > 0 ? 9999 : 0))) * dir;
-  return list.sort((a, b) => {
-    if (sort === 'year-asc') return byYear(a, b, 1) || b.playcount - a.playcount;
-    if (sort === 'year-desc') return byYear(a, b, -1) || b.playcount - a.playcount;
-    if (sort === 'relevance') {
-      // Pertinence : similarité de l'artiste (mode similaire) ou score MusicBrainz (mode genre), puis popularité
-      const ra = a.match != null ? a.match : (a.mbScore || 0) / 100;
-      const rb = b.match != null ? b.match : (b.mbScore || 0) / 100;
-      return (rb - ra) || (a.reissue - b.reissue) || (b.playcount - a.playcount);
-    }
-    // Popularité (par défaut) : les plus écoutés d'abord, puis les artistes les plus proches
-    return (b.playcount - a.playcount) || ((b.match || 0) - (a.match || 0)) || byYear(a, b, 1);
-  });
-}
-
-function discoverVisibleResults() {
-  const s = discoverState;
-  const c = s.criteria;
-  const { owned, ideas } = discoverOwnedSets();
-
-  let list = s.results.map(r => ({ ...r, isOwned: owned.has(r.key), isIdea: ideas.has(r.key) }));
-  const total = list.length;
-  if (c.hideOwned) list = list.filter(r => !r.isOwned && !r.isIdea);
-  const hiddenOwned = total - list.length;
-
-  return { list: discoverSortList(list, c.sort), hiddenOwned };
-}
-
-function discoverCoverHTML(r) {
-  const caa = r.mbid ? `https://coverartarchive.org/release-group/${r.mbid}/front-250` : '';
-  const primary = r.image || caa;
-  const fallback = r.image ? caa : '';
-  const img = primary
-    ? `<img src="${mbEscapeHTML(primary)}" data-fallback="${mbEscapeHTML(fallback)}" alt="" loading="lazy" onerror="discoverCoverError(this)">`
-    : '';
-  return `<div class="dc-cover"><span class="dc-cover-ph">💿</span>${img}</div>`;
 }
 
 function discoverCoverError(img) {
@@ -4028,234 +3582,6 @@ function discoverCoverError(img) {
   img.style.display = 'none';
 }
 
-function discoverItemHTML(r, listName = 'r') {
-  const color = getSingleGenreColor(r.mainGenre ? r.mainGenre.toUpperCase() : 'AUTRE');
-  const genreLabel = r.mainGenre ? `<div class="dc-genre" style="color:${color}">${mbEscapeHTML(r.mainGenre)}</div>` : '';
-
-  const labels = [];
-  if (r.year) labels.push(r.year);
-  if (r.primary === 'EP') labels.push('EP');
-  r.secondary.forEach(t => labels.push(t));
-
-  const chips = [];
-  if (r.playcount > 0) chips.push(`<span class="dc-chip dc-chip-pop">🔥 ${fmtCount(r.playcount)} écoutes</span>`);
-  if (r.match != null) chips.push(`<span class="dc-chip dc-chip-match">≈ ${Math.round(r.match * 100)} % similaire</span>`);
-
-  let action;
-  if (r.isOwned) action = `<span class="dc-owned">✔ Dans ma collection</span>`;
-  else if (r.isIdea) action = `<span class="dc-owned">💡 Déjà dans mes idées</span>`;
-  else action = `<button type="button" class="dc-add" onclick="discoverAddToIdeas('${listName}', ${r.idx})">＋ Ajouter aux idées</button>`;
-
-  const discoBtn = listName === 'r'
-    ? `<button type="button" class="dc-disco-link" data-artist="${mbEscapeHTML(r.artist)}" data-mbid="${mbEscapeHTML(r.artistMbid || '')}" onclick="discoverShowDiscography(this.dataset.artist, this.dataset.mbid)">📀 Discographie</button>`
-    : '';
-  const link = r.lastfmUrl
-    ? `<a class="dc-link" href="${mbEscapeHTML(r.lastfmUrl)}" target="_blank" rel="noopener">Last.fm ↗</a>`
-    : '';
-
-  return `
-    <div class="list-item dc-item" style="border-color:${color}; --glow:${color}; border-left-width:6px;">
-      ${discoverCoverHTML(r)}
-      <div class="dc-info">
-        ${genreLabel}
-        <div class="dc-title">${mbEscapeHTML(r.title)}</div>
-        <div class="dc-artist">${mbEscapeHTML(r.artist)}</div>
-        ${labels.length ? `<div class="dc-meta">${labels.map(mbEscapeHTML).join(' · ')}</div>` : ''}
-        ${chips.length ? `<div class="dc-chips">${chips.join('')}</div>` : ''}
-        <div class="dc-actions">${action}${discoBtn}${link}</div>
-      </div>
-    </div>`;
-}
-
-function renderDiscoverResults() {
-  const s = discoverState;
-  const box = document.getElementById('dc-results');
-  const statusEl = document.getElementById('dc-status');
-  const moreEl = document.getElementById('dc-more');
-  if (!box || !statusEl || !moreEl) return;
-
-  // Vue « discographie complète d'un artiste »
-  if (s.view === 'disco' && s.disco) {
-    const d = s.disco;
-    const { owned, ideas } = discoverOwnedSets();
-    // Une discographie se lit par dates : du plus ancien au plus récent (ou l'inverse si « Année ↓ » est choisi)
-    const discoSort = s.criteria.sort === 'year-desc' ? 'year-desc' : 'year-asc';
-    const items = discoverSortList(d.items.map(r => ({ ...r, isOwned: owned.has(r.key), isIdea: ideas.has(r.key) })), discoSort);
-
-    box.innerHTML = `
-      <div class="dc-disco-head">
-        <button type="button" class="btn-secondary dc-back-results" onclick="discoverBackToResults()">← Retour aux résultats</button>
-        <div class="dc-disco-title">📀 Discographie de <span class="dc-disco-artist">${mbEscapeHTML(d.artist)}</span></div>
-      </div>` + items.map(r => discoverItemHTML(r, 'd')).join('');
-
-    statusEl.classList.remove('dc-status-running');
-    statusEl.innerHTML = d.status || '';
-    statusEl.classList.toggle('hidden', !d.status);
-    moreEl.classList.add('hidden');
-    return;
-  }
-
-  // Pendant la recherche : aucun résultat n'est (ré)affiché, pour éviter que les albums ne montent et
-  // redescendent au fil de l'arrivée des données. Tout apparaît d'un coup à la fin.
-  statusEl.classList.toggle('dc-status-running', s.running);
-  if (s.running) {
-    statusEl.textContent = '⏳ Recherche en cours…';
-    statusEl.classList.remove('hidden');
-    moreEl.classList.add('hidden');
-    return;
-  }
-
-  const { list, hiddenOwned } = discoverVisibleResults();
-
-  box.innerHTML = list.map(r => discoverItemHTML(r, 'r')).join('');
-
-  let status = s.status || '';
-  if (s.started && list.length > 0) {
-    const hidden = hiddenOwned > 0 ? ` <span class="dc-muted">(${hiddenOwned} déjà dans ta collection ou tes idées, masqué${hiddenOwned > 1 ? 's' : ''})</span>` : '';
-    status = `<strong>${list.length}</strong> résultat${list.length > 1 ? 's' : ''}${hidden}` + (status ? `<br>${status}` : '');
-  }
-  statusEl.innerHTML = status;
-  statusEl.classList.toggle('hidden', !status);
-
-  const canLoadMore = s.started && !s.running && s.queue.length > 0;
-  moreEl.classList.toggle('hidden', !canLoadMore);
-  if (canLoadMore) {
-    moreEl.textContent = s.mode === 'similar'
-      ? `Voir plus (${s.queue.length} artiste${s.queue.length > 1 ? 's' : ''} restant${s.queue.length > 1 ? 's' : ''})`
-      : `Voir plus (${s.queue.length} album${s.queue.length > 1 ? 's' : ''} restant${s.queue.length > 1 ? 's' : ''})`;
-  }
-}
-
-/* ---------- Discographie complète d'un artiste ---------- */
-function discoverScrollToResults() {
-  const box = document.getElementById('dc-results');
-  if (box) window.scrollTo({ top: Math.max(0, box.getBoundingClientRect().top + window.scrollY - 175), behavior: 'smooth' });
-}
-
-// Bouton du formulaire : discographie de l'artiste saisi dans « Similaire à »
-function discoverShowDiscographyFromForm() {
-  readDiscoverCriteria();
-  const name = discoverState.criteria.artist;
-  if (!name) {
-    showToast("⚠️ Indique d'abord un artiste dans « Similaire à »");
-    return;
-  }
-  discoverShowDiscography(name, '');
-}
-
-async function discoverShowDiscography(name, mbid) {
-  const s = discoverState;
-  if (!name) return;
-  if (!getLastfmKey()) {
-    s.showKeyCard = true;
-    s.status = '<span class="dc-warn">🔑 Ajoute d\'abord ta clé API Last.fm ci-dessus.</span>';
-    refreshDiscoverPage();
-    return;
-  }
-
-  // Une recherche en cours est mise en pause (elle reprendra avec « Voir plus »)
-  s.runId++;
-  s.running = false;
-  const runId = s.runId;
-
-  s.view = 'disco';
-  s.disco = { artist: name, mbid: mbid || '', items: [], loading: true, status: `Chargement de la discographie de <strong>${mbEscapeHTML(name)}</strong>…` };
-  renderDiscoverResults();
-  discoverScrollToResults();
-
-  try {
-    // Nom exact et identifiant MusicBrainz de l'artiste (via Last.fm) pour une recherche précise
-    const artist = { name, mbid: mbid || '' };
-    if (!artist.mbid) {
-      try {
-        const info = await lastfmCall('artist.getInfo', { artist: name });
-        if (info.artist) {
-          artist.name = info.artist.name || name;
-          artist.mbid = info.artist.mbid || '';
-        }
-      } catch (err) {
-        if (isFatalDiscoverError(err)) throw err;
-      }
-    }
-    if (!discoverAlive(runId)) return;
-    s.disco.artist = artist.name;
-
-    const [mb, top] = await Promise.all([
-      discoverMbArtistGroups(artist, 2),
-      lastfmCall('artist.getTopAlbums', { artist: artist.name, limit: 100 }).catch(err => {
-        if (isFatalDiscoverError(err)) throw err;
-        return null;
-      }),
-    ]);
-    if (!discoverAlive(runId)) return;
-
-    if (!mb.ok) {
-      s.disco.loading = false;
-      s.disco.status = '<span class="dc-warn">⏳ MusicBrainz n\'a pas répondu (trop de requêtes ?). Réessaie dans un instant.</span>';
-      renderDiscoverResults();
-      return;
-    }
-
-    // Popularité Last.fm, retrouvée par titre
-    const popularity = new Map();
-    asArray(top && top.topalbums && top.topalbums.album).forEach(album => {
-      if (!album.name) return;
-      const key = mbBaseTitle(album.name);
-      const playcount = parseInt(album.playcount, 10) || 0;
-      const current = popularity.get(key);
-      if (!current || playcount > current.playcount) popularity.set(key, { playcount, image: lfmImage(album.image), url: album.url || '' });
-    });
-
-    // Une édition par album (l'originale), sans hommages ni reprises : mêmes filtres que la recherche
-    const items = [];
-    discoverIndexGroups(mb.groups).forEach(({ g }) => {
-      if (MB_PARASITE_REGEX.test(g.title || '')) return;
-      const pop = popularity.get(mbBaseTitle(g.title)) || { playcount: 0, image: '', url: '' };
-      const tags = discoverGroupTags(g);
-      items.push({
-        idx: items.length,
-        key: `${mbNormalize(artist.name)}|${mbBaseTitle(g.title)}`,
-        artist: artist.name,
-        title: g.title,
-        year: discoverYearOf(g),
-        date: g['first-release-date'] || '',
-        mbGroup: g,
-        mbid: g.id,
-        primary: g['primary-type'],
-        secondary: asArray(g['secondary-types']),
-        playcount: pop.playcount,
-        image: pop.image,
-        lastfmUrl: pop.url,
-        match: null,
-        tags,
-        mainGenre: discoverGuessGenre(tags),
-        reissue: MB_REISSUE_REGEX.test(g.title) ? 1 : 0,
-        artistMbid: artist.mbid,
-      });
-    });
-
-    s.disco.items = items;
-    s.disco.loading = false;
-    s.disco.status = items.length === 0 ? '<span class="dc-warn">Aucun album trouvé pour cet artiste.</span>' : '';
-    renderDiscoverResults();
-  } catch (err) {
-    if (runId !== s.runId) return;
-    s.view = 'results';
-    s.disco = null;
-    discoverHandleError(err);
-  }
-}
-
-function discoverBackToResults() {
-  const s = discoverState;
-  s.runId++; // annule un éventuel chargement de discographie
-  s.view = 'results';
-  s.disco = null;
-  renderDiscoverResults();
-  discoverScrollToResults();
-}
-
-/* ---------- Ajout aux idées (formulaire pré-rempli) ---------- */
 async function discoverAddToIdeas(listName, idx) {
   const list = listName === 'd' ? (discoverState.disco ? discoverState.disco.items : []) : discoverState.results;
   const r = list[idx];
@@ -4304,7 +3630,6 @@ async function discoverAddToIdeas(listName, idx) {
   }
 }
 
-/* ---------- Pages : hub « Créer » et « Découverte » ---------- */
 function prepareSubPage(title) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'none';
@@ -4340,13 +3665,828 @@ function renderCreateHub() {
   `;
 }
 
-function discoverArtistOptionsHTML() {
+function saveLastfmKeyFromInput() {
+  const input = document.getElementById('dc-key-input');
+  const key = input ? input.value.trim() : '';
+  if (!/^[0-9a-fA-F]{32}$/.test(key)) {
+    showToast("⚠️ Une clé Last.fm compte 32 caractères (chiffres et lettres a-f)");
+    return;
+  }
+  localStorage.setItem(LASTFM_KEY_STORAGE, key);
+  discoverCache.clear();
+  const s = discoverState;
+  s.showKeyCard = false;
+  s.status = '';
+  showToast("🔑 Clé Last.fm enregistrée");
+  refreshDiscoverPage();
+  if (s.pendingAuto) startDiscoverSearch();
+}
+
+function discoverChangeKey() {
+  discoverState.showKeyCard = true;
+  refreshDiscoverPage();
+  document.getElementById('dc-key-input')?.focus();
+}
+
+function openSimilarSearch(mdIndex, albumIndex) {
+  const md = catalogData && catalogData[mdIndex];
+  if (!md) return;
+
+  const hasAlbum = albumIndex !== null && albumIndex !== undefined && md.albums && md.albums[albumIndex];
+  const albums = hasAlbum ? [md.albums[albumIndex]] : (md.albums && md.albums.length ? md.albums : [md]);
+  const artists = Array.from(new Set(albums.map(a => (a.artist || '').trim()).filter(isRealArtist)));
+  const ref = albums[0];
+
+  const params = new URLSearchParams();
+  if (artists[0]) params.set('artist', artists[0]);
+  if (artists.length > 1) params.set('artists', artists.join('|'));
+  const genre = ref.main_genre || md.main_genre || '';
+  if (genre) params.set('genre', genre);
+  const year = parseInt(ref.release_year, 10);
+  if (year) params.set('year', String(year));
+  params.set('auto', '1');
+
+  discoverBackHash = window.location.hash || '#dashboard';
+  window.location.hash = '#discover?' + params.toString();
+}
+
+function similarButtonHTML(mdIndex, albumIndex) {
+  const albumArg = albumIndex === null || albumIndex === undefined ? 'null' : albumIndex;
+  return `<button type="button" class="similar-fab" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">🔎 Trouver des artistes similaires</button>`;
+}
+
+/* ---------- Ce que je possède déjà ---------- */
+function discoverOwnedArtists() {
+  const owned = new Set();
+  const add = name => {
+    if (isRealArtist(name)) owned.add(mbNormalize(name));
+  };
+  (catalogData || []).forEach(md => {
+    add(md.artist);
+    (md.albums || []).forEach(a => add(a.artist));
+  });
+  (window.ideaAlbums || []).forEach(i => add(i.artist));
+  return owned;
+}
+
+function discoverOwnedAlbumKeys() {
+  const owned = new Set();
+  const ideas = new Set();
+  const add = (set, artist, title) => {
+    if (artist && title) set.add(`${mbNormalize(artist)}|${mbBaseTitle(title)}`);
+  };
+  (catalogData || []).forEach(md => {
+    add(owned, md.artist, md.title);
+    (md.albums || []).forEach(a => add(owned, a.artist, a.title));
+  });
+  (window.ideaAlbums || []).forEach(i => add(ideas, i.artist, i.title));
+  return { owned, ideas };
+}
+
+function discoverArtistNames() {
   const names = new Set();
   (catalogData || []).forEach(md => {
     if (isRealArtist(md.artist)) names.add(md.artist.trim());
     (md.albums || []).forEach(a => { if (isRealArtist(a.artist)) names.add(a.artist.trim()); });
   });
-  return Array.from(names).sort((a, b) => a.localeCompare(b)).map(n => `<option value="${mbEscapeHTML(n)}"></option>`).join('');
+  return Array.from(names).sort((a, b) => a.localeCompare(b));
+}
+
+/* ---------- Suggestions d'artistes (liste maison, placée SOUS le champ) ---------- */
+function discoverSuggest() {
+  const input = document.getElementById('dc-artist');
+  const box = document.getElementById('dc-suggest');
+  if (!input || !box) return;
+
+  const query = mbNormalize(input.value);
+  const names = discoverArtistNames()
+    .filter(n => mbNormalize(n) !== query && (!query || mbNormalize(n).includes(query)))
+    .slice(0, 6);
+
+  if (names.length === 0) {
+    box.classList.add('hidden');
+    return;
+  }
+  box.innerHTML = names.map(n =>
+    `<button type="button" class="dc-suggest-item" data-name="${mbEscapeHTML(n)}" onpointerdown="event.preventDefault(); discoverPickSuggestion(this.dataset.name)">${mbEscapeHTML(n)}</button>`
+  ).join('');
+  box.classList.remove('hidden');
+}
+
+function discoverHideSuggestSoon() {
+  setTimeout(() => {
+    const box = document.getElementById('dc-suggest');
+    if (box) box.classList.add('hidden');
+  }, 150);
+}
+
+function discoverPickSuggestion(name) {
+  const input = document.getElementById('dc-artist');
+  const box = document.getElementById('dc-suggest');
+  if (input) input.value = name;
+  if (box) box.classList.add('hidden');
+}
+
+/* ---------- Lancement d'une recherche ---------- */
+function discoverAlive(runId) {
+  return runId === discoverState.runId && !!document.getElementById('discover-page');
+}
+
+function readDiscoverCriteria() {
+  const val = id => {
+    const el = document.getElementById(id);
+    return el ? el.value : '';
+  };
+  const c = discoverState.criteria;
+  c.artist = val('dc-artist').trim();
+  c.genre = val('dc-genre');
+  c.tag = val('dc-tag').trim();
+  c.yearFrom = val('dc-year-from').trim();
+  c.yearTo = val('dc-year-to').trim();
+  readDiscoverViewOptions();
+}
+
+function readDiscoverViewOptions() {
+  const c = discoverState.criteria;
+  const sort = document.getElementById('dc-sort');
+  const hide = document.getElementById('dc-hide-owned');
+  if (sort) c.sort = sort.value;
+  if (hide) c.hideOwned = hide.checked;
+}
+
+function discoverResetResults() {
+  const s = discoverState;
+  s.candidates = [];
+  s.shown = 0;
+  s.extraShown = false;
+  s.lifespanNote = '';
+  s.status = '';
+  s.view = 'results';
+  s.disco = null;
+}
+
+async function startDiscoverSearch() {
+  const s = discoverState;
+  readDiscoverCriteria();
+  const c = s.criteria;
+
+  if (!getLastfmKey()) {
+    s.showKeyCard = true;
+    s.formOpen = true;
+    s.status = '<span class="dc-warn">🔑 Ajoute d\'abord ta clé API Last.fm ci-dessus.</span>';
+    s.pendingAuto = true;
+    refreshDiscoverPage();
+    return;
+  }
+  if (!c.artist && !c.genre && !c.tag.trim()) {
+    showToast("⚠️ Indique un artiste, un genre ou un tag");
+    return;
+  }
+
+  s.runId++;
+  const runId = s.runId;
+  discoverResetResults();
+  s.started = true;
+  s.running = true;
+  s.pendingAuto = false;
+  s.formOpen = false; // le formulaire se replie : il ne reste que le bandeau « Nouvelle recherche »
+  s.mode = c.artist ? 'similar' : 'tag';
+  refreshDiscoverPage();
+  window.scrollTo({ top: 0 });
+
+  try {
+    const pool = s.mode === 'similar' ? await discoverPoolSimilar() : await discoverPoolTag();
+    if (!discoverAlive(runId)) return;
+    if (pool.length > 0) {
+      await discoverEvaluatePool(pool, runId);
+      if (!discoverAlive(runId)) return;
+      await discoverApplyLifespan(runId);
+      if (!discoverAlive(runId)) return;
+      await discoverRevealMore(runId); // 1re page : les couvertures sont chargées avant l'affichage
+    }
+  } catch (err) {
+    if (runId === s.runId) discoverHandleError(err);
+  } finally {
+    if (runId === s.runId) {
+      s.running = false;
+      discoverFinishStatus(s.candidates.length === 0);
+      renderDiscoverResults();
+    }
+  }
+}
+
+// « Voir plus » : révèle la page suivante de la liste (déjà classée en entier au moment de la recherche)
+async function discoverLoadMore() {
+  const s = discoverState;
+  if (s.running) return;
+  s.running = true;
+  const runId = s.runId;
+  renderDiscoverResults();
+  try {
+    await discoverRevealMore(runId);
+  } catch (err) {
+    if (runId === s.runId) discoverHandleError(err);
+  } finally {
+    if (runId === s.runId) {
+      s.running = false;
+      renderDiscoverResults();
+    }
+  }
+}
+
+function discoverHandleError(err) {
+  const s = discoverState;
+  console.error(err);
+  let message;
+  if (err.code === 'nokey' || err.code === 10 || err.code === 26) {
+    s.showKeyCard = true;
+    s.formOpen = true;
+    message = '🔑 Clé API Last.fm absente, invalide ou refusée. Vérifie-la ci-dessus.';
+  } else if (err.code === 29 || err.rateLimited) {
+    message = '⏳ Le service limite le nombre de requêtes : réessaie dans une minute.';
+  } else if (err.code === 6) {
+    s.formOpen = true;
+    message = `Artiste « ${mbEscapeHTML(s.criteria.artist)} » introuvable sur Last.fm : vérifie l'orthographe.`;
+  } else if (isNetworkError(err)) {
+    message = '📡 Impossible de joindre Last.fm (connexion coupée ou requête bloquée par le navigateur).';
+  } else {
+    message = `⚠️ Une erreur est survenue (${mbEscapeHTML(err.message || 'inconnue')}).`;
+  }
+  s.status = `<span class="dc-warn">${message}</span>`;
+  refreshDiscoverPage();
+}
+
+// Message de fin de recherche
+function discoverFinishStatus(noCandidates) {
+  const s = discoverState;
+  if (s.status && s.status.includes('dc-warn')) return;
+  if (noCandidates) {
+    const c = s.criteria;
+    const relaxable = c.genre || c.tag || c.yearFrom || c.yearTo;
+    s.status = `<span class="dc-warn">Aucun résultat avec ces critères.</span>` +
+      (relaxable ? ` <button type="button" class="dc-link-btn" onclick="discoverRelax()">Relancer sans genre ni période</button>` : '');
+    s.formOpen = true;
+    refreshDiscoverPage();
+  } else {
+    s.status = '';
+  }
+}
+
+function discoverRelax() {
+  const c = discoverState.criteria;
+  c.genre = '';
+  c.tag = '';
+  c.yearFrom = '';
+  c.yearTo = '';
+  if (!c.artist) {
+    showToast("⚠️ Indique un artiste pour élargir la recherche");
+    refreshDiscoverPage();
+    return;
+  }
+  refreshDiscoverPage();
+  startDiscoverSearch();
+}
+
+/* ---------- Étape 1 : la liste d'artistes candidats (Last.fm uniquement) ---------- */
+async function discoverPoolSimilar() {
+  const s = discoverState;
+  const data = await lastfmCall('artist.getSimilar', { artist: s.criteria.artist, limit: DISCOVER_POOL_SIZE + 5 });
+  const block = data.similarartists || {};
+  s.startArtist = (block['@attr'] && block['@attr'].artist) || s.criteria.artist;
+  const startNorm = mbNormalize(s.startArtist);
+
+  return asArray(block.artist)
+    .filter(a => mbNormalize(a.name) !== startNorm)
+    .slice(0, DISCOVER_POOL_SIZE)
+    .map(a => ({ name: a.name, mbid: a.mbid || '', match: parseFloat(a.match) || 0, url: a.url || '' }));
+}
+
+// Sans artiste de départ : les artistes les plus écoutés du ou des tags (genre), en alternant les tags
+async function discoverPoolTag() {
+  const tags = discoverRequiredTags(discoverState.criteria).slice(0, 3);
+  const lists = [];
+  for (const tag of tags) {
+    const data = await lastfmCall('tag.getTopArtists', { tag, limit: DISCOVER_POOL_SIZE });
+    lists.push(asArray(data.topartists && data.topartists.artist));
+  }
+
+  const seen = new Set();
+  const pool = [];
+  for (let i = 0; i < DISCOVER_POOL_SIZE && pool.length < DISCOVER_POOL_SIZE; i++) {
+    lists.forEach(list => {
+      const a = list[i];
+      if (!a || pool.length >= DISCOVER_POOL_SIZE) return;
+      const key = mbNormalize(a.name);
+      if (seen.has(key)) return;
+      seen.add(key);
+      pool.push({ name: a.name, mbid: a.mbid || '', match: null, url: a.url || '' });
+    });
+  }
+  return pool;
+}
+
+/* ---------- Étape 2 : popularité et tags de chaque candidat (Last.fm) ---------- */
+async function discoverEvaluatePool(pool, runId) {
+  const s = discoverState;
+  const required = s.mode === 'similar' ? discoverRequiredTags(s.criteria) : [];
+
+  for (let i = 0; i < pool.length; i += DISCOVER_INFO_CONCURRENCY) {
+    if (!discoverAlive(runId)) return;
+    const chunk = pool.slice(i, i + DISCOVER_INFO_CONCURRENCY);
+
+    const infos = await Promise.all(chunk.map(a =>
+      lastfmCall('artist.getInfo', { artist: a.name }).catch(err => {
+        if (isFatalDiscoverError(err)) throw err;
+        return null;
+      })
+    ));
+    if (!discoverAlive(runId)) return;
+
+    chunk.forEach((a, k) => {
+      const info = infos[k] && infos[k].artist;
+      if (!info) return;
+      const tags = asArray(info.tags && info.tags.tag).map(t => String(t.name).toLowerCase());
+      if (!discoverTagsMatch(tags, required)) return; // genre / tag demandé
+
+      const stats = info.stats || {};
+      s.candidates.push({
+        idx: s.candidates.length,
+        key: mbNormalize(info.name || a.name),
+        artist: info.name || a.name,
+        mbid: info.mbid || a.mbid,
+        match: a.match,
+        listeners: parseInt(stats.listeners, 10) || 0,
+        playcount: parseInt(stats.playcount, 10) || 0,
+        tags,
+        mainGenre: discoverGuessGenre(tags) || s.criteria.genre || '',
+        lastfmUrl: info.url || a.url || '',
+        topAlbum: null,
+        topLoaded: false,
+      });
+    });
+  }
+}
+
+/* ---------- Étape 3 (si une période est demandée) : années d'activité, en une seule requête MusicBrainz ---------- */
+async function discoverApplyLifespan(runId) {
+  const s = discoverState;
+  const c = s.criteria;
+  const from = parseInt(c.yearFrom, 10);
+  const to = parseInt(c.yearTo, 10);
+  s.lifespanNote = '';
+  if (!from && !to) return;
+
+  const withId = s.candidates.filter(a => a.mbid);
+  if (withId.length === 0) return;
+
+  const spans = new Map();
+  try {
+    const query = `arid:(${withId.map(a => a.mbid).join(' OR ')})`;
+    const data = await mbFetchJson(`${MB_API}/artist/?query=${encodeURIComponent(query)}&fmt=json&limit=100`);
+    asArray(data.artists).forEach(x => spans.set(x.id, x['life-span'] || {}));
+  } catch (err) {
+    s.lifespanNote = "Période non vérifiée (MusicBrainz n'a pas répondu).";
+    return;
+  }
+  if (!discoverAlive(runId)) return;
+
+  // On garde les artistes dont la période d'activité recoupe [from, to] (et ceux dont les dates sont inconnues)
+  const nowYear = new Date().getFullYear();
+  s.candidates = s.candidates.filter(a => {
+    const span = spans.get(a.mbid);
+    if (!span) return true;
+    const begin = parseInt(String(span.begin || '').slice(0, 4), 10);
+    if (!begin) return true;
+    const end = span.ended ? (parseInt(String(span.end || '').slice(0, 4), 10) || nowYear) : nowYear;
+    return (!to || begin <= to) && (!from || end >= from);
+  });
+  s.candidates.forEach((a, i) => { a.idx = i; });
+}
+
+/* ---------- Classement GLOBAL : calculé une fois sur tous les candidats, la pagination ne fait que révéler la suite ---------- */
+function discoverPercentile(values) {
+  const n = values.length;
+  return v => {
+    if (n <= 1) return 1;
+    const below = values.filter(x => x < v).length;
+    const equal = values.filter(x => x === v).length;
+    return (below + (equal - 1) / 2) / (n - 1);
+  };
+}
+
+function discoverComputeOrder() {
+  const s = discoverState;
+  const c = s.criteria;
+  const owned = c.hideOwned ? discoverOwnedArtists() : new Set();
+  const all = s.candidates.filter(a => !owned.has(a.key));
+  const hiddenOwned = s.candidates.length - all.length;
+
+  // Popularité et similarité mesurées en rang (0 à 1) pour peser autant l'une que l'autre, sans qu'une échelle écrase l'autre
+  const popRank = discoverPercentile(all.map(a => a.listeners));
+  const simRank = discoverPercentile(all.filter(a => a.match != null).map(a => a.match));
+  all.forEach(a => {
+    a.lowTier = false;
+    a.score = a.match == null
+      ? popRank(a.listeners)
+      : DISCOVER_WEIGHT_POP * popRank(a.listeners) + DISCOVER_WEIGHT_SIM * simRank(a.match);
+    a.qualified = (a.match == null || a.match >= DISCOVER_MIN_MATCH) && a.listeners >= DISCOVER_MIN_LISTENERS;
+  });
+
+  const compare = c.sort === 'popularity'
+    ? (a, b) => b.listeners - a.listeners
+    : c.sort === 'similarity'
+      ? (a, b) => ((b.match || 0) - (a.match || 0)) || (b.listeners - a.listeners)
+      : (a, b) => (b.score - a.score) || (b.listeners - a.listeners);
+
+  let main = all.filter(a => a.qualified).sort(compare);
+  const extra = all.filter(a => !a.qualified).sort(compare);
+
+  // Pas assez de résultats "de qualité" : on complète avec les meilleurs des autres, et seulement ce qu'il faut
+  const missing = DISCOVER_PAGE_SIZE - main.length;
+  if (missing > 0 && extra.length > 0) {
+    const filler = extra.splice(0, missing);
+    filler.forEach(a => { a.lowTier = true; });
+    main = main.concat(filler);
+  }
+  if (s.extraShown) extra.forEach(a => { a.lowTier = true; });
+
+  return { list: s.extraShown ? main.concat(extra) : main, main, extra, hiddenOwned };
+}
+
+// Couverture = pochette de l'album le plus écouté de l'artiste (Last.fm)
+async function discoverFillTopAlbums(items) {
+  const todo = items.filter(a => !a.topLoaded);
+  await Promise.all(todo.map(async a => {
+    try {
+      const data = await lastfmCall('artist.getTopAlbums', { artist: a.artist, limit: 4 });
+      const albums = asArray(data.topalbums && data.topalbums.album)
+        .filter(x => x.name && x.name !== '(null)' && !MB_PARASITE_REGEX.test(x.name));
+      const best = albums.find(x => lfmImage(x.image)) || albums[0];
+      if (best) a.topAlbum = { title: best.name, image: lfmImage(best.image) };
+    } catch (err) {
+      if (isFatalDiscoverError(err)) throw err;
+    }
+    a.topLoaded = true;
+  }));
+}
+
+// Révèle la page suivante (ou, quand tout est affiché, les artistes moins proches / moins connus)
+async function discoverRevealMore(runId) {
+  const s = discoverState;
+  let order = discoverComputeOrder();
+  if (s.shown >= order.list.length && !s.extraShown && order.extra.length > 0) {
+    s.extraShown = true;
+    order = discoverComputeOrder();
+  }
+  const nextCount = Math.min(order.list.length, s.shown + DISCOVER_PAGE_SIZE);
+  await discoverFillTopAlbums(order.list.slice(s.shown, nextCount));
+  if (!discoverAlive(runId)) return;
+  s.shown = nextCount;
+}
+
+/* ---------- Affichage ---------- */
+function discoverCoverHTML(image, placeholder = '🎤') {
+  const img = image
+    ? `<img src="${mbEscapeHTML(image)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+    : '';
+  return `<div class="dc-cover"><span class="dc-cover-ph">${placeholder}</span>${img}</div>`;
+}
+
+function discoverLastfmLink(url) {
+  return url ? `<a class="dc-lastfm" href="${mbEscapeHTML(url)}" target="_blank" rel="noopener">Last.fm ↗</a>` : '';
+}
+
+function discoverArtistHTML(a) {
+  const color = getSingleGenreColor(a.mainGenre ? a.mainGenre.toUpperCase() : 'AUTRE');
+  const genreLabel = a.mainGenre ? `<div class="dc-genre" style="color:${color}">${mbEscapeHTML(a.mainGenre)}</div>` : '';
+
+  const chips = [];
+  if (a.listeners > 0) chips.push(`<span class="dc-chip dc-chip-pop">👥 ${fmtCount(a.listeners)} auditeurs</span>`);
+  if (a.match != null) chips.push(`<span class="dc-chip dc-chip-match">≈ ${Math.round(a.match * 100)} % similaire</span>`);
+
+  return `
+    <div class="list-item dc-item" style="border-color:${color}; --glow:${color}; border-left-width:6px;">
+      ${discoverLastfmLink(a.lastfmUrl)}
+      ${discoverCoverHTML(a.topAlbum && a.topAlbum.image)}
+      <div class="dc-info">
+        ${genreLabel}
+        <div class="dc-title">${mbEscapeHTML(a.artist)}</div>
+        ${a.topAlbum ? `<div class="dc-artist">Album phare : ${mbEscapeHTML(a.topAlbum.title)}</div>` : ''}
+        ${chips.length ? `<div class="dc-chips">${chips.join('')}</div>` : ''}
+        <div class="dc-actions">
+          <button type="button" class="dc-disco-link" data-artist="${mbEscapeHTML(a.artist)}" data-mbid="${mbEscapeHTML(a.mbid || '')}" onclick="discoverShowDiscography(this.dataset.artist, this.dataset.mbid)">📀 Discographie</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function discoverAlbumHTML(r) {
+  const color = getSingleGenreColor(r.mainGenre ? r.mainGenre.toUpperCase() : 'AUTRE');
+  const caa = r.mbid ? `https://coverartarchive.org/release-group/${r.mbid}/front-250` : '';
+
+  const labels = [];
+  if (r.year) labels.push(r.year);
+  if (r.primary === 'EP') labels.push('EP');
+  r.secondary.forEach(t => labels.push(t));
+
+  let action;
+  if (r.isOwned) action = `<span class="dc-owned">✔ Dans ma collection</span>`;
+  else if (r.isIdea) action = `<span class="dc-owned">💡 Déjà dans mes idées</span>`;
+  else action = `<button type="button" class="dc-add" onclick="discoverAddToIdeas('d', ${r.idx})">＋ Ajouter aux idées</button>`;
+
+  const cover = (r.image || caa)
+    ? `<div class="dc-cover"><span class="dc-cover-ph">💿</span><img src="${mbEscapeHTML(r.image || caa)}" data-fallback="${mbEscapeHTML(r.image ? caa : '')}" alt="" loading="lazy" onerror="discoverCoverError(this)"></div>`
+    : `<div class="dc-cover"><span class="dc-cover-ph">💿</span></div>`;
+
+  return `
+    <div class="list-item dc-item" style="border-color:${color}; --glow:${color}; border-left-width:6px;">
+      ${discoverLastfmLink(r.lastfmUrl)}
+      ${cover}
+      <div class="dc-info">
+        <div class="dc-title">${mbEscapeHTML(r.title)}</div>
+        ${labels.length ? `<div class="dc-meta">${labels.map(mbEscapeHTML).join(' · ')}</div>` : ''}
+        ${r.playcount > 0 ? `<div class="dc-chips"><span class="dc-chip dc-chip-pop">🔥 ${fmtCount(r.playcount)} écoutes</span></div>` : ''}
+        <div class="dc-actions">${action}</div>
+      </div>
+    </div>`;
+}
+
+function discoverSeparatorHTML(label) {
+  return `<div class="dc-separator"><span>${mbEscapeHTML(label)}</span></div>`;
+}
+
+function renderDiscoverResults() {
+  const s = discoverState;
+  const box = document.getElementById('dc-results');
+  const statusEl = document.getElementById('dc-status');
+  const moreEl = document.getElementById('dc-more');
+  if (!box || !statusEl || !moreEl) return;
+
+  // ----- Vue « discographie complète d'un artiste » -----
+  if (s.view === 'disco' && s.disco) {
+    const d = s.disco;
+    const { owned, ideas } = discoverOwnedAlbumKeys();
+    const mark = r => ({ ...r, isOwned: owned.has(r.key), isIdea: ideas.has(r.key) });
+
+    let html = `
+      <div class="dc-disco-head">
+        <button type="button" class="btn-secondary dc-back-results" onclick="discoverBackToResults()">← Retour aux résultats</button>
+        <div class="dc-disco-title">📀 Discographie de <span class="dc-disco-artist">${mbEscapeHTML(d.artist)}</span></div>
+      </div>`;
+
+    html += d.items.filter(r => r.official).map(r => discoverAlbumHTML(mark(r))).join('');
+
+    const others = d.items.filter(r => !r.official);
+    if (others.length > 0) {
+      html += discoverSeparatorHTML('Autres sorties');
+      html += `<button type="button" class="btn-secondary dc-others-toggle" onclick="discoverToggleOthers()">${d.showOthers ? 'Masquer' : 'Afficher'} les autres sorties (${others.length}) · live, compilations, EP…</button>`;
+      if (d.showOthers) html += others.map(r => discoverAlbumHTML(mark(r))).join('');
+    }
+    box.innerHTML = html;
+
+    statusEl.classList.remove('dc-status-running');
+    statusEl.innerHTML = d.status || '';
+    statusEl.classList.toggle('hidden', !d.status);
+    moreEl.classList.add('hidden');
+    return;
+  }
+
+  // ----- Recherche en cours : rien de nouveau n'est affiché, seul l'indicateur change -----
+  statusEl.classList.toggle('dc-status-running', s.running);
+  moreEl.classList.toggle('dc-more-running', s.running);
+  moreEl.disabled = s.running;
+  if (s.running) {
+    if (s.shown > 0) {
+      // « Voir plus » : la liste reste figée et le bouton lui-même indique que ça travaille
+      moreEl.textContent = '⏳ Recherche en cours…';
+      moreEl.classList.remove('hidden');
+      statusEl.classList.add('hidden');
+    } else {
+      statusEl.textContent = '⏳ Recherche en cours…';
+      statusEl.classList.remove('hidden');
+      moreEl.classList.add('hidden');
+    }
+    return;
+  }
+
+  // ----- Liste d'artistes -----
+  const order = discoverComputeOrder();
+  const visible = order.list.slice(0, s.shown);
+
+  let html = '';
+  let previousLow = false;
+  visible.forEach(a => {
+    if (a.lowTier && !previousLow) html += discoverSeparatorHTML('Moins proches ou moins connus');
+    previousLow = a.lowTier;
+    html += discoverArtistHTML(a);
+  });
+  box.innerHTML = html;
+
+  let status = s.status || '';
+  if (s.started && visible.length > 0) {
+    const parts = [`<strong>${visible.length}</strong> sur ${order.list.length} artiste${order.list.length > 1 ? 's' : ''}`];
+    if (order.hiddenOwned > 0) parts.push(`<span class="dc-muted">(${order.hiddenOwned} déjà dans ta collection ou tes idées, masqué${order.hiddenOwned > 1 ? 's' : ''})</span>`);
+    if (s.lifespanNote) parts.push(`<span class="dc-muted">${mbEscapeHTML(s.lifespanNote)}</span>`);
+    status = parts.join(' ') + (status ? `<br>${status}` : '');
+  } else if (s.started && s.candidates.length > 0 && visible.length === 0 && !status) {
+    status = 'Tous les artistes trouvés sont déjà dans ta collection ou tes idées : décoche « Masquer » pour les voir.';
+  }
+  statusEl.innerHTML = status;
+  statusEl.classList.toggle('hidden', !status);
+
+  const remaining = order.list.length - visible.length;
+  let moreLabel = '';
+  if (s.started && remaining > 0) moreLabel = `Voir plus (${remaining} restant${remaining > 1 ? 's' : ''})`;
+  else if (s.started && !s.extraShown && order.extra.length > 0) moreLabel = `Afficher des artistes moins proches ou moins connus (${order.extra.length})`;
+  moreEl.classList.toggle('hidden', !moreLabel);
+  if (moreLabel) moreEl.textContent = moreLabel;
+
+  // Les couvertures des artistes affichés qui n'en ont pas encore (après un changement de tri, par exemple)
+  const missing = visible.filter(a => !a.topLoaded);
+  if (missing.length > 0) {
+    discoverFillTopAlbums(missing).then(() => {
+      if (!s.running && s.view === 'results') renderDiscoverResults();
+    }).catch(err => console.warn(err));
+  }
+}
+
+/* ---------- Discographie complète d'un artiste (Last.fm d'abord, MusicBrainz pour les dates) ---------- */
+function discoverScrollToResults() {
+  const target = document.getElementById('dc-banner') || document.getElementById('dc-results');
+  if (target) window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - 175), behavior: 'smooth' });
+}
+
+function discoverToggleOthers() {
+  if (!discoverState.disco) return;
+  discoverState.disco.showOthers = !discoverState.disco.showOthers;
+  renderDiscoverResults();
+}
+
+// Bouton du formulaire : discographie de l'artiste saisi dans « Similaire à »
+function discoverShowDiscographyFromForm() {
+  readDiscoverCriteria();
+  const name = discoverState.criteria.artist;
+  if (!name) {
+    showToast("⚠️ Indique d'abord un artiste dans « Similaire à »");
+    return;
+  }
+  discoverShowDiscography(name, '');
+}
+
+async function discoverShowDiscography(name, mbid) {
+  const s = discoverState;
+  if (!name) return;
+  if (!getLastfmKey()) {
+    s.showKeyCard = true;
+    s.formOpen = true;
+    s.status = '<span class="dc-warn">🔑 Ajoute d\'abord ta clé API Last.fm ci-dessus.</span>';
+    refreshDiscoverPage();
+    return;
+  }
+
+  // Une recherche en cours est abandonnée (les résultats déjà classés sont conservés)
+  s.runId++;
+  s.running = false;
+  const runId = s.runId;
+
+  s.formOpen = false;
+  s.view = 'disco';
+  s.disco = { artist: name, mbid: mbid || '', items: [], showOthers: false, loading: true, status: `Chargement de la discographie de <strong>${mbEscapeHTML(name)}</strong>…` };
+  refreshDiscoverPage();
+  discoverScrollToResults();
+
+  try {
+    // Nom exact et identifiant MusicBrainz de l'artiste (via Last.fm) pour une recherche précise
+    const artist = { name, mbid: mbid || '' };
+    if (!artist.mbid) {
+      try {
+        const info = await lastfmCall('artist.getInfo', { artist: name });
+        if (info.artist) {
+          artist.name = info.artist.name || name;
+          artist.mbid = info.artist.mbid || '';
+        }
+      } catch (err) {
+        if (isFatalDiscoverError(err)) throw err;
+      }
+    }
+    if (!discoverAlive(runId)) return;
+    s.disco.artist = artist.name;
+
+    const [mb, top] = await Promise.all([
+      discoverMbArtistGroups(artist, 2),
+      lastfmCall('artist.getTopAlbums', { artist: artist.name, limit: 100 }),
+    ]);
+    if (!discoverAlive(runId)) return;
+
+    // Albums connus de Last.fm : un par titre (l'édition d'origine), sans hommages ni reprises
+    const lfmAlbums = new Map();
+    asArray(top && top.topalbums && top.topalbums.album).forEach(album => {
+      const title = album.name;
+      if (!title || title === '(null)' || MB_PARASITE_REGEX.test(title)) return;
+      const key = mbBaseTitle(title);
+      const playcount = parseInt(album.playcount, 10) || 0;
+      const reissue = MB_REISSUE_REGEX.test(title) ? 1 : 0;
+      const current = lfmAlbums.get(key);
+      if (!current || reissue < current.reissue || (reissue === current.reissue && playcount > current.playcount)) {
+        lfmAlbums.set(key, { title, playcount, reissue, image: lfmImage(album.image), url: album.url || '' });
+      }
+    });
+
+    const items = [];
+    const make = (title, group, pop, official) => {
+      const tags = discoverGroupTags(group);
+      return {
+        key: `${mbNormalize(artist.name)}|${mbBaseTitle(title)}`,
+        artist: artist.name,
+        title,
+        year: discoverYearOf(group),
+        date: group ? (group['first-release-date'] || '') : '',
+        mbGroup: group,
+        mbid: group ? group.id : '',
+        primary: group ? group['primary-type'] : '',
+        secondary: group ? asArray(group['secondary-types']) : [],
+        playcount: pop ? pop.playcount : 0,
+        image: pop ? pop.image : '',
+        lastfmUrl: pop ? pop.url : '',
+        tags,
+        mainGenre: discoverGuessGenre(tags),
+        official,
+      };
+    };
+
+    if (!mb.ok) {
+      // MusicBrainz n'a pas répondu : on garde les albums Last.fm, sans dates
+      lfmAlbums.forEach(pop => items.push(make(pop.title, null, pop, true)));
+      items.sort((a, b) => b.playcount - a.playcount);
+      s.disco.status = `<span class="dc-muted">MusicBrainz n'a pas répondu : les dates ne sont pas disponibles.</span>`;
+    } else {
+      // Albums officiels = albums studio connus de Last.fm et confirmés par MusicBrainz (ce qui donne aussi la date)
+      const mbIndex = new Map();
+      discoverIndexGroups(mb.groups).forEach((entry, key) => {
+        if (!MB_PARASITE_REGEX.test(entry.g.title || '')) mbIndex.set(key, entry);
+      });
+      const findEntry = key => {
+        if (mbIndex.has(key)) return [key, mbIndex.get(key)];
+        if (key.length >= 5) {
+          for (const [k, v] of mbIndex) {
+            if (k.length >= 5 && (k.startsWith(key) || key.startsWith(k))) return [k, v];
+          }
+        }
+        return null;
+      };
+      const isStudio = g => asArray(g['secondary-types']).length === 0 && g['primary-type'] === 'Album';
+
+      const used = new Set();
+      lfmAlbums.forEach((pop, key) => {
+        const found = findEntry(key);
+        if (found) {
+          used.add(found[0]);
+          items.push(make(pop.title, found[1].g, pop, isStudio(found[1].g)));
+        } else {
+          items.push(make(pop.title, null, pop, false)); // inconnu de MusicBrainz : rangé avec le reste
+        }
+      });
+      // Le reste de MusicBrainz (jamais dans le top Last.fm) : après le trait de séparation
+      mbIndex.forEach((entry, key) => {
+        if (!used.has(key)) items.push(make(entry.g.title, entry.g, null, false));
+      });
+
+      const byYear = (a, b) => (a.year || 9999) - (b.year || 9999) || b.playcount - a.playcount;
+      items.sort((a, b) => (b.official - a.official) || byYear(a, b));
+    }
+
+    items.forEach((r, i) => { r.idx = i; });
+    s.disco.items = items;
+    s.disco.loading = false;
+    if (items.length === 0) s.disco.status = '<span class="dc-warn">Aucun album trouvé pour cet artiste.</span>';
+    else if (mb.ok) s.disco.status = '';
+    renderDiscoverResults();
+  } catch (err) {
+    if (runId !== s.runId) return;
+    s.view = 'results';
+    s.disco = null;
+    discoverHandleError(err);
+  }
+}
+
+function discoverBackToResults() {
+  const s = discoverState;
+  s.runId++; // annule un éventuel chargement de discographie
+  s.view = 'results';
+  s.disco = null;
+  renderDiscoverResults();
+  discoverScrollToResults();
+}
+
+/* ---------- Pages : « Découverte » ---------- */
+function discoverSummaryText() {
+  const c = discoverState.criteria;
+  const parts = [];
+  if (c.artist) parts.push(`Similaire à ${c.artist}`);
+  if (c.genre) parts.push(c.genre);
+  if (c.tag) parts.push(`#${c.tag}`);
+  if (c.yearFrom || c.yearTo) parts.push(`${c.yearFrom || '…'}–${c.yearTo || '…'}`);
+  return parts.join(' · ') || 'Aucun critère';
 }
 
 function discoverPageHTML() {
@@ -4381,13 +4521,22 @@ function discoverPageHTML() {
   return `
     <div id="discover-page" class="discover-page">
       ${keyCard}
-      <div class="dc-card">
+
+      <button type="button" id="dc-banner" class="dc-banner ${s.formOpen ? 'hidden' : ''}" onclick="discoverToggleForm(true)">
+        <span class="dc-banner-title">🔎 Nouvelle recherche</span>
+        <span class="dc-banner-sub">${mbEscapeHTML(discoverSummaryText())}</span>
+      </button>
+
+      <div id="dc-form" class="dc-card ${s.formOpen ? '' : 'hidden'}">
         <div class="dc-card-title">🔎 Mes critères</div>
 
         <div class="form-group">
           <label>Similaire à (artiste)</label>
-          <input type="text" id="dc-artist" list="dc-artists-list" placeholder="ex: Radiohead" value="${mbEscapeHTML(c.artist)}" autocomplete="off" ${enter}>
-          <datalist id="dc-artists-list">${discoverArtistOptionsHTML()}</datalist>
+          <div class="dc-autocomplete">
+            <input type="text" id="dc-artist" placeholder="ex: Radiohead" value="${mbEscapeHTML(c.artist)}" autocomplete="off"
+              oninput="discoverSuggest()" onfocus="discoverSuggest()" onblur="discoverHideSuggestSoon()" ${enter}>
+            <div id="dc-suggest" class="dc-suggest hidden"></div>
+          </div>
         </div>
         ${chips}
 
@@ -4404,7 +4553,7 @@ function discoverPageHTML() {
 
         <div class="dc-row">
           <div class="form-group">
-            <label>Sorti à partir de</label>
+            <label>Actif à partir de</label>
             <input type="number" id="dc-year-from" inputmode="numeric" min="1900" max="2100" placeholder="1990" value="${mbEscapeHTML(c.yearFrom)}" ${enter}>
           </div>
           <div class="form-group">
@@ -4417,10 +4566,9 @@ function discoverPageHTML() {
           <div class="form-group">
             <label>Trier par</label>
             <select id="dc-sort" onchange="discoverViewChanged()">
+              <option value="recommended" ${sel('recommended', c.sort)}>Recommandés</option>
               <option value="popularity" ${sel('popularity', c.sort)}>Popularité ↓</option>
-              <option value="relevance" ${sel('relevance', c.sort)}>Pertinence</option>
-              <option value="year-asc" ${sel('year-asc', c.sort)}>Année ↑ (anciens)</option>
-              <option value="year-desc" ${sel('year-desc', c.sort)}>Année ↓ (récents)</option>
+              <option value="similarity" ${sel('similarity', c.sort)}>Similarité ↓</option>
             </select>
           </div>
           <div class="form-group">
@@ -4430,7 +4578,7 @@ function discoverPageHTML() {
         </div>
 
         <div class="form-group">
-          <label><input type="checkbox" id="dc-hide-owned" ${c.hideOwned ? 'checked' : ''} onchange="discoverViewChanged()"> Masquer ce que j'ai déjà (collection et idées)</label>
+          <label><input type="checkbox" id="dc-hide-owned" ${c.hideOwned ? 'checked' : ''} onchange="discoverViewChanged()"> Masquer les artistes que j'ai déjà (collection et idées)</label>
         </div>
 
         <div class="dc-buttons">
@@ -4458,6 +4606,16 @@ function refreshDiscoverPage() {
   renderDiscoverResults();
 }
 
+// Ouvre / referme le formulaire (fermé, il ne reste que le bandeau « Nouvelle recherche »)
+function discoverToggleForm(open) {
+  discoverState.formOpen = open;
+  const form = document.getElementById('dc-form');
+  const banner = document.getElementById('dc-banner');
+  if (form) form.classList.toggle('hidden', !open);
+  if (banner) banner.classList.toggle('hidden', open);
+  if (open) window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 // Point d'entrée de la page (params : critères pré-remplis quand on arrive depuis un album)
 function renderDiscover(params) {
   const s = discoverState;
@@ -4476,13 +4634,10 @@ function renderDiscover(params) {
       yearTo: year ? String(Math.min(year + 5, nowYear)) : '',
     };
     s.chips = (params.get('artists') || '').split('|').filter(Boolean);
-    s.results = [];
-    s.queue = [];
+    discoverResetResults();
     s.started = false;
     s.running = false;
-    s.status = '';
-    s.view = 'results';
-    s.disco = null;
+    s.formOpen = true;
     autoStart = params.get('auto') === '1';
   }
 
@@ -4495,32 +4650,9 @@ function renderDiscover(params) {
   }
 }
 
-function saveLastfmKeyFromInput() {
-  const input = document.getElementById('dc-key-input');
-  const key = input ? input.value.trim() : '';
-  if (!/^[0-9a-fA-F]{32}$/.test(key)) {
-    showToast("⚠️ Une clé Last.fm compte 32 caractères (chiffres et lettres a-f)");
-    return;
-  }
-  localStorage.setItem(LASTFM_KEY_STORAGE, key);
-  discoverCache.clear();
-  const s = discoverState;
-  s.showKeyCard = false;
-  s.status = '';
-  showToast("🔑 Clé Last.fm enregistrée");
-  refreshDiscoverPage();
-  if (s.pendingAuto) startDiscoverSearch();
-}
-
-function discoverChangeKey() {
-  discoverState.showKeyCard = true;
-  refreshDiscoverPage();
-  document.getElementById('dc-key-input')?.focus();
-}
-
 function discoverViewChanged() {
   readDiscoverViewOptions();
-  discoverFinishStatus();
+  if (discoverState.running) return;
   renderDiscoverResults();
 }
 
@@ -4535,43 +4667,13 @@ function discoverReset() {
   s.runId++;
   s.criteria = { ...DISCOVER_DEFAULTS };
   s.chips = [];
-  s.results = [];
-  s.queue = [];
+  discoverResetResults();
   s.started = false;
   s.running = false;
-  s.status = '';
-  s.view = 'results';
-  s.disco = null;
+  s.formOpen = true;
   refreshDiscoverPage();
 }
 
-/* ---------- Depuis un album : « Trouver des artistes similaires » ---------- */
-function openSimilarSearch(mdIndex, albumIndex) {
-  const md = catalogData && catalogData[mdIndex];
-  if (!md) return;
-
-  const hasAlbum = albumIndex !== null && albumIndex !== undefined && md.albums && md.albums[albumIndex];
-  const albums = hasAlbum ? [md.albums[albumIndex]] : (md.albums && md.albums.length ? md.albums : [md]);
-  const artists = Array.from(new Set(albums.map(a => (a.artist || '').trim()).filter(isRealArtist)));
-  const ref = albums[0];
-
-  const params = new URLSearchParams();
-  if (artists[0]) params.set('artist', artists[0]);
-  if (artists.length > 1) params.set('artists', artists.join('|'));
-  const genre = ref.main_genre || md.main_genre || '';
-  if (genre) params.set('genre', genre);
-  const year = parseInt(ref.release_year, 10);
-  if (year) params.set('year', String(year));
-  params.set('auto', '1');
-
-  discoverBackHash = window.location.hash || '#dashboard';
-  window.location.hash = '#discover?' + params.toString();
-}
-
-function similarButtonHTML(mdIndex, albumIndex) {
-  const albumArg = albumIndex === null || albumIndex === undefined ? 'null' : albumIndex;
-  return `<button type="button" class="similar-fab" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">🔎 Trouver des artistes similaires</button>`;
-}
 
 /* ==========================================
    DÉMARRAGE
