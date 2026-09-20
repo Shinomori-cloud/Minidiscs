@@ -2,12 +2,17 @@
    1. VARIABLES & DESIGN DE BASE
    ========================================== */
 :root {
-  --bg-color: #f8fafc;
-  --card-bg: #ffffff;
-  --text-main: #1e293b;
-  --text-sub: #64748b;
-  --border-color: #e2e8f0;
+  /* Thème sombre dépoli (glassmorphism) : les tuiles sont du verre fumé violet sur le fond d'écran */
+  --bg-color: #120a24;
+  --card-bg: rgba(20, 12, 42, 0.64);        /* tuiles */
+  --glass-strong: rgba(20, 12, 42, 0.88);   /* menus et formulaires (plus opaques pour la lisibilité) */
+  --glass-blur: blur(10px);
+  --text-main: #ffffff;                     /* titres */
+  --text-sub: #c4b5fd;                      /* sous-textes : violet clair */
+  --text-cyan: #67e8f9;                     /* infos secondaires : cyan */
+  --border-color: rgba(255, 255, 255, 0.14);
   --accent-color: #7b2cbf;
+  --accent-light: #d8b4fe;
   --export-color: #06d6a0;
 
   /* Encombrement ajouté au header quand un genre filtré y est affiché (encart 20px + 4px d'espace) */
@@ -33,13 +38,11 @@ body {
   max-width: 600px;
   margin: 0 auto;
 
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
-    url('/Minidiscs/images/pattern.jpg');
+  background-image: url('/Minidiscs/images/pattern.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  background-color: #f8fafc;
+  background-color: var(--bg-color);
   background-attachment: fixed;
 }
 
@@ -57,7 +60,7 @@ body::before {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  background-color: #f8fafc;
+  background-color: var(--bg-color);
   background-attachment: fixed;
   z-index: 800;
   pointer-events: none;
@@ -105,7 +108,9 @@ header {
   justify-content: center !important;
   
   padding: 10px 14px !important;
-  background-color: #ffffff !important;
+  background-color: var(--card-bg) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  backdrop-filter: var(--glass-blur) !important;
   border-radius: 16px !important;
   border: 2px solid #000 !important;
   box-shadow: 4px 4px 0px #000 !important;
@@ -140,7 +145,7 @@ body:has(.dashboard-container) .header-subtitle {
   font-family: 'Righteous', cursive;
   font-size: 0.75rem;
   letter-spacing: 2px;
-  color: #7b2cbf;
+  color: var(--text-sub);
   text-transform: uppercase;
   margin-bottom: 2px;
   text-align: center;
@@ -151,7 +156,7 @@ body:has(.dashboard-container) .header-subtitle {
   font-size: 2rem;
   text-transform: uppercase;
   text-align: center;
-  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 50%, #00f0ff 100%);
+  background: linear-gradient(135deg, #ff4fa3 0%, #b57bff 50%, #00f0ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(2px 2px 0px #000);
@@ -204,7 +209,7 @@ body:has(.dashboard-container) .title-90s {
   padding: 10px 16px;
   border-radius: 12px;
   border: 3px solid #000;
-  background: #ffffff;
+  background: var(--glass-strong);
   color: var(--text-main);
   font-size: 0.9rem;
   font-weight: 600;
@@ -227,6 +232,8 @@ body:has(.dashboard-container) .title-90s {
 
 .dashboard-card {
   background-color: var(--card-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   border-radius: 16px;
   padding: 6px 12px;
   border: 2px solid #000;
@@ -248,7 +255,7 @@ body:has(.dashboard-container) .title-90s {
   font-family: 'Righteous', cursive;
   font-size: 2rem;
   line-height: 1;
-  color: #7b2cbf;
+  color: var(--text-cyan);
 }
 
 .stat-label {
@@ -304,7 +311,7 @@ body:has(.dashboard-container) .title-90s {
   background: transparent;
   padding: 4px 2px;
   border: none;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 0;
   cursor: pointer;
   transition: opacity 0.1s ease;
@@ -334,7 +341,7 @@ body:has(.dashboard-container) .title-90s {
 .btn-primary.btn-view-all {
   display: block;
   margin: 12px 0 12px 0;
-  padding: 15px 14px 15px 38%;
+  padding: 19px 14px 19px 38%;
   background-color: #7b2cbf;
   background-image:
     linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 26%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 0.5) 100%),
@@ -383,16 +390,16 @@ body:has(.dashboard-container) .title-90s {
   touch-action: manipulation;
 }
 
-/* Léger dégradé noir sur la zone du titre (bande centrale) pour qu'il reste lisible */
+/* Halo sombre léger, concentré autour du titre : les images gardent leurs couleurs */
 .action-btn-create {
   background-image:
-    linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 32%, rgba(0, 0, 0, 0.5) 68%, rgba(0, 0, 0, 0) 100%),
+    radial-gradient(ellipse 58% 40% at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0) 100%),
     url('images/Créer.jpg');
 }
 
 .action-btn-add {
   background-image:
-    linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 32%, rgba(0, 0, 0, 0.5) 68%, rgba(0, 0, 0, 0) 100%),
+    radial-gradient(ellipse 58% 40% at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0) 100%),
     url('images/Ajouter.jpg');
 }
 
@@ -432,7 +439,7 @@ body:has(.dashboard-container) .title-90s {
   -webkit-backdrop-filter: none !important;
   border: none !important;
   border-radius: 0 !important;
-  padding: 18px 12px 14px 12px;
+  padding: 18px 5px 14px 5px;
   box-shadow: none !important;
 }
 
@@ -442,8 +449,8 @@ body:has(.dashboard-container) .title-90s {
   content: "";
   position: absolute;
   top: 32px;
-  left: 10px;
-  right: 8px;
+  left: 0;
+  right: 0;
   bottom: -6px;
   border-radius: 16px;
   padding: 3px;
@@ -458,6 +465,24 @@ body:has(.dashboard-container) .title-90s {
   
   pointer-events: none;
   z-index: 1;
+}
+
+/* Fond en verre dépoli de la sélection du jour (même largeur et mêmes bords que les autres tuiles) */
+.featured-container::after,
+.featured-container-inline::after {
+  content: "";
+  position: absolute;
+  top: 32px;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  border-radius: 16px;
+  background: var(--card-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: 4px 4px 0px #000;
+  pointer-events: none;
+  z-index: 0;
 }
 
 body:has(.dashboard-container) .featured-container {
@@ -476,7 +501,7 @@ body:has(.dashboard-container) .featured-container {
   z-index: 2;
   margin: 0 auto 14px auto;
 
-  background: #ffffff;
+  background: var(--glass-strong);
   border: 1.5px solid #ff007f;
   border-radius: 8px;
   box-shadow: 2px 2px 0px #000;
@@ -522,10 +547,10 @@ body:has(.dashboard-container) .featured-container {
 }
 
 .featured-item {
-  flex: 0 1 110;
-  max-width: 110px;
-  height: 160px;
-  border-radius: 6px;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 172px;
+  border-radius: 8px;
   overflow: hidden;
   border: 1.5px solid #000;
   cursor: pointer;
@@ -541,9 +566,9 @@ body:has(.dashboard-container) .featured-container {
 }
 
 .featured-thumb {
-  width: auto;
+  width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
 }
 
@@ -581,6 +606,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   align-items: center;
   gap: 16px;
   background-color: var(--card-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   padding: 14px 16px;
   border-radius: 16px;
   margin-bottom: 14px;
@@ -588,7 +615,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   
   border: 2px solid #000000;
   border-left-width: 6px;
-  box-shadow: 4px 4px 0px #000000;
+  box-shadow: 4px 4px 0px #000000, inset 0 1px 0 rgba(255, 255, 255, 0.14);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -602,6 +629,11 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   padding: 10px 12px;
   gap: 14px;
   margin-bottom: 12px;
+}
+
+/* Page "Minidiscs" : plus d'air entre les genres et le titre */
+.list-item:has(.md-thumb) .item-details {
+  gap: 11px;
 }
 
 .md-thumb {
@@ -680,6 +712,11 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   color: var(--text-sub);
 }
 
+/* Année sous l'artiste : cyan */
+.item-details .item-sub + .item-sub {
+  color: var(--text-cyan);
+}
+
 .md-album-item {
   margin-bottom: 8px;
 }
@@ -692,7 +729,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   font-size: 1rem;
   font-weight: 650;
   line-height: 1;
-  margin-bottom: 0.9px;
+  margin-bottom: 3px;
 }
 
 .md-album-artist {
@@ -703,11 +740,13 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 /* Vue Titres / Pistes */
 .track-container {
-  background: #ffffff;
+  background: var(--card-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   border: 2px solid #000000;
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 4px 4px 0px #000000;
+  box-shadow: 4px 4px 0px #000000, inset 0 1px 0 rgba(255, 255, 255, 0.14);
   margin-top: 0px;
 }
 
@@ -716,7 +755,28 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   align-items: center;
   gap: 16px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Informations à droite de la pochette : mêmes espacements que la page Albums (.item-details) */
+.album-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.album-header-info h2 {
+  line-height: 1.35;
+}
+
+.album-header-info .badge-to-record-header {
+  align-self: flex-start;
+  margin-bottom: 0;
+}
+
+.album-header-info .meta-line {
+  color: var(--text-cyan);
 }
 
 .album-cover-large {
@@ -744,7 +804,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   font-size: 0.92rem;
   color: var(--text-main);
   padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
 }
@@ -759,6 +819,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 .track-list li strong {
   margin-right: 8px;
   font-weight: 800;
+  color: var(--text-cyan);
 }
 
 /* Style de base pour les badges roses à bords arrondis */
@@ -892,20 +953,20 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   margin-top: -130px;
 }
 
-/* Conteneur de la carte servant de cadre d'affichage */
+/* Tuile "jaquette pleine" : la pochette occupe toute la tuile, les infos sont sur un bandeau de verre dépoli */
 .idea-card {
   position: relative;
-  background: #ffffff !important;
-  border: 3px solid #000000 !important;
-  border-radius: 16px;
+  background: #1a1030 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 18px;
   overflow: hidden;
   cursor: pointer;
   box-shadow: 4px 4px 0px #000000;
   user-select: none;
   aspect-ratio: 1/1;
-  padding: 8px !important;
+  padding: 0 !important;
   box-sizing: border-box;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .idea-card:hover {
@@ -918,127 +979,125 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   box-shadow: 2px 2px 0px #000000;
 }
 
+/* Sélection : contour rose lumineux + pastille */
 .idea-card.selected {
-  outline: 3px solid #ff007f;
-  border-color: #000000 !important;
-  box-shadow: 5px 5px 0px #000000;
+  border-color: #ff007f !important;
+  box-shadow: 4px 4px 0px #000000, 0 0 0 3px rgba(255, 0, 127, 0.55), 0 0 22px rgba(255, 0, 127, 0.6);
 }
 
 .idea-card.selected::after {
   content: "✓";
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 8px;
+  left: 8px;
   background: #ff007f;
   color: #ffffff;
   font-weight: 900;
   border: 2px solid #000000;
   border-radius: 50%;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   box-shadow: 2px 2px 0px #000000;
   z-index: 5;
 }
 
-/* Bouton corbeille discret en haut à droite */
+/* Bouton corbeille : pastille de verre en haut à droite */
 .idea-delete-btn {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: #ffffff;
-  color: #000000;
-  border: 2px solid #000000;
-  border-radius: 6px;
-  width: 22px;
-  height: 22px;
-  font-size: 0.65rem;
+  top: 8px;
+  right: 8px;
+  background: rgba(20, 12, 42, 0.6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 0.7rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 5;
-  box-shadow: 2px 2px 0px #000000;
-  transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.1s ease;
+  transition: transform 0.1s ease, background-color 0.15s ease;
 }
 
 .idea-delete-btn:hover {
   background: #ff007f;
-  color: #ffffff;
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0px #000000;
+  border-color: #000000;
 }
 
 .idea-delete-btn:active {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0px #000000;
+  transform: scale(0.92);
 }
 
-/* Image de la pochette encadrée */
-.idea-cover {
+/* Pochette pleine tuile */
+.idea-card > .idea-cover {
+  position: absolute !important;
+  inset: 0;
   width: 100%;
   height: 100%;
-  aspect-ratio: 1/1;
-  object-fit: cover;
-  border: 2px solid #000000;
-  border-radius: 8px;
-  background: #eee;
+  border: 0 !important;
+  border-radius: 0;
+  background: #2a1f45;
   display: block;
-  box-sizing: border-box;
+  object-fit: cover;
 }
 
-/* Repositionnement absolu des métadonnées directement sur l'image */
-.idea-title,
-.idea-artist,
-.idea-duration {
+/* Bandeau d'infos en verre dépoli, collé en bas de la tuile */
+.idea-info {
   position: absolute;
-  left: 8px;
-  right: 8px;
-  padding: 0 8px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 10px 8px;
+  background: rgba(20, 12, 42, 0.58);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 .idea-title {
-  bottom: 34px;
   font-weight: 800;
-  font-size: 0.75rem;
+  font-size: 0.82rem;
+  line-height: 1.2;
   color: #ffffff;
-  margin-top: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.idea-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .idea-artist {
-  bottom: 22px;
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.85);
+  min-width: 0;
+  font-size: 0.7rem;
+  color: var(--text-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .idea-duration {
-  bottom: 10px;
-  font-size: 0.65rem;
+  flex: 0 0 auto;
+  font-size: 0.68rem;
   font-weight: 800;
-  color: #06d6a0;
-  margin-top: 0;
-}
-
-/* Calque dégradé pour garantir la lisibilité du texte blanc sur les pochettes claires */
-.idea-card::before {
-  content: "";
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
-  right: 8px;
-  height: 50%;
-  border-radius: 0 0 6px 6px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
-  z-index: 2;
-  pointer-events: none;
+  color: var(--text-cyan);
+  white-space: nowrap;
 }
 
 .idea-card.disabled-card {
@@ -1168,9 +1227,12 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .modal-content {
   position: relative;
-  background-color: #ffffff;
-  background-image: radial-gradient(rgba(123, 44, 191, 0.12) 1.2px, transparent 1.2px);
+  color-scheme: dark;
+  background-color: var(--glass-strong);
+  background-image: radial-gradient(rgba(196, 181, 253, 0.10) 1.2px, transparent 1.2px);
   background-size: 16px 16px;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   border-radius: 18px;
   padding: 0 16px 16px;
   max-width: 500px;
@@ -1246,14 +1308,14 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 5px;
-  color: var(--accent-color);
+  color: var(--accent-light);
 }
 
 .form-group input, .form-group textarea, .form-group select {
   width: 100%;
   padding: 10px 12px;
-  background: #ffffff;
-  border: 2px solid #000000;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(196, 181, 253, 0.5);
   color: var(--text-main);
   border-radius: 10px;
   font-family: inherit;
@@ -1262,7 +1324,12 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .form-group input::placeholder, .form-group textarea::placeholder {
-  color: #94a3b8;
+  color: rgba(196, 181, 253, 0.55);
+}
+
+.form-group select option {
+  background: #1b1233;
+  color: #ffffff;
 }
 
 .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
@@ -1280,7 +1347,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   -webkit-appearance: none;
   appearance: none;
   padding-right: 36px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b2cbf' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8b4fe' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 16px;
@@ -1289,8 +1356,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 /* Choix de la pochette : zone en pointillés + bouton coloré */
 .form-group input[type="file"] {
   padding: 8px;
-  background: #fff5fa;
-  border: 2px dashed #ff007f;
+  background: rgba(255, 0, 127, 0.10);
+  border: 2px dashed #ff4fa3;
   font-size: 0.8rem;
 }
 
@@ -1311,8 +1378,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 /* Cases à cocher (ex : "À enregistrer") : puce cliquable */
 .form-group label:has(input[type="checkbox"]) {
   padding: 10px 12px;
-  background: #fff5fa;
-  border: 2px solid #000000;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(196, 181, 253, 0.5);
   border-radius: 10px;
   box-shadow: 2px 2px 0 #000000;
   color: var(--text-main);
@@ -1321,7 +1388,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .form-group label:has(input[type="checkbox"]:checked) {
-  background: #ffd6ea;
+  background: rgba(255, 0, 127, 0.25);
   border-color: #ff007f;
   box-shadow: 2px 2px 0 #ff007f;
 }
@@ -1349,9 +1416,9 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   justify-content: center;
   margin: 0;
   padding: 10px 8px;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-main);
-  border: 2px solid #000000;
+  border: 2px solid rgba(196, 181, 253, 0.5);
   border-radius: 10px;
   box-shadow: 2px 2px 0 #000000;
   font-size: 0.85rem;
@@ -1382,9 +1449,9 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 /* Blocs d'album (série d'albums) */
 .album-block {
   position: relative;
-  background: #faf5ff;
+  background: rgba(255, 255, 255, 0.05);
   padding: 12px;
-  border: 2px solid #000000;
+  border: 2px solid rgba(196, 181, 253, 0.35);
   border-left: 6px solid #ff007f;
   border-radius: 12px;
   box-shadow: 3px 3px 0 #000000;
@@ -1401,14 +1468,14 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 .album-block h4 {
   margin: 0;
   font-size: 1rem;
-  color: #ff007f;
+  color: #ff4fa3;
   font-family: 'Righteous', cursive;
 }
 
 .btn-remove-album {
   padding: 5px 9px;
-  background: #ffffff;
-  color: #e64059;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ff6b81;
   border: 2px solid #000000;
   border-radius: 8px;
   box-shadow: 2px 2px 0 #000000;
@@ -1424,9 +1491,9 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .btn-sub {
   width: 100%;
-  background: #ffffff;
-  color: var(--accent-color);
-  border: 2px dashed var(--accent-color);
+  background: transparent;
+  color: var(--accent-light);
+  border: 2px dashed var(--accent-light);
   padding: 10px 12px;
   border-radius: 10px;
   cursor: pointer;
@@ -1436,9 +1503,9 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .btn-secondary {
-  background: #f1f5f9;
+  background: rgba(255, 255, 255, 0.1);
   color: var(--text-main);
-  border: 2px solid #000;
+  border: 2px solid rgba(196, 181, 253, 0.5);
   padding: 10px 14px;
   border-radius: 10px;
   font-weight: 700;
@@ -1454,7 +1521,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 /* Boutons du bas de formulaire */
 .form-actions {
   padding-top: 14px;
-  border-top: 2px dashed rgba(0, 0, 0, 0.18);
+  border-top: 2px dashed rgba(255, 255, 255, 0.2);
 }
 
 .form-actions .btn-primary,
@@ -1466,8 +1533,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 /* Recherche automatique de métadonnées */
 .md-search-box {
   padding: 12px;
-  background: linear-gradient(135deg, #e0fbff 0%, #f3e8ff 100%);
-  border: 2px dashed var(--accent-color);
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.14) 0%, rgba(123, 44, 191, 0.28) 100%);
+  border: 2px dashed var(--accent-light);
   border-radius: 12px;
 }
 
@@ -1482,8 +1549,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   gap: 10px;
   padding: 8px;
   margin-bottom: 8px;
-  background: #ffffff;
-  border: 2px solid #000000;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(196, 181, 253, 0.45);
   border-radius: 10px;
   box-shadow: 2px 2px 0 #000000;
   cursor: pointer;
@@ -1604,11 +1671,14 @@ body:has(.modal:not(.hidden)) .fab-container {
   display: flex !important;
   flex-direction: column !important;
   gap: 8px;
-  background: #ffffff;
+  color-scheme: dark;
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   padding: 14px;
   border: 3px solid #000000;
   border-radius: 18px;
-  box-shadow: 5px 5px 0 #000000, 0 12px 28px rgba(0, 0, 0, 0.3);
+  box-shadow: 5px 5px 0 #000000, 0 12px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.14);
   min-width: 244px;
   max-width: min(300px, calc(100vw - 48px));
   max-height: 70vh;
@@ -1637,13 +1707,13 @@ body:has(.modal:not(.hidden)) .fab-container {
   font-size: 0.76rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--accent-color);
+  color: var(--accent-light);
   margin: 4px 0 0 2px;
 }
 
 .fab-divider {
   border: 0;
-  border-top: 2px dashed rgba(0, 0, 0, 0.18);
+  border-top: 2px dashed rgba(255, 255, 255, 0.2);
   margin: 6px 0 2px;
 }
 
@@ -1660,9 +1730,9 @@ body:has(.modal:not(.hidden)) .fab-container {
   width: 100%;
   height: 46px;
   padding: 0 14px;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-main);
-  border: 2px solid #000000;
+  border: 2px solid rgba(196, 181, 253, 0.5);
   border-radius: 12px;
   box-shadow: 2px 2px 0 #000000;
   font-size: 0.92rem;
@@ -1689,15 +1759,17 @@ body:has(.modal:not(.hidden)) .fab-container {
 .fab-item.accent {
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
   color: #ffffff;
+  border-color: #000000;
 }
 
 .fab-item.danger {
-  color: #e64059;
+  color: #ff6b81;
 }
 
 .fab-item.success {
   background: var(--export-color);
   color: #000000;
+  border-color: #000000;
 }
 
 /* Sous-menus (genres, statut) */
@@ -1748,9 +1820,9 @@ body:has(.modal:not(.hidden)) .fab-container {
   justify-content: space-between;
   gap: 8px;
   padding: 9px 12px;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-main);
-  border: 2px solid #000000;
+  border: 2px solid rgba(196, 181, 253, 0.4);
   border-radius: 10px;
   font-size: 0.82rem;
   font-weight: 800;
@@ -1774,9 +1846,9 @@ body:has(.modal:not(.hidden)) .fab-container {
   width: 100%;
   height: 42px;
   padding: 0 12px;
-  background: #f8fafc;
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-main);
-  border: 2px solid #000000;
+  border: 2px solid rgba(196, 181, 253, 0.5);
   border-radius: 12px;
   font-size: 0.9rem;
   font-family: inherit;
@@ -1785,8 +1857,12 @@ body:has(.modal:not(.hidden)) .fab-container {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
+.fab-search-input::placeholder {
+  color: rgba(196, 181, 253, 0.7);
+}
+
 .fab-search-input:focus {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
   border-color: #ff007f;
   box-shadow: 2px 2px 0 #ff007f;
 }

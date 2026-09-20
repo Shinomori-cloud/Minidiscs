@@ -561,7 +561,7 @@ function populateFabGenreMenu() {
   container.innerHTML = '';
 
   if (allGenres.size === 0) {
-    container.innerHTML = `<span style="font-size: 0.75rem; color: #666; padding: 6px 12px;">Aucun genre</span>`;
+    container.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-sub); padding: 6px 12px;">Aucun genre</span>`;
     return;
   }
 
@@ -875,19 +875,20 @@ window.addEventListener('hashchange', handleRoute);
    COULEURS DYNAMIQUES PAR GENRE
    ========================================== */
 // Une couleur fixe par genre, toujours la même (peu importe l'ordre de chargement).
+// (teintes un peu plus lumineuses pour rester lisibles sur le fond sombre)
 const genreColorMap = {
-  'ALTERNATIVE & GRUNGE 90S': '#e63946',
-  'ROCK & BLUES': '#ff007f',
-  'RAP, SOUL & REGGAE': '#ffb703',
-  'METAL & HARD ROCK': '#7b2cbf',
-  'POP & FOLK & VARIETY': '#3a86ef',
-  'TALKS & HUMOUR': '#ff9770',
+  'ALTERNATIVE & GRUNGE 90S': '#ff4d5e',
+  'ROCK & BLUES': '#ff3d9a',
+  'RAP, SOUL & REGGAE': '#ffc933',
+  'METAL & HARD ROCK': '#b46cff',
+  'POP & FOLK & VARIETY': '#5aa2ff',
+  'TALKS & HUMOUR': '#ffa07a',
   'ÉLECTRO, TRIP-HOP & EXPÉRIMENTAL': '#00f0ff',
-  'AMBIENT & ORCHESTRAL': '#06d6a0',
-  'AUTRE': '#888888',
+  'AMBIENT & ORCHESTRAL': '#2ee6b6',
+  'AUTRE': '#b0b0c0',
 };
 // Couleurs de secours si jamais un genre hors de cette liste apparaît (données à corriger)
-const genreColorPalette = ['#e63946', '#ff007f', '#00f0ff', '#ffb703', '#7b2cbf', '#70e000', '#ff70a6', '#3a86ef'];
+const genreColorPalette = ['#ff4d5e', '#ff3d9a', '#00f0ff', '#ffc933', '#b46cff', '#70e000', '#ff70a6', '#5aa2ff'];
 
 function getBorderColor(genreData) {
   const genres = getNormalizedGenres(genreData);
@@ -947,7 +948,7 @@ function renderFeatured() {
    prennent toute la hauteur d'écran disponible, entre DASH_TILE_MIN et DASH_TILE_MAX.
    La taille est stockée dans la variable CSS --dash-tile.
    ========================================== */
-const DASH_TILE_MIN = 80;   // px
+const DASH_TILE_MIN = 72;   // px
 const DASH_TILE_MAX = 140;  // px
 const DASH_BOTTOM_GAP = 22; // px laissés libres sous les boutons (ombre + respiration)
 
@@ -1036,8 +1037,8 @@ function renderDashboard(pushState = true) {
   Object.keys(typeCounts).sort((a,b) => typeCounts[b] - typeCounts[a]).forEach(t => {
     const safeType = t.replace(/'/g, "\\'");
     typeBadgesHTML += `
-      <div class="genre-badge" style="border-left-color: #ff007f;" onclick="window.location.hash = '#minidiscs?type=${safeType}'">
-        <span class="genre-name" style="color:#ff007f">${t}</span>
+      <div class="genre-badge" style="border-left-color: #ff4fa3;" onclick="window.location.hash = '#minidiscs?type=${safeType}'">
+        <span class="genre-name" style="color:#ff5cad">${t}</span>
         <span class="genre-count">${typeCounts[t]}</span>
       </div>
     `;
@@ -1340,12 +1341,12 @@ if (!md.albums || md.albums.length === 0) {
     <div class="track-container" style="padding-bottom: 90px;">
       <div class="album-header">
         ${coverHTML}
-        <div>
+        <div class="album-header-info">
           ${badgeCompilHTML}
           <h2 style="font-size: 1.2rem; font-weight: 800;">${md.title || 'Compilation'}</h2>
           <p style="color: var(--text-sub); font-size: 0.95rem;">${md.artist || 'Artistes divers'}</p>
           <p style="color: ${borderColor}; font-size: 0.8rem; font-weight: 800;">${allMdGenres.join(' / ')}</p>
-          ${metaLine ? `<p style="color: var(--text-sub); font-size: 0.8rem;">${metaLine}</p>` : ''}
+          ${metaLine ? `<p class="meta-line" style="font-size: 0.8rem;">${metaLine}</p>` : ''}
         </div>
       </div>
       <ul class="track-list">${tracksHTML}</ul>
@@ -1459,12 +1460,12 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     <div class="track-container">
       <div class="album-header">
         ${coverHTML}
-        <div>
+        <div class="album-header-info">
           ${badgeAlbumHTML}
           <h2 style="font-size: 1.2rem; font-weight: 800;">${album.title || 'Album sans titre'}</h2>
           <p style="color: var(--text-sub); font-size: 0.95rem;">${album.artist || 'Artiste inconnu'}</p>
           <p style="color: ${albumColor}; font-size: 0.8rem; font-weight: 800;">${albumGenres.join(' / ')}</p>
-          ${albumMetaLine ? `<p style="color: var(--text-sub); font-size: 0.8rem;">${albumMetaLine}</p>` : ''}
+          ${albumMetaLine ? `<p class="meta-line" style="font-size: 0.8rem;">${albumMetaLine}</p>` : ''}
         </div>
       </div>
       <ul class="track-list">${tracksHTML}</ul>
@@ -1947,10 +1948,10 @@ function updatePlannerHeader() {
       totalSeconds += parseTimeToSeconds(item.duration);
       return `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 8px;">
-          <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #000; font-weight: 600;">
-            🎵 <span style="color: #666;">${item.artist || 'Artiste'}</span> - ${item.title || 'Titre'}
+          <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); font-weight: 600;">
+            🎵 <span style="color: var(--text-sub);">${item.artist || 'Artiste'}</span> - ${item.title || 'Titre'}
           </div>
-          <div style="font-weight: 700; color: #000; white-space: nowrap;">⏱️ ${item.duration || '00:00'}</div>
+          <div style="font-weight: 700; color: var(--text-cyan); white-space: nowrap;">⏱️ ${item.duration || '00:00'}</div>
         </div>`;
     }).join('');
 
@@ -2003,17 +2004,18 @@ function injectPlannerHeaderBadge() {
   badge.id = 'header-planner-badge';
   badge.style.cssText = `
     position: fixed; top: 150px; left: 50%; transform: translateX(-50%); z-index: 999;
-    background: #ffffff; border: 2px solid #000000; border-radius: 16px; padding: 10px 16px;
+    background: var(--card-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+    border: 2px solid #000000; border-radius: 16px; padding: 10px 16px;
     box-shadow: 4px 4px 0px #000000; display: flex; flex-direction: column; gap: 8px;
     width: calc(100% - 32px); max-width: 568px; box-sizing: border-box;
   `;
   
   badge.innerHTML = `
     <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-      <span style="font-size: 0.85rem; font-weight: bold; color: #000000;">Durée sélectionnée :</span>
+      <span style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Durée sélectionnée :</span>
       <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
     </div>
-    <div id="planner-selected-list" style="display: none; border-top: 1.5px dashed #ccc; padding-top: 6px; max-height: 100px; overflow-y: auto; font-size: 0.78rem;"></div>
+    <div id="planner-selected-list" style="display: none; border-top: 1.5px dashed rgba(255, 255, 255, 0.25); padding-top: 6px; max-height: 100px; overflow-y: auto; font-size: 0.78rem;"></div>
   `;
 
   header.after(badge);
@@ -2088,9 +2090,13 @@ function renderCompilPlanner(pushState = true) {
         return `
           <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
             ${coverHTML}
-            <div class="idea-title">${item.title || 'Sans titre'}</div>
-            <div class="idea-artist">${item.artist || 'Artiste inconnu'}</div>
-            <div class="idea-duration">⏱️ ${item.duration || '00:00'}</div>
+            <div class="idea-info">
+              <div class="idea-title">${item.title || 'Sans titre'}</div>
+              <div class="idea-meta">
+                <span class="idea-artist">${item.artist || 'Artiste inconnu'}</span>
+                <span class="idea-duration">⏱️ ${item.duration || '00:00'}</span>
+              </div>
+            </div>
             <button type="button" class="idea-delete-btn" data-delete="${index}">🗑️</button>
           </div>
         `;
@@ -2725,7 +2731,7 @@ async function searchItunes() {
     return;
   }
 
-  resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Recherche sur MusicBrainz...</p>`;
+  resultsBox.innerHTML = `<p style="font-size:0.8rem; color:var(--text-sub);">Recherche sur MusicBrainz...</p>`;
 
   try {
     // Du plus strict au plus souple : on ne passe au niveau suivant que s'il n'y a aucun résultat
@@ -2737,14 +2743,14 @@ async function searchItunes() {
 
     let groups = [];
     for (const attempt of attempts) {
-      if (attempt.label) resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">${attempt.label}</p>`;
+      if (attempt.label) resultsBox.innerHTML = `<p style="font-size:0.8rem; color:var(--text-sub);">${attempt.label}</p>`;
       const rawGroups = await mbSearchReleaseGroups(tokens, attempt.mode);
       groups = mbFilterAndRank(rawGroups, tokens, attempt.minRatio);
       if (groups.length > 0) break;
     }
 
     if (groups.length === 0) {
-      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:#666;">Aucun résultat correspondant trouvé. Essaie avec moins de mots (ex : juste l'artiste).</p>`;
+      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:var(--text-sub);">Aucun résultat correspondant trouvé. Essaie avec moins de mots (ex : juste l'artiste).</p>`;
       return;
     }
 
@@ -2764,7 +2770,7 @@ async function searchItunes() {
                style="width:40px; height:40px; border-radius:4px; object-fit:cover; background:#eee;">
           <div style="flex:1; font-size:0.8rem;">
             <div style="font-weight:700;">${mbEscapeHTML(g.title)}</div>
-            <div style="color:#666;">${mbEscapeHTML(artist)}${details ? ' · ' + mbEscapeHTML(details) : ''}</div>
+            <div style="color:var(--text-sub);">${mbEscapeHTML(artist)}${details ? ' · ' + mbEscapeHTML(details) : ''}</div>
           </div>
         </div>
       `;
@@ -2835,7 +2841,7 @@ async function applyItunesResult(index) {
       <img src="${pendingItunesCoverUrl}" 
            onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\\'font-size:0.7rem; color:#888;\\'>Pas de pochette disponible sur Cover Art Archive</div>';" 
            style="width:80px; height:80px; border-radius:6px; object-fit:cover;">
-      <div style="font-size:0.7rem; color:#666;">Pochette récupérée (transférée à l'enregistrement)</div>
+      <div style="font-size:0.7rem; color:var(--text-sub);">Pochette récupérée (transférée à l'enregistrement)</div>
     `;
   }
 
