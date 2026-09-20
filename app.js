@@ -1426,10 +1426,16 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   if (headerTitle) headerTitle.textContent = "TITRES";
   if (pushState) history.pushState({ view: 'tracklist', mdIndex, albumIndex }, '', `#md-${mdIndex}-album-${albumIndex}`);
 
+  // La numérotation continue d'un album à l'autre, comme sur le MiniDisc physique :
+  // si le 1er album a 13 pistes, la 1re piste du 2e album porte le numéro 14.
+  const trackOffset = md.albums
+    .slice(0, Number(albumIndex))
+    .reduce((sum, a) => sum + ((a.tracks && a.tracks.length) || 0), 0);
+
   let tracksHTML = '';
   if (album.tracks && album.tracks.length > 0) {
     album.tracks.forEach((track, i) => {
-      const num = String(i + 1).padStart(2, '0');
+      const num = String(trackOffset + i + 1).padStart(2, '0');
       tracksHTML += `<li class="track-item"><strong class="track-num">${num}.</strong> ${track}</li>`;
     });
   } else {
@@ -1908,14 +1914,15 @@ function parseTimeToSeconds(timeStr) {
   return 0;
 }
 
-// Durée d'un album affichée systématiquement en Heures:Minutes:Secondes (ex: "63:29" -> "1:03:29", "36:25" -> "0:36:25")
-function formatDurationHMS(timeStr) {
+// Durée d'un album dans le planificateur : "1:03:29" à partir d'une heure, "36:25" en dessous
+// (ex: "63:29" -> "1:03:29", "36:25" -> "36:25")
+function formatPlannerDuration(timeStr) {
   const total = parseTimeToSeconds(timeStr);
   const h = Math.floor(total / 3600);
   const m = Math.floor((total % 3600) / 60);
   const sec = total % 60;
   const pad = n => String(n).padStart(2, '0');
-  return `${h}:${pad(m)}:${pad(sec)}`;
+  return h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${m}:${pad(sec)}`;
 }
 
 function formatSecondsToDisplay(totalSec) {
@@ -1949,7 +1956,7 @@ function updatePlannerHeader() {
           <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); font-weight: 600;">
             🎵 <span style="color: var(--text-sub);">${item.artist || 'Artiste'}</span> - ${item.title || 'Titre'}
           </div>
-          <div style="font-weight: 700; color: var(--text-cyan); white-space: nowrap;">⏱️ ${formatDurationHMS(item.duration)}</div>
+          <div style="font-weight: 700; color: var(--text-cyan); white-space: nowrap;">⏱️ ${formatPlannerDuration(item.duration)}</div>
         </div>`;
     }).join('');
 
@@ -2092,7 +2099,7 @@ function renderCompilPlanner(pushState = true) {
               <div class="idea-title">${item.title || 'Sans titre'}</div>
               <div class="idea-meta">
                 <span class="idea-artist">${item.artist || 'Artiste inconnu'}</span>
-                <span class="idea-duration">⏱️ ${formatDurationHMS(item.duration)}</span>
+                <span class="idea-duration">⏱️ ${formatPlannerDuration(item.duration)}</span>
               </div>
             </div>
             <button type="button" class="idea-delete-btn" data-delete="${index}">🗑️</button>
