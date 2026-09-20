@@ -2469,19 +2469,20 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
 .similar-fab {
   position: fixed;
   left: 50%;
-  bottom: 30px;
+  bottom: 40px;
   transform: translateX(-50%);
   z-index: 900;
-  max-width: min(250px, calc(100vw - 190px));
-  padding: 12px 18px;
+  max-width: calc(100vw - 188px); /* ne recouvre jamais le bouton flottant de droite */
+  padding: 7px 14px;
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
   color: #ffffff;
-  border: 3px solid #000000;
+  border: 2px solid #000000;
   border-radius: 999px;
-  box-shadow: 4px 4px 0 #000000, 0 8px 18px rgba(0, 0, 0, 0.35);
-  font-size: 0.8rem;
+  box-shadow: 3px 3px 0 #000000, 0 6px 14px rgba(0, 0, 0, 0.3);
+  font-size: clamp(0.56rem, 2.6vw, 0.72rem);
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.2;
+  white-space: nowrap;
   text-align: center;
   cursor: pointer;
   touch-action: manipulation;
@@ -2489,8 +2490,8 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
 }
 
 .similar-fab:active {
-  transform: translate(calc(-50% + 3px), 3px);
-  box-shadow: 1px 1px 0 #000000, 0 4px 10px rgba(0, 0, 0, 0.3);
+  transform: translate(calc(-50% + 2px), 2px);
+  box-shadow: 1px 1px 0 #000000, 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 body:has(.modal:not(.hidden)) .similar-fab {
@@ -2499,5 +2500,58 @@ body:has(.modal:not(.hidden)) .similar-fab {
 
 /* Laisse de la place sous la dernière tuile quand le bouton est affiché */
 main#app:has(.similar-fab) {
-  padding-bottom: 100px;
+  padding-bottom: 90px;
+}
+
+/* Discographie complète d'un artiste */
+.dc-disco-btn {
+  width: 100%;
+  height: 42px;
+  padding: 0 8px;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.dc-disco-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  background-color: var(--card-bg);
+  background-image: var(--card-sheen);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 2px solid #000;
+  border-radius: 14px;
+  box-shadow: 4px 4px 0px #000, var(--card-rim);
+}
+
+.dc-disco-title {
+  font-family: 'Righteous', cursive;
+  font-size: 1rem;
+  line-height: 1.25;
+  color: var(--text-main);
+}
+
+.dc-back-results {
+  align-self: flex-start;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+}
+
+.dc-disco-link {
+  padding: 5px 10px;
+  background: transparent;
+  color: var(--text-sub);
+  border: 1.5px solid rgba(196, 181, 253, 0.6);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.dc-disco-link:active {
+  background: rgba(255, 255, 255, 0.12);
 }
