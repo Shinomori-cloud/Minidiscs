@@ -2787,6 +2787,61 @@
       "duration": "",
       "tracks": [],
       "toRecord": false
+    },
+    {
+      "id": "md-1789940831285",
+      "md_cover": "images/img_1789940831286.jpg",
+      "albums": [
+        {
+          "id": "md-1789940831285-alb-1",
+          "md_cover": "images/img_1789940833342.jpg",
+          "title": "Le Roi Lion",
+          "artist": "Divers",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "1994",
+          "duration": "",
+          "tracks": [],
+          "toRecord": false
+        },
+        {
+          "id": "md-1789940831285-alb-2",
+          "md_cover": "images/img_1789940834975.jpg",
+          "title": "Aladdin",
+          "artist": "Divers",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "1993",
+          "duration": "",
+          "tracks": [],
+          "toRecord": false
+        },
+        {
+          "id": "md-1789940831285-alb-3",
+          "md_cover": "images/img_1789940836725.jpg",
+          "title": "Le retour de Jafar",
+          "artist": "Divers",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "1995",
+          "duration": "",
+          "tracks": [],
+          "toRecord": false
+        },
+        {
+          "id": "md-1789940831285-alb-4",
+          "md_cover": "images/img_1789940838251.jpg",
+          "title": "Robin des bois",
+          "artist": "Divers",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "",
+          "duration": "",
+          "tracks": [],
+          "toRecord": false
+        }
+      ],
+      "title": "Le Roi Lion / Aladdin / Le retour de Jafar / Robin des bois"
     }
   ],
   "ideaAlbums": [
