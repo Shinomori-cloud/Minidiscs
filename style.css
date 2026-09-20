@@ -4,7 +4,9 @@
 :root {
   /* Thème sombre dépoli (glassmorphism) : les tuiles sont du verre fumé violet sur le fond d'écran */
   --bg-color: #120a24;
-  --card-bg: rgba(20, 12, 42, 0.64);        /* tuiles */
+  --card-bg: rgba(20, 12, 42, 0.72);        /* tuiles */
+  --card-sheen: linear-gradient(160deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 50%); /* reflet du verre */
+  --card-rim: inset 0 1px 0 rgba(255, 255, 255, 0.30), inset 0 0 0 1px rgba(255, 255, 255, 0.07), inset 0 -3px 8px rgba(0, 0, 0, 0.30); /* épaisseur du bord */
   --glass-strong: rgba(20, 12, 42, 0.88);   /* menus et formulaires (plus opaques pour la lisibilité) */
   --glass-blur: blur(10px);
   --text-main: #ffffff;                     /* titres */
@@ -109,11 +111,12 @@ header {
   
   padding: 10px 14px !important;
   background-color: var(--card-bg) !important;
+  background-image: var(--card-sheen) !important;
   -webkit-backdrop-filter: var(--glass-blur) !important;
   backdrop-filter: var(--glass-blur) !important;
   border-radius: 16px !important;
   border: 2px solid #000 !important;
-  box-shadow: 4px 4px 0px #000 !important;
+  box-shadow: 4px 4px 0px #000, var(--card-rim) !important;
   box-sizing: border-box !important;
 }
 
@@ -232,12 +235,13 @@ body:has(.dashboard-container) .title-90s {
 
 .dashboard-card {
   background-color: var(--card-bg);
+  background-image: var(--card-sheen);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   border-radius: 16px;
   padding: 6px 12px;
   border: 2px solid #000;
-  box-shadow: 4px 4px 0px #000;
+  box-shadow: 4px 4px 0px #000, var(--card-rim);
 }
 
 .dashboard-stat-main {
@@ -384,7 +388,7 @@ body:has(.dashboard-container) .title-90s {
   cursor: pointer;
   box-shadow: 4px 4px 0px #000;
   text-align: center;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.85), 0 1px 3px rgba(0, 0, 0, 0.9);
   transition: transform 0.1s ease;
   white-space: normal;
   touch-action: manipulation;
@@ -393,13 +397,13 @@ body:has(.dashboard-container) .title-90s {
 /* Halo sombre léger, concentré autour du titre : les images gardent leurs couleurs */
 .action-btn-create {
   background-image:
-    radial-gradient(ellipse 58% 40% at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0) 100%),
+    radial-gradient(ellipse 40% 24% at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.28) 50%, rgba(0, 0, 0, 0) 100%),
     url('images/Créer.jpg');
 }
 
 .action-btn-add {
   background-image:
-    radial-gradient(ellipse 58% 40% at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0) 100%),
+    radial-gradient(ellipse 40% 24% at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.28) 50%, rgba(0, 0, 0, 0) 100%),
     url('images/Ajouter.jpg');
 }
 
@@ -439,7 +443,7 @@ body:has(.dashboard-container) .title-90s {
   -webkit-backdrop-filter: none !important;
   border: none !important;
   border-radius: 0 !important;
-  padding: 18px 5px 14px 5px;
+  padding: 18px 13px 14px 13px;
   box-shadow: none !important;
 }
 
@@ -477,10 +481,11 @@ body:has(.dashboard-container) .title-90s {
   right: 0;
   bottom: -6px;
   border-radius: 16px;
-  background: var(--card-bg);
+  background-color: var(--card-bg);
+  background-image: var(--card-sheen);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
-  box-shadow: 4px 4px 0px #000;
+  box-shadow: 4px 4px 0px #000, var(--card-rim);
   pointer-events: none;
   z-index: 0;
 }
@@ -606,6 +611,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   align-items: center;
   gap: 16px;
   background-color: var(--card-bg);
+  background-image: var(--card-sheen);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   padding: 14px 16px;
@@ -615,13 +621,13 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   
   border: 2px solid #000000;
   border-left-width: 6px;
-  box-shadow: 4px 4px 0px #000000, inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  box-shadow: 4px 4px 0px #000000, var(--card-rim);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .list-item:active {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px #000000;
+  box-shadow: 2px 2px 0px #000000, var(--card-rim);
 }
 
 /* Page "Minidiscs" : tuiles un peu plus compactes (les pochettes gardent leur taille) */
@@ -740,13 +746,14 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 /* Vue Titres / Pistes */
 .track-container {
-  background: var(--card-bg);
+  background-color: var(--card-bg);
+  background-image: var(--card-sheen);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   border: 2px solid #000000;
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 4px 4px 0px #000000, inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  box-shadow: 4px 4px 0px #000000, var(--card-rim);
   margin-top: 0px;
 }
 
@@ -1060,9 +1067,9 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   flex-direction: column;
   gap: 3px;
   padding: 9px 10px 8px;
-  background: rgba(20, 12, 42, 0.58);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  background: rgba(20, 12, 42, 0.46);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
   border-top: 1px solid rgba(255, 255, 255, 0.22);
 }
 
@@ -1071,6 +1078,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   font-size: 0.82rem;
   line-height: 1.2;
   color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1087,6 +1095,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   min-width: 0;
   font-size: 0.7rem;
   color: var(--text-sub);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1097,6 +1106,7 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   font-size: 0.68rem;
   font-weight: 800;
   color: var(--text-cyan);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
   white-space: nowrap;
 }
 

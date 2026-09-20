@@ -2004,9 +2004,9 @@ function injectPlannerHeaderBadge() {
   badge.id = 'header-planner-badge';
   badge.style.cssText = `
     position: fixed; top: 150px; left: 50%; transform: translateX(-50%); z-index: 999;
-    background: var(--card-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+    background: var(--card-sheen), var(--card-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
     border: 2px solid #000000; border-radius: 16px; padding: 10px 16px;
-    box-shadow: 4px 4px 0px #000000; display: flex; flex-direction: column; gap: 8px;
+    box-shadow: 4px 4px 0px #000000, var(--card-rim); display: flex; flex-direction: column; gap: 8px;
     width: calc(100% - 32px); max-width: 568px; box-sizing: border-box;
   `;
   
