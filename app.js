@@ -1033,6 +1033,60 @@ function fitDashboardSize() {
 
 window.addEventListener('resize', fitDashboardSize);
 
+/* ==========================================
+   DÉFILEMENT AUTOMATIQUE DU CARROUSEL
+   ------------------------------------------
+   Le carrousel avance doucement tout seul. Il s'arrête dès qu'on le touche, qu'on clique ou qu'on
+   fait défiler, puis reprend progressivement CAROUSEL_PAUSE_MS après le dernier geste.
+   ========================================== */
+const CAROUSEL_AUTO_SPEED = 28;      // px par seconde (0 pour désactiver)
+const CAROUSEL_PAUSE_MS = 5000;      // pause après un clic ou un geste
+const CAROUSEL_RESUME_RAMP_MS = 800; // reprise progressive de la vitesse
+
+function startCarouselAutoScroll(container) {
+  if (!container || CAROUSEL_AUTO_SPEED <= 0) return;
+
+  let pausedUntil = 0;
+  let holding = false;              // un doigt est posé sur le carrousel
+  let pos = container.scrollLeft;   // position en nombre décimal (scrollLeft est arrondi par le navigateur)
+  let last = performance.now();
+
+  const pause = () => { pausedUntil = performance.now() + CAROUSEL_PAUSE_MS; };
+  const hold = () => { holding = true; pause(); };
+  const release = () => { holding = false; pause(); };
+
+  container.addEventListener('touchstart', hold, { passive: true });
+  container.addEventListener('touchmove', pause, { passive: true });
+  container.addEventListener('touchend', release, { passive: true });
+  container.addEventListener('touchcancel', release, { passive: true });
+  container.addEventListener('pointerdown', pause, { passive: true });
+  container.addEventListener('mousedown', pause, { passive: true });
+  container.addEventListener('wheel', pause, { passive: true });
+  container.addEventListener('click', pause, { passive: true });
+
+  const tick = (now) => {
+    if (!container.isConnected) return; // l'accueil n'est plus affiché : la boucle s'arrête
+
+    const dt = Math.min(now - last, 100);
+    last = now;
+
+    const blocked = holding || document.hidden || now < pausedUntil || document.querySelector('.modal:not(.hidden)');
+    if (blocked) {
+      pos = container.scrollLeft; // on suit le geste de l'utilisateur
+    } else {
+      // Recalage si la position a changé ailleurs (bouclage du carrousel infini, redimensionnement...)
+      if (Math.abs(container.scrollLeft - pos) > 2) pos = container.scrollLeft;
+      const ramp = Math.min(1, (now - pausedUntil) / CAROUSEL_RESUME_RAMP_MS);
+      pos += CAROUSEL_AUTO_SPEED * ramp * dt / 1000;
+      container.scrollLeft = pos;
+    }
+
+    requestAnimationFrame(tick);
+  };
+
+  requestAnimationFrame(tick);
+}
+
 /* 1. DASHBOARD */
 function renderDashboard(pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
@@ -1192,6 +1246,8 @@ function renderDashboard(pushState = true) {
         carouselContainer.scrollLeft -= setWidth;
       }
     });
+
+    startCarouselAutoScroll(carouselContainer);
   }
 
   window.scrollTo(0, 0);
