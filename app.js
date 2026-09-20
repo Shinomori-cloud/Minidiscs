@@ -3356,11 +3356,10 @@ const LASTFM_KEY_STORAGE = 'lastfm_api_key';
 const LASTFM_MIN_DELAY_MS = 230;          // Last.fm tolère environ 5 requêtes par seconde
 const LASTFM_PLACEHOLDER_HASH = '2a96cbd8b46e442fc41c2b86b821562f'; // image "vide" de Last.fm
 
-const DISCOVER_BATCH_ARTISTS = 6;         // artistes similaires analysés à chaque étape
-const DISCOVER_ALBUMS_PER_ARTIST = 2;     // 1 ou 2 albums maximum par artiste, pour multiplier les artistes proposés
-const DISCOVER_SECOND_ALBUM_RATIO = 0.35; // le 2e album n'est proposé que s'il est au moins aussi écouté que 35 % du 1er
+const DISCOVER_BATCH_ARTISTS = 10;        // artistes similaires analysés à chaque étape (1 album retenu par artiste)
+const DISCOVER_ALBUMS_PER_ARTIST = 1;     // un seul album proposé par artiste
 const DISCOVER_TAG_BATCH = 12;            // albums dont on récupère la popularité à chaque étape (mode sans artiste)
-const DISCOVER_MIN_RESULTS = 10;          // on enchaîne une 2e étape automatiquement s'il y a moins de résultats
+const DISCOVER_MIN_RESULTS = 8;           // on enchaîne une 2e étape automatiquement s'il y a moins de résultats
 const DISCOVER_MB_EXCLUDED = 'secondarytype:Remix OR secondarytype:"DJ-mix" OR secondarytype:Demo OR secondarytype:Audiobook OR secondarytype:"Audio drama" OR secondarytype:Interview';
 
 // Tags Last.fm / MusicBrainz correspondant à chacun des 8 genres de l'appli
@@ -3739,9 +3738,6 @@ function discoverRelax() {
 async function discoverStartSimilar(runId) {
   const s = discoverState;
   const c = s.criteria;
-  s.status = `Recherche des artistes proches de <strong>${mbEscapeHTML(c.artist)}</strong>…`;
-  renderDiscoverResults();
-
   const data = await lastfmCall('artist.getSimilar', { artist: c.artist, limit: 40 });
   if (!discoverAlive(runId)) return;
 
@@ -3772,8 +3768,6 @@ async function discoverProcessSimilarBatch(runId) {
     if (!discoverAlive(runId)) return;
 
     const artist = s.queue[0];
-    s.status = `Analyse des artistes similaires… ${s.processed + 1}/${s.total} <em>(${mbEscapeHTML(artist.name)})</em>`;
-    renderDiscoverResults();
 
     let items = [];
     try {
@@ -3790,7 +3784,6 @@ async function discoverProcessSimilarBatch(runId) {
       item.idx = s.results.length;
       s.results.push(item);
     });
-    renderDiscoverResults();
   }
 }
 
@@ -3860,19 +3853,13 @@ async function discoverAnalyzeArtist(artist) {
   return discoverPickAlbums(Array.from(found.values()));
 }
 
-// 1 ou 2 propositions par artiste : les albums studio d'abord (les live, compilations et EP ne passent que
-// s'il n'y a rien d'autre), le plus écouté en tête, le 2e seulement s'il est suffisamment populaire.
+// Un album par artiste : le plus écouté des albums studio (les live, compilations et EP ne passent
+// que s'il n'y a rien d'autre).
 function discoverPickAlbums(items) {
   const isStudio = i => i.secondary.length === 0 && i.primary !== 'EP';
   const studio = items.filter(isStudio);
   const pool = (studio.length > 0 ? studio : items).slice().sort((a, b) => b.playcount - a.playcount);
-  if (pool.length === 0) return [];
-
-  const picked = [pool[0]];
-  if (DISCOVER_ALBUMS_PER_ARTIST > 1 && pool[1] && pool[1].playcount >= pool[0].playcount * DISCOVER_SECOND_ALBUM_RATIO) {
-    picked.push(pool[1]);
-  }
-  return picked;
+  return pool.slice(0, DISCOVER_ALBUMS_PER_ARTIST);
 }
 
 /* ---------- Mode « genre / tag + période » ---------- */
@@ -3881,9 +3868,6 @@ async function discoverStartTag(runId) {
   const c = s.criteria;
   const tags = discoverRequiredTags(c).slice(0, 4);
   if (tags.length === 0) return;
-
-  s.status = 'Recherche des albums sur MusicBrainz…';
-  renderDiscoverResults();
 
   const from = parseInt(c.yearFrom, 10);
   const to = parseInt(c.yearTo, 10);
@@ -3911,7 +3895,7 @@ async function discoverStartTag(runId) {
       ((MB_REISSUE_REGEX.test(a.title) ? 1 : 0) - (MB_REISSUE_REGEX.test(b.title) ? 1 : 0)) ||
       ((b.score || 0) - (a.score || 0)));
 
-  // 1 à 2 albums par artiste maximum
+  // Un seul album par artiste
   const perArtist = new Map();
   const limited = candidates.filter(g => {
     const artistKey = mbNormalize(mbArtistName(g));
@@ -3957,8 +3941,6 @@ async function discoverProcessTagBatch(runId) {
     if (!discoverAlive(runId)) return;
 
     const chunk = batch.slice(i, i + 4);
-    s.status = `Récupération de la popularité… ${s.processed + 1}/${s.total}`;
-    renderDiscoverResults();
 
     const infos = await Promise.all(chunk.map(g => discoverLastfmAlbumInfo(mbArtistName(g), g.title)));
     if (!discoverAlive(runId)) return;
@@ -3992,7 +3974,6 @@ async function discoverProcessTagBatch(runId) {
 
     s.queue.splice(0, chunk.length);
     s.processed += chunk.length;
-    renderDiscoverResults();
   }
 }
 
@@ -4097,17 +4078,29 @@ function renderDiscoverResults() {
   if (s.view === 'disco' && s.disco) {
     const d = s.disco;
     const { owned, ideas } = discoverOwnedSets();
-    const items = discoverSortList(d.items.map(r => ({ ...r, isOwned: owned.has(r.key), isIdea: ideas.has(r.key) })), s.criteria.sort);
+    // Une discographie se lit par dates : du plus ancien au plus récent (ou l'inverse si « Année ↓ » est choisi)
+    const discoSort = s.criteria.sort === 'year-desc' ? 'year-desc' : 'year-asc';
+    const items = discoverSortList(d.items.map(r => ({ ...r, isOwned: owned.has(r.key), isIdea: ideas.has(r.key) })), discoSort);
 
     box.innerHTML = `
       <div class="dc-disco-head">
         <button type="button" class="btn-secondary dc-back-results" onclick="discoverBackToResults()">← Retour aux résultats</button>
-        <div class="dc-disco-title">📀 Discographie de <strong>${mbEscapeHTML(d.artist)}</strong></div>
-        ${d.loading ? '' : `<div class="dc-muted">${items.length} album${items.length > 1 ? 's' : ''} · albums et EP, sans remix, démos ni hommages</div>`}
+        <div class="dc-disco-title">📀 Discographie de <span class="dc-disco-artist">${mbEscapeHTML(d.artist)}</span></div>
       </div>` + items.map(r => discoverItemHTML(r, 'd')).join('');
 
+    statusEl.classList.remove('dc-status-running');
     statusEl.innerHTML = d.status || '';
     statusEl.classList.toggle('hidden', !d.status);
+    moreEl.classList.add('hidden');
+    return;
+  }
+
+  // Pendant la recherche : aucun résultat n'est (ré)affiché, pour éviter que les albums ne montent et
+  // redescendent au fil de l'arrivée des données. Tout apparaît d'un coup à la fin.
+  statusEl.classList.toggle('dc-status-running', s.running);
+  if (s.running) {
+    statusEl.textContent = '⏳ Recherche en cours…';
+    statusEl.classList.remove('hidden');
     moreEl.classList.add('hidden');
     return;
   }
