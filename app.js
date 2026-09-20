@@ -1019,30 +1019,18 @@ function renderDashboard(pushState = true) {
   }
 
   const totalMD = sourceData.length;
-  const typeCounts = {};
+  // Nombre de MiniDiscs à enregistrer (un MD compte pour 1, même si plusieurs de ses albums sont à enregistrer)
+  const toRecordCount = sourceData.filter(md =>
+    md.toRecord || (md.albums && md.albums.some(a => a.toRecord))
+  ).length;
 
-  // Extraction sécurisée des types
-  sourceData.forEach(md => {
-    const types = typeof getMDAllTypes === 'function' 
-      ? getMDAllTypes(md) 
-      : (md.typeTags || md.type ? (Array.isArray(md.typeTags || md.type) ? (md.typeTags || md.type) : (md.typeTags || md.type).split(',')) : []);
+  let recordSummaryHTML;
+  if (toRecordCount === 0) {
+    recordSummaryHTML = 'Tous les minidiscs sont enregistrés';
+  } else {
+    recordSummaryHTML = `Il reste <strong>${toRecordCount}</strong> minidisc${toRecordCount > 1 ? 's' : ''} à enregistrer`;
+  }
 
-    types.forEach(t => {
-      const cleanT = t.trim().toUpperCase();
-      if (cleanT) typeCounts[cleanT] = (typeCounts[cleanT] || 0) + 1;
-    });
-  });
-
-  let typeBadgesHTML = '';
-  Object.keys(typeCounts).sort((a,b) => typeCounts[b] - typeCounts[a]).forEach(t => {
-    const safeType = t.replace(/'/g, "\\'");
-    typeBadgesHTML += `
-      <div class="genre-badge" style="border-left-color: #ff4fa3;" onclick="window.location.hash = '#minidiscs?type=${safeType}'">
-        <span class="genre-name" style="color:#ff5cad">${t}</span>
-        <span class="genre-count">${typeCounts[t]}</span>
-      </div>
-    `;
-  });
 
   // Définition des 8 genres avec leurs images d'illustration dans /images
   const genreConfigs = [
@@ -1090,7 +1078,7 @@ function renderDashboard(pushState = true) {
          <span class="stat-number" style="font-size: 1.2rem; line-height: 1;">${totalMD}</span>
          <span class="stat-label" style="font-size: 0.75rem;">MiniDiscs</span>
         </div>
-        <div class="genres-grid">${typeBadgesHTML}</div>
+        <div class="record-summary" onclick="window.location.hash = '#minidiscs?record=toRecord'">${recordSummaryHTML}</div>
       </div>
 
       <div class="featured-container-inline">
@@ -1253,7 +1241,7 @@ if (genre && genre !== 'ALL') {
       const coverHTML = createLoadingCoverHTML(listCover, 'md-thumb', '💽');
 
       html += `
-        <div class="list-item" style="border-color: ${borderColor}; border-left-width: 6px; position: relative;" onclick="openMD(${originalIndex})">
+        <div class="list-item" style="border-color: ${borderColor}; --glow: ${borderColor}; border-left-width: 6px; position: relative;" onclick="openMD(${originalIndex})">
           ${coverHTML}
           <div class="item-details">
             <div class="item-tag" style="font-size: inherit;">${genreListHTML(allGenres, 'inherit')}</div>
@@ -1372,7 +1360,7 @@ md.albums.forEach((album, aIndex) => {
   const coverHTML = createLoadingCoverHTML(album.md_cover, 'album-thumb', '🎵');
 
   html += `
-    <div class="list-item" style="border-color: ${albumColor}; border-left-width: 6px; position: relative;" onclick="openAlbum(${index}, ${aIndex})">
+    <div class="list-item" style="border-color: ${albumColor}; --glow: ${albumColor}; border-left-width: 6px; position: relative;" onclick="openAlbum(${index}, ${aIndex})">
       <div class="album-cover-container" style="margin-right: 15px; display: inline-block;">
         ${coverHTML}
       </div>
@@ -1920,6 +1908,16 @@ function parseTimeToSeconds(timeStr) {
   return 0;
 }
 
+// Durée d'un album affichée systématiquement en Heures:Minutes:Secondes (ex: "63:29" -> "1:03:29", "36:25" -> "0:36:25")
+function formatDurationHMS(timeStr) {
+  const total = parseTimeToSeconds(timeStr);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const sec = total % 60;
+  const pad = n => String(n).padStart(2, '0');
+  return `${h}:${pad(m)}:${pad(sec)}`;
+}
+
 function formatSecondsToDisplay(totalSec) {
   const h = Math.floor(totalSec / 3600);
   const m = Math.floor((totalSec % 3600) / 60);
@@ -1951,7 +1949,7 @@ function updatePlannerHeader() {
           <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); font-weight: 600;">
             🎵 <span style="color: var(--text-sub);">${item.artist || 'Artiste'}</span> - ${item.title || 'Titre'}
           </div>
-          <div style="font-weight: 700; color: var(--text-cyan); white-space: nowrap;">⏱️ ${item.duration || '00:00'}</div>
+          <div style="font-weight: 700; color: var(--text-cyan); white-space: nowrap;">⏱️ ${formatDurationHMS(item.duration)}</div>
         </div>`;
     }).join('');
 
@@ -2094,7 +2092,7 @@ function renderCompilPlanner(pushState = true) {
               <div class="idea-title">${item.title || 'Sans titre'}</div>
               <div class="idea-meta">
                 <span class="idea-artist">${item.artist || 'Artiste inconnu'}</span>
-                <span class="idea-duration">⏱️ ${item.duration || '00:00'}</span>
+                <span class="idea-duration">⏱️ ${formatDurationHMS(item.duration)}</span>
               </div>
             </div>
             <button type="button" class="idea-delete-btn" data-delete="${index}">🗑️</button>
