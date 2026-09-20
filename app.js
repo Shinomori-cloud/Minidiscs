@@ -4325,14 +4325,12 @@ function renderCreateHub() {
   app.innerHTML = `
     <div id="create-page" class="create-page">
       <button type="button" class="create-tile create-tile-find" onclick="window.location.hash = '#discover'">
-        <span class="create-tile-icon">🔎</span>
         <span class="create-tile-text">
           <span class="create-tile-title">Trouver de nouvelles idées</span>
           <span class="create-tile-desc">Artistes et albums similaires, par genre, période ou popularité.</span>
         </span>
       </button>
       <button type="button" class="create-tile create-tile-new" onclick="window.location.hash = '#planner'">
-        <span class="create-tile-icon">💽</span>
         <span class="create-tile-text">
           <span class="create-tile-title">Créer un nouveau minidisc</span>
           <span class="create-tile-desc">Composer un MiniDisc à partir de tes idées d'albums.</span>
