@@ -890,19 +890,69 @@ const genreColorMap = {
 // Couleurs de secours si jamais un genre hors de cette liste apparaît (données à corriger)
 const genreColorPalette = ['#ff4d5e', '#ff3d9a', '#00f0ff', '#ffc933', '#b46cff', '#70e000', '#ff70a6', '#5aa2ff'];
 
-function getBorderColor(genreData) {
-  const genres = getNormalizedGenres(genreData);
-  const primaryGenre = genres[0] || 'AUTRE';
-
-  if (genreColorMap[primaryGenre]) {
-    return genreColorMap[primaryGenre];
-  }
+// Couleur d'un genre (attribue une couleur de la palette aux genres inconnus)
+function getSingleGenreColor(genre) {
+  if (genreColorMap[genre]) return genreColorMap[genre];
 
   const assignedCount = Object.keys(genreColorMap).length;
   const color = genreColorPalette[assignedCount % genreColorPalette.length];
-  genreColorMap[primaryGenre] = color;
-  
+  genreColorMap[genre] = color;
   return color;
+}
+
+function hexToRgb(hex) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  if (max === min) return [0, 0, l];
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h;
+  if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+  else if (max === g) h = (b - r) / d + 2;
+  else h = (r - g) / d + 4;
+  return [h * 60, s, l];
+}
+
+function hslToHex(h, s, l) {
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+  let rgb;
+  if (h < 60) rgb = [c, x, 0];
+  else if (h < 120) rgb = [x, c, 0];
+  else if (h < 180) rgb = [0, c, x];
+  else if (h < 240) rgb = [0, x, c];
+  else if (h < 300) rgb = [x, 0, c];
+  else rgb = [c, 0, x];
+  return '#' + rgb.map(v => Math.round((v + m) * 255).toString(16).padStart(2, '0')).join('');
+}
+
+// Mélange de plusieurs couleurs de genres : moyenne des couleurs, puis on réavive le résultat
+// (deux teintes éloignées donnent sinon un gris terne) pour rester dans l'esprit néon.
+function mixGenreColors(hexColors) {
+  if (hexColors.length === 1) return hexColors[0];
+
+  const rgbs = hexColors.map(hexToRgb);
+  const avg = [0, 1, 2].map(i => rgbs.reduce((sum, c) => sum + c[i], 0) / rgbs.length);
+  let [h, sat, l] = rgbToHsl(avg[0], avg[1], avg[2]);
+
+  // Moyenne quasi grise : la teinte n'a plus de sens, on garde celle du premier genre
+  if (sat < 0.12) h = rgbToHsl(...rgbs[0])[0];
+
+  return hslToHex(h, Math.max(sat, 0.7), Math.min(Math.max(l, 0.58), 0.68));
+}
+
+// Couleur de bordure d'une tuile : celle du genre, ou un mélange des couleurs si plusieurs genres
+function getBorderColor(genreData) {
+  const genres = getNormalizedGenres(genreData);
+  if (genres.length === 0) return getSingleGenreColor('AUTRE');
+  return mixGenreColors(genres.map(getSingleGenreColor));
 }
 
 // Construit un affichage où chaque genre garde sa propre couleur (au lieu de tout
@@ -1094,8 +1144,12 @@ function renderDashboard(pushState = true) {
 
       <div class="dashboard-card genres-banner">
         <div class="dashboard-section-title">MINIDISCS PAR GENRES</div>
-        <div class="genre-carousel-container">
-          ${carouselCardsHTML}
+        <div class="genre-carousel-wrap">
+          <span class="carousel-arrow carousel-arrow-left" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="15 4 7 12 15 20"/></svg></span>
+          <div class="genre-carousel-container">
+            ${carouselCardsHTML}
+          </div>
+          <span class="carousel-arrow carousel-arrow-right" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></span>
         </div>
       </div>
 
