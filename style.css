@@ -2785,3 +2785,88 @@ main#app:has(.similar-fab) {
 .dc-disco-head {
   gap: 10px;
 }
+
+/* Bouton ▶ d'écoute d'un extrait (en bas à droite de la pochette) */
+.dc-play {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: rgba(20, 12, 42, 0.75);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color 0.12s ease, transform 0.1s ease;
+}
+
+/* Zone de toucher un peu plus large que le bouton */
+.dc-play::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+.dc-play:active {
+  transform: scale(0.92);
+}
+
+.dc-play svg {
+  width: 15px;
+  height: 15px;
+  fill: #ffffff;
+}
+
+.dc-play .i-pause,
+.dc-play .i-spin {
+  display: none;
+}
+
+.dc-play .i-play {
+  margin-left: 2px; /* centre optique du triangle */
+}
+
+.dc-play.is-playing {
+  background: #ff007f;
+  border-color: #000000;
+}
+
+.dc-play.is-playing .i-play { display: none; }
+.dc-play.is-playing .i-pause { display: block; }
+
+.dc-play.is-loading .i-play { display: none; }
+.dc-play.is-loading .i-spin {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: dcSpin 0.8s linear infinite;
+}
+
+@keyframes dcSpin {
+  to { transform: rotate(360deg); }
+}
+
+.dc-nowplaying {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ff8cc4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dc-nowplaying.hidden {
+  display: none;
+}

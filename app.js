@@ -3858,6 +3858,7 @@ async function startDiscoverSearch() {
 
   s.runId++;
   const runId = s.runId;
+  discoverStopPreview();
   discoverResetResults();
   s.started = true;
   s.running = true;
@@ -4158,11 +4159,11 @@ async function discoverRevealMore(runId) {
 }
 
 /* ---------- Affichage ---------- */
-function discoverCoverHTML(image, placeholder = '🎤') {
+function discoverCoverHTML(image, placeholder = '🎤', extra = '') {
   const img = image
     ? `<img src="${mbEscapeHTML(image)}" alt="" loading="lazy" onerror="this.style.display='none'">`
     : '';
-  return `<div class="dc-cover"><span class="dc-cover-ph">${placeholder}</span>${img}</div>`;
+  return `<div class="dc-cover"><span class="dc-cover-ph">${placeholder}</span>${img}${extra}</div>`;
 }
 
 function discoverLastfmLink(url) {
@@ -4180,11 +4181,12 @@ function discoverArtistHTML(a) {
   return `
     <div class="list-item dc-item" style="border-color:${color}; --glow:${color}; border-left-width:6px;">
       ${discoverLastfmLink(a.lastfmUrl)}
-      ${discoverCoverHTML(a.topAlbum && a.topAlbum.image)}
+      ${discoverCoverHTML(a.topAlbum && a.topAlbum.image, '🎤', discoverPlayButton('artist', a.artist, ''))}
       <div class="dc-info">
         ${genreLabel}
         <div class="dc-title">${mbEscapeHTML(a.artist)}</div>
         ${facts.length ? `<div class="dc-facts">${facts.join(' · ')}</div>` : ''}
+        ${discoverNowPlaying(discoverPreviewKey('artist', a.artist, ''))}
         <div class="dc-actions">
           <button type="button" class="dc-disco-link" data-artist="${mbEscapeHTML(a.artist)}" data-mbid="${mbEscapeHTML(a.mbid || '')}" onclick="discoverShowDiscography(this.dataset.artist, this.dataset.mbid)">📀 Discographie</button>
         </div>
@@ -4206,9 +4208,10 @@ function discoverAlbumHTML(r) {
   else if (r.isIdea) action = `<span class="dc-owned">💡 Déjà dans mes idées</span>`;
   else action = `<button type="button" class="dc-add" onclick="discoverAddToIdeas('d', ${r.idx})">＋ Ajouter aux idées</button>`;
 
+  const playBtn = discoverPlayButton('album', r.artist, r.title);
   const cover = (r.image || caa)
-    ? `<div class="dc-cover"><span class="dc-cover-ph">💿</span><img src="${mbEscapeHTML(r.image || caa)}" data-fallback="${mbEscapeHTML(r.image ? caa : '')}" alt="" loading="lazy" onerror="discoverCoverError(this)"></div>`
-    : `<div class="dc-cover"><span class="dc-cover-ph">💿</span></div>`;
+    ? `<div class="dc-cover"><span class="dc-cover-ph">💿</span><img src="${mbEscapeHTML(r.image || caa)}" data-fallback="${mbEscapeHTML(r.image ? caa : '')}" alt="" loading="lazy" onerror="discoverCoverError(this)">${playBtn}</div>`
+    : `<div class="dc-cover"><span class="dc-cover-ph">💿</span>${playBtn}</div>`;
 
   return `
     <div class="list-item dc-item" style="border-color:${color}; --glow:${color}; border-left-width:6px;">
@@ -4217,6 +4220,7 @@ function discoverAlbumHTML(r) {
       <div class="dc-info">
         <div class="dc-title">${mbEscapeHTML(r.title)}</div>
         ${labels.length ? `<div class="dc-meta">${labels.map(mbEscapeHTML).join(' · ')}</div>` : ''}
+        ${discoverNowPlaying(discoverPreviewKey('album', r.artist, r.title))}
         <div class="dc-actions">${action}</div>
       </div>
     </div>`;
@@ -4508,6 +4512,251 @@ function discoverBackToResults(fromHistory = false) {
   if (!fromHistory && hadHistory) history.back(); // retire l'entrée ajoutée à l'ouverture de la discographie
 }
 
+/* ==========================================
+   EXTRAITS AUDIO (30 secondes, API publique iTunes)
+   ------------------------------------------
+   Un seul lecteur pour toute la page : lancer un extrait arrête le précédent.
+   - Artiste : le titre le plus écouté (Last.fm) est recherché sur iTunes ; à défaut, le premier titre de l'artiste.
+   - Album   : le 1er titre de l'album (iTunes), retrouvé par artiste + titre d'album.
+   ========================================== */
+const ITUNES_API = 'https://itunes.apple.com/';
+const ITUNES_COUNTRY = 'FR';
+// Fichier audio vide : jouer ce fichier au moment de l'appui "débloque" le lecteur sur Android, même si l'extrait
+// n'est trouvé qu'une ou deux secondes plus tard
+const SILENT_AUDIO = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+
+const discoverPlayer = { audio: null, key: '', state: 'idle', title: '', token: 0 };
+
+function itunesUrl(path, params) {
+  return `${ITUNES_API}${path}?${new URLSearchParams({ country: ITUNES_COUNTRY, ...params })}`;
+}
+
+// Certains navigateurs bloquent la lecture directe de l'API : on retombe alors sur la méthode JSONP (balise script)
+function itunesJsonp(url) {
+  return new Promise((resolve, reject) => {
+    const callback = `__itunes_${Date.now()}_${Math.floor(Math.random() * 1e6)}`;
+    const script = document.createElement('script');
+    const cleanup = () => { clearTimeout(timer); delete window[callback]; script.remove(); };
+    const timer = setTimeout(() => { cleanup(); reject(new TypeError('iTunes : délai dépassé (network)')); }, 8000);
+    window[callback] = data => { cleanup(); resolve(data); };
+    script.onerror = () => { cleanup(); reject(new TypeError('iTunes : requête bloquée (network)')); };
+    script.src = `${url}&callback=${callback}`;
+    document.head.appendChild(script);
+  });
+}
+
+async function itunesFetch(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`iTunes : HTTP ${response.status}`);
+    return await response.json();
+  } catch (err) {
+    if (!(err instanceof TypeError)) throw err;
+    return itunesJsonp(url);
+  }
+}
+
+// Le nom d'artiste iTunes correspond-il à celui recherché ? ("Muse" ou "Muse & Autre" / "Muse feat. Autre")
+function itunesArtistMatches(rawName, wanted) {
+  const full = mbNormalize(rawName);
+  if (full === wanted) return true;
+  const first = String(rawName || '').split(/\s*(?:&|,|\bfeat\.?|\bft\.?|\bfeaturing\b|\bwith\b|\band\b)\s*/i)[0];
+  return mbNormalize(first) === wanted;
+}
+
+function itunesTitleKey(title) {
+  return mbNormalize(String(title || '').replace(/[(\[][^)\]]*[)\]]/g, ' ').replace(/\s[-–]\s.*$/, ''));
+}
+
+// Extrait d'un artiste : ses titres les plus écoutés (Last.fm) d'abord, puis son premier titre iTunes
+async function discoverFindArtistPreview(artistName) {
+  const cacheKey = `pv:a:${mbNormalize(artistName)}`;
+  if (discoverCache.has(cacheKey)) return discoverCache.get(cacheKey);
+  const wanted = mbNormalize(artistName);
+
+  let topTracks = [];
+  try {
+    const data = await lastfmCall('artist.getTopTracks', { artist: artistName, limit: 5 });
+    topTracks = asArray(data.toptracks && data.toptracks.track).map(t => t.name).filter(Boolean).slice(0, 3);
+  } catch (err) {
+    if (err instanceof TypeError && !isNetworkError(err)) throw err; // vraie erreur de code
+    // Last.fm indisponible : on se contente d'iTunes
+  }
+
+  const pick = (results, trackName) => (results || []).find(r =>
+    r.previewUrl && itunesArtistMatches(r.artistName, wanted) &&
+    (!trackName || itunesTitleKey(r.trackName) === itunesTitleKey(trackName))
+  );
+  const toResult = r => ({ url: r.previewUrl, title: r.trackName, artist: r.artistName });
+
+  let found = null;
+  for (const track of topTracks) {
+    const data = await itunesFetch(itunesUrl('search', { term: `${artistName} ${track}`, entity: 'song', limit: 10 }));
+    const hit = pick(data.results, track);
+    if (hit) { found = toResult(hit); break; }
+  }
+  if (!found) {
+    const data = await itunesFetch(itunesUrl('search', { term: artistName, entity: 'song', attribute: 'artistTerm', limit: 25 }));
+    const hit = pick(data.results, '');
+    if (hit) found = toResult(hit);
+  }
+  if (found) discoverCache.set(cacheKey, found);
+  return found;
+}
+
+// Extrait d'un album : son premier titre, retrouvé via la fiche album iTunes
+async function discoverFindAlbumPreview(artistName, albumTitle) {
+  const cacheKey = `pv:b:${mbNormalize(artistName)}|${mbBaseTitle(albumTitle)}`;
+  if (discoverCache.has(cacheKey)) return discoverCache.get(cacheKey);
+  const wanted = mbNormalize(artistName);
+  const wantedTitle = mbBaseTitle(albumTitle);
+
+  const search = await itunesFetch(itunesUrl('search', { term: `${artistName} ${albumTitle}`, entity: 'album', limit: 10 }));
+  const albums = (search.results || [])
+    .filter(r => r.collectionId && itunesArtistMatches(r.artistName, wanted))
+    .filter(r => { const t = mbBaseTitle(r.collectionName); return t === wantedTitle || (t.length >= 4 && wantedTitle.length >= 4 && (t.startsWith(wantedTitle) || wantedTitle.startsWith(t))); })
+    .sort((a, b) => String(a.collectionName).length - String(b.collectionName).length);
+  if (albums.length === 0) return null;
+
+  const lookup = await itunesFetch(itunesUrl('lookup', { id: albums[0].collectionId, entity: 'song' }));
+  const tracks = (lookup.results || [])
+    .filter(r => r.wrapperType === 'track' && r.previewUrl)
+    .sort((a, b) => ((a.discNumber || 1) - (b.discNumber || 1)) || ((a.trackNumber || 99) - (b.trackNumber || 99)));
+  if (tracks.length === 0) return null;
+
+  const found = { url: tracks[0].previewUrl, title: tracks[0].trackName, artist: tracks[0].artistName };
+  discoverCache.set(cacheKey, found);
+  return found;
+}
+
+/* ---------- Lecteur ---------- */
+function discoverPreviewKey(kind, artist, title) {
+  return kind === 'artist' ? `a:${mbNormalize(artist)}` : `b:${mbNormalize(artist)}|${mbBaseTitle(title)}`;
+}
+
+function discoverPlayClass(key) {
+  const p = discoverPlayer;
+  if (p.key !== key) return '';
+  return p.state === 'loading' ? 'is-loading' : (p.state === 'playing' ? 'is-playing' : '');
+}
+
+function discoverPlayButton(kind, artist, title) {
+  const key = discoverPreviewKey(kind, artist, title);
+  return `<button type="button" class="dc-play ${discoverPlayClass(key)}" data-key="${mbEscapeHTML(key)}" data-kind="${kind}" data-artist="${mbEscapeHTML(artist)}" data-title="${mbEscapeHTML(title || '')}" aria-label="Écouter un extrait" onclick="event.stopPropagation(); discoverTogglePreview(this)">` +
+    `<svg class="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>` +
+    `<svg class="i-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>` +
+    `<span class="i-spin"></span></button>`;
+}
+
+// Titre en cours de lecture, affiché discrètement sous le nom
+function discoverNowPlaying(key) {
+  const p = discoverPlayer;
+  const on = p.key === key && p.state === 'playing';
+  return `<div class="dc-nowplaying ${on ? '' : 'hidden'}" data-key="${mbEscapeHTML(key)}">${on ? '♪ ' + mbEscapeHTML(p.title) : ''}</div>`;
+}
+
+function discoverUpdatePlayButtons() {
+  const p = discoverPlayer;
+  document.querySelectorAll('.dc-play').forEach(btn => {
+    const mine = btn.dataset.key === p.key;
+    btn.classList.toggle('is-loading', mine && p.state === 'loading');
+    btn.classList.toggle('is-playing', mine && p.state === 'playing');
+  });
+  document.querySelectorAll('.dc-nowplaying').forEach(el => {
+    const on = el.dataset.key === p.key && p.state === 'playing';
+    el.classList.toggle('hidden', !on);
+    el.textContent = on ? `♪ ${p.title}` : '';
+  });
+}
+
+function discoverAudio() {
+  const p = discoverPlayer;
+  if (!p.audio) {
+    const audio = new Audio();
+    audio.preload = 'none';
+    audio.addEventListener('ended', () => {
+      if (audio.src.startsWith('data:')) return; // fin du fichier vide de déblocage : on attend le vrai extrait
+      discoverStopPreview();
+    });
+    audio.addEventListener('error', () => {
+      if (audio.src.startsWith('data:')) return; // le fichier vide de déblocage
+      if (p.state === 'playing' || p.state === 'loading') {
+        discoverStopPreview();
+        showToast("⚠️ Lecture impossible pour cet extrait");
+      }
+    });
+    p.audio = audio;
+  }
+  return p.audio;
+}
+
+function discoverStopPreview() {
+  const p = discoverPlayer;
+  p.token++;
+  p.key = '';
+  p.state = 'idle';
+  p.title = '';
+  if (p.audio) {
+    p.audio.pause();
+    p.audio.removeAttribute('src');
+    p.audio.load();
+  }
+  discoverUpdatePlayButtons();
+}
+
+async function discoverTogglePreview(btn) {
+  const p = discoverPlayer;
+  const key = btn.dataset.key;
+  const kind = btn.dataset.kind;
+
+  // Un second appui sur le même bouton arrête la lecture
+  if (p.key === key && (p.state === 'playing' || p.state === 'loading')) {
+    discoverStopPreview();
+    return;
+  }
+
+  discoverStopPreview();
+  const audio = discoverAudio();
+  audio.src = SILENT_AUDIO;               // déblocage de la lecture pendant le geste
+  audio.play().catch(() => {});
+
+  p.key = key;
+  p.state = 'loading';
+  discoverUpdatePlayButtons();
+  const token = ++p.token;
+
+  try {
+    const found = kind === 'artist'
+      ? await discoverFindArtistPreview(btn.dataset.artist)
+      : await discoverFindAlbumPreview(btn.dataset.artist, btn.dataset.title);
+    if (token !== p.token) return;
+
+    if (!found) {
+      discoverStopPreview();
+      showToast("🎧 Aucun extrait disponible sur iTunes pour celui-ci");
+      return;
+    }
+    audio.src = found.url;
+    await audio.play();
+    if (token !== p.token) return;
+    p.state = 'playing';
+    p.title = found.title;
+    discoverUpdatePlayButtons();
+  } catch (err) {
+    if (token !== p.token) return;
+    console.error(err);
+    discoverStopPreview();
+    showToast(isNetworkError(err) ? "📡 Impossible de joindre iTunes" : "⚠️ Lecture impossible : appuie à nouveau sur ▶");
+  }
+}
+
+// La lecture s'arrête quand on quitte la page Découverte
+['hashchange', 'popstate'].forEach(evt => window.addEventListener(evt, () => {
+  setTimeout(() => {
+    if (discoverPlayer.state !== 'idle' && !document.getElementById('discover-page')) discoverStopPreview();
+  }, 0);
+}));
+
 /* ---------- Pages : « Découverte » ---------- */
 function discoverSummaryText() {
   const c = discoverState.criteria;
@@ -4626,7 +4875,8 @@ function discoverPageHTML() {
 
       <div class="dc-credits">
         Données : <a href="https://www.last.fm" target="_blank" rel="noopener">Last.fm</a> et
-        <a href="https://musicbrainz.org" target="_blank" rel="noopener">MusicBrainz</a>
+        <a href="https://musicbrainz.org" target="_blank" rel="noopener">MusicBrainz</a> ·
+        Extraits : <a href="https://www.apple.com/fr/itunes/" target="_blank" rel="noopener">Apple</a>
         ${hasKey ? ' · <a href="#" onclick="discoverChangeKey(); return false;">Changer la clé Last.fm</a>' : ''}
       </div>
     </div>
@@ -4699,6 +4949,7 @@ function discoverPickArtist(name) {
 
 function discoverReset() {
   const s = discoverState;
+  discoverStopPreview();
   s.runId++;
   s.criteria = { ...DISCOVER_DEFAULTS };
   s.chips = [];
