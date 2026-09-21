@@ -1430,7 +1430,6 @@ const fabHTML = `
       <span class="fab-icon" aria-hidden="true"></span>
     </button>
   </div>
-  ${similarButtonHTML(index, null)}
 `;
 
 // CAS 1 : MINIDISC SIMPLE / COMPILATION (SANS ALBUMS)
@@ -1448,7 +1447,7 @@ if (!md.albums || md.albums.length === 0) {
   }
 
   const badgeCompilHTML = md.toRecord 
-    ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
+    ? `<div class="badge-to-record-header">💽 À enregistrer</div>` 
     : '';
 
   const coverHTML = createLoadingCoverHTML(md.md_cover, 'album-cover-large', '💽');
@@ -1470,6 +1469,7 @@ if (!md.albums || md.albums.length === 0) {
       <ul class="track-list">${tracksHTML}</ul>
     </div>
     ${fabHTML}
+    ${titlesActionsHTML(index, null, true)}
   `;
   window.scrollTo(0, 0);
   return;
@@ -1573,7 +1573,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   }
 
   const badgeAlbumHTML = album.toRecord 
-    ? `<div class="badge-to-record-header">💽 À ENREGISTRER</div>` 
+    ? `<div class="badge-to-record-header">💽 À enregistrer</div>` 
     : '';
 
   const coverHTML = createLoadingCoverHTML(album.md_cover, 'album-cover-large', '🎵');
@@ -1594,7 +1594,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
       </div>
       <ul class="track-list">${tracksHTML}</ul>
     </div>
-    ${similarButtonHTML(mdIndex, albumIndex)}
+    ${titlesActionsHTML(mdIndex, albumIndex, false)}
   `;
   window.scrollTo(0, 0);
 }
@@ -3133,7 +3133,7 @@ window.addEventListener('popstate', () => {
   const hash = window.location.hash;
 
   // Retour (geste Android, bouton du navigateur) depuis la discographie : on revient aux résultats
-  if (document.getElementById('discover-page') && discoverState.view === 'disco') {
+  if (document.getElementById('discover-page') && discoverState.view === 'disco' && !(discoverState.disco && discoverState.disco.direct)) {
     discoverBackToResults(true);
     return;
   }
@@ -3413,6 +3413,7 @@ const discoverState = {
   lifespanNote: '',
   showKeyCard: false,
   pendingAuto: false,
+  pendingDisco: '',     // artiste dont la discographie s'ouvrira dès que la clé Last.fm sera enregistrée
   startArtist: '',
   formOpen: true,       // le formulaire se replie une fois la recherche lancée
   view: 'results',      // 'results' | 'disco' (discographie complète d'un artiste)
@@ -3693,6 +3694,11 @@ function saveLastfmKeyFromInput() {
   showToast("🔑 Clé Last.fm enregistrée");
   refreshDiscoverPage();
   if (s.pendingAuto) startDiscoverSearch();
+  else if (s.pendingDisco) {
+    const artist = s.pendingDisco;
+    s.pendingDisco = '';
+    discoverShowDiscography(artist, '', { direct: true });
+  }
 }
 
 function discoverChangeKey() {
@@ -3723,9 +3729,31 @@ function openSimilarSearch(mdIndex, albumIndex) {
   window.location.hash = '#discover?' + params.toString();
 }
 
-function similarButtonHTML(mdIndex, albumIndex) {
+// Artiste concerné par une page Titres (album d'une série, ou MiniDisc compilation) : vide si c'est "Divers"
+function titlesArtist(mdIndex, albumIndex) {
+  const md = catalogData && catalogData[mdIndex];
+  if (!md) return '';
+  const hasAlbum = albumIndex !== null && albumIndex !== undefined && md.albums && md.albums[albumIndex];
+  const artist = String((hasAlbum ? md.albums[albumIndex].artist : md.artist) || '').trim();
+  return isRealArtist(artist) ? artist : '';
+}
+
+// Discographie de l'artiste concerné, ouverte directement
+function openArtistDiscography(mdIndex, albumIndex) {
+  const artist = titlesArtist(mdIndex, albumIndex);
+  if (!artist) return;
+  discoverBackHash = window.location.hash || '#dashboard';
+  window.location.hash = '#discover?' + new URLSearchParams({ artist, disco: '1' }).toString();
+}
+
+// Boutons en bas des pages Titres : « Discographie » à gauche de « Trouver des artistes similaires »
+// (hasFab : la page a déjà un bouton flottant en bas à droite, les boutons se placent à sa gauche)
+function titlesActionsHTML(mdIndex, albumIndex, hasFab) {
   const albumArg = albumIndex === null || albumIndex === undefined ? 'null' : albumIndex;
-  return `<button type="button" class="similar-fab" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">🔎 Trouver des artistes similaires</button>`;
+  const disco = titlesArtist(mdIndex, albumIndex)
+    ? `<button type="button" class="titles-disco-btn" onclick="openArtistDiscography(${mdIndex}, ${albumArg})">📀 Discographie</button>`
+    : '';
+  return `<div class="titles-actions ${hasFab ? 'has-fab' : ''}">${disco}<button type="button" class="similar-fab" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">🔎 Trouver des artistes similaires</button></div>`;
 }
 
 /* ---------- Ce que je possède déjà ---------- */
@@ -4181,11 +4209,12 @@ function discoverArtistHTML(a) {
   return `
     <div class="list-item dc-item" style="border-color:${color}; --glow:${color}; border-left-width:6px;">
       ${discoverLastfmLink(a.lastfmUrl)}
-      ${discoverCoverHTML(a.topAlbum && a.topAlbum.image, '🎤', discoverPlayButton('artist', a.artist, ''))}
+      ${discoverPlayButton('artist', a.artist, '', 'dc-play-side')}
+      ${discoverCoverHTML(a.topAlbum && a.topAlbum.image, '🎤')}
       <div class="dc-info">
         ${genreLabel}
         <div class="dc-title">${mbEscapeHTML(a.artist)}</div>
-        ${facts.length ? `<div class="dc-facts">${facts.join(' · ')}</div>` : ''}
+        ${facts.length ? `<div class="dc-facts">${facts.join('<br>')}</div>` : ''}
         ${discoverNowPlaying(discoverPreviewKey('artist', a.artist, ''))}
         <div class="dc-actions">
           <button type="button" class="dc-disco-link" data-artist="${mbEscapeHTML(a.artist)}" data-mbid="${mbEscapeHTML(a.mbid || '')}" onclick="discoverShowDiscography(this.dataset.artist, this.dataset.mbid)">📀 Discographie</button>
@@ -4246,7 +4275,7 @@ function renderDiscoverResults() {
 
     // Barre fixe : bouton retour bien visible + titre
     discoBar.innerHTML = `
-      <button type="button" class="dc-back-results" onclick="discoverBackToResults()">← Retour aux résultats</button>
+      <button type="button" class="dc-back-results" onclick="discoverBackToResults()">${d.direct ? '← Retour' : '← Retour aux résultats'}</button>
       <div class="dc-disco-title">📀 Discographie de <span class="dc-disco-artist">${mbEscapeHTML(d.artist)}</span></div>`;
     discoBar.classList.remove('hidden');
 
@@ -4351,9 +4380,10 @@ function discoverShowDiscographyFromForm() {
   discoverShowDiscography(name, '');
 }
 
-async function discoverShowDiscography(name, mbid) {
+async function discoverShowDiscography(name, mbid, options = {}) {
   const s = discoverState;
   if (!name) return;
+  const direct = !!options.direct; // ouverte depuis une page Titres : pas de résultats vers lesquels revenir
   if (!getLastfmKey()) {
     s.showKeyCard = true;
     s.formOpen = true;
@@ -4370,9 +4400,9 @@ async function discoverShowDiscography(name, mbid) {
   s.formOpen = false;
   // Une entrée d'historique est ajoutée pour que le retour (bouton ← ou geste Android) revienne aux résultats
   const alreadyInHistory = !!(s.view === 'disco' && s.disco && s.disco.hist);
-  if (!alreadyInHistory) history.pushState({ discoView: true }, '', window.location.href);
+  if (!direct && !alreadyInHistory) history.pushState({ discoView: true }, '', window.location.href);
   s.view = 'disco';
-  s.disco = { artist: name, mbid: mbid || '', items: [], showOthers: false, loading: true, hist: true, status: `Chargement de la discographie de <strong>${mbEscapeHTML(name)}</strong>…` };
+  s.disco = { artist: name, mbid: mbid || '', items: [], showOthers: false, loading: true, hist: !direct && true, direct, status: `Chargement de la discographie de <strong>${mbEscapeHTML(name)}</strong>…` };
   refreshDiscoverPage();
   discoverScrollToResults();
 
@@ -4503,6 +4533,13 @@ async function discoverShowDiscography(name, mbid) {
 // fromHistory : true quand on arrive ici par le retour du navigateur / du téléphone (l'entrée d'historique est déjà retirée)
 function discoverBackToResults(fromHistory = false) {
   const s = discoverState;
+  // Discographie ouverte directement depuis une page Titres : il n'y a pas de résultats, on revient à la page d'origine
+  if (s.disco && s.disco.direct) {
+    s.runId++;
+    window.location.hash = discoverBackHash || '#create';
+    discoverBackHash = '#create';
+    return;
+  }
   const hadHistory = !!(s.disco && s.disco.hist);
   s.runId++; // annule un éventuel chargement de discographie
   s.view = 'results';
@@ -4640,9 +4677,9 @@ function discoverPlayClass(key) {
   return p.state === 'loading' ? 'is-loading' : (p.state === 'playing' ? 'is-playing' : '');
 }
 
-function discoverPlayButton(kind, artist, title) {
+function discoverPlayButton(kind, artist, title, extraClass = '') {
   const key = discoverPreviewKey(kind, artist, title);
-  return `<button type="button" class="dc-play ${discoverPlayClass(key)}" data-key="${mbEscapeHTML(key)}" data-kind="${kind}" data-artist="${mbEscapeHTML(artist)}" data-title="${mbEscapeHTML(title || '')}" aria-label="Écouter un extrait" onclick="event.stopPropagation(); discoverTogglePreview(this)">` +
+  return `<button type="button" class="dc-play ${extraClass} ${discoverPlayClass(key)}" data-key="${mbEscapeHTML(key)}" data-kind="${kind}" data-artist="${mbEscapeHTML(artist)}" data-title="${mbEscapeHTML(title || '')}" aria-label="Écouter un extrait" onclick="event.stopPropagation(); discoverTogglePreview(this)">` +
     `<svg class="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>` +
     `<svg class="i-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>` +
     `<span class="i-spin"></span></button>`;
@@ -4932,6 +4969,16 @@ function renderDiscover(params) {
   if (autoStart) {
     if (getLastfmKey()) startDiscoverSearch();
     else s.pendingAuto = true;
+  }
+
+  // Bouton « Discographie » d'une page Titres : on ouvre directement la discographie de l'artiste
+  if (params && params.get('disco') === '1' && params.get('artist')) {
+    if (getLastfmKey()) discoverShowDiscography(params.get('artist'), '', { direct: true });
+    else {
+      s.showKeyCard = true;
+      s.pendingDisco = params.get('artist');
+      refreshDiscoverPage();
+    }
   }
 }
 

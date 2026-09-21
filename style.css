@@ -823,10 +823,11 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   background-color: #ff007f;
   color: #ffffff;
   display: inline-block;
-  padding: 4px 12px;
+  padding: 3px 8px;      /* mêmes dimensions que la vignette des pages Albums et Minidiscs */
   border-radius: 20px;
-  font-size: 0.75rem;
+  font-size: 0.70rem;
   font-weight: bold;
+  white-space: nowrap;
   margin-bottom: 6px;
 }
 
@@ -2506,40 +2507,64 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
 }
 
 /* Bouton arrondi « Trouver des artistes similaires » (pages Albums et Titres) */
-.similar-fab {
+.titles-actions {
   position: fixed;
-  left: 50%;
+  right: 20px;
   bottom: 40px;
-  transform: translateX(-50%);
   z-index: 900;
-  max-width: calc(100vw - 188px); /* ne recouvre jamais le bouton flottant de droite */
-  padding: 7px 14px;
-  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
+  display: flex;
+  flex-wrap: wrap-reverse;      /* si l'écran est trop étroit, les boutons passent sur deux lignes */
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100vw - 40px);
+  font-size: clamp(0.56rem, 2.4vw, 0.7rem);
+}
+
+/* La page a déjà un bouton flottant en bas à droite : on se place à sa gauche */
+.titles-actions.has-fab {
+  right: 94px;
+  max-width: calc(100vw - 110px);
+}
+
+.similar-fab,
+.titles-disco-btn {
+  padding: 0.6em 1em;
   color: #ffffff;
   border: 2px solid #000000;
   border-radius: 999px;
   box-shadow: 3px 3px 0 #000000, 0 6px 14px rgba(0, 0, 0, 0.3);
-  font-size: clamp(0.56rem, 2.6vw, 0.72rem);
+  font-size: 1em;
   font-weight: 800;
   line-height: 1.2;
   white-space: nowrap;
   text-align: center;
   cursor: pointer;
   touch-action: manipulation;
-  transition: box-shadow 0.1s ease;
 }
 
-.similar-fab:active {
-  transform: translate(calc(-50% + 2px), 2px);
+.similar-fab {
+  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
+}
+
+.titles-disco-btn {
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.similar-fab:active,
+.titles-disco-btn:active {
+  transform: translate(2px, 2px);
   box-shadow: 1px 1px 0 #000000, 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
-body:has(.modal:not(.hidden)) .similar-fab {
+body:has(.modal:not(.hidden)) .titles-actions {
   display: none;
 }
 
 /* Laisse de la place sous la dernière tuile quand le bouton est affiché */
-main#app:has(.similar-fab) {
+main#app:has(.titles-actions) {
   padding-bottom: 90px;
 }
 
@@ -2869,4 +2894,22 @@ main#app:has(.similar-fab) {
 
 .dc-nowplaying.hidden {
   display: none;
+}
+
+/* Tuile artiste : bouton ▶ sur le côté droit, au milieu (entre le lien Last.fm et le bouton « Discographie ») */
+.dc-play.dc-play-side {
+  right: 14px;
+  bottom: auto;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translateY(-50%);
+}
+
+.dc-play.dc-play-side:active {
+  transform: translateY(-50%) scale(0.92);
+}
+
+.dc-item .dc-facts {
+  line-height: 1.4;
 }
