@@ -2509,28 +2509,25 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
 /* Bouton arrondi « Trouver des artistes similaires » (pages Albums et Titres) */
 .titles-actions {
   position: fixed;
-  right: 20px;
+  left: 50%;
   bottom: 40px;
+  transform: translateX(-50%);
   z-index: 900;
-  display: flex;
-  flex-wrap: wrap-reverse;      /* si l'écran est trop étroit, les boutons passent sur deux lignes */
-  justify-content: flex-end;
-  align-items: center;
+  display: grid;                 /* colonnes de largeur égale : les deux boutons ont la même largeur */
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   gap: 6px;
-  max-width: calc(100vw - 40px);
   font-size: clamp(0.56rem, 2.4vw, 0.7rem);
 }
 
-/* La page a déjà un bouton flottant en bas à droite : on se place à sa gauche */
-.titles-actions.has-fab {
-  right: 94px;
-  max-width: calc(100vw - 110px);
+/* Si les boutons touchent le bouton flottant de droite (page d'une compilation), ils passent au-dessus */
+.titles-actions.above-fab {
+  bottom: 102px;
 }
 
 .similar-fab,
 .titles-disco-btn {
   padding: 0.6em 1em;
-  color: #ffffff;
   border: 2px solid #000000;
   border-radius: 999px;
   box-shadow: 3px 3px 0 #000000, 0 6px 14px rgba(0, 0, 0, 0.3);
@@ -2544,13 +2541,14 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
 }
 
 .similar-fab {
+  color: #ffffff;
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
 }
 
+/* Cyan : bien visible sur le fond sombre, distinct du bouton rose */
 .titles-disco-btn {
-  background: var(--glass-strong);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  color: #000000;
+  background: linear-gradient(135deg, #00f0ff 0%, #5aa2ff 100%);
 }
 
 .similar-fab:active,
@@ -2912,4 +2910,66 @@ main#app:has(.titles-actions) {
 
 .dc-item .dc-facts {
   line-height: 1.4;
+}
+
+/* Tuiles : le bouton d'action (Discographie / Ajouter aux idées) reste tout en bas de la tuile */
+.dc-item .dc-info {
+  align-self: stretch;
+}
+
+.dc-item .dc-actions {
+  margin-top: auto;
+}
+
+/* Case « Masquer les artistes que j'ai déjà » : sans encart, texte centré sur la coche */
+.form-group label.dc-check,
+.form-group label.dc-check:has(input[type="checkbox"]:checked) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: var(--text-sub);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.form-group label.dc-check input[type="checkbox"] {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+/* Création aléatoire (planificateur) : bouton centré en bas */
+.random-compil-btn {
+  position: fixed;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  z-index: 900;
+  padding: 10px 18px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
+  border: 2px solid #000000;
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 #000000, 0 6px 14px rgba(0, 0, 0, 0.3);
+  font-size: 0.8rem;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.random-compil-btn:active {
+  transform: translate(calc(-50% + 2px), 2px);
+  box-shadow: 1px 1px 0 #000000, 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+body:has(.modal:not(.hidden)) .random-compil-btn {
+  display: none;
 }

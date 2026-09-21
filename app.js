@@ -2288,6 +2288,8 @@ function renderCompilPlanner(pushState = true) {
             <span class="fab-icon" aria-hidden="true"></span>
           </button>
         </div>
+
+        <button type="button" class="random-compil-btn" onclick="createRandomCompilation()">🎲 Création Aléatoire</button>
       </div>
     `;
 
@@ -2486,6 +2488,94 @@ function deleteIdeaAlbum(index) {
     if (typeof showToast === 'function') showToast("🗑️ Album supprimé des idées");
     renderCompilPlanner(false);
   }
+}
+
+/* ==========================================
+   CRÉATION ALÉATOIRE
+   ------------------------------------------
+   Propose une compilation d'idées d'un SEUL genre dont la durée remplit au maximum un MiniDisc (2h 28m).
+   Chaque appui tire une nouvelle proposition : parmi les combinaisons qui remplissent presque au maximum
+   (à RANDOM_COMPIL_TOLERANCE secondes du meilleur remplissage), une est choisie au hasard.
+   ========================================== */
+const PLANNER_MAX_SECONDS = 148 * 60;   // capacité d'un MiniDisc
+const RANDOM_COMPIL_TOLERANCE = 120;    // secondes sous le meilleur remplissage encore acceptées
+let lastRandomCompil = { genre: '', key: '' };
+
+function shuffleInPlace(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Sommes de durées atteignables (sans dépasser la capacité), avec de quoi retrouver la combinaison
+function plannerSubsetSums(pool, capacity) {
+  const order = shuffleInPlace(pool.slice()); // l'ordre aléatoire varie les combinaisons trouvées
+  const parent = new Int32Array(capacity + 1).fill(-2);
+  parent[0] = -1;
+  order.forEach((item, i) => {
+    for (let sum = capacity; sum >= item.sec; sum--) {
+      if (parent[sum] === -2 && parent[sum - item.sec] !== -2) parent[sum] = i;
+    }
+  });
+  let best = 0;
+  for (let sum = capacity; sum > 0; sum--) {
+    if (parent[sum] !== -2) { best = sum; break; }
+  }
+  return { order, parent, best };
+}
+
+function createRandomCompilation() {
+  const ideas = getIdeaList();
+  const items = ideas
+    .map((item, index) => ({ index, sec: parseTimeToSeconds(item.duration), genres: getItemGenresList(item) }))
+    .filter(x => x.sec > 0 && x.sec <= PLANNER_MAX_SECONDS && x.genres.length > 0);
+
+  if (items.length === 0) {
+    showToast("⚠️ Aucune idée avec une durée renseignée");
+    return;
+  }
+
+  // Idées regroupées par genre (une idée de plusieurs genres figure dans chacun)
+  const byGenre = new Map();
+  items.forEach(x => x.genres.forEach(g => {
+    if (!byGenre.has(g)) byGenre.set(g, []);
+    byGenre.get(g).push(x);
+  }));
+
+  // Genres capables de bien remplir un MiniDisc (au moins 90 % ; sinon les meilleurs disponibles)
+  const scored = Array.from(byGenre.entries()).map(([genre, pool]) => ({ genre, pool, best: plannerSubsetSums(pool, PLANNER_MAX_SECONDS).best }));
+  const overall = Math.max(...scored.map(g => g.best));
+  const good = scored.filter(g => g.best >= 0.9 * PLANNER_MAX_SECONDS);
+  let choices = good.length > 0 ? good : scored.filter(g => g.best >= 0.9 * overall);
+  const others = choices.filter(g => g.genre !== lastRandomCompil.genre); // variété d'un appui à l'autre
+  if (others.length > 0) choices = others;
+  const picked = choices[Math.floor(Math.random() * choices.length)];
+
+  // Combinaison au hasard parmi celles qui remplissent presque au maximum (différente de la précédente si possible)
+  let chosen = [];
+  let total = 0;
+  let key = '';
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const { order, parent, best } = plannerSubsetSums(picked.pool, PLANNER_MAX_SECONDS);
+    const targets = [];
+    for (let sum = Math.max(1, best - RANDOM_COMPIL_TOLERANCE); sum <= best; sum++) {
+      if (parent[sum] !== -2) targets.push(sum);
+    }
+    total = targets[Math.floor(Math.random() * targets.length)];
+    chosen = [];
+    for (let sum = total; sum > 0; sum -= order[parent[sum]].sec) chosen.push(order[parent[sum]]);
+    key = chosen.map(x => x.index).sort((a, b) => a - b).join(',');
+    if (key !== lastRandomCompil.key || attempt === 7) break;
+  }
+
+  lastRandomCompil = { genre: picked.genre, key };
+  selectedIdeaIndices = new Set(chosen.map(x => x.index));
+  currentPlannerGenreFilters.clear();
+  currentPlannerGenreFilters.add(picked.genre); // on n'affiche que les idées du genre tiré
+  renderCompilPlanner(false);
+  showToast(`🎲 ${picked.genre} · ${formatSecondsToDisplay(total)} / 2h 28m · ${chosen.length} album${chosen.length > 1 ? 's' : ''}`, 4500);
 }
 
 function clearIdeaSelection() {
@@ -3750,11 +3840,25 @@ function openArtistDiscography(mdIndex, albumIndex) {
 // (hasFab : la page a déjà un bouton flottant en bas à droite, les boutons se placent à sa gauche)
 function titlesActionsHTML(mdIndex, albumIndex, hasFab) {
   const albumArg = albumIndex === null || albumIndex === undefined ? 'null' : albumIndex;
+  requestAnimationFrame(() => requestAnimationFrame(fitTitlesActions)); // une fois la page affichée
   const disco = titlesArtist(mdIndex, albumIndex)
     ? `<button type="button" class="titles-disco-btn" onclick="openArtistDiscography(${mdIndex}, ${albumArg})">📀 Discographie</button>`
     : '';
-  return `<div class="titles-actions ${hasFab ? 'has-fab' : ''}">${disco}<button type="button" class="similar-fab" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">🔎 Trouver des artistes similaires</button></div>`;
+  return `<div class="titles-actions ${hasFab ? 'has-fab' : ''}">${disco}<button type="button" class="similar-fab" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">🔎 Artistes similaires</button></div>`;
 }
+
+// Les boutons sont centrés en bas ; s'ils touchent le bouton flottant de droite (compilation), ils passent au-dessus
+function fitTitlesActions() {
+  const box = document.querySelector('.titles-actions');
+  if (!box) return;
+  box.classList.remove('above-fab');
+  const fab = document.querySelector('#md-detail-floating-actions .fab-main-btn');
+  if (!fab) return;
+  const b = box.getBoundingClientRect();
+  const f = fab.getBoundingClientRect();
+  if (b.right > f.left - 6 && b.bottom > f.top - 6) box.classList.add('above-fab');
+}
+window.addEventListener('resize', fitTitlesActions);
 
 /* ---------- Ce que je possède déjà ---------- */
 function discoverOwnedArtists() {
@@ -4237,14 +4341,14 @@ function discoverAlbumHTML(r) {
   else if (r.isIdea) action = `<span class="dc-owned">💡 Déjà dans mes idées</span>`;
   else action = `<button type="button" class="dc-add" onclick="discoverAddToIdeas('d', ${r.idx})">＋ Ajouter aux idées</button>`;
 
-  const playBtn = discoverPlayButton('album', r.artist, r.title);
   const cover = (r.image || caa)
-    ? `<div class="dc-cover"><span class="dc-cover-ph">💿</span><img src="${mbEscapeHTML(r.image || caa)}" data-fallback="${mbEscapeHTML(r.image ? caa : '')}" alt="" loading="lazy" onerror="discoverCoverError(this)">${playBtn}</div>`
-    : `<div class="dc-cover"><span class="dc-cover-ph">💿</span>${playBtn}</div>`;
+    ? `<div class="dc-cover"><span class="dc-cover-ph">💿</span><img src="${mbEscapeHTML(r.image || caa)}" data-fallback="${mbEscapeHTML(r.image ? caa : '')}" alt="" loading="lazy" onerror="discoverCoverError(this)"></div>`
+    : `<div class="dc-cover"><span class="dc-cover-ph">💿</span></div>`;
 
   return `
     <div class="list-item dc-item" style="border-color:${color}; --glow:${color}; border-left-width:6px;">
       ${discoverLastfmLink(r.lastfmUrl)}
+      ${discoverPlayButton('album', r.artist, r.title, 'dc-play-side')}
       ${cover}
       <div class="dc-info">
         <div class="dc-title">${mbEscapeHTML(r.title)}</div>
@@ -4889,7 +4993,7 @@ function discoverPageHTML() {
         </div>
 
         <div class="form-group">
-          <label><input type="checkbox" id="dc-hide-owned" ${c.hideOwned ? 'checked' : ''} onchange="discoverViewChanged()"> Masquer les artistes que j'ai déjà (collection et idées)</label>
+          <label class="dc-check"><input type="checkbox" id="dc-hide-owned" ${c.hideOwned ? 'checked' : ''} onchange="discoverViewChanged()"><span>Masquer les artistes que j'ai déjà (collection et idées)</span></label>
         </div>
 
         <div class="dc-buttons">
