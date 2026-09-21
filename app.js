@@ -786,7 +786,10 @@ if (!window.location.hash || window.location.hash === '#') {
 // Gestion du bouton Retour
 if (backBtn) {
   backBtn.addEventListener('click', () => {
-    if (document.getElementById('discover-page')) {
+    if (document.getElementById('discover-page') && discoverState.view === 'disco') {
+      // Discographie -> retour aux résultats
+      discoverBackToResults();
+    } else if (document.getElementById('discover-page')) {
       // Découverte -> page d'où l'on vient (album, titres, ou page « Créer »)
       window.location.hash = discoverBackHash || '#create';
       discoverBackHash = '#create';
@@ -2791,12 +2794,16 @@ function mbArtistName(group, separator = ' ') {
 }
 
 // Titre sans les mentions d'édition, pour reconnaître "Nevermind" et "Nevermind (Deluxe Edition)" comme un seul album
+// Mots qui signalent une édition spéciale plutôt qu'un autre album
+const MB_EDITION_BRACKET_REGEX = /[(\[][^)\]]*\b(?:deluxe|dlx|remaster(?:ed|s)?|anniversary|expanded|re-?issue|edition|version|bonus|special|limited|collector'?s?|legacy|super|explicit|clean|digital|mono|stereo|extended|international|japan(?:ese)?|import|platinum|reloaded|cd\s?\d|disc\s?\d|\d+(?:st|nd|rd|th)|xx)\b[^)\]]*[)\]]/gi;
+const MB_EDITION_TRAIL_REGEX = /(?:\s*[-–—:]\s*|\s+)(?:\d+(?:st|nd|rd|th)|deluxe|special|expanded|limited|collector'?s?|legacy|anniversary|super|remaster(?:ed)?(?:\s+\d{4})?|re-?issue|edition|version|bonus|tracks?|explicit|digital|mono|stereo|dlx)\s*$/i;
+
+// "Nevermind", "Nevermind (Remastered)", "Nevermind - 20th Anniversary Deluxe Edition" -> même clé
 function mbBaseTitle(title) {
-  return mbNormalize(
-    String(title || '')
-      .replace(/[(\[][^)\]]*(?:deluxe|remaster|anniversary|expanded|re-?issue|edition|bonus)[^)\]]*[)\]]/gi, ' ')
-      .replace(/\s[-–:]\s.*(?:deluxe|remaster|anniversary|expanded|re-?issue|edition|bonus).*$/i, ' ')
-  );
+  let t = String(title || '').replace(MB_EDITION_BRACKET_REGEX, ' ');
+  t = t.replace(/\s[-–:]\s.*(?:deluxe|remaster|anniversary|expanded|re-?issue|edition|bonus).*$/i, ' ');
+  for (let i = 0; i < 6 && MB_EDITION_TRAIL_REGEX.test(t.trim()); i++) t = t.trim().replace(MB_EDITION_TRAIL_REGEX, '');
+  return mbNormalize(t);
 }
 
 function mbTypeRank(group) {
@@ -3125,6 +3132,12 @@ function handlePlannerSearch(query) {
 window.addEventListener('popstate', () => {
   const hash = window.location.hash;
 
+  // Retour (geste Android, bouton du navigateur) depuis la discographie : on revient aux résultats
+  if (document.getElementById('discover-page') && discoverState.view === 'disco') {
+    discoverBackToResults(true);
+    return;
+  }
+
   // Pages « Créer » et « Découverte » : affichées par le routage (hashchange)
   if (hash.startsWith('#create') || hash.startsWith('#discover')) return;
 
@@ -3364,7 +3377,7 @@ const DISCOVER_INFO_CONCURRENCY = 4;
 // Qualité minimale pour figurer dans la liste principale : les artistes en dessous ne sont proposés que
 // s'il n'y a pas assez de résultats (ou sur demande, en fin de liste)
 const DISCOVER_MIN_MATCH = 0.35;          // similarité minimale (35 %)
-const DISCOVER_MIN_LISTENERS = 50000;     // auditeurs Last.fm minimum
+const DISCOVER_MIN_LISTENERS = 500000;    // auditeurs Last.fm minimum
 // Classement "Recommandés" : poids de la popularité et de la similarité (mesurées en rang, de 0 à 1)
 const DISCOVER_WEIGHT_POP = 0.6;
 const DISCOVER_WEIGHT_SIM = 0.4;
@@ -4160,9 +4173,9 @@ function discoverArtistHTML(a) {
   const color = getSingleGenreColor(a.mainGenre ? a.mainGenre.toUpperCase() : 'AUTRE');
   const genreLabel = a.mainGenre ? `<div class="dc-genre" style="color:${color}">${mbEscapeHTML(a.mainGenre)}</div>` : '';
 
-  const chips = [];
-  if (a.listeners > 0) chips.push(`<span class="dc-chip dc-chip-pop">👥 ${fmtCount(a.listeners)} auditeurs</span>`);
-  if (a.match != null) chips.push(`<span class="dc-chip dc-chip-match">≈ ${Math.round(a.match * 100)} % similaire</span>`);
+  const facts = [];
+  if (a.listeners > 0) facts.push(`👥 ${fmtCount(a.listeners)} auditeurs`);
+  if (a.match != null) facts.push(`≈ ${Math.round(a.match * 100)} % similaire`);
 
   return `
     <div class="list-item dc-item" style="border-color:${color}; --glow:${color}; border-left-width:6px;">
@@ -4171,8 +4184,7 @@ function discoverArtistHTML(a) {
       <div class="dc-info">
         ${genreLabel}
         <div class="dc-title">${mbEscapeHTML(a.artist)}</div>
-        ${a.topAlbum ? `<div class="dc-artist">Album phare : ${mbEscapeHTML(a.topAlbum.title)}</div>` : ''}
-        ${chips.length ? `<div class="dc-chips">${chips.join('')}</div>` : ''}
+        ${facts.length ? `<div class="dc-facts">${facts.join(' · ')}</div>` : ''}
         <div class="dc-actions">
           <button type="button" class="dc-disco-link" data-artist="${mbEscapeHTML(a.artist)}" data-mbid="${mbEscapeHTML(a.mbid || '')}" onclick="discoverShowDiscography(this.dataset.artist, this.dataset.mbid)">📀 Discographie</button>
         </div>
@@ -4205,7 +4217,6 @@ function discoverAlbumHTML(r) {
       <div class="dc-info">
         <div class="dc-title">${mbEscapeHTML(r.title)}</div>
         ${labels.length ? `<div class="dc-meta">${labels.map(mbEscapeHTML).join(' · ')}</div>` : ''}
-        ${r.playcount > 0 ? `<div class="dc-chips"><span class="dc-chip dc-chip-pop">🔥 ${fmtCount(r.playcount)} écoutes</span></div>` : ''}
         <div class="dc-actions">${action}</div>
       </div>
     </div>`;
@@ -4219,8 +4230,9 @@ function renderDiscoverResults() {
   const s = discoverState;
   const box = document.getElementById('dc-results');
   const statusEl = document.getElementById('dc-status');
+  const discoBar = document.getElementById('dc-disco-bar');
   const moreEl = document.getElementById('dc-more');
-  if (!box || !statusEl || !moreEl) return;
+  if (!box || !statusEl || !moreEl || !discoBar) return;
 
   // ----- Vue « discographie complète d'un artiste » -----
   if (s.view === 'disco' && s.disco) {
@@ -4228,12 +4240,13 @@ function renderDiscoverResults() {
     const { owned, ideas } = discoverOwnedAlbumKeys();
     const mark = r => ({ ...r, isOwned: owned.has(r.key), isIdea: ideas.has(r.key) });
 
-    let html = `
-      <div class="dc-disco-head">
-        <button type="button" class="btn-secondary dc-back-results" onclick="discoverBackToResults()">← Retour aux résultats</button>
-        <div class="dc-disco-title">📀 Discographie de <span class="dc-disco-artist">${mbEscapeHTML(d.artist)}</span></div>
-      </div>`;
+    // Barre fixe : bouton retour bien visible + titre
+    discoBar.innerHTML = `
+      <button type="button" class="dc-back-results" onclick="discoverBackToResults()">← Retour aux résultats</button>
+      <div class="dc-disco-title">📀 Discographie de <span class="dc-disco-artist">${mbEscapeHTML(d.artist)}</span></div>`;
+    discoBar.classList.remove('hidden');
 
+    let html = '';
     html += d.items.filter(r => r.official).map(r => discoverAlbumHTML(mark(r))).join('');
 
     const others = d.items.filter(r => !r.official);
@@ -4252,6 +4265,7 @@ function renderDiscoverResults() {
   }
 
   // ----- Recherche en cours : rien de nouveau n'est affiché, seul l'indicateur change -----
+  discoBar.classList.add('hidden');
   statusEl.classList.toggle('dc-status-running', s.running);
   moreEl.classList.toggle('dc-more-running', s.running);
   moreEl.disabled = s.running;
@@ -4350,8 +4364,11 @@ async function discoverShowDiscography(name, mbid) {
   const runId = s.runId;
 
   s.formOpen = false;
+  // Une entrée d'historique est ajoutée pour que le retour (bouton ← ou geste Android) revienne aux résultats
+  const alreadyInHistory = !!(s.view === 'disco' && s.disco && s.disco.hist);
+  if (!alreadyInHistory) history.pushState({ discoView: true }, '', window.location.href);
   s.view = 'disco';
-  s.disco = { artist: name, mbid: mbid || '', items: [], showOthers: false, loading: true, status: `Chargement de la discographie de <strong>${mbEscapeHTML(name)}</strong>…` };
+  s.disco = { artist: name, mbid: mbid || '', items: [], showOthers: false, loading: true, hist: true, status: `Chargement de la discographie de <strong>${mbEscapeHTML(name)}</strong>…` };
   refreshDiscoverPage();
   discoverScrollToResults();
 
@@ -4378,18 +4395,12 @@ async function discoverShowDiscography(name, mbid) {
     ]);
     if (!discoverAlive(runId)) return;
 
-    // Albums connus de Last.fm : un par titre (l'édition d'origine), sans hommages ni reprises
-    const lfmAlbums = new Map();
+    // Albums connus de Last.fm (sans hommages ni reprises). Last.fm liste chaque édition à part : on les regroupe plus bas.
+    const lfmAlbums = [];
     asArray(top && top.topalbums && top.topalbums.album).forEach(album => {
       const title = album.name;
       if (!title || title === '(null)' || MB_PARASITE_REGEX.test(title)) return;
-      const key = mbBaseTitle(title);
-      const playcount = parseInt(album.playcount, 10) || 0;
-      const reissue = MB_REISSUE_REGEX.test(title) ? 1 : 0;
-      const current = lfmAlbums.get(key);
-      if (!current || reissue < current.reissue || (reissue === current.reissue && playcount > current.playcount)) {
-        lfmAlbums.set(key, { title, playcount, reissue, image: lfmImage(album.image), url: album.url || '' });
-      }
+      lfmAlbums.push({ title, key: mbBaseTitle(title), playcount: parseInt(album.playcount, 10) || 0, image: lfmImage(album.image), url: album.url || '' });
     });
 
     const items = [];
@@ -4415,40 +4426,56 @@ async function discoverShowDiscography(name, mbid) {
     };
 
     if (!mb.ok) {
-      // MusicBrainz n'a pas répondu : on garde les albums Last.fm, sans dates
-      lfmAlbums.forEach(pop => items.push(make(pop.title, null, pop, true)));
+      // MusicBrainz n'a pas répondu : albums Last.fm regroupés par titre de base, sans dates
+      const byKey = new Map();
+      lfmAlbums.forEach(a => {
+        const cur = byKey.get(a.key);
+        if (!cur || a.title.length < cur.title.length) byKey.set(a.key, { ...a, playcount: (cur ? cur.playcount : 0) + a.playcount });
+        else cur.playcount += a.playcount;
+      });
+      byKey.forEach(pop => items.push(make(pop.title, null, pop, true)));
       items.sort((a, b) => b.playcount - a.playcount);
       s.disco.status = `<span class="dc-muted">MusicBrainz n'a pas répondu : les dates ne sont pas disponibles.</span>`;
     } else {
-      // Albums officiels = albums studio connus de Last.fm et confirmés par MusicBrainz (ce qui donne aussi la date)
-      const mbIndex = new Map();
-      discoverIndexGroups(mb.groups).forEach((entry, key) => {
-        if (!MB_PARASITE_REGEX.test(entry.g.title || '')) mbIndex.set(key, entry);
-      });
-      const findEntry = key => {
-        if (mbIndex.has(key)) return [key, mbIndex.get(key)];
-        if (key.length >= 5) {
-          for (const [k, v] of mbIndex) {
-            if (k.length >= 5 && (k.startsWith(key) || key.startsWith(k))) return [k, v];
-          }
-        }
-        return null;
-      };
       const isStudio = g => asArray(g['secondary-types']).length === 0 && g['primary-type'] === 'Album';
+      // Une fin de titre qui ressemble à une suite ("II", "Vol. 2", "Part 3"...) désigne un autre album, pas une réédition
+      const isSequelTail = tail => /^(?:\d|[ivx]+\b|vol|volume|part|pt)/i.test(tail.trim());
 
-      const used = new Set();
-      lfmAlbums.forEach((pop, key) => {
-        const found = findEntry(key);
-        if (found) {
-          used.add(found[0]);
-          items.push(make(pop.title, found[1].g, pop, isStudio(found[1].g)));
-        } else {
-          items.push(make(pop.title, null, pop, false)); // inconnu de MusicBrainz : rangé avec le reste
-        }
+      // 1. Albums MusicBrainz : une seule entrée par titre de base (l'originale, la plus ancienne)
+      const entries = Array.from(discoverIndexGroups(mb.groups).entries())
+        .filter(([, e]) => !MB_PARASITE_REGEX.test(e.g.title || ''))
+        .map(([key, e]) => ({ key, g: e.g, year: discoverYearOf(e.g), studio: isStudio(e.g), lfm: [] }));
+
+      // 2. Les rééditions au titre rallongé ("OK Computer OKNOTOK 1997 2017") sont écartées au profit de l'original
+      const kept = entries.filter(a => {
+        if (!a.studio) return true;
+        return !entries.some(b =>
+          b !== a && b.studio && b.key.length >= 5 && a.key.startsWith(b.key + ' ') &&
+          !isSequelTail(a.key.slice(b.key.length)) && (!b.year || !a.year || b.year <= a.year)
+        );
       });
-      // Le reste de MusicBrainz (jamais dans le top Last.fm) : après le trait de séparation
-      mbIndex.forEach((entry, key) => {
-        if (!used.has(key)) items.push(make(entry.g.title, entry.g, null, false));
+
+      // 3. Chaque album Last.fm est rattaché à l'album MusicBrainz d'origine (titre identique ou édition rallongée)
+      const unmatched = [];
+      lfmAlbums.forEach(a => {
+        let target = kept.find(e => e.key === a.key);
+        if (!target) target = kept.find(e => e.key.length >= 5 && a.key.startsWith(e.key + ' ') && !isSequelTail(a.key.slice(e.key.length)));
+        if (target) target.lfm.push(a);
+        else unmatched.push(a);
+      });
+
+      // 4. Albums officiels = albums studio connus de Last.fm ; le reste passera sous le trait de séparation
+      kept.forEach(e => {
+        const best = e.lfm.slice().sort((x, y) => y.playcount - x.playcount)[0];
+        const pop = best ? { playcount: e.lfm.reduce((n, x) => n + x.playcount, 0), image: best.image, url: best.url } : null;
+        items.push(make(e.g.title, e.g, pop, e.studio && e.lfm.length > 0));
+      });
+      // Albums Last.fm inconnus de MusicBrainz : une seule ligne par titre de base
+      const seenUnmatched = new Set();
+      unmatched.forEach(a => {
+        if (seenUnmatched.has(a.key)) return;
+        seenUnmatched.add(a.key);
+        items.push(make(a.title, null, a, false));
       });
 
       const byYear = (a, b) => (a.year || 9999) - (b.year || 9999) || b.playcount - a.playcount;
@@ -4469,13 +4496,16 @@ async function discoverShowDiscography(name, mbid) {
   }
 }
 
-function discoverBackToResults() {
+// fromHistory : true quand on arrive ici par le retour du navigateur / du téléphone (l'entrée d'historique est déjà retirée)
+function discoverBackToResults(fromHistory = false) {
   const s = discoverState;
+  const hadHistory = !!(s.disco && s.disco.hist);
   s.runId++; // annule un éventuel chargement de discographie
   s.view = 'results';
   s.disco = null;
   renderDiscoverResults();
   discoverScrollToResults();
+  if (!fromHistory && hadHistory) history.back(); // retire l'entrée ajoutée à l'ouverture de la discographie
 }
 
 /* ---------- Pages : « Découverte » ---------- */
@@ -4521,11 +4551,6 @@ function discoverPageHTML() {
   return `
     <div id="discover-page" class="discover-page">
       ${keyCard}
-
-      <button type="button" id="dc-banner" class="dc-banner ${s.formOpen ? 'hidden' : ''}" onclick="discoverToggleForm(true)">
-        <span class="dc-banner-title">🔎 Nouvelle recherche</span>
-        <span class="dc-banner-sub">${mbEscapeHTML(discoverSummaryText())}</span>
-      </button>
 
       <div id="dc-form" class="dc-card ${s.formOpen ? '' : 'hidden'}">
         <div class="dc-card-title">🔎 Mes critères</div>
@@ -4587,7 +4612,15 @@ function discoverPageHTML() {
         </div>
       </div>
 
-      <div id="dc-status" class="dc-status hidden"></div>
+      <!-- Ces deux tuiles restent affichées en haut de l'écran pendant qu'on fait défiler les résultats -->
+      <div id="dc-sticky" class="dc-sticky">
+        <button type="button" id="dc-banner" class="dc-banner ${s.formOpen ? 'hidden' : ''}" onclick="discoverToggleForm(true)">
+          <span class="dc-banner-title">🔎 Nouvelle recherche</span>
+          <span class="dc-banner-sub">${mbEscapeHTML(discoverSummaryText())}</span>
+        </button>
+        <div id="dc-status" class="dc-status hidden"></div>
+        <div id="dc-disco-bar" class="dc-disco-head hidden"></div>
+      </div>
       <div id="dc-results" class="dc-results"></div>
       <button type="button" id="dc-more" class="btn-secondary dc-more hidden" onclick="discoverLoadMore()">Voir plus</button>
 
@@ -4620,6 +4653,8 @@ function discoverToggleForm(open) {
 function renderDiscover(params) {
   const s = discoverState;
   prepareSubPage('DÉCOUVERTE');
+  s.view = 'results';
+  s.disco = null;
 
   let autoStart = false;
   if (params && ['artist', 'genre', 'year', 'artists'].some(k => params.get(k))) {
