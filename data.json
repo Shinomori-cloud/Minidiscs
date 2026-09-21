@@ -3652,6 +3652,41 @@
         "Downer"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790007557477",
+      "md_cover": "images/img_1790007556013.jpg",
+      "title": "Issues",
+      "artist": "Korn",
+      "main_genre": "Metal & Hard Rock",
+      "tags": [
+        "nu metal",
+        "alternative metal",
+        "heavy metal",
+        "industrial rock",
+        "rock"
+      ],
+      "release_year": "1999",
+      "duration": "53:15",
+      "tracks": [
+        "Dead",
+        "Falling Away From Me",
+        "Trash",
+        "4 U",
+        "Beg for Me",
+        "Make Me Bad",
+        "It’s Gonna Go Away",
+        "Wake Up",
+        "Am I Going Crazy",
+        "Hey Daddy",
+        "Somebody Someone",
+        "No Way",
+        "Let’s Get This Party Started",
+        "Wish You Could Be Me",
+        "Counting",
+        "Dirty"
+      ],
+      "toRecord": false
     }
   ]
 }
