@@ -2973,3 +2973,46 @@ main#app:has(.titles-actions) {
 body:has(.modal:not(.hidden)) .random-compil-btn {
   display: none;
 }
+
+/* Séparations dans les formulaires : sections plus lisibles, moins "gros pavé" */
+.form-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 12px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-light);
+}
+
+.form-divider::before,
+.form-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(196, 181, 253, 0), rgba(196, 181, 253, 0.7));
+}
+
+.form-divider::after {
+  background: linear-gradient(to left, rgba(196, 181, 253, 0), rgba(196, 181, 253, 0.7));
+}
+
+/* Premier titre de section : pas d'espace en trop sous la bande de titre / la zone de recherche */
+.form-divider-sm {
+  margin: 14px 0 10px;
+  font-size: 0.62rem;
+}
+
+/* Deux champs courts côte à côte (année / durée) */
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Discographie : bouton ▶ légèrement relevé, pour ne pas coller à « Ajouter aux idées » */
+.dc-play.dc-play-side.dc-play-up {
+  top: calc(50% - 10px);
+}

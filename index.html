@@ -70,6 +70,7 @@
 
         <!-- VUE COMPILATION -->
         <div id="section-compil">
+          <div class="form-divider"><span>Titre et artiste</span></div>
           <div class="form-group">
             <label>Titre de la compilation</label>
             <input type="text" id="compil-title" placeholder="ex: Best of 90s">
@@ -78,6 +79,8 @@
             <label>Artiste(s)</label>
             <input type="text" id="compil-artist" placeholder="ex: Artistes Divers">
           </div>
+
+          <div class="form-divider"><span>Classement</span></div>
           <div class="form-group">
             <label>Genre</label>
             <select id="compil-genre">
@@ -96,19 +99,25 @@
             <label>Tags (optionnel, pour un classement futur plus fin)</label>
             <input type="text" id="compil-tags" placeholder="ex: Acoustic, Punk Rock (séparés par virgule)">
           </div>
-          <div class="form-group">
-            <label>Année de sortie</label>
-            <input type="text" id="compil-year" placeholder="ex: 1998">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Année</label>
+              <input type="text" id="compil-year" placeholder="ex: 1998">
+            </div>
+            <div class="form-group">
+              <label>Durée</label>
+              <input type="text" id="compil-duration" placeholder="ex: 1:14:32">
+            </div>
           </div>
+
+          <div class="form-divider"><span>Pistes</span></div>
           <div class="form-group">
-            <label>Durée</label>
-            <input type="text" id="compil-duration" placeholder="ex: 1:14:32">
-          </div>
-          <div class="form-group">
-            <label>Pistes (une par ligne, sans numéro)</label>
+            <label>Une par ligne, sans numéro</label>
             <textarea id="compil-tracks" placeholder="Piste A&#10;Piste B"></textarea>
           </div>
-          <div class="form-group" style="margin-top: 10px;">
+
+          <div class="form-divider"><span>Statut</span></div>
+          <div class="form-group">
             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">
               <input type="checkbox" id="compil-to-record" style="width: 16px; height: 16px;">
               🎙️ À enregistrer
@@ -149,6 +158,8 @@
           <div id="itunes-results" style="margin-top:8px;"></div>
         </div>
 
+        <div class="form-divider"><span>Album</span></div>
+
         <div class="form-group">
           <label>Titre de l'album</label>
           <input type="text" id="idea-title" placeholder="ex: Discovery" required>
@@ -158,6 +169,8 @@
           <label>Artiste</label>
           <input type="text" id="idea-artist" placeholder="ex: Daft Punk" required>
         </div>
+
+        <div class="form-divider"><span>Classement</span></div>
 
         <div class="form-group">
           <label>Genre</label>
@@ -179,15 +192,18 @@
           <input type="text" id="idea-tags" placeholder="ex: House, Disco">
         </div>
 
-        <div class="form-group">
-          <label>Année de sortie</label>
-          <input type="text" id="idea-year" placeholder="ex: 2001">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Année</label>
+            <input type="text" id="idea-year" placeholder="ex: 2001">
+          </div>
+          <div class="form-group">
+            <label>Durée</label>
+            <input type="text" id="idea-duration" placeholder="45:30 ou 1:02:15" required>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Durée (ex: 45:30 ou 1:02:15)</label>
-          <input type="text" id="idea-duration" placeholder="mm:ss ou hh:mm:ss" required>
-        </div>
+        <div class="form-divider"><span>Pistes et pochette</span></div>
 
         <div class="form-group">
           <label>Pistes (optionnel, une par ligne)</label>

@@ -985,12 +985,19 @@ function genreListHTML(genresArray, fontSize = '0.8rem') {
 /* ==========================================
    SÉLECTION DU JOUR (24H)
    ========================================== */
+// Un MiniDisc est "à enregistrer" si lui-même ou l'un de ses albums l'est
+function isMDToRecord(md) {
+  return !!(md.toRecord || (md.albums && md.albums.some(a => a.toRecord)));
+}
+
 function renderFeatured() {
   if (!catalogData || catalogData.length === 0) return;
   const featuredGrid = document.getElementById('featured-grid');
   if (!featuredGrid) return;
 
-  const shuffled = dailyShuffle(catalogData, '-featured');
+  // Les MiniDiscs pas encore enregistrés ne sont pas écoutables : ils ne sont pas proposés
+  const playable = catalogData.filter(md => !isMDToRecord(md));
+  const shuffled = dailyShuffle(playable, '-featured');
   const selected = shuffled.slice(0, 3);
 
   let html = '';
@@ -1143,9 +1150,7 @@ function renderDashboard(pushState = true) {
 
   const totalMD = sourceData.length;
   // Nombre de MiniDiscs à enregistrer (un MD compte pour 1, même si plusieurs de ses albums sont à enregistrer)
-  const toRecordCount = sourceData.filter(md =>
-    md.toRecord || (md.albums && md.albums.some(a => a.toRecord))
-  ).length;
+  const toRecordCount = sourceData.filter(isMDToRecord).length;
 
   let recordSummaryHTML;
   if (toRecordCount === 0) {
@@ -1829,18 +1834,24 @@ function addAdminAlbumBlock() {
     </div>
     <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album"></div>
     <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste"></div>
+
+    <div class="form-divider form-divider-sm"><span>Classement</span></div>
     <div class="form-group">
-      <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">Genre</label>
+      <label>Genre</label>
       <select class="album-genre">${mainGenreOptionsHTML()}</select>
     </div>
     <div class="form-group"><input type="text" class="album-tags" placeholder="Tags (optionnel, ex: Acoustic, Punk Rock)"></div>
-    <div class="form-group"><input type="text" class="album-year" placeholder="Année de sortie (ex: 1998)"></div>
-    <div class="form-group"><input type="text" class="album-duration" placeholder="Durée (ex: 45:30)"></div>
+    <div class="form-row-2">
+      <div class="form-group"><input type="text" class="album-year" placeholder="Année (ex: 1998)"></div>
+      <div class="form-group"><input type="text" class="album-duration" placeholder="Durée (ex: 45:30)"></div>
+    </div>
+
+    <div class="form-divider form-divider-sm"><span>Pistes et pochette</span></div>
+    <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne, sans numéro)"></textarea></div>
     <div class="form-group">
-      <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">Pochette Album</label>
+      <label>Pochette Album</label>
       <input type="file" class="album-cover" accept="image/*">
     </div>
-    <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne, sans numéro)"></textarea></div>
     <div class="form-group" style="margin-top: 8px;">
       <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">
         <input type="checkbox" class="album-to-record" style="width: 16px; height: 16px;">
@@ -2499,6 +2510,7 @@ function deleteIdeaAlbum(index) {
    ========================================== */
 const PLANNER_MAX_SECONDS = 148 * 60;   // capacité d'un MiniDisc
 const RANDOM_COMPIL_TOLERANCE = 120;    // secondes sous le meilleur remplissage encore acceptées
+const RANDOM_COMPIL_MIN_FILL = 0.81;    // un genre n'est proposé que s'il peut remplir au moins 81 % d'un MiniDisc
 let lastRandomCompil = { genre: '', key: '' };
 
 function shuffleInPlace(array) {
@@ -2544,10 +2556,10 @@ function createRandomCompilation() {
     byGenre.get(g).push(x);
   }));
 
-  // Genres capables de bien remplir un MiniDisc (au moins 90 % ; sinon les meilleurs disponibles)
+  // Genres capables de bien remplir un MiniDisc (au moins 81 % ; sinon les meilleurs disponibles)
   const scored = Array.from(byGenre.entries()).map(([genre, pool]) => ({ genre, pool, best: plannerSubsetSums(pool, PLANNER_MAX_SECONDS).best }));
   const overall = Math.max(...scored.map(g => g.best));
-  const good = scored.filter(g => g.best >= 0.9 * PLANNER_MAX_SECONDS);
+  const good = scored.filter(g => g.best >= RANDOM_COMPIL_MIN_FILL * PLANNER_MAX_SECONDS);
   let choices = good.length > 0 ? good : scored.filter(g => g.best >= 0.9 * overall);
   const others = choices.filter(g => g.genre !== lastRandomCompil.genre); // variété d'un appui à l'autre
   if (others.length > 0) choices = others;
@@ -2727,7 +2739,7 @@ function convertSelectedToMD() {
     release_year: a.release_year || '',
     duration: a.duration || '',
     tracks: a.tracks || [],
-    toRecord: false,
+    toRecord: true, // un MiniDisc créé depuis des idées reste à enregistrer
   }));
 
   let newMD;
@@ -4348,7 +4360,7 @@ function discoverAlbumHTML(r) {
   return `
     <div class="list-item dc-item" style="border-color:${color}; --glow:${color}; border-left-width:6px;">
       ${discoverLastfmLink(r.lastfmUrl)}
-      ${discoverPlayButton('album', r.artist, r.title, 'dc-play-side')}
+      ${discoverPlayButton('album', r.artist, r.title, 'dc-play-side dc-play-up')}
       ${cover}
       <div class="dc-info">
         <div class="dc-title">${mbEscapeHTML(r.title)}</div>
