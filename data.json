@@ -2176,7 +2176,7 @@
             "Nancy Boy",
             "Pure Morning"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-16-2",
@@ -2202,7 +2202,7 @@
             "Taste In Men (Jazz version)",
             "Slave to the Wage (Organ version)"
           ],
-          "toRecord": true
+          "toRecord": false
         }
       ],
       "title": "Live at Paris Olympia / Live at Ancienne Belgique"
