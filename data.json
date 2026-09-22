@@ -2238,7 +2238,7 @@
             "Stay Young (Oasis)",
             "Another Brick In the Wall (Part1) (Class of '99)"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-41-2",
@@ -2274,7 +2274,7 @@
             "Plowed (Sponge)",
             "Sugarhigh (Coyote Shivers)"
           ],
-          "toRecord": true
+          "toRecord": false
         }
       ],
       "title": "The Faculty / Empire Records"
