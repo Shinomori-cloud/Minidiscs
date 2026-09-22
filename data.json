@@ -2508,7 +2508,7 @@
             "Jungleland",
             "Point Blank"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-29-2",
@@ -2534,7 +2534,7 @@
             "The Needle and the Damage Done",
             "Words (Between the Lines of Age)"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-29-3",
@@ -2559,7 +2559,7 @@
             "Positively 4th Street",
             "Just like a Woman"
           ],
-          "toRecord": true
+          "toRecord": false
         }
       ],
       "title": "Greatest Hits Live / Harvest / Greatest Hits"
