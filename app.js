@@ -14,19 +14,6 @@ let toastTimeout = null;
 let selectedIdeaIndices = new Set();
 let currentRecordFilter = 'all'; // 'all', 'toRecord', 'recorded'
 
-// Mémoire de scroll : retient la position de défilement d'une page qu'on quitte,
-// pour la restaurer si on y revient via le bouton retour (au lieu de remonter en haut).
-const scrollMemory = {};
-let pendingScrollRestore = null; // position à restaurer au prochain rendu, ou null pour remonter en haut
-
-// À appeler à la toute fin du rendu d'une page à la place de window.scrollTo(0, 0) :
-// restaure la position mémorisée si on y revient via retour, sinon remonte en haut.
-function applyPendingScroll() {
-  const y = pendingScrollRestore;
-  pendingScrollRestore = null;
-  window.scrollTo(0, y != null ? y : 0);
-}
-
 // Filtre multi-genres et état du menu déroulant du planificateur
 let currentPlannerGenreFilters = new Set();
 let isPlannerGenreDropdownOpen = false;
@@ -787,82 +774,52 @@ function dailyShuffle(array, extraSeedKey = '') {
 
 /* ==========================================
    GESTION STRICTE DE L'HISTORIQUE
-   ------------------------------------------
-   - performCanonicalBack() est LA seule fonction qui décide où mène un « retour »,
-     que ce soit le bouton retour affiché dans l'appli ou le bouton/geste retour du
-     téléphone (voir l'écouteur 'popstate' plus bas). Elle suit toujours la même
-     hiérarchie fixe (Titres > Albums > Minidisc > Accueil, etc.), peu importe le
-     chemin réellement emprunté pour arriver sur la page.
-   - Chaque appel garantit qu'une nouvelle entrée d'historique est ajoutée (soit en
-     changeant le hash, soit — si le hash ne change pas, ex: on est déjà à l'accueil —
-     en repoussant explicitement une entrée). Ainsi l'historique du navigateur n'est
-     jamais « à sec », ce qui évite que le geste retour du téléphone ne ferme
-     l'application par accident au lieu de naviguer dans l'appli.
    ========================================== */
 if (!window.location.hash || window.location.hash === '#') {
   window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
 }
-// Entrée « tampon » pour que même le tout premier appui sur retour, juste après
-// l'ouverture de l'application, soit intercepté par notre gestion plutôt que de
-// fermer l'appli faute d'historique suffisant.
-window.history.pushState({ view: 'dashboard' }, '', window.location.hash);
 
 /* ==========================================
    INITIALISATION DATA & ÉCOUTEURS GLOBAUX
    ========================================== */
 
-// Logique canonique de retour, partagée par le bouton retour à l'écran ET par le
-// bouton/geste retour matériel du téléphone (voir écouteur 'popstate').
-function performCanonicalBack(fromPop = false) {
-  const hashBefore = window.location.hash;
-
-  if (document.getElementById('discover-page') && discoverState.view === 'disco') {
-    // Discographie -> retour aux résultats
-    discoverBackToResults(fromPop);
-  } else if (document.getElementById('discover-page')) {
-    // Découverte -> page d'où l'on vient (album, titres, ou page « Créer »)
-    window.location.hash = discoverBackHash || '#create';
-    discoverBackHash = '#create';
-  } else if (document.getElementById('create-page')) {
-    window.location.hash = '#dashboard';
-  } else if (document.getElementById('header-planner-badge')) {
-    // Planificateur -> page « Créer »
-    window.location.hash = '#create';
-  } else if (currentAlbum !== null) {
-    // Si on est dans le détail d'un album, retour au MiniDisc parent
-    if (currentMD !== null) {
-      pendingScrollRestore = scrollMemory[`md:${currentMD}`] ?? null;
-      window.location.hash = `#md-${currentMD}`;
-    } else {
-      pendingScrollRestore = scrollMemory['mdlist'] ?? null;
-      window.location.hash = '#minidiscs';
-    }
-  } else if (currentMD !== null) {
-    // Si on est dans le détail d'un MiniDisc, retour à la liste
-    pendingScrollRestore = scrollMemory['mdlist'] ?? null;
-    window.location.hash = '#minidiscs';
-  } else if (backBtn && !backBtn.classList.contains('hidden')) {
-    // Si on est dans la liste (filtrée ou non), retour au Dashboard
-    currentGenreFilter = null;
-    currentTypeFilter = null;
-    currentRecordFilter = null;
-    pendingScrollRestore = scrollMemory['dashboard'] ?? null;
-    window.location.hash = '#dashboard';
-  }
-  // Sinon : on est déjà sur l'Accueil (racine de l'appli), rien à faire de plus.
-
-  // Filet de sécurité : si le hash n'a pas changé (ex: on était déjà à l'accueil),
-  // on ajoute quand même une entrée d'historique pour que le geste retour du
-  // téléphone continue toujours d'être intercepté par l'appli au prochain appui,
-  // au lieu de risquer de fermer l'application.
-  if (window.location.hash === hashBefore) {
-    window.history.pushState({ view: 'dashboard' }, '', window.location.hash);
-  }
-}
-
-// Gestion du bouton Retour affiché dans l'appli
+// Gestion du bouton Retour
 if (backBtn) {
-  backBtn.addEventListener('click', () => performCanonicalBack(false));
+  backBtn.addEventListener('click', () => {
+    if (document.getElementById('discover-page') && discoverState.view === 'disco') {
+      // Discographie -> retour aux résultats
+      discoverBackToResults();
+    } else if (document.getElementById('discover-page')) {
+      // Découverte -> page d'où l'on vient (album, titres, ou page « Créer »)
+      window.location.hash = discoverBackHash || '#create';
+      discoverBackHash = '#create';
+    } else if (document.getElementById('create-page')) {
+      window.location.hash = '#dashboard';
+    } else if (document.getElementById('header-planner-badge')) {
+      // Planificateur -> page « Créer »
+      window.location.hash = '#create';
+    } else if (currentAlbum !== null) {
+      // Si on est dans le détail d'un album, retour au MiniDisc parent
+      if (currentMD !== null) {
+        window.location.hash = `#md-${currentMD}`;
+      } else {
+        window.location.hash = '#minidiscs';
+      }
+    } else if (currentMD !== null) {
+      // Si on est dans le détail d'un MiniDisc, retour à la liste
+      window.location.hash = '#minidiscs';
+    } else {
+      // Si on est dans la liste (filtrée ou non), retour au Dashboard
+      currentGenreFilter = null;
+      currentTypeFilter = null;
+      currentRecordFilter = null;
+      window.location.hash = '#dashboard';
+      
+      if (typeof renderDashboard === 'function') {
+        renderDashboard(true);
+      }
+    }
+  });
 }
 
 // Interception des soumissions de formulaires (évite le rechargement de page)
@@ -1317,17 +1274,12 @@ function renderDashboard(pushState = true) {
     startCarouselAutoScroll(carouselContainer);
   }
 
-  applyPendingScroll();
+  window.scrollTo(0, 0);
 }
 
 /* 2. LISTE DES MINIDISCS */
 function renderMDList(filters = {}, pushState = true) {
   if (catalogData === null) return;
-
-  // Mémorise la position de défilement du Dashboard si c'est de là qu'on vient.
-  if (featuredContainer && !featuredContainer.classList.contains('hidden')) {
-    scrollMemory['dashboard'] = window.scrollY;
-  }
 
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'flex';
@@ -1436,7 +1388,7 @@ if (genre && genre !== 'ALL') {
   }
   html += '</div>';
   app.innerHTML = html;
-  applyPendingScroll();
+  window.scrollTo(0, 0);
 }
 
 /* 3. VUE D'UN MINIDISC */
@@ -1445,12 +1397,6 @@ function openMD(index, pushState = true) {
   if (fa) fa.style.display = 'none';
     
   if (!catalogData || !catalogData[index]) return;
-
-  // Mémorise la position de défilement de la liste qu'on quitte, pour pouvoir
-  // y revenir exactement au même endroit avec le bouton retour.
-  if (backBtn && !backBtn.classList.contains('hidden')) {
-    scrollMemory['mdlist'] = window.scrollY;
-  }
 
   if (pushState) {
     history.pushState({ view: 'album', mdIndex: index }, '', `#md-${index}`);
@@ -1530,7 +1476,7 @@ if (!md.albums || md.albums.length === 0) {
     ${fabHTML}
     ${titlesActionsHTML(index, null, true)}
   `;
-  applyPendingScroll();
+  window.scrollTo(0, 0);
   return;
 }
 
@@ -1565,7 +1511,7 @@ md.albums.forEach((album, aIndex) => {
 });
 html += `${fabHTML}</div>`;
 app.innerHTML = html;
-applyPendingScroll();
+window.scrollTo(0, 0);
 }
 
 /* GESTION DU MENU FAB DÉTAIL MINIDISC */
@@ -1598,12 +1544,6 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   if (fa) fa.style.display = 'none';
     
   if (!catalogData || !catalogData[mdIndex] || !catalogData[mdIndex].albums[albumIndex]) return;
-
-  // Mémorise la position de défilement de la liste d'albums de ce MiniDisc,
-  // pour pouvoir y revenir exactement au même endroit avec le bouton retour.
-  if (currentAlbum === null) {
-    scrollMemory[`md:${mdIndex}`] = window.scrollY;
-  }
 
   currentMD = mdIndex;
   currentAlbum = albumIndex;
@@ -1661,7 +1601,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     </div>
     ${titlesActionsHTML(mdIndex, albumIndex, false)}
   `;
-  applyPendingScroll();
+  window.scrollTo(0, 0);
 }
 /* ==========================================
    SUPPRESSION ET MODIFICATION
@@ -3288,15 +3228,53 @@ function handlePlannerSearch(query) {
 }
 
 /* ==========================================
-   GESTION DU BOUTON RETOUR MATÉRIEL (TÉLÉPHONE)
-   ------------------------------------------
-   On ne se fie plus au hash sur lequel le navigateur a naturellement navigué (qui
-   dépend du chemin de clics réellement suivi, et peut donc être incohérent). À la
-   place, on relance systématiquement la même logique canonique que le bouton
-   retour de l'appli, qui connaît toujours la « bonne » page parente.
+   GESTION DU BOUTON RETOUR (ANCRAGE HASH)
    ========================================== */
+
 window.addEventListener('popstate', () => {
-  performCanonicalBack(true);
+  const hash = window.location.hash;
+
+  // Retour (geste Android, bouton du navigateur) depuis la discographie : on revient aux résultats
+  if (document.getElementById('discover-page') && discoverState.view === 'disco' && !(discoverState.disco && discoverState.disco.direct)) {
+    discoverBackToResults(true);
+    return;
+  }
+
+  // Pages « Créer » et « Découverte » : affichées par le routage (hashchange)
+  if (hash.startsWith('#create') || hash.startsWith('#discover')) return;
+
+  const albumMatch = hash.match(/^#md-(\d+)-album-(\d+)$/);
+  if (albumMatch && typeof openAlbum === 'function') {
+    openAlbum(+albumMatch[1], +albumMatch[2], false);
+    return;
+  }
+
+  if (hash.startsWith('#md-') && !hash.includes('list')) {
+    const index = parseInt(hash.replace('#md-', ''), 10);
+    if (!isNaN(index) && typeof openMD === 'function') {
+      openMD(index, false);
+      return;
+    }
+  }
+
+  if (hash === '#md-list') {
+    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
+    if (typeof renderMDList === 'function') {
+      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
+      return;
+    }
+  }
+
+  if (hash === '#planner') {
+    if (typeof renderCompilPlanner === 'function') {
+      renderCompilPlanner(false);
+      return;
+    }
+  }
+
+  // Si le hash est vide, #home ou inconnu -> Accueil
+  if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
+  if (typeof renderDashboard === 'function') renderDashboard(false);
 });
 
 // Remplit dynamiquement les menus déroulants avec genres et types existants
