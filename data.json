@@ -1667,33 +1667,34 @@
         },
         {
           "id": "alb-19-3",
-          "md_cover": "images/foo_fighters_there_is_nothing.jpg",
-          "title": "There Is Nothing Left to Lose",
-          "artist": "Foo Fighters",
-          "main_genre": "Alternative & Grunge 90s",
+          "md_cover": "images/img_1790233039532.jpg",
+          "title": "Stiff Upper Lip",
+          "artist": "ACDC",
+          "main_genre": "Metal & Hard Rock",
           "tags": [
-            "Alternative Rock",
-            "Grunge"
+            "Hard Rock",
+            "Blues rock"
           ],
           "release_year": "1999",
           "duration": "Unknow",
           "tracks": [
-            "Stacked Actors",
-            "Breakout",
-            "Learn to Fly",
-            "Gimme Stitches",
-            "Generator",
-            "Aurora",
-            "Live-In Skin",
-            "Next Year",
-            "Headwires",
-            "Ain't It the Life",
-            "M.I.A."
+            "Stiff UpperLip",
+            "Meltdown",
+            "House of Jazz",
+            "Hold Me Back",
+            "Safe in New York City",
+            "Can't Stand Still",
+            "Can't Stop Rock 'N' Roll",
+            "Satellite Blues",
+            "Damned",
+            "Come and Get It",
+            "All Screwed Up",
+            "Give It Up"
           ],
           "toRecord": false
         }
       ],
-      "title": "Americana / Buckcherry / There Is Nothing Left to Lose"
+      "title": "Americana / Buckcherry / Stiff Upper Lip"
     },
     {
       "id": "md-34",
