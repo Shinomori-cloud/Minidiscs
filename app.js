@@ -302,7 +302,7 @@ function applyLateRemote(remote) {
 
   const before = JSON.stringify(buildPayload());
   adoptRemoteCollection(remote);
-  if (JSON.stringify(buildPayload()) !== before) handleRoute();
+  if (JSON.stringify(buildPayload()) !== before) refreshCurrentPage();
 }
 
 async function initData() {
@@ -312,7 +312,7 @@ async function initData() {
   //    On les affiche tout de suite et on relance l'envoi.
   if (backup && getGithubToken() && readSyncMeta().pending) {
     processLoadedData(backup);
-    handleRoute();
+    bootRoute();
     syncCollectionToGithub();
     return;
   }
@@ -332,7 +332,7 @@ async function initData() {
 
     if (waited === undefined) {
       processLoadedData(backup);
-      handleRoute();
+      bootRoute();
       const late = await remotePromise;
       if (late) applyLateRemote(late);
       return;
@@ -344,14 +344,14 @@ async function initData() {
 
   if (remote) {
     adoptRemoteCollection(remote);
-    handleRoute();
+    bootRoute();
     return;
   }
 
   // 3) GitHub injoignable : copie locale, ou message d'erreur si on n'a rien.
   if (backup) {
     processLoadedData(backup);
-    handleRoute();
+    bootRoute();
     return;
   }
 
@@ -783,43 +783,209 @@ if (!window.location.hash || window.location.hash === '#') {
    INITIALISATION DATA & ÉCOUTEURS GLOBAUX
    ========================================== */
 
-// Gestion du bouton Retour
-if (backBtn) {
-  backBtn.addEventListener('click', () => {
-    if (document.getElementById('discover-page') && discoverState.view === 'disco') {
-      // Discographie -> retour aux résultats
-      discoverBackToResults();
-    } else if (document.getElementById('discover-page')) {
-      // Découverte -> page d'où l'on vient (album, titres, ou page « Créer »)
-      window.location.hash = discoverBackHash || '#create';
-      discoverBackHash = '#create';
-    } else if (document.getElementById('create-page')) {
-      window.location.hash = '#dashboard';
-    } else if (document.getElementById('header-planner-badge')) {
-      // Planificateur -> page « Créer »
-      window.location.hash = '#create';
-    } else if (currentAlbum !== null) {
-      // Si on est dans le détail d'un album, retour au MiniDisc parent
-      if (currentMD !== null) {
-        window.location.hash = `#md-${currentMD}`;
-      } else {
-        window.location.hash = '#minidiscs';
-      }
-    } else if (currentMD !== null) {
-      // Si on est dans le détail d'un MiniDisc, retour à la liste
-      window.location.hash = '#minidiscs';
-    } else {
-      // Si on est dans la liste (filtrée ou non), retour au Dashboard
-      currentGenreFilter = null;
-      currentTypeFilter = null;
-      currentRecordFilter = null;
-      window.location.hash = '#dashboard';
-      
-      if (typeof renderDashboard === 'function') {
-        renderDashboard(true);
-      }
+/* ==========================================
+   NAVIGATION : HIÉRARCHIE FIXE, PILE INTERNE, MÉMOIRE DE DÉFILEMENT
+   ------------------------------------------
+   Chaque page a un seul parent, toujours le même quel que soit le chemin emprunté pour y arriver
+   (Titres -> Albums -> Minidiscs -> Accueil ; Planificateur -> Créer -> Accueil ; etc.). Le bouton
+   retour de l'appli ET celui du téléphone appellent tous les deux goBack(), qui calcule ce parent
+   puis y navigue : le retour amène donc toujours au même endroit, peu importe comment on est arrivé
+   sur la page actuelle.
+
+   La profondeur réelle de navigation n'est suivie qu'en mémoire (currentPage) : l'adresse affichée est
+   mise à jour avec history.replaceState (jamais pushState), et une unique entrée "sentinelle" est ajoutée
+   après le chargement pour intercepter le bouton retour. La pile d'historique du navigateur ne grandit
+   donc jamais vraiment : un appui sur retour ne peut jamais tomber à court d'entrées et fermer
+   l'application par erreur tant qu'il reste une page entre l'écran actuel et l'accueil - ce qui est la
+   cause du bug où les premiers appuis sur retour fermaient l'application.
+   ========================================== */
+
+let currentPage = { key: 'dashboard' };
+const pageScrollMemory = new Map(); // clé de page -> défilement vertical à restaurer en y revenant
+
+function pageScrollKey(page) {
+  switch (page.key) {
+    case 'md': return 'md-' + page.mdIndex;
+    case 'track': return 'track-' + page.mdIndex + '-' + page.albumIndex;
+    case 'discover-disco': return 'discover-disco-' + mbNormalize(page.artist || '');
+    default: return page.key;
+  }
+}
+
+function rememberScrollForCurrentPage() {
+  pageScrollMemory.set(pageScrollKey(currentPage), window.scrollY);
+}
+
+// Programmé après le rendu de la page cible : le contenu (donc sa hauteur) doit d'abord être en place
+function restoreScrollFor(page) {
+  const y = pageScrollMemory.get(pageScrollKey(page)) || 0;
+  requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, y)));
+}
+
+// Adresse affichée pour une page (cosmétique : ce texte n'est jamais relu pour calculer un retour)
+function pageHash(page) {
+  const q = page.params && [...page.params].length ? '?' + page.params.toString() : '';
+  switch (page.key) {
+    case 'list': return '#minidiscs' + q;
+    case 'md': return `#md-${page.mdIndex}`;
+    case 'track': return `#md-${page.mdIndex}-album-${page.albumIndex}`;
+    case 'create': return '#create';
+    case 'planner': return '#planner';
+    case 'discover-results': return '#discover' + q;
+    case 'discover-disco': return '#discover';
+    default: return '#dashboard';
+  }
+}
+
+// Parent FIXE de chaque page : c'est ici, et ici seulement, qu'est décrite la hiérarchie de l'appli
+function parentOfPage(page) {
+  switch (page.key) {
+    case 'list': return { key: 'dashboard' };
+    case 'md': return { key: 'list' };
+    case 'track': return { key: 'md', mdIndex: page.mdIndex };
+    case 'planner': return { key: 'create' };
+    case 'discover-results': return page.parent || { key: 'create' };
+    case 'discover-disco': return page.direct ? (page.parent || { key: 'create' }) : { key: 'discover-results' };
+    case 'create': return { key: 'dashboard' };
+    default: return { key: 'dashboard' };
+  }
+}
+
+// Affiche une page en centralisant tout ce qui ne doit être fait qu'à cet unique endroit :
+// mémoriser le défilement de la page quittée, mettre à jour l'adresse affichée, rendre la nouvelle
+// page, puis restaurer son défilement si on y revient (jamais lors d'une navigation vers l'avant).
+function navigateTo(page, { isBack = false } = {}) {
+  rememberScrollForCurrentPage();
+  currentPage = page;
+  ensureBackSentinel();
+  history.replaceState({ sentinel: true }, '', pageHash(page));
+  renderForPage(page);
+  if (isBack) restoreScrollFor(page);
+}
+
+// Garantit qu'on se trouve bien sur l'entrée sentinelle avant de la mettre à jour (replaceState) :
+// sans ce garde-fou, une navigation qui suit immédiatement un retour resté à la racine réécrirait
+// l'entrée de tout premier chargement au lieu de la sentinelle, et le retour suivant fermerait l'appli.
+function ensureBackSentinel() {
+  if (!(history.state && history.state.sentinel)) {
+    history.pushState({ sentinel: true }, '', location.href);
+  }
+}
+
+// Un modal ouvert doit se fermer avant de naviguer, plutôt que de rester affiché au-dessus d'une
+// autre page qui aurait changé en dessous de lui
+function closeOpenModal() {
+  const admin = document.getElementById('admin-modal');
+  const idea = document.getElementById('idea-modal');
+  if (admin && !admin.classList.contains('hidden')) { closeAdminModal(); return true; }
+  if (idea && !idea.classList.contains('hidden')) { closeIdeaModal(); return true; }
+  return false;
+}
+
+function goBack() {
+  if (closeOpenModal()) return;
+  if (currentPage.key === 'dashboard') return; // à la racine : comportement natif (quitter / mettre en arrière-plan)
+  navigateTo(parentOfPage(currentPage), { isBack: true });
+}
+
+// Retour matériel (bouton du téléphone) ou navigateur : on ignore la page vers laquelle le navigateur
+// vient nativement de basculer, et on lui superpose systématiquement le parent calculé selon notre
+// propre hiérarchie - ainsi le résultat est identique, quel que soit le chemin réellement parcouru.
+window.addEventListener('popstate', () => { goBack(); });
+
+// Affiche la page demandée en appelant la fonction de rendu existante correspondante
+function renderForPage(page) {
+  switch (page.key) {
+    case 'list': {
+      const params = page.params || new URLSearchParams();
+      const genre = params.get('genre');
+      const type = params.get('type');
+      const record = params.get('record');
+      renderMDList({
+        genre: genre !== null ? genre : currentGenreFilter,
+        type: type !== null ? type : currentTypeFilter,
+        record: record !== null ? record : currentRecordFilter,
+      }, false);
+      break;
     }
-  });
+    case 'md': openMD(page.mdIndex, false); break;
+    case 'track': openAlbum(page.mdIndex, page.albumIndex, false); break;
+    case 'create': renderCreateHub(); break;
+    case 'planner': renderCompilPlanner(false); break;
+    case 'discover-results': renderDiscover(page.params || new URLSearchParams()); break;
+    case 'discover-disco':
+      // Le cadre de la page Découverte doit exister avant d'y afficher le chargement de la discographie
+      renderDiscover(new URLSearchParams());
+      discoverShowDiscography(page.artist, page.mbid || '', { direct: !!page.direct });
+      break;
+    default: renderDashboard(false);
+  }
+}
+
+// Points d'entrée utilisés par les templates (onclick) : chacun exprime clairement son intention plutôt
+// que de dépendre d'un état global implicite, pour que le résultat ne dépende jamais du chemin parcouru
+function goToDashboard() { navigateTo({ key: 'dashboard' }); }
+function goToCreateHub() { navigateTo({ key: 'create' }); }
+function goToPlanner() { navigateTo({ key: 'planner' }); }
+function goToMD(mdIndex) { navigateTo({ key: 'md', mdIndex }); }
+function goToAlbum(mdIndex, albumIndex) { navigateTo({ key: 'track', mdIndex, albumIndex }); }
+
+function goToAllMinidiscs() {
+  currentGenreFilter = '';
+  currentTypeFilter = '';
+  currentRecordFilter = '';
+  navigateTo({ key: 'list' });
+}
+
+function goToMinidiscsByGenre(genre) {
+  currentTypeFilter = '';
+  currentRecordFilter = '';
+  navigateTo({ key: 'list', params: new URLSearchParams({ genre }) });
+}
+
+function goToMinidiscsToRecord() {
+  currentGenreFilter = '';
+  currentTypeFilter = '';
+  navigateTo({ key: 'list', params: new URLSearchParams({ record: 'toRecord' }) });
+}
+
+function goToDiscoverResults(params) { navigateTo({ key: 'discover-results', params: params || new URLSearchParams(), parent: currentPage }); }
+function goToArtistDiscography(artist, mbid) { navigateTo({ key: 'discover-disco', artist, mbid, direct: true, parent: currentPage }); }
+function goToArtistDiscographyFromResults(artist, mbid) { navigateTo({ key: 'discover-disco', artist, mbid, direct: false }); }
+
+// Lit l'adresse initiale (lien profond ou rechargement de la page) une fois les données chargées
+function parsePageFromHash(hash) {
+  hash = hash || '#dashboard';
+  const [rawHash, query] = hash.split('?');
+  const params = new URLSearchParams(query || '');
+  const albumMatch = rawHash.match(/^#md-(\d+)-album-(\d+)$/);
+
+  if (rawHash.startsWith('#create')) return { key: 'create' };
+  if (rawHash.startsWith('#discover')) return { key: 'discover-results', params };
+  if (albumMatch && catalogData && catalogData[+albumMatch[1]] && catalogData[+albumMatch[1]].albums && catalogData[+albumMatch[1]].albums[+albumMatch[2]]) {
+    return { key: 'track', mdIndex: +albumMatch[1], albumIndex: +albumMatch[2] };
+  }
+  if (rawHash.startsWith('#planner')) return { key: 'planner' };
+  if (rawHash.startsWith('#minidiscs')) return { key: 'list', params };
+  if (rawHash.startsWith('#md-')) {
+    const mdIndex = parseInt(rawHash.replace('#md-', ''), 10);
+    if (!isNaN(mdIndex) && catalogData && catalogData[mdIndex]) return { key: 'md', mdIndex };
+  }
+  return { key: 'dashboard' };
+}
+
+// Premier affichage, une fois les données chargées (lien profond ou rechargement de la page)
+function bootRoute() {
+  navigateTo(parsePageFromHash(window.location.hash), { isBack: false });
+}
+
+// Redessine la page actuellement affichée sans naviguer (ex : arrivée tardive des données GitHub)
+function refreshCurrentPage() {
+  renderForPage(currentPage);
+}
+
+if (backBtn) {
+  backBtn.addEventListener('click', goBack);
 }
 
 // Interception des soumissions de formulaires (évite le rechargement de page)
@@ -848,45 +1014,6 @@ function processLoadedData(data) {
   // Remplissage dynamique des menus déroulants une fois catalogData chargé
   populateFormDatalists();
 }
-
-// Fonction globale pour appliquer la vue selon l'URL (hash)
-function handleRoute() {
-  const hash = window.location.hash;
-  const albumRoute = hash.match(/^#md-(\d+)-album-(\d+)$/);
-  if (hash.startsWith('#create')) {
-    renderCreateHub();
-  } else if (hash.startsWith('#discover')) {
-    renderDiscover(new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : ''));
-  } else if (albumRoute && catalogData && catalogData[+albumRoute[1]] && catalogData[+albumRoute[1]].albums && catalogData[+albumRoute[1]].albums[+albumRoute[2]]) {
-    openAlbum(+albumRoute[1], +albumRoute[2], false);
-  } else if (hash.startsWith('#planner')) {
-    if (typeof renderCompilPlanner === 'function') {
-      renderCompilPlanner(false);
-    }
-  } else if (hash.startsWith('#minidiscs')) {
-    const urlParams = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
-    const genre = urlParams.get('genre');
-    const type = urlParams.get('type');
-    const record = urlParams.get('record');
-    if (typeof renderMDList === 'function') {
-      renderMDList({ genre, type, record }, false);
-    }
-  } else if (hash.startsWith('#md-')) {
-    const mdIndex = parseInt(hash.replace('#md-', ''), 10);
-    if (!isNaN(mdIndex) && catalogData[mdIndex] && typeof openMD === 'function') {
-      openMD(mdIndex, false);
-    } else if (typeof renderDashboard === 'function') {
-      renderDashboard(false);
-    }
-  } else {
-    if (typeof renderDashboard === 'function') {
-      renderDashboard(false);
-    }
-  }
-}
-
-// Écouteur pour réagir aux clics sur les ancres / boutons de navigation
-window.addEventListener('hashchange', handleRoute);
 
 // Le chargement des données est lancé tout en bas du fichier (voir initData).
 
@@ -1005,7 +1132,7 @@ function renderFeatured() {
     const originalIndex = catalogData.indexOf(md);
     const mdCover = md.md_cover || (md.albums && md.albums[0] ? md.albums[0].md_cover : '') || '';
     html += `
-      <div class="featured-item" onclick="openMD(${originalIndex})">
+      <div class="featured-item" onclick="goToMD(${originalIndex})">
         <img class="featured-thumb" src="${resolveImageSrc(mdCover)}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'48\\' height=\\'68\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23e5e7eb\\'/><text x=\\'50%\\' y=\\'50%\\' font-size=\\'20\\' text-anchor=\\'middle\\' dominant-baseline=\\'central\\'>💽</text></svg>'">
       </div>
     `;
@@ -1181,7 +1308,7 @@ function renderDashboard(pushState = true) {
 
       // Image bien visible : seul le bas est assombri (dégradé qui disparaît au milieu de la vignette)
       return `
-        <div class="genre-carousel-card" style="background-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%), url('${imageUrl}');" onclick="if(typeof selectGenreFilter === 'function'){ selectGenreFilter('${safeGenreUpper}'); } else { window.location.hash = '#minidiscs?genre=${encodeURIComponent(safeGenreUpper)}'; }">
+        <div class="genre-carousel-card" style="background-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%), url('${imageUrl}');" onclick="goToMinidiscsByGenre('${safeGenreUpper}')">
           <div class="carousel-genre-name">${genre}</div>
         </div>
       `;
@@ -1206,7 +1333,7 @@ function renderDashboard(pushState = true) {
          <span class="stat-number" style="font-size: 1.2rem; line-height: 1;">${totalMD}</span>
          <span class="stat-label" style="font-size: 0.75rem;">MiniDiscs</span>
         </div>
-        <div class="record-summary" onclick="window.location.hash = '#minidiscs?record=toRecord'">${recordSummaryHTML}</div>
+        <div class="record-summary" onclick="goToMinidiscsToRecord()">${recordSummaryHTML}</div>
       </div>
 
       <div class="featured-container-inline">
@@ -1216,7 +1343,7 @@ function renderDashboard(pushState = true) {
         <div class="featured-grid" id="featured-grid-inline"></div>
       </div>
 
-      <button class="btn-primary btn-view-all" onclick="window.location.hash = '#minidiscs'">
+      <button class="btn-primary btn-view-all" onclick="goToAllMinidiscs()">
         VOIR TOUS LES MINIDISCS &rarr;
       </button>
 
@@ -1232,7 +1359,7 @@ function renderDashboard(pushState = true) {
       </div>
 
       <div class="dashboard-actions-row">
-        <button class="action-btn-wide action-btn-create" onclick="window.location.hash = '#create'">
+        <button class="action-btn-wide action-btn-create" onclick="goToCreateHub()">
           Créer une compilation
         </button>
         <button class="action-btn-wide action-btn-add" onclick="openAdminModal()">
@@ -1375,7 +1502,7 @@ if (genre && genre !== 'ALL') {
       const coverHTML = createLoadingCoverHTML(listCover, 'md-thumb', '💽');
 
       html += `
-        <div class="list-item" style="border-color: ${borderColor}; --glow: ${borderColor}; border-left-width: 6px; position: relative;" onclick="openMD(${originalIndex})">
+        <div class="list-item" style="border-color: ${borderColor}; --glow: ${borderColor}; border-left-width: 6px; position: relative;" onclick="goToMD(${originalIndex})">
           ${coverHTML}
           <div class="item-details">
             <div class="item-tag" style="font-size: inherit;">${genreListHTML(allGenres, 'inherit')}</div>
@@ -1495,7 +1622,7 @@ md.albums.forEach((album, aIndex) => {
   const coverHTML = createLoadingCoverHTML(album.md_cover, 'album-thumb', '🎵');
 
   html += `
-    <div class="list-item" style="border-color: ${albumColor}; --glow: ${albumColor}; border-left-width: 6px; position: relative;" onclick="openAlbum(${index}, ${aIndex})">
+    <div class="list-item" style="border-color: ${albumColor}; --glow: ${albumColor}; border-left-width: 6px; position: relative;" onclick="goToAlbum(${index}, ${aIndex})">
       <div class="album-cover-container" style="margin-right: 15px; display: inline-block;">
         ${coverHTML}
       </div>
@@ -3227,56 +3354,6 @@ function handlePlannerSearch(query) {
   });
 }
 
-/* ==========================================
-   GESTION DU BOUTON RETOUR (ANCRAGE HASH)
-   ========================================== */
-
-window.addEventListener('popstate', () => {
-  const hash = window.location.hash;
-
-  // Retour (geste Android, bouton du navigateur) depuis la discographie : on revient aux résultats
-  if (document.getElementById('discover-page') && discoverState.view === 'disco' && !(discoverState.disco && discoverState.disco.direct)) {
-    discoverBackToResults(true);
-    return;
-  }
-
-  // Pages « Créer » et « Découverte » : affichées par le routage (hashchange)
-  if (hash.startsWith('#create') || hash.startsWith('#discover')) return;
-
-  const albumMatch = hash.match(/^#md-(\d+)-album-(\d+)$/);
-  if (albumMatch && typeof openAlbum === 'function') {
-    openAlbum(+albumMatch[1], +albumMatch[2], false);
-    return;
-  }
-
-  if (hash.startsWith('#md-') && !hash.includes('list')) {
-    const index = parseInt(hash.replace('#md-', ''), 10);
-    if (!isNaN(index) && typeof openMD === 'function') {
-      openMD(index, false);
-      return;
-    }
-  }
-
-  if (hash === '#md-list') {
-    if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-    if (typeof renderMDList === 'function') {
-      renderMDList({ genre: currentGenreFilter, type: currentTypeFilter }, false);
-      return;
-    }
-  }
-
-  if (hash === '#planner') {
-    if (typeof renderCompilPlanner === 'function') {
-      renderCompilPlanner(false);
-      return;
-    }
-  }
-
-  // Si le hash est vide, #home ou inconnu -> Accueil
-  if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-  if (typeof renderDashboard === 'function') renderDashboard(false);
-});
-
 // Remplit dynamiquement les menus déroulants avec genres et types existants
 function populateFormDatalists() {
   if (!catalogData || !Array.isArray(catalogData)) return;
@@ -3521,7 +3598,6 @@ const discoverState = {
   view: 'results',      // 'results' | 'disco' (discographie complète d'un artiste)
   disco: null,          // { artist, mbid, items, showOthers, loading, status }
 };
-let discoverBackHash = '#create';
 const discoverCache = new Map();
 
 /* ---------- Utilitaires ---------- */
@@ -3765,13 +3841,13 @@ function renderCreateHub() {
   prepareSubPage('CRÉER');
   app.innerHTML = `
     <div id="create-page" class="create-page">
-      <button type="button" class="create-tile create-tile-find" onclick="window.location.hash = '#discover'">
+      <button type="button" class="create-tile create-tile-find" onclick="goToDiscoverResults()">
         <span class="create-tile-text">
           <span class="create-tile-title">Trouver de nouvelles idées</span>
           <span class="create-tile-desc">Artistes et albums similaires, par genre, période ou popularité.</span>
         </span>
       </button>
-      <button type="button" class="create-tile create-tile-new" onclick="window.location.hash = '#planner'">
+      <button type="button" class="create-tile create-tile-new" onclick="goToPlanner()">
         <span class="create-tile-text">
           <span class="create-tile-title">Créer un nouveau minidisc</span>
           <span class="create-tile-desc">Composer un MiniDisc à partir de tes idées d'albums.</span>
@@ -3827,8 +3903,7 @@ function openSimilarSearch(mdIndex, albumIndex) {
   if (year) params.set('year', String(year));
   params.set('auto', '1');
 
-  discoverBackHash = window.location.hash || '#dashboard';
-  window.location.hash = '#discover?' + params.toString();
+  goToDiscoverResults(params);
 }
 
 // Artiste concerné par une page Titres (album d'une série, ou MiniDisc compilation) : vide si c'est "Divers"
@@ -3844,8 +3919,7 @@ function titlesArtist(mdIndex, albumIndex) {
 function openArtistDiscography(mdIndex, albumIndex) {
   const artist = titlesArtist(mdIndex, albumIndex);
   if (!artist) return;
-  discoverBackHash = window.location.hash || '#dashboard';
-  window.location.hash = '#discover?' + new URLSearchParams({ artist, disco: '1' }).toString();
+  goToArtistDiscography(artist, '');
 }
 
 // Boutons en bas des pages Titres : « Discographie » à gauche de « Trouver des artistes similaires »
@@ -4333,7 +4407,7 @@ function discoverArtistHTML(a) {
         ${facts.length ? `<div class="dc-facts">${facts.join('<br>')}</div>` : ''}
         ${discoverNowPlaying(discoverPreviewKey('artist', a.artist, ''))}
         <div class="dc-actions">
-          <button type="button" class="dc-disco-link" data-artist="${mbEscapeHTML(a.artist)}" data-mbid="${mbEscapeHTML(a.mbid || '')}" onclick="discoverShowDiscography(this.dataset.artist, this.dataset.mbid)">📀 Discographie</button>
+          <button type="button" class="dc-disco-link" data-artist="${mbEscapeHTML(a.artist)}" data-mbid="${mbEscapeHTML(a.mbid || '')}" onclick="goToArtistDiscographyFromResults(this.dataset.artist, this.dataset.mbid)">📀 Discographie</button>
         </div>
       </div>
     </div>`;
@@ -4391,7 +4465,7 @@ function renderDiscoverResults() {
 
     // Barre fixe : bouton retour bien visible + titre
     discoBar.innerHTML = `
-      <button type="button" class="dc-back-results" onclick="discoverBackToResults()">${d.direct ? '← Retour' : '← Retour aux résultats'}</button>
+      <button type="button" class="dc-back-results" onclick="goBack()">${d.direct ? '← Retour' : '← Retour aux résultats'}</button>
       <div class="dc-disco-title">📀 Discographie de <span class="dc-disco-artist">${mbEscapeHTML(d.artist)}</span></div>`;
     discoBar.classList.remove('hidden');
 
@@ -4493,16 +4567,17 @@ function discoverShowDiscographyFromForm() {
     showToast("⚠️ Indique d'abord un artiste dans « Similaire à »");
     return;
   }
-  discoverShowDiscography(name, '');
+  goToArtistDiscographyFromResults(name, '');
 }
 
 async function discoverShowDiscography(name, mbid, options = {}) {
   const s = discoverState;
   if (!name) return;
-  const direct = !!options.direct; // ouverte depuis une page Titres : pas de résultats vers lesquels revenir
+  const direct = !!options.direct; // ouverte depuis une page Titres (bouton dédié) : le retour va vers cette page-là, pas vers les résultats
   if (!getLastfmKey()) {
     s.showKeyCard = true;
     s.formOpen = true;
+    if (direct) s.pendingDisco = name; // pour ouvrir directement cette discographie une fois la clé enregistrée
     s.status = '<span class="dc-warn">🔑 Ajoute d\'abord ta clé API Last.fm ci-dessus.</span>';
     refreshDiscoverPage();
     return;
@@ -4514,11 +4589,8 @@ async function discoverShowDiscography(name, mbid, options = {}) {
   const runId = s.runId;
 
   s.formOpen = false;
-  // Une entrée d'historique est ajoutée pour que le retour (bouton ← ou geste Android) revienne aux résultats
-  const alreadyInHistory = !!(s.view === 'disco' && s.disco && s.disco.hist);
-  if (!direct && !alreadyInHistory) history.pushState({ discoView: true }, '', window.location.href);
   s.view = 'disco';
-  s.disco = { artist: name, mbid: mbid || '', items: [], showOthers: false, loading: true, hist: !direct && true, direct, status: `Chargement de la discographie de <strong>${mbEscapeHTML(name)}</strong>…` };
+  s.disco = { artist: name, mbid: mbid || '', items: [], showOthers: false, loading: true, direct, status: `Chargement de la discographie de <strong>${mbEscapeHTML(name)}</strong>…` };
   refreshDiscoverPage();
   discoverScrollToResults();
 
@@ -4644,25 +4716,6 @@ async function discoverShowDiscography(name, mbid, options = {}) {
     s.disco = null;
     discoverHandleError(err);
   }
-}
-
-// fromHistory : true quand on arrive ici par le retour du navigateur / du téléphone (l'entrée d'historique est déjà retirée)
-function discoverBackToResults(fromHistory = false) {
-  const s = discoverState;
-  // Discographie ouverte directement depuis une page Titres : il n'y a pas de résultats, on revient à la page d'origine
-  if (s.disco && s.disco.direct) {
-    s.runId++;
-    window.location.hash = discoverBackHash || '#create';
-    discoverBackHash = '#create';
-    return;
-  }
-  const hadHistory = !!(s.disco && s.disco.hist);
-  s.runId++; // annule un éventuel chargement de discographie
-  s.view = 'results';
-  s.disco = null;
-  renderDiscoverResults();
-  discoverScrollToResults();
-  if (!fromHistory && hadHistory) history.back(); // retire l'entrée ajoutée à l'ouverture de la discographie
 }
 
 /* ==========================================
@@ -5085,16 +5138,6 @@ function renderDiscover(params) {
   if (autoStart) {
     if (getLastfmKey()) startDiscoverSearch();
     else s.pendingAuto = true;
-  }
-
-  // Bouton « Discographie » d'une page Titres : on ouvre directement la discographie de l'artiste
-  if (params && params.get('disco') === '1' && params.get('artist')) {
-    if (getLastfmKey()) discoverShowDiscography(params.get('artist'), '', { direct: true });
-    else {
-      s.showKeyCard = true;
-      s.pendingDisco = params.get('artist');
-      refreshDiscoverPage();
-    }
   }
 }
 
