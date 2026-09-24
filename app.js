@@ -792,12 +792,13 @@ if (!window.location.hash || window.location.hash === '#') {
    puis y navigue : le retour amène donc toujours au même endroit, peu importe comment on est arrivé
    sur la page actuelle.
 
-   La profondeur réelle de navigation n'est suivie qu'en mémoire (currentPage) : l'adresse affichée est
-   mise à jour avec history.replaceState (jamais pushState), et une unique entrée "sentinelle" est ajoutée
-   après le chargement pour intercepter le bouton retour. La pile d'historique du navigateur ne grandit
-   donc jamais vraiment : un appui sur retour ne peut jamais tomber à court d'entrées et fermer
-   l'application par erreur tant qu'il reste une page entre l'écran actuel et l'accueil - ce qui est la
-   cause du bug où les premiers appuis sur retour fermaient l'application.
+   La profondeur réelle de navigation n'est suivie qu'en mémoire (currentPage), jamais déduite de l'entrée
+   d'historique sur laquelle le navigateur atterrit après un retour (ce texte peut être trompeur : deux
+   MiniDiscs consultés l'un après l'autre créent deux entrées voisines qui n'ont pourtant aucun lien de
+   parenté). Chaque navigation - y compris celles déclenchées par un retour - pousse une NOUVELLE entrée
+   d'historique (jamais history.replaceState, dont le comportement s'est révélé peu fiable sur certains
+   navigateurs Android) : la pile ne peut donc que grandir ou rester stable, jamais se vider avant d'avoir
+   atteint l'accueil, ce qui évite qu'un appui sur retour ne ferme l'application par erreur.
    ========================================== */
 
 let currentPage = { key: 'dashboard' };
@@ -852,24 +853,16 @@ function parentOfPage(page) {
 }
 
 // Affiche une page en centralisant tout ce qui ne doit être fait qu'à cet unique endroit :
-// mémoriser le défilement de la page quittée, mettre à jour l'adresse affichée, rendre la nouvelle
-// page, puis restaurer son défilement si on y revient (jamais lors d'une navigation vers l'avant).
-function navigateTo(page, { isBack = false } = {}) {
+// mémoriser le défilement de la page quittée, pousser une nouvelle entrée d'historique (jamais la
+// remplacer, sauf tout premier affichage), rendre la nouvelle page, puis restaurer son défilement si
+// on y revient (jamais lors d'une navigation vers l'avant).
+function navigateTo(page, { isBack = false, isBoot = false } = {}) {
   rememberScrollForCurrentPage();
   currentPage = page;
-  ensureBackSentinel();
-  history.replaceState({ sentinel: true }, '', pageHash(page));
+  if (isBoot) history.replaceState({ page: page.key }, '', pageHash(page));
+  else history.pushState({ page: page.key }, '', pageHash(page));
   renderForPage(page);
   if (isBack) restoreScrollFor(page);
-}
-
-// Garantit qu'on se trouve bien sur l'entrée sentinelle avant de la mettre à jour (replaceState) :
-// sans ce garde-fou, une navigation qui suit immédiatement un retour resté à la racine réécrirait
-// l'entrée de tout premier chargement au lieu de la sentinelle, et le retour suivant fermerait l'appli.
-function ensureBackSentinel() {
-  if (!(history.state && history.state.sentinel)) {
-    history.pushState({ sentinel: true }, '', location.href);
-  }
 }
 
 // Un modal ouvert doit se fermer avant de naviguer, plutôt que de rester affiché au-dessus d'une
@@ -976,7 +969,7 @@ function parsePageFromHash(hash) {
 
 // Premier affichage, une fois les données chargées (lien profond ou rechargement de la page)
 function bootRoute() {
-  navigateTo(parsePageFromHash(window.location.hash), { isBack: false });
+  navigateTo(parsePageFromHash(window.location.hash), { isBack: false, isBoot: true });
 }
 
 // Redessine la page actuellement affichée sans naviguer (ex : arrivée tardive des données GitHub)
