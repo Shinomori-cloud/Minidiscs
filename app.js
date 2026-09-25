@@ -785,6 +785,7 @@ if (!window.location.hash || window.location.hash === '#') {
   window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
 }
 window.history.pushState({ backTrap: true }, '', window.location.href);
+let backTrapArmed = true; // suivi par une simple variable, jamais en relisant history.state (peu fiable ici)
 
 /* ==========================================
    INITIALISATION DATA & ÉCOUTEURS GLOBAUX
@@ -800,12 +801,13 @@ window.history.pushState({ backTrap: true }, '', window.location.href);
    sur la page actuelle.
 
    La profondeur réelle de navigation n'est suivie qu'en mémoire (currentPage), jamais déduite de l'entrée
-   d'historique sur laquelle le navigateur atterrit après un retour (ce texte peut être trompeur : deux
-   MiniDiscs consultés l'un après l'autre créent deux entrées voisines qui n'ont pourtant aucun lien de
-   parenté). Chaque navigation - y compris celles déclenchées par un retour - pousse une NOUVELLE entrée
-   d'historique (jamais history.replaceState, dont le comportement s'est révélé peu fiable sur certains
-   navigateurs Android) : la pile ne peut donc que grandir ou rester stable, jamais se vider avant d'avoir
-   atteint l'accueil, ce qui évite qu'un appui sur retour ne ferme l'application par erreur.
+   d'historique sur laquelle le navigateur atterrit après un retour. Un unique emplacement d'historique
+   (le "piège") est maintenu au-dessus de la page de tout premier chargement : son adresse est mise à jour
+   à chaque navigation (history.replaceState, qui ne fait donc jamais grandir la pile), pour que le
+   navigateur/Hermit le reconnaisse comme une page réelle et distincte plutôt que comme un doublon inerte.
+   Ce piège n'est reconstitué par un nouveau history.pushState qu'en réaction à un authentique retour
+   matériel (popstate), jamais pour une navigation ordinaire à l'intérieur de l'appli - la pile du
+   navigateur ne peut donc jamais se vider avant d'avoir atteint l'accueil.
    ========================================== */
 
 let currentPage = { key: 'dashboard' };
@@ -859,14 +861,20 @@ function parentOfPage(page) {
   }
 }
 
-// Affiche une page en centralisant tout ce qui ne doit être fait qu'à cet unique endroit : mémoriser
-// le défilement de la page quittée, rendre la nouvelle page, puis restaurer son défilement si on y
-// revient (jamais lors d'une navigation vers l'avant). Ne touche jamais à l'historique du navigateur :
-// pageHash() reste disponible pour donner un nom à chaque page, mais n'est plus utilisée pour mettre
-// à jour l'adresse affichée (voir la remarque plus haut).
+// Affiche une page en centralisant tout ce qui ne doit être fait qu'à cet unique endroit : mémoriser le
+// défilement de la page quittée, tenir à jour l'adresse du piège (sans jamais empiler), rendre la
+// nouvelle page, puis restaurer son défilement si on y revient (jamais lors d'une navigation vers l'avant).
 function navigateTo(page, { isBack = false } = {}) {
   rememberScrollForCurrentPage();
   currentPage = page;
+  if (!backTrapArmed) {
+    // Ne devrait arriver qu'après un retour matériel : le popstate ci-dessous s'en charge déjà, ceci
+    // n'est qu'un filet de sécurité si navigateTo() était jamais appelée sans passer par lui.
+    window.history.pushState({ backTrap: true }, '', pageHash(page));
+    backTrapArmed = true;
+  } else {
+    window.history.replaceState({ backTrap: true }, '', pageHash(page));
+  }
   renderForPage(page);
   if (isBack) restoreScrollFor(page);
 }
@@ -890,10 +898,10 @@ function goBack() {
 // Retour matériel (bouton du téléphone), geste ou bouton "retour" du navigateur : on ignore la page vers
 // laquelle le navigateur vient nativement de basculer, et on lui superpose systématiquement le parent
 // calculé selon notre propre hiérarchie - ainsi le résultat est identique, quel que soit le chemin
-// réellement parcouru. Le piège est immédiatement ré-amorcé pour rester prêt à intercepter l'appui
-// suivant (voir la remarque en tête de fichier sur la fiabilité de cette API).
+// réellement parcouru. Le piège vient d'être consommé : navigateTo() (appelée par goBack()) va le
+// reconstituer avec l'adresse de la page vers laquelle on navigue réellement.
 window.addEventListener('popstate', () => {
-  window.history.pushState({ backTrap: true }, '', window.location.href);
+  backTrapArmed = false;
   goBack();
 });
 
