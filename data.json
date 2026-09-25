@@ -2035,7 +2035,7 @@
             "Scissors",
             "Eeyore"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-40-2",
@@ -2065,7 +2065,7 @@
             "Aerials",
             "Der Voghormia"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-40-3",
