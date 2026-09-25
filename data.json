@@ -3677,6 +3677,36 @@
         "Dirty"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790368028934",
+      "md_cover": "images/img_1790368027442.jpg",
+      "title": "Adrenaline",
+      "artist": "Deftones",
+      "main_genre": "Rock & Blues",
+      "tags": [
+        "alternative metal",
+        "nu metal",
+        "post-grunge",
+        "post-hardcore",
+        "rock"
+      ],
+      "release_year": "1995",
+      "duration": "47:08",
+      "tracks": [
+        "Bored",
+        "Minus Blindfold",
+        "One Weak",
+        "Nosebleed",
+        "Lifter",
+        "Root",
+        "7 Words",
+        "Birthmark",
+        "Engine No. 9",
+        "Fireal",
+        "Fist"
+      ],
+      "toRecord": false
     }
   ]
 }
