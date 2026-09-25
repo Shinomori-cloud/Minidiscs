@@ -2891,6 +2891,22 @@
       "duration": "",
       "tracks": [],
       "toRecord": false
+    },
+    {
+      "id": "md-1790368249418",
+      "md_cover": "images/farmerbercy.jpg",
+      "title": "Live à Bercy",
+      "artist": "Mylène Farmer",
+      "main_genre": "Pop & Folk & Variety",
+      "tags": [
+        "Pop Rock",
+        "Variété",
+        "Français"
+      ],
+      "release_year": "",
+      "duration": "1:58:13",
+      "tracks": [],
+      "toRecord": true
     }
   ],
   "ideaAlbums": [
@@ -3055,18 +3071,6 @@
       ],
       "duration": "53:18",
       "md_cover": "images/alanisunplugged.jpg"
-    },
-    {
-      "title": "Live à Bercy",
-      "artist": "Mylène Farmer",
-      "main_genre": "Pop & Folk & Variety",
-      "tags": [
-        "Pop Rock",
-        "Variété",
-        "Français"
-      ],
-      "duration": "1:58:13",
-      "md_cover": "images/farmerbercy.jpg"
     },
     {
       "title": "Le tour de M",
