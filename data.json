@@ -2907,6 +2907,23 @@
       "duration": "1:58:13",
       "tracks": [],
       "toRecord": true
+    },
+    {
+      "id": "md-1790368268658",
+      "md_cover": "images/tourdem.jpg",
+      "title": "Le tour de M",
+      "artist": "M",
+      "main_genre": "Rock & Blues",
+      "tags": [
+        "Rock",
+        "Pop Rock",
+        "Variété",
+        "Français"
+      ],
+      "release_year": "",
+      "duration": "1:50:00",
+      "tracks": [],
+      "toRecord": true
     }
   ],
   "ideaAlbums": [
@@ -3071,19 +3088,6 @@
       ],
       "duration": "53:18",
       "md_cover": "images/alanisunplugged.jpg"
-    },
-    {
-      "title": "Le tour de M",
-      "artist": "M",
-      "main_genre": "Rock & Blues",
-      "tags": [
-        "Rock",
-        "Pop Rock",
-        "Variété",
-        "Français"
-      ],
-      "duration": "1:50:00",
-      "md_cover": "images/tourdem.jpg"
     },
     {
       "title": "Superunknown",
