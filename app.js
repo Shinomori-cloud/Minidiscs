@@ -774,10 +774,17 @@ function dailyShuffle(array, extraSeedKey = '') {
 
 /* ==========================================
    GESTION STRICTE DE L'HISTORIQUE
+   ------------------------------------------
+   L'API history.pushState/replaceState s'est révélée peu fiable pour intercepter le bouton retour sur
+   certains navigateurs Android (dont, semble-t-il, Hermit) : plus on l'utilise, moins le résultat est
+   prévisible. On la sollicite donc au strict minimum, une seule fois ici, pour poser un unique "piège" ;
+   la navigation à l'intérieur de l'application (taper sur un MiniDisc, changer d'onglet...) ne touche
+   plus du tout l'historique du navigateur, seul un vrai appui sur retour le fait (voir plus bas).
    ========================================== */
 if (!window.location.hash || window.location.hash === '#') {
   window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
 }
+window.history.pushState({ backTrap: true }, '', window.location.href);
 
 /* ==========================================
    INITIALISATION DATA & ÉCOUTEURS GLOBAUX
@@ -852,15 +859,14 @@ function parentOfPage(page) {
   }
 }
 
-// Affiche une page en centralisant tout ce qui ne doit être fait qu'à cet unique endroit :
-// mémoriser le défilement de la page quittée, pousser une nouvelle entrée d'historique (jamais la
-// remplacer, sauf tout premier affichage), rendre la nouvelle page, puis restaurer son défilement si
-// on y revient (jamais lors d'une navigation vers l'avant).
-function navigateTo(page, { isBack = false, isBoot = false } = {}) {
+// Affiche une page en centralisant tout ce qui ne doit être fait qu'à cet unique endroit : mémoriser
+// le défilement de la page quittée, rendre la nouvelle page, puis restaurer son défilement si on y
+// revient (jamais lors d'une navigation vers l'avant). Ne touche jamais à l'historique du navigateur :
+// pageHash() reste disponible pour donner un nom à chaque page, mais n'est plus utilisée pour mettre
+// à jour l'adresse affichée (voir la remarque plus haut).
+function navigateTo(page, { isBack = false } = {}) {
   rememberScrollForCurrentPage();
   currentPage = page;
-  if (isBoot) history.replaceState({ page: page.key }, '', pageHash(page));
-  else history.pushState({ page: page.key }, '', pageHash(page));
   renderForPage(page);
   if (isBack) restoreScrollFor(page);
 }
@@ -881,10 +887,15 @@ function goBack() {
   navigateTo(parentOfPage(currentPage), { isBack: true });
 }
 
-// Retour matériel (bouton du téléphone) ou navigateur : on ignore la page vers laquelle le navigateur
-// vient nativement de basculer, et on lui superpose systématiquement le parent calculé selon notre
-// propre hiérarchie - ainsi le résultat est identique, quel que soit le chemin réellement parcouru.
-window.addEventListener('popstate', () => { goBack(); });
+// Retour matériel (bouton du téléphone), geste ou bouton "retour" du navigateur : on ignore la page vers
+// laquelle le navigateur vient nativement de basculer, et on lui superpose systématiquement le parent
+// calculé selon notre propre hiérarchie - ainsi le résultat est identique, quel que soit le chemin
+// réellement parcouru. Le piège est immédiatement ré-amorcé pour rester prêt à intercepter l'appui
+// suivant (voir la remarque en tête de fichier sur la fiabilité de cette API).
+window.addEventListener('popstate', () => {
+  window.history.pushState({ backTrap: true }, '', window.location.href);
+  goBack();
+});
 
 // Affiche la page demandée en appelant la fonction de rendu existante correspondante
 function renderForPage(page) {
@@ -969,7 +980,7 @@ function parsePageFromHash(hash) {
 
 // Premier affichage, une fois les données chargées (lien profond ou rechargement de la page)
 function bootRoute() {
-  navigateTo(parsePageFromHash(window.location.hash), { isBack: false, isBoot: true });
+  navigateTo(parsePageFromHash(window.location.hash), { isBack: false });
 }
 
 // Redessine la page actuellement affichée sans naviguer (ex : arrivée tardive des données GitHub)
