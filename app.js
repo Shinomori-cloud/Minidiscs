@@ -775,17 +775,17 @@ function dailyShuffle(array, extraSeedKey = '') {
 /* ==========================================
    GESTION STRICTE DE L'HISTORIQUE
    ------------------------------------------
-   L'API history.pushState/replaceState s'est révélée peu fiable pour intercepter le bouton retour sur
-   certains navigateurs Android (dont, semble-t-il, Hermit) : plus on l'utilise, moins le résultat est
-   prévisible. On la sollicite donc au strict minimum, une seule fois ici, pour poser un unique "piège" ;
-   la navigation à l'intérieur de l'application (taper sur un MiniDisc, changer d'onglet...) ne touche
-   plus du tout l'historique du navigateur, seul un vrai appui sur retour le fait (voir plus bas).
+   Sur le navigateur utilisé (Hermit, sur Android), l'API history.pushState/replaceState s'est révélée
+   trop peu fiable pour faire correspondre le bouton retour du téléphone à la hiérarchie de l'appli, quel
+   que soit le réglage essayé : Hermit semble parcourir son propre historique plutôt que de respecter les
+   nôtres. Le retour matériel est donc volontairement neutralisé (voir le popstate plus bas) : seule la
+   flèche ← de l'appli navigue réellement. L'historique du navigateur n'est ici utilisé que pour ce garde-
+   fou : un "piège", pour éviter qu'un appui sur retour ne quitte l'application par erreur.
    ========================================== */
 if (!window.location.hash || window.location.hash === '#') {
   window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
 }
 window.history.pushState({ backTrap: true }, '', window.location.href);
-let backTrapArmed = true; // suivi par une simple variable, jamais en relisant history.state (peu fiable ici)
 
 /* ==========================================
    INITIALISATION DATA & ÉCOUTEURS GLOBAUX
@@ -795,19 +795,10 @@ let backTrapArmed = true; // suivi par une simple variable, jamais en relisant h
    NAVIGATION : HIÉRARCHIE FIXE, PILE INTERNE, MÉMOIRE DE DÉFILEMENT
    ------------------------------------------
    Chaque page a un seul parent, toujours le même quel que soit le chemin emprunté pour y arriver
-   (Titres -> Albums -> Minidiscs -> Accueil ; Planificateur -> Créer -> Accueil ; etc.). Le bouton
-   retour de l'appli ET celui du téléphone appellent tous les deux goBack(), qui calcule ce parent
-   puis y navigue : le retour amène donc toujours au même endroit, peu importe comment on est arrivé
-   sur la page actuelle.
-
-   La profondeur réelle de navigation n'est suivie qu'en mémoire (currentPage), jamais déduite de l'entrée
-   d'historique sur laquelle le navigateur atterrit après un retour. Un unique emplacement d'historique
-   (le "piège") est maintenu au-dessus de la page de tout premier chargement : son adresse est mise à jour
-   à chaque navigation (history.replaceState, qui ne fait donc jamais grandir la pile), pour que le
-   navigateur/Hermit le reconnaisse comme une page réelle et distincte plutôt que comme un doublon inerte.
-   Ce piège n'est reconstitué par un nouveau history.pushState qu'en réaction à un authentique retour
-   matériel (popstate), jamais pour une navigation ordinaire à l'intérieur de l'appli - la pile du
-   navigateur ne peut donc jamais se vider avant d'avoir atteint l'accueil.
+   (Titres -> Albums -> Minidiscs -> Accueil ; Planificateur -> Créer -> Accueil ; etc.). Seule la flèche
+   ← de l'appli déplace réellement d'une page à l'autre, en appelant goBack() qui calcule ce parent puis
+   y navigue (le retour matériel du téléphone est neutralisé, voir plus haut). La profondeur réelle de
+   navigation n'est donc suivie qu'en mémoire (currentPage), jamais déduite d'une entrée d'historique.
    ========================================== */
 
 let currentPage = { key: 'dashboard' };
@@ -861,20 +852,13 @@ function parentOfPage(page) {
   }
 }
 
-// Affiche une page en centralisant tout ce qui ne doit être fait qu'à cet unique endroit : mémoriser le
-// défilement de la page quittée, tenir à jour l'adresse du piège (sans jamais empiler), rendre la
-// nouvelle page, puis restaurer son défilement si on y revient (jamais lors d'une navigation vers l'avant).
+// Affiche une page en centralisant tout ce qui ne doit être fait qu'à cet unique endroit : mémoriser
+// le défilement de la page quittée, tenir à jour l'adresse affichée (cosmétique, jamais relue), rendre
+// la nouvelle page, puis restaurer son défilement si on y revient (jamais lors d'une navigation avant).
 function navigateTo(page, { isBack = false } = {}) {
   rememberScrollForCurrentPage();
   currentPage = page;
-  if (!backTrapArmed) {
-    // Ne devrait arriver qu'après un retour matériel : le popstate ci-dessous s'en charge déjà, ceci
-    // n'est qu'un filet de sécurité si navigateTo() était jamais appelée sans passer par lui.
-    window.history.pushState({ backTrap: true }, '', pageHash(page));
-    backTrapArmed = true;
-  } else {
-    window.history.replaceState({ backTrap: true }, '', pageHash(page));
-  }
+  window.history.replaceState({ backTrap: true }, '', pageHash(page));
   renderForPage(page);
   if (isBack) restoreScrollFor(page);
 }
@@ -895,14 +879,13 @@ function goBack() {
   navigateTo(parentOfPage(currentPage), { isBack: true });
 }
 
-// Retour matériel (bouton du téléphone), geste ou bouton "retour" du navigateur : on ignore la page vers
-// laquelle le navigateur vient nativement de basculer, et on lui superpose systématiquement le parent
-// calculé selon notre propre hiérarchie - ainsi le résultat est identique, quel que soit le chemin
-// réellement parcouru. Le piège vient d'être consommé : navigateTo() (appelée par goBack()) va le
-// reconstituer avec l'adresse de la page vers laquelle on navigue réellement.
+// Retour matériel (bouton du téléphone), geste ou bouton "retour" du navigateur : volontairement
+// neutralisé (voir la remarque en tête de fichier). On se contente de fermer un formulaire ouvert s'il y
+// en a un, puis on rétablit aussitôt le piège pour absorber l'appui suivant sans jamais changer de page ;
+// seule la flèche ← de l'appli navigue réellement.
 window.addEventListener('popstate', () => {
-  backTrapArmed = false;
-  goBack();
+  closeOpenModal();
+  window.history.pushState({ backTrap: true }, '', pageHash(currentPage));
 });
 
 // Affiche la page demandée en appelant la fonction de rendu existante correspondante
