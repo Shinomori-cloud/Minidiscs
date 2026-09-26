@@ -2366,7 +2366,7 @@ function renderCompilPlanner(pushState = true) {
                 <span class="idea-duration">⏱️ ${formatPlannerDuration(item.duration)}</span>
               </div>
             </div>
-            <button type="button" class="idea-delete-btn" data-delete="${index}">🗑️</button>
+            <button type="button" class="idea-delete-btn" data-settings="${index}" aria-label="Paramètres de l'idée">⚙️</button>
           </div>
         `;
       }).join('');
@@ -2431,11 +2431,11 @@ function renderCompilPlanner(pushState = true) {
     const gridContainer = document.getElementById('ideas-grid-container');
     if (gridContainer) {
       gridContainer.addEventListener('click', (e) => {
-        const deleteBtn = e.target.closest('[data-delete]');
-        if (deleteBtn) {
+        const settingsBtn = e.target.closest('[data-settings]');
+        if (settingsBtn) {
           e.stopPropagation();
-          const index = parseInt(deleteBtn.getAttribute('data-delete'), 10);
-          if (typeof deleteIdeaAlbum === 'function') deleteIdeaAlbum(index);
+          const index = parseInt(settingsBtn.getAttribute('data-settings'), 10);
+          openIdeaSettingsModal(index);
           return;
         }
 
@@ -2624,6 +2624,62 @@ function deleteIdeaAlbum(index) {
 }
 
 /* ==========================================
+   MODALE « PARAMÈTRES DE L'IDÉE »
+   ------------------------------------------
+   Titre, artiste et pistes sont figés (tels qu'importés) ; seul le genre reste modifiable, utile quand
+   une idée récupérée automatiquement (recherche d'artistes similaires, MusicBrainz...) a hérité d'un
+   genre peu pertinent.
+   ========================================== */
+let ideaSettingsIndex = null;
+
+function openIdeaSettingsModal(index) {
+  const ideas = getIdeaList();
+  const idea = ideas[index];
+  if (!idea) return;
+  ideaSettingsIndex = index;
+
+  document.getElementById('idea-settings-title').textContent = idea.title || 'Sans titre';
+  document.getElementById('idea-settings-artist').textContent = idea.artist || 'Artiste inconnu';
+  document.getElementById('idea-settings-genre').innerHTML = mainGenreOptionsHTML(idea.main_genre || '');
+
+  const tracks = idea.tracks || [];
+  document.getElementById('idea-settings-tracks').innerHTML = tracks.length > 0
+    ? tracks.map(t => `<li>${mbEscapeHTML(t)}</li>`).join('')
+    : `<li class="idea-settings-notrack">Aucune piste renseignée</li>`;
+
+  document.getElementById('idea-settings-modal').classList.remove('hidden');
+}
+
+function closeIdeaSettingsModal() {
+  document.getElementById('idea-settings-modal').classList.add('hidden');
+  ideaSettingsIndex = null;
+}
+
+function saveIdeaSettingsGenre() {
+  const ideas = getIdeaList();
+  const idea = ideas[ideaSettingsIndex];
+  if (!idea) return;
+
+  const genre = document.getElementById('idea-settings-genre').value;
+  if (!genre) {
+    showToast("⚠️ Choisis un genre");
+    return;
+  }
+
+  idea.main_genre = genre;
+  if (typeof saveLocalBackup === 'function') saveLocalBackup();
+  showToast("✓ Genre mis à jour");
+  closeIdeaSettingsModal();
+  renderCompilPlanner(false);
+}
+
+function deleteIdeaFromSettings() {
+  const index = ideaSettingsIndex;
+  closeIdeaSettingsModal();
+  if (index !== null) deleteIdeaAlbum(index);
+}
+
+/* ==========================================
    CRÉATION ALÉATOIRE
    ------------------------------------------
    Propose une compilation d'idées d'un SEUL genre dont la durée remplit au maximum un MiniDisc (2h 28m).
@@ -2632,7 +2688,7 @@ function deleteIdeaAlbum(index) {
    ========================================== */
 const PLANNER_MAX_SECONDS = 148 * 60;   // capacité d'un MiniDisc
 const RANDOM_COMPIL_TOLERANCE = 120;    // secondes sous le meilleur remplissage encore acceptées
-const RANDOM_COMPIL_MIN_FILL = 0.81;    // un genre n'est proposé que s'il peut remplir au moins 81 % d'un MiniDisc
+const RANDOM_COMPIL_MIN_FILL = 0.77;    // un genre n'est proposé que s'il peut remplir au moins 77 % d'un MiniDisc
 let lastRandomCompil = { genre: '', key: '' };
 
 function shuffleInPlace(array) {
@@ -2678,7 +2734,7 @@ function createRandomCompilation() {
     byGenre.get(g).push(x);
   }));
 
-  // Genres capables de bien remplir un MiniDisc (au moins 81 % ; sinon les meilleurs disponibles)
+  // Genres capables de bien remplir un MiniDisc (au moins 77 % ; sinon les meilleurs disponibles)
   const scored = Array.from(byGenre.entries()).map(([genre, pool]) => ({ genre, pool, best: plannerSubsetSums(pool, PLANNER_MAX_SECONDS).best }));
   const overall = Math.max(...scored.map(g => g.best));
   const good = scored.filter(g => g.best >= RANDOM_COMPIL_MIN_FILL * PLANNER_MAX_SECONDS);
@@ -3589,6 +3645,7 @@ const discoverState = {
   pendingAuto: false,
   pendingDisco: '',     // artiste dont la discographie s'ouvrira dès que la clé Last.fm sera enregistrée
   startArtist: '',
+  searchedArtist: null, // l'artiste recherché lui-même, affiché avant ses artistes similaires
   formOpen: true,       // le formulaire se replie une fois la recherche lancée
   view: 'results',      // 'results' | 'disco' (discographie complète d'un artiste)
   disco: null,          // { artist, mbid, items, showOthers, loading, status }
@@ -4049,6 +4106,7 @@ function discoverResetResults() {
   s.status = '';
   s.view = 'results';
   s.disco = null;
+  s.searchedArtist = null;
 }
 
 async function startDiscoverSearch() {
@@ -4182,10 +4240,46 @@ async function discoverPoolSimilar() {
   s.startArtist = (block['@attr'] && block['@attr'].artist) || s.criteria.artist;
   const startNorm = mbNormalize(s.startArtist);
 
+  discoverFetchSearchedArtist(s.startArtist); // en parallèle, sans bloquer la liste des artistes similaires
+
   return asArray(block.artist)
     .filter(a => mbNormalize(a.name) !== startNorm)
     .slice(0, DISCOVER_POOL_SIZE)
     .map(a => ({ name: a.name, mbid: a.mbid || '', match: parseFloat(a.match) || 0, url: a.url || '' }));
+}
+
+// L'artiste recherché lui-même : affiché en tête des résultats, avant ses artistes similaires
+async function discoverFetchSearchedArtist(name) {
+  const s = discoverState;
+  const runId = s.runId;
+  try {
+    const data = await lastfmCall('artist.getInfo', { artist: name });
+    const info = data.artist;
+    if (!info || !discoverAlive(runId)) return;
+
+    const tags = asArray(info.tags && info.tags.tag).map(t => String(t.name).toLowerCase());
+    const stats = info.stats || {};
+    const artist = {
+      idx: -1,
+      key: mbNormalize(info.name || name),
+      artist: info.name || name,
+      mbid: info.mbid || '',
+      match: null, // pas de "% similaire" pour l'artiste recherché lui-même
+      listeners: parseInt(stats.listeners, 10) || 0,
+      playcount: parseInt(stats.playcount, 10) || 0,
+      tags,
+      mainGenre: discoverGuessGenre(tags) || s.criteria.genre || '',
+      lastfmUrl: info.url || '',
+      topAlbum: null,
+      topLoaded: false,
+    };
+    s.searchedArtist = artist;
+    await discoverFillTopAlbums([artist]);
+    if (!discoverAlive(runId)) return;
+    if (!s.running) renderDiscoverResults(); // la recherche principale est peut-être déjà terminée
+  } catch (err) {
+    console.warn("Artiste recherché introuvable sur Last.fm :", err);
+  }
 }
 
 // Sans artiste de départ : les artistes les plus écoutés du ou des tags (genre), en alternant les tags
@@ -4380,7 +4474,7 @@ function discoverCoverHTML(image, placeholder = '🎤', extra = '') {
 }
 
 function discoverLastfmLink(url) {
-  return url ? `<a class="dc-lastfm" href="${mbEscapeHTML(url)}" target="_blank" rel="noopener">Last.fm ↗</a>` : '';
+  return url ? `<a class="dc-lastfm" href="${mbEscapeHTML(url)}" target="_blank" rel="noopener">Détails ↗</a>` : '';
 }
 
 function discoverArtistHTML(a) {
@@ -4416,6 +4510,7 @@ function discoverAlbumHTML(r) {
   if (r.year) labels.push(r.year);
   if (r.primary === 'EP') labels.push('EP');
   r.secondary.forEach(t => labels.push(t));
+  const popularityLabel = r.playcount > 0 ? `🔥 ${fmtCount(r.playcount)} écoutes` : '';
 
   let action;
   if (r.isOwned) action = `<span class="dc-owned">✔ Dans ma collection</span>`;
@@ -4434,6 +4529,7 @@ function discoverAlbumHTML(r) {
       <div class="dc-info">
         <div class="dc-title">${mbEscapeHTML(r.title)}</div>
         ${labels.length ? `<div class="dc-meta">${labels.map(mbEscapeHTML).join(' · ')}</div>` : ''}
+        ${popularityLabel ? `<div class="dc-facts">${popularityLabel}</div>` : ''}
         ${discoverNowPlaying(discoverPreviewKey('album', r.artist, r.title))}
         <div class="dc-actions">${action}</div>
       </div>
@@ -4442,6 +4538,22 @@ function discoverAlbumHTML(r) {
 
 function discoverSeparatorHTML(label) {
   return `<div class="dc-separator"><span>${mbEscapeHTML(label)}</span></div>`;
+}
+
+// Place le bouton ▶ d'une tuile artiste à égale distance de « Détails » (en haut) et du bouton
+// « Discographie » (en bas) : une position fixe en % ne convient pas, la hauteur de ces tuiles variant
+// selon qu'un genre est affiché et selon que les infos tiennent sur une ou deux lignes.
+function positionDiscoverPlayButtons() {
+  document.querySelectorAll('#dc-results .dc-item').forEach(tile => {
+    const play = tile.querySelector('.dc-play-side');
+    const details = tile.querySelector('.dc-lastfm');
+    const discoBtn = tile.querySelector('.dc-disco-link');
+    if (!play || !details || !discoBtn) return;
+    const tileTop = tile.getBoundingClientRect().top;
+    // Léger correctif empirique : la hauteur de ligne du texte déborde un peu sous son tracé visible
+    const midpoint = (details.getBoundingClientRect().bottom + discoBtn.getBoundingClientRect().top) / 2 - 2;
+    play.style.top = `${midpoint - tileTop}px`;
+  });
 }
 
 function renderDiscoverResults() {
@@ -4506,6 +4618,10 @@ function renderDiscoverResults() {
   const visible = order.list.slice(0, s.shown);
 
   let html = '';
+  if (s.mode === 'similar' && s.searchedArtist) {
+    html += discoverArtistHTML(s.searchedArtist);
+    html += discoverSeparatorHTML('Artistes similaires');
+  }
   let previousLow = false;
   visible.forEach(a => {
     if (a.lowTier && !previousLow) html += discoverSeparatorHTML('Moins proches ou moins connus');
@@ -4513,6 +4629,7 @@ function renderDiscoverResults() {
     html += discoverArtistHTML(a);
   });
   box.innerHTML = html;
+  positionDiscoverPlayButtons();
 
   let status = s.status || '';
   if (s.started && visible.length > 0) {
@@ -5006,7 +5123,7 @@ function discoverPageHTML() {
         <div class="dc-card-title">🔎 Mes critères</div>
 
         <div class="form-group">
-          <label>Similaire à (artiste)</label>
+          <label>Discographie et artistes similaires</label>
           <div class="dc-autocomplete">
             <input type="text" id="dc-artist" placeholder="ex: Radiohead" value="${mbEscapeHTML(c.artist)}" autocomplete="off"
               oninput="discoverSuggest()" onfocus="discoverSuggest()" onblur="discoverHideSuggestSoon()" ${enter}>

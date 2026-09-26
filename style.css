@@ -3016,3 +3016,51 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .dc-play.dc-play-side.dc-play-up {
   top: calc(50% - 10px);
 }
+
+/* Bouton "danger" (suppression) des formulaires */
+.btn-danger {
+  padding: 12px 14px;
+  background: rgba(255, 107, 129, 0.14);
+  color: #ff6b81;
+  border: 2px solid #ff6b81;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.btn-danger:active {
+  transform: translate(2px, 2px);
+  background: rgba(255, 107, 129, 0.24);
+}
+
+/* Modale "Paramètres de l'idée" : informations figées (titre, artiste, pistes) */
+.idea-settings-locked {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(196, 181, 253, 0.3);
+  border-radius: 10px;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.idea-settings-tracks {
+  margin: 0;
+  padding: 10px 12px 10px 30px;
+  max-height: 200px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid rgba(196, 181, 253, 0.25);
+  border-radius: 10px;
+  color: var(--text-sub);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.idea-settings-notrack {
+  list-style: none;
+  margin-left: -30px;
+  color: var(--text-sub);
+  opacity: 0.7;
+}
