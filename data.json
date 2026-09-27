@@ -1340,7 +1340,7 @@
             "Burger Queen",
             "Evil Dildo"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-13-2",
@@ -1367,7 +1367,7 @@
             "Overdue",
             "Hate This & I'll Love You"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-13-3",
@@ -1395,7 +1395,7 @@
             "Lurgee",
             "Blow Out"
           ],
-          "toRecord": true
+          "toRecord": false
         }
       ],
       "title": "Without You I'm Nothing / Showbiz / Pablo Honey"
