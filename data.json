@@ -3846,6 +3846,40 @@
         "La Lumière"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790525788558",
+      "md_cover": "images/img_1790525787133.jpg",
+      "title": "Grain de sable",
+      "artist": "Tryo",
+      "main_genre": "Rap, Soul & Reggae",
+      "tags": [
+        "reggae",
+        "french pop",
+        "reggae-pop",
+        "chanson alternative",
+        "pop"
+      ],
+      "release_year": "2003",
+      "duration": "56:46",
+      "tracks": [
+        "G8",
+        "Sortez-les",
+        "Comme les journées sont longues",
+        "Pompafric",
+        "Si la vie m'a mis là",
+        "Dans les nuages",
+        "Monsieur Bibendum",
+        "Serre-moi",
+        "Ta réalité",
+        "Récréaction",
+        "Ballade en forêt",
+        "Désolé pour hier soir",
+        "Pas pareil",
+        "Apocalypticodramatic",
+        "J'ai un but"
+      ],
+      "toRecord": false
     }
   ]
 }
