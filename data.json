@@ -2994,7 +2994,13 @@
           "tags": [],
           "release_year": "1995",
           "duration": "",
-          "tracks": [],
+          "tracks": [
+            "Nuit d'arabie",
+            "Je prends soin de ma vie",
+            "Un ami",
+            "Oubli l'amour",
+            "Tu n'es qu'un amateur"
+          ],
           "toRecord": false
         },
         {
