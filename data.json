@@ -4001,6 +4001,26 @@
         "En passant"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790531718716",
+      "md_cover": "images/img_1790531717025.jpg",
+      "title": "Hibou",
+      "artist": "Le Duc Factory",
+      "main_genre": "Rock & Blues",
+      "tags": [],
+      "release_year": "2002",
+      "duration": "40:46",
+      "tracks": [
+        "Ferry",
+        "Mc Lovin",
+        "Gentil Géant",
+        "Zouk Heroes",
+        "Grief of the Sailor",
+        "Pirates",
+        "Last"
+      ],
+      "toRecord": false
     }
   ]
 }
