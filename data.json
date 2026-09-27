@@ -4042,6 +4042,35 @@
         "NERV"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790533328260",
+      "md_cover": "images/img_1790533326864.webp",
+      "title": "Rurouni Kenshin : Tsuioku Hen",
+      "artist": "Taku Iwasaki",
+      "main_genre": "Ambient & Orchestral",
+      "tags": [],
+      "release_year": "1999",
+      "duration": "55:21",
+      "tracks": [
+        "In Memories 'A Boy Meets the Man'",
+        "One of These Nights",
+        "Alone Again",
+        "Blood",
+        "Day After Day",
+        "In The Rain",
+        "Quiet Life piano",
+        "The Will (pf solo version)",
+        "War of the Last Wolves",
+        "The Will",
+        "Testament",
+        "Talk to the Moon",
+        "Sound of Snow Falling",
+        "Shades of Revolution",
+        "In Memories - Kotowari",
+        "Quiet Life"
+      ],
+      "toRecord": false
     }
   ]
 }
