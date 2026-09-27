@@ -3777,6 +3777,30 @@
         "One Night Stand"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790525050346",
+      "md_cover": "images/img_1790525048986.jpg",
+      "title": "Stuff",
+      "artist": "Rob Sawyer",
+      "main_genre": "Pop & Folk & Variety",
+      "tags": [],
+      "release_year": "2002",
+      "duration": "54:38",
+      "tracks": [
+        "Beauty Artillery",
+        "Our Time",
+        "I'm Wrong",
+        "My Music",
+        "Unity",
+        "Truth and Eyes",
+        "Chew it up",
+        "Water",
+        "From the Heart",
+        "Night",
+        "Stuff"
+      ],
+      "toRecord": false
     }
   ]
 }
