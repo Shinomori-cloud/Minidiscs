@@ -3686,6 +3686,23 @@
         "Guanahani"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790522517172",
+      "md_cover": "images/default.jpg",
+      "title": "Exit",
+      "artist": "Exit",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [],
+      "release_year": "2007",
+      "duration": "20:38",
+      "tracks": [
+        "The White Cloth",
+        "Nicotine Monster",
+        "Vodka",
+        "Nobody Cares"
+      ],
+      "toRecord": false
     }
   ]
 }
