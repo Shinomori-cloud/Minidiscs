@@ -3963,6 +3963,32 @@
         "Vole"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790526398050",
+      "md_cover": "images/img_1790526396415.jpg",
+      "title": "En passant",
+      "artist": "Jean‐Jacques Goldman",
+      "main_genre": "Pop & Folk & Variety",
+      "tags": [
+        "pop"
+      ],
+      "release_year": "1997",
+      "duration": "47:35",
+      "tracks": [
+        "Sache que je",
+        "Bonne idée",
+        "Tout était dit",
+        "Quand tu danses",
+        "Le Coureur",
+        "Juste quelques hommes",
+        "Nos mains",
+        "Natacha",
+        "Les Murailles",
+        "On ira",
+        "En passant"
+      ],
+      "toRecord": false
     }
   ]
 }
