@@ -3933,6 +3933,36 @@
         "Fuite de fantaisie (acoustique)"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790526224791",
+      "md_cover": "images/img_1790526223454.jpg",
+      "title": "D'eux",
+      "artist": "Céline Dion",
+      "main_genre": "Pop & Folk & Variety",
+      "tags": [
+        "pop",
+        "pop rock",
+        "rock",
+        "ballad"
+      ],
+      "release_year": "1995",
+      "duration": "47:08",
+      "tracks": [
+        "Pour que tu m’aimes encore",
+        "Le Ballet",
+        "Regarde‐moi",
+        "Je sais pas",
+        "La Mémoire d’Abraham",
+        "Cherche encore",
+        "Destin",
+        "Les derniers seront les premiers",
+        "J’irai où tu iras",
+        "J’attendais",
+        "Prière païenne",
+        "Vole"
+      ],
+      "toRecord": false
     }
   ]
 }
