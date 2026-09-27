@@ -3667,6 +3667,25 @@
         "Fist"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790522408579",
+      "md_cover": "images/default.jpg",
+      "title": "Strassenkind",
+      "artist": "Fuoristrada",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [],
+      "release_year": "1996",
+      "duration": "21:07",
+      "tracks": [
+        "Strassenkind",
+        "Zauberland",
+        "Ein buch mit leeren seiten",
+        "Wir fliegen Montag zum mars",
+        "Winter-Zauber",
+        "Guanahani"
+      ],
+      "toRecord": false
     }
   ]
 }
