@@ -3727,6 +3727,30 @@
         "Stuff"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790523293156",
+      "md_cover": "images/img_1790523291591.jpg",
+      "title": "Raven",
+      "artist": "Pterodactil Plains",
+      "main_genre": "Pop & Folk & Variety",
+      "tags": [],
+      "release_year": "2005",
+      "duration": "41:09",
+      "tracks": [
+        "Horizon",
+        "Stay Awhile",
+        "Color",
+        "Clean",
+        "Right Here",
+        "Red Umbrella",
+        "Solace",
+        "Straitjacket",
+        "Carry your Soul",
+        "Strangers",
+        "Horizon II"
+      ],
+      "toRecord": false
     }
   ]
 }
