@@ -4021,6 +4021,37 @@
         "Last"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790532557487",
+      "md_cover": "images/img_1790532555892.webp",
+      "title": "Neon Genesis Evangelion",
+      "artist": "Shirô Sagisu",
+      "main_genre": "Ambient & Orchestral",
+      "tags": [],
+      "release_year": "1995",
+      "duration": "41:27",
+      "tracks": [
+        "Asuka strikes",
+        "Misato",
+        "Barefoot in the park",
+        "Hedgehog's Dilemma",
+        "Rei I",
+        "Fly me to the moon (acid bossa version)",
+        "Jikai Yokoku",
+        "Fly me to the moon",
+        "Rei II",
+        "Marking time ,waiting for death",
+        "The beast",
+        "EVA-00",
+        "EVA-02",
+        "A step forward into terror",
+        "EVA-01",
+        "Ikari Shinji",
+        "Tôkyô-3",
+        "NERV"
+      ],
+      "toRecord": false
     }
   ]
 }
