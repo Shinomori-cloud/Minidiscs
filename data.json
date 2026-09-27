@@ -2660,7 +2660,7 @@
             "Derniers pas dans la mafia",
             "Un reup qui fait reup"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-42-2",
@@ -2690,7 +2690,7 @@
             "Jalouse-moi",
             "Soirée Chirée"
           ],
-          "toRecord": true
+          "toRecord": false
         }
       ],
       "title": "Quelques balles de plus pour... le calibre qu'il te faut / Mixomatose"
