@@ -2941,7 +2941,19 @@
           "tags": [],
           "release_year": "1994",
           "duration": "",
-          "tracks": [],
+          "tracks": [
+            "L'histoire de la vie",
+            "Je voudrais déjà être roi",
+            "... Soyez prêtes",
+            "Hakuna Matata",
+            "L'amour brille sous les étoiles",
+            "Terres interdites",
+            "La tentation de Simba",
+            "... Les Hyènes",
+            "Sous les étoiles",
+            "Sur le rocher des lions",
+            "Can you feel the love tonight"
+          ],
           "toRecord": false
         },
         {
