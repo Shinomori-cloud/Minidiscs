@@ -3814,6 +3814,38 @@
         "Ça m’aurait plu"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790525779547",
+      "md_cover": "images/img_1790525778011.jpg",
+      "title": "Faut qu’ils s’activent",
+      "artist": "Tryo",
+      "main_genre": "Rap, Soul & Reggae",
+      "tags": [
+        "reggae",
+        "reggae-pop",
+        "introspective",
+        "chanson alternative"
+      ],
+      "release_year": "2000",
+      "duration": "1:09:32",
+      "tracks": [
+        "J’ai trouvé des amis",
+        "Le Petit Chose",
+        "Con par raison",
+        "Plus on en fait",
+        "Paris",
+        "Les Extrêmes",
+        "Cinq sens",
+        "La Mer",
+        "La Débandade",
+        "Les Nouveaux Bergers",
+        "Le monde est avare",
+        "Ça y est c’est fait",
+        "Le Saule",
+        "La Lumière"
+      ],
+      "toRecord": false
     }
   ]
 }
