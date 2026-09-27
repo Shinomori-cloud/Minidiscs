@@ -3241,17 +3241,6 @@
       "md_cover": "images/sadhill.jpg"
     },
     {
-      "title": "Thriller",
-      "artist": "Michael Jackson",
-      "main_genre": "Pop & Folk & Variety",
-      "tags": [
-        "Pop Rock",
-        "Soul Funk"
-      ],
-      "duration": "42:19",
-      "md_cover": "images/thriller.jpeg"
-    },
-    {
       "title": "The Miseducation of Lauryn Hill",
       "artist": "Lauryn Hill",
       "main_genre": "Rap, Soul & Reggae",
