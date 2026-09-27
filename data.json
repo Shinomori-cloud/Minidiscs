@@ -3758,6 +3758,25 @@
         "Nobody Cares"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790525554368",
+      "md_cover": "images/img_1790525551990.jpg",
+      "title": "Strassenkind",
+      "artist": "Fuoristrada",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [],
+      "release_year": "2002",
+      "duration": "21:07",
+      "tracks": [
+        "Strassenkind",
+        "Zauberland",
+        "Ein buch mit leeren seiten",
+        "Wir fliegen Montag zum mars",
+        "Winter-Zauber",
+        "Guanahani"
+      ],
+      "toRecord": false
     }
   ]
 }
