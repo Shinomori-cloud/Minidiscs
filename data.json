@@ -3751,6 +3751,32 @@
         "Horizon II"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790524424067",
+      "md_cover": "images/img_1790524422685.jpg",
+      "title": "Super Hits",
+      "artist": "Janis Joplin",
+      "main_genre": "Rock & Blues",
+      "tags": [
+        "rock",
+        "blues"
+      ],
+      "release_year": "2000",
+      "duration": "40:23",
+      "tracks": [
+        "Piece of My Heart",
+        "Cry Baby",
+        "Me and Bobby McGee",
+        "Try (Just a Little Bit Harder)",
+        "One Good Man",
+        "Move Over",
+        "I Need a Man to Love",
+        "Turtle Blues",
+        "A Woman Left Lonely",
+        "One Night Stand"
+      ],
+      "toRecord": false
     }
   ]
 }
