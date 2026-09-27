@@ -2965,7 +2965,24 @@
           "tags": [],
           "release_year": "1993",
           "duration": "",
-          "tracks": [],
+          "tracks": [
+            "Nuit d'arabie",
+            "La légende de la lampe",
+            "Je vole",
+            "Le vaurien",
+            "Être libre",
+            "Prince Ali",
+            "Ce rêve bleu",
+            "L'heure de Jafar",
+            "Le baiser",
+            "Par une sombre nuit",
+            "Jasmine s'enfuit",
+            "Place du marché",
+            "La grotte aux merveilles",
+            "La promesse d'Aladdin",
+            "Le combat",
+            "Heureux dénouement à Agrabah"
+          ],
           "toRecord": false
         },
         {
