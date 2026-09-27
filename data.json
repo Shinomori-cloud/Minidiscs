@@ -3760,6 +3760,23 @@
         "Stuff"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790525237542",
+      "md_cover": "images/img_1790525235213.jpg",
+      "title": "Exit",
+      "artist": "Exit",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [],
+      "release_year": "2002",
+      "duration": "20:56",
+      "tracks": [
+        "The White Cloth",
+        "Nicotine Monster",
+        "Vodka",
+        "Nobody Cares"
+      ],
+      "toRecord": false
     }
   ]
 }
