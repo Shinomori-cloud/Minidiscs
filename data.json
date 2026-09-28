@@ -1837,7 +1837,7 @@
             "Something in the Way",
             "Endless, Nameless (Hidden Track)"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-39-2",
@@ -1863,7 +1863,7 @@
             "Swallow",
             "H.K. Farewell (Hidden Track)"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-39-3",
@@ -1892,7 +1892,7 @@
             "God in My Bed",
             "Winners"
           ],
-          "toRecord": true
+          "toRecord": false
         }
       ],
       "title": "Nevermind / Placebo / Cocoon Crash"
