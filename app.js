@@ -1239,6 +1239,7 @@ function startCarouselAutoScroll(container) {
 function renderDashboard(pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'none';
+  hidePlannerFab();
     
   if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
 
@@ -1405,6 +1406,7 @@ function renderMDList(filters = {}, pushState = true) {
 
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'flex';
+  hidePlannerFab();
 
   // Mise à jour explicite des variables globales avec fallback
   currentGenreFilter = filters.genre !== undefined ? filters.genre : currentGenreFilter;
@@ -1517,6 +1519,7 @@ if (genre && genre !== 'ALL') {
 function openMD(index, pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'none';
+  hidePlannerFab();
     
   if (!catalogData || !catalogData[index]) return;
 
@@ -1664,6 +1667,7 @@ document.addEventListener('click', (e) => {
 function openAlbum(mdIndex, albumIndex, pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'none';
+  hidePlannerFab();
     
   if (!catalogData || !catalogData[mdIndex] || !catalogData[mdIndex].albums[albumIndex]) return;
 
@@ -2372,59 +2376,23 @@ function renderCompilPlanner(pushState = true) {
       }).join('');
     }
 
-    const activeGenreCount = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
-    const countSelect = selectedIdeaIndices.size;
     const appContainer = document.getElementById('app') || document.body;
-    
+
     appContainer.innerHTML = `
       <div style="padding-bottom: 110px; padding-top: 215px; max-width: 800px; margin: 0 auto;">
         <div class="ideas-grid" id="ideas-grid-container">
           ${cardsHTML}
         </div>
 
-        <div id="planner-floating-actions" class="fab-container">
-          <div id="planner-fab-menu" class="fab-menu hidden">
-            <!-- Section Filtres -->
-            <div class="fab-section-title">Filtres</div>
-            <button type="button" id="planner-btn-genre-toggle" class="fab-item" onclick="if(typeof togglePlannerGenreDropdown==='function') togglePlannerGenreDropdown();">
-              🎵 Genres ${activeGenreCount > 0 ? '(' + activeGenreCount + ')' : ''}
-            </button>
-
-            <!-- Section Recherche -->
-            <hr class="fab-divider">
-            <div class="fab-section-title">Recherche</div>
-            <div style="padding: 2px 4px;">
-              <input 
-                type="search" 
-                id="planner-search-input" 
-                class="fab-search-input" 
-                placeholder="Chercher une idée..." 
-                oninput="handlePlannerSearch(this.value);" 
-              />
-            </div>
-
-            <!-- Section Options -->
-            <hr class="fab-divider">
-            <div class="fab-section-title">Options</div>
-            <button type="button" id="planner-btn-add" class="fab-item accent" onclick="if(typeof openIdeaModal==='function') openIdeaModal();">
-              💽 Ajouter
-            </button>
-            <button type="button" id="planner-btn-convert" class="fab-item success" onclick="if(typeof convertSelectedToMD==='function') convertSelectedToMD(); else if(typeof convertIdeasToMD==='function') convertIdeasToMD();" ${countSelect === 0 ? 'disabled' : ''}>
-              💾 Convertir (${countSelect})
-            </button>
-            <button type="button" id="planner-btn-reset" class="fab-item danger" onclick="if(typeof clearIdeaSelection==='function') clearIdeaSelection(); else if(typeof resetPlannerSelections==='function') resetPlannerSelections();">
-              🔄 Réinitialiser
-            </button>
-          </div>
-          
-          <button type="button" id="planner-fab-main-btn" class="fab-main-btn" onclick="togglePlannerFabMenu();" title="Menu planificateur">
-            <span class="fab-icon" aria-hidden="true"></span>
-          </button>
-        </div>
-
         <button type="button" class="random-compil-btn" onclick="createRandomCompilation()">🎲 Création Aléatoire</button>
       </div>
     `;
+
+    // Le FAB du planificateur est statique (voir index.html), comme celui de la page "Minidiscs" : il n'est
+    // donc jamais reconstruit ici, pour que le menu et le sous-menu des genres restent ouverts sans clignoter
+    // pendant qu'on coche des genres.
+    document.getElementById('planner-floating-actions')?.classList.remove('hidden');
+    refreshPlannerFabState();
 
     updatePlannerHeader();
 
@@ -2454,6 +2422,16 @@ function renderCompilPlanner(pushState = true) {
   }
 }
 
+// Quand on quitte le planificateur : le FAB se masque ET son menu se referme (le FAB étant statique, il
+// resterait sinon ouvert à notre retour sur la page)
+function hidePlannerFab() {
+  document.getElementById('planner-floating-actions')?.classList.add('hidden');
+  document.getElementById('planner-fab-menu')?.classList.add('hidden');
+  document.getElementById('planner-genre-submenu')?.classList.add('hidden');
+  document.getElementById('planner-fab-main-btn')?.classList.remove('open');
+  window.isPlannerGenreDropdownOpen = false;
+}
+
 function togglePlannerFabMenu() {
   const menu = document.getElementById('planner-fab-menu');
   const btn = document.getElementById('planner-fab-main-btn');
@@ -2469,7 +2447,7 @@ function togglePlannerFabMenu() {
 
   if (!isOpening) {
     window.isPlannerGenreDropdownOpen = false;
-    document.getElementById('planner-genre-submenu')?.remove();
+    document.getElementById('planner-genre-submenu')?.classList.add('hidden');
   }
 }
 
@@ -2491,34 +2469,28 @@ function toggleIdeaSelection(index) {
 }
 
 function togglePlannerGenreDropdown() {
-  window.isPlannerGenreDropdownOpen = !Boolean(window.isPlannerGenreDropdownOpen);
-  renderPlannerGenreFilter();
+  const sub = document.getElementById('planner-genre-submenu');
+  if (!sub) return;
+
+  const willOpen = sub.classList.contains('hidden');
+  window.isPlannerGenreDropdownOpen = willOpen;
+  sub.classList.toggle('hidden', !willOpen);
+  if (willOpen) populatePlannerGenreMenu();
 }
 
-function renderPlannerGenreFilter(savedScrollTop = 0) {
-  const fabMenu = document.getElementById('planner-fab-menu');
-  if (!fabMenu) return;
-
-  const existingScrollArea = document.getElementById('planner-genre-scroll-area');
-  if (existingScrollArea && savedScrollTop === 0) {
-    savedScrollTop = existingScrollArea.scrollTop;
-  }
-
-  document.getElementById('planner-genre-submenu')?.remove();
-  if (!window.isPlannerGenreDropdownOpen) return;
+// Remplit le sous-menu des genres SUR PLACE : le conteneur et le menu ne sont jamais reconstruits, donc ils
+// restent ouverts sans clignoter quand on coche un genre. Tous les genres sont affichés d'un coup (pas de
+// liste défilante interne) : c'est le menu entier qui s'agrandit, comme sur la page "Minidiscs".
+function populatePlannerGenreMenu() {
+  const sub = document.getElementById('planner-genre-submenu');
+  if (!sub) return;
 
   const genresSet = new Set();
-  const ideas = getIdeaList();
-  ideas.forEach(item => {
-    getItemGenresList(item).forEach(g => genresSet.add(g));
-  });
-
+  getIdeaList().forEach(item => getItemGenresList(item).forEach(g => genresSet.add(g)));
   const genres = Array.from(genresSet).sort();
-  if (genres.length === 0) return;
 
-  const subMenu = document.createElement('div');
-  subMenu.id = 'planner-genre-submenu';
-  subMenu.className = 'fab-submenu fab-genre-submenu';
+  sub.innerHTML = '';
+  if (genres.length === 0) return;
 
   const activeFilters = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters : new Set();
 
@@ -2533,42 +2505,23 @@ function renderPlannerGenreFilter(savedScrollTop = 0) {
     return btn;
   };
 
-  // 1. Bouton "Tous les genres" FIXE en haut du sous-menu
-  const allBtn = createGenreBtn('TOUS', activeFilters.size === 0, () => {
-    if (typeof clearPlannerGenreFilters === 'function') clearPlannerGenreFilters();
-  });
-  subMenu.appendChild(allBtn);
-
-  // 2. Zone défilante pour le reste des genres
-  const scrollArea = document.createElement('div');
-  scrollArea.id = 'planner-genre-scroll-area';
-  scrollArea.className = 'fab-scrollable-submenu fab-genre-list';
-
+  sub.appendChild(createGenreBtn('TOUS', activeFilters.size === 0, () => clearPlannerGenreFilters()));
   genres.forEach(g => {
-    scrollArea.appendChild(createGenreBtn(g, activeFilters.has(g), () => {
-      if (typeof togglePlannerGenreFilter === 'function') togglePlannerGenreFilter(g);
-    }));
+    sub.appendChild(createGenreBtn(g, activeFilters.has(g), () => togglePlannerGenreFilter(g)));
   });
+}
 
-  subMenu.appendChild(scrollArea);
-  
-  // Insertion directe après le bouton de bascule de genre
-  const genreToggleBtn = document.getElementById('planner-btn-genre-toggle');
-  if (genreToggleBtn && genreToggleBtn.nextSibling) {
-    fabMenu.insertBefore(subMenu, genreToggleBtn.nextSibling);
-  } else {
-    fabMenu.appendChild(subMenu);
-  }
+// Met à jour, sans jamais reconstruire le menu : le compteur de genres du bouton, et le sous-menu s'il est ouvert
+function refreshPlannerFabState() {
+  const count = typeof currentPlannerGenreFilters !== 'undefined' ? currentPlannerGenreFilters.size : 0;
+  const label = document.getElementById('planner-genre-toggle-label');
+  if (label) label.textContent = count > 0 ? `🎵 Genres (${count})` : '🎵 Genres';
 
-  if (savedScrollTop > 0) {
-    scrollArea.scrollTop = savedScrollTop;
-  }
+  const sub = document.getElementById('planner-genre-submenu');
+  if (sub && !sub.classList.contains('hidden')) populatePlannerGenreMenu();
 }
 
 function togglePlannerGenreFilter(genre) {
-  const scrollArea = document.getElementById('planner-genre-scroll-area');
-  const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
-
   if (typeof currentPlannerGenreFilters === 'undefined') window.currentPlannerGenreFilters = new Set();
 
   if (currentPlannerGenreFilters.has(genre)) {
@@ -2577,14 +2530,7 @@ function togglePlannerGenreFilter(genre) {
     currentPlannerGenreFilters.add(genre);
   }
 
-  renderCompilPlanner(false);
-
-  // On s'assure d'enlever le hidden au lieu d'injecter du display inline
-  const menu = document.getElementById('planner-fab-menu');
-  if (menu) menu.classList.remove('hidden');
-  window.isPlannerGenreDropdownOpen = true;
-
-  renderPlannerGenreFilter(scrollTop);
+  renderCompilPlanner(false); // ne reconstruit que la grille : le FAB est statique et se met à jour sur place
 }
 
 function clearPlannerGenreFilters() {
@@ -2592,13 +2538,6 @@ function clearPlannerGenreFilters() {
     currentPlannerGenreFilters.clear();
   }
   renderCompilPlanner(false);
-
-  // On s'assure d'enlever le hidden au lieu d'injecter du display inline
-  const menu = document.getElementById('planner-fab-menu');
-  if (menu) menu.classList.remove('hidden');
-  window.isPlannerGenreDropdownOpen = true;
-
-  renderPlannerGenreFilter(0);
 }
 
 function deleteIdeaAlbum(index) {
@@ -2682,13 +2621,13 @@ function deleteIdeaFromSettings() {
 /* ==========================================
    CRÉATION ALÉATOIRE
    ------------------------------------------
-   Propose une compilation d'idées d'un SEUL genre dont la durée remplit au maximum un MiniDisc (2h 28m).
-   Chaque appui tire une nouvelle proposition : parmi les combinaisons qui remplissent presque au maximum
-   (à RANDOM_COMPIL_TOLERANCE secondes du meilleur remplissage), une est choisie au hasard.
+   Propose une compilation d'idées d'un SEUL genre, dont la durée remplit au moins RANDOM_COMPIL_MIN_FILL
+   d'un MiniDisc (2h 28m). Chaque appui tire une nouvelle proposition, au hasard parmi TOUTES les durées
+   atteignables entre ce plancher et le meilleur remplissage possible du genre (et non parmi les seules
+   combinaisons les plus optimisées).
    ========================================== */
 const PLANNER_MAX_SECONDS = 148 * 60;   // capacité d'un MiniDisc
-const RANDOM_COMPIL_TOLERANCE = 120;    // secondes sous le meilleur remplissage encore acceptées
-const RANDOM_COMPIL_MIN_FILL = 0.77;    // un genre n'est proposé que s'il peut remplir au moins 77 % d'un MiniDisc
+const RANDOM_COMPIL_MIN_FILL = 0.77;    // durée minimale d'une proposition : 77 % d'un MiniDisc
 let lastRandomCompil = { genre: '', key: '' };
 
 function shuffleInPlace(array) {
@@ -2743,14 +2682,16 @@ function createRandomCompilation() {
   if (others.length > 0) choices = others;
   const picked = choices[Math.floor(Math.random() * choices.length)];
 
-  // Combinaison au hasard parmi celles qui remplissent presque au maximum (différente de la précédente si possible)
+  // Combinaison au hasard parmi TOUTES celles qui atteignent au moins le plancher (différente de la précédente
+  // si possible). Le plancher est ramené au meilleur remplissage du genre s'il ne peut pas l'atteindre.
   let chosen = [];
   let total = 0;
   let key = '';
+  const floorSeconds = Math.round(RANDOM_COMPIL_MIN_FILL * PLANNER_MAX_SECONDS);
   for (let attempt = 0; attempt < 8; attempt++) {
     const { order, parent, best } = plannerSubsetSums(picked.pool, PLANNER_MAX_SECONDS);
     const targets = [];
-    for (let sum = Math.max(1, best - RANDOM_COMPIL_TOLERANCE); sum <= best; sum++) {
+    for (let sum = Math.max(1, Math.min(floorSeconds, best)); sum <= best; sum++) {
       if (parent[sum] !== -2) targets.push(sum);
     }
     total = targets[Math.floor(Math.random() * targets.length)];
@@ -2771,6 +2712,9 @@ function createRandomCompilation() {
 function clearIdeaSelection() {
   if (typeof selectedIdeaIndices !== 'undefined') {
     selectedIdeaIndices.clear();
+  }
+  if (typeof currentPlannerGenreFilters !== 'undefined') {
+    currentPlannerGenreFilters.clear(); // remet aussi les genres sur "Tous"
   }
   renderCompilPlanner(false);
 }
@@ -3877,6 +3821,7 @@ async function discoverAddToIdeas(listName, idx) {
 function prepareSubPage(title) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'none';
+  hidePlannerFab();
   if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
 
   currentMD = null;

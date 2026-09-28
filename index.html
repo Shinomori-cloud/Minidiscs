@@ -317,6 +317,46 @@
     </button>
   </div>
 
+  <!-- BOUTON FLOTTANT DU PLANIFICATEUR (statique, comme #floating-actions : jamais reconstruit,
+       pour que le menu reste ouvert pendant qu'on coche des genres) -->
+  <div id="planner-floating-actions" class="fab-container hidden">
+    <div id="planner-fab-menu" class="fab-menu hidden">
+      <div class="fab-section-title">Filtres</div>
+      <button type="button" id="planner-btn-genre-toggle" class="fab-item" onclick="togglePlannerGenreDropdown();">
+        <span id="planner-genre-toggle-label">🎵 Genres</span>
+      </button>
+      <div id="planner-genre-submenu" class="fab-submenu fab-genre-submenu hidden"></div>
+
+      <hr class="fab-divider">
+      <div class="fab-section-title">Recherche</div>
+      <div style="padding: 2px 4px;">
+        <input
+          type="search"
+          id="planner-search-input"
+          class="fab-search-input"
+          placeholder="Chercher une idée..."
+          oninput="handlePlannerSearch(this.value);"
+        />
+      </div>
+
+      <hr class="fab-divider">
+      <div class="fab-section-title">Options</div>
+      <button type="button" class="fab-item accent" onclick="openIdeaModal(); togglePlannerFabMenu();">
+        <span>💽 Ajouter</span>
+      </button>
+      <button type="button" id="planner-btn-convert" class="fab-item success" onclick="convertSelectedToMD();">
+        💾 Convertir (0)
+      </button>
+      <button type="button" id="planner-btn-reset" class="fab-item danger" onclick="clearIdeaSelection();">
+        🔄 Réinitialiser
+      </button>
+    </div>
+
+    <button type="button" id="planner-fab-main-btn" class="fab-main-btn" onclick="togglePlannerFabMenu();" title="Menu planificateur">
+      <span class="fab-icon" aria-hidden="true"></span>
+    </button>
+  </div>
+
   <!-- CHARGEMENT DU SCRIPT À LA FIN POUR ACCÉDER À TOUS LES ÉLÉMENTS DU DOM -->
   <script src="app.js"></script>
 </body>
