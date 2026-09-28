@@ -2596,7 +2596,7 @@
             "Baba Mnumzane - Live",
             "Africa - Live"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-37-2",
@@ -2626,7 +2626,7 @@
             "The Zoo",
             "China White"
           ],
-          "toRecord": true
+          "toRecord": false
         }
       ],
       "title": "XX: 1977-1997 / Best of Rockers'n'Ballads"
