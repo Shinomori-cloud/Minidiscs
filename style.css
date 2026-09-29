@@ -3065,18 +3065,18 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
   opacity: 0.7;
 }
 
-/* Bouton retour latéral (TEMPORAIREMENT VISIBLE POUR TEST) */
+/* Bouton retour transparent latéral */
 #global-right-back-btn {
   position: fixed;
   right: 0;
-  top: 48%;              /* Ajuste le pourcentage (ex: 45% à 52%) pour le centrer sur la bannière */
-  width: 60px;           /* Largeur de la zone tactile */
+  top: 60%;              /* Ajuste la hauteur (ex: 40% à 50% de l'écran) */
+  width: 50px;           /* Largeur de la zone tactile */
   height: 90px;          /* Hauteur de la zone tactile */
   transform: translateY(-50%);
-  background: rgba(255, 0, 0, 0.4) !important; /* Temporaire pour réglage */
-  border: 2px solid red !important;
+  background: transparent;
+  border: none;
   outline: none;
-  z-index: 999999 !important; /* Rehaussé pour être bien au-dessus de tout */
+  z-index: 9999;         /* S'assure qu'il reste au-dessus des cartes */
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent; /* Supprime le flash gris au clic sur mobile */
 }
