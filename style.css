@@ -3064,3 +3064,24 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
   color: var(--text-sub);
   opacity: 0.7;
 }
+
+/* Bouton retour transparent latéral */
+#global-right-back-btn {
+  position: fixed;
+  right: 0;
+  top: 40%;              /* Ajuste la hauteur (ex: 40% à 50% de l'écran) */
+  width: 50px;           /* Largeur de la zone tactile */
+  height: 90px;          /* Hauteur de la zone tactile */
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  outline: none;
+  z-index: 9999;         /* S'assure qu'il reste au-dessus des cartes */
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent; /* Supprime le flash gris au clic sur mobile */
+}
+
+/* Optionnel : Masquer sur la page d'accueil principale si besoin */
+body:has(#dashboard-view) #global-right-back-btn {
+  /* display: none; */
+}
