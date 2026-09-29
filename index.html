@@ -318,7 +318,7 @@
   </div>
 
   <!-- BOUTON FLOTTANT DU PLANIFICATEUR (statique, comme #floating-actions : jamais reconstruit,
-       pour que le menu reste ouvert pendant qu'on coche des genres) -->
+        pour que le menu reste ouvert pendant qu'on coche des genres) -->
   <div id="planner-floating-actions" class="fab-container hidden">
     <div id="planner-fab-menu" class="fab-menu hidden">
       <div class="fab-section-title">Filtres</div>
@@ -358,7 +358,7 @@
   </div>
 
   <!-- Zone invisible cliquable pour retour arrière -->
-<button id="global-right-back-btn" aria-label="Retour" onclick="window.history.back()"></button>
+  <button id="global-right-back-btn" aria-label="Retour" onclick="if (typeof goBack === 'function') goBack(); else window.history.back();"></button>
 
   <!-- CHARGEMENT DU SCRIPT À LA FIN POUR ACCÉDER À TOUS LES ÉLÉMENTS DU DOM -->
   <script src="app.js"></script>
