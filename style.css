@@ -2543,17 +2543,15 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
   color: var(--text-sub);
 }
 
-/* Bouton arrondi « Trouver des artistes similaires » (pages Albums et Titres) */
+/* Bouton arrondi « Discographie et Artistes similaires » (pages Albums et Titres), centré en bas */
 .titles-actions {
   position: fixed;
   left: 50%;
   bottom: 40px;
   transform: translateX(-50%);
   z-index: 900;
-  display: grid;                 /* colonnes de largeur égale : les deux boutons ont la même largeur */
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-  gap: 6px;
+  display: flex;
+  justify-content: center;
   font-size: clamp(0.56rem, 2.4vw, 0.7rem);
 }
 
@@ -2562,9 +2560,8 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
   bottom: 102px;
 }
 
-.similar-fab,
-.titles-disco-btn {
-  padding: 0.6em 1em;
+.similar-fab {
+  padding: 0.6em 1.4em;
   border: 2px solid #000000;
   border-radius: 999px;
   box-shadow: 3px 3px 0 #000000, 0 6px 14px rgba(0, 0, 0, 0.3);
@@ -2582,14 +2579,7 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
   background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
 }
 
-/* Cyan : bien visible sur le fond sombre, distinct du bouton rose */
-.titles-disco-btn {
-  color: #000000;
-  background: linear-gradient(135deg, #00f0ff 0%, #5aa2ff 100%);
-}
-
-.similar-fab:active,
-.titles-disco-btn:active {
+.similar-fab:active {
   transform: translate(2px, 2px);
   box-shadow: 1px 1px 0 #000000, 0 3px 8px rgba(0, 0, 0, 0.3);
 }

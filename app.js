@@ -2395,7 +2395,7 @@ function renderCompilPlanner(pushState = true) {
     document.getElementById('back-btn')?.classList.remove('hidden');
     
     const headerTitle = document.getElementById('header-title') || document.querySelector('.header-title');
-    if (headerTitle) headerTitle.textContent = "PLANIFICATEUR";
+    if (headerTitle) headerTitle.textContent = "COMPILATIONS";
     setHeaderGenreInfo(Array.from(currentPlannerGenreFilters));
 
     document.getElementById('featured-container')?.classList.add('hidden');
@@ -3986,22 +3986,12 @@ function titlesArtist(mdIndex, albumIndex) {
   return isRealArtist(artist) ? artist : '';
 }
 
-// Discographie de l'artiste concerné, ouverte directement
-function openArtistDiscography(mdIndex, albumIndex) {
-  const artist = titlesArtist(mdIndex, albumIndex);
-  if (!artist) return;
-  goToArtistDiscography(artist, '');
-}
-
-// Boutons en bas des pages Titres : « Discographie » à gauche de « Trouver des artistes similaires »
-// (hasFab : la page a déjà un bouton flottant en bas à droite, les boutons se placent à sa gauche)
+// Bouton en bas des pages Titres : « Discographie et Artistes similaires » (texte sur 2 lignes)
+// (hasFab : la page a déjà un bouton flottant en bas à droite, le bouton passe au-dessus s'il le touche)
 function titlesActionsHTML(mdIndex, albumIndex, hasFab) {
   const albumArg = albumIndex === null || albumIndex === undefined ? 'null' : albumIndex;
   requestAnimationFrame(() => requestAnimationFrame(fitTitlesActions)); // une fois la page affichée
-  const disco = titlesArtist(mdIndex, albumIndex)
-    ? `<button type="button" class="titles-disco-btn" onclick="openArtistDiscography(${mdIndex}, ${albumArg})">📀 Discographie</button>`
-    : '';
-  return `<div class="titles-actions ${hasFab ? 'has-fab' : ''}">${disco}<button type="button" class="similar-fab" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">🔎 Artistes similaires</button></div>`;
+  return `<div class="titles-actions ${hasFab ? 'has-fab' : ''}"><button type="button" class="similar-fab" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">🔎 Discographie et<br>Artistes similaires</button></div>`;
 }
 
 // Les boutons sont centrés en bas ; s'ils touchent le bouton flottant de droite (compilation), ils passent au-dessus
