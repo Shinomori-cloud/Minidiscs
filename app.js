@@ -5433,3 +5433,7 @@ function exportCoverForMD(mdId) {
   // Lancement de la génération
   generateMinidiscCover(covers, md.title || md.name, md.artist || "Artistes Divers");
 }
+
+function closeCoverModal() {
+  document.getElementById('cover-generator-modal').classList.add('hidden');
+}
