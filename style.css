@@ -1850,7 +1850,8 @@ body:has(.modal:not(.hidden)) .fab-container {
   color: var(--text-main);
   border: 2px solid rgba(196, 181, 253, 0.5);
   border-radius: 12px;
-  font-size: 0.9rem;
+  /* 16px minimum : en dessous, iOS zoome sur le champ au focus et décale toute la page */
+  font-size: 16px;
   font-family: inherit;
   outline: none;
   box-sizing: border-box;
@@ -1865,6 +1866,42 @@ body:has(.modal:not(.hidden)) .fab-container {
   background: rgba(255, 255, 255, 0.14);
   border-color: #ff007f;
   box-shadow: 2px 2px 0 #ff007f;
+}
+
+/* ==========================================
+   RECHERCHE DANS LES FAB : MODE "CHAMP ANCRÉ"
+   Pendant la saisie, le menu se réduit au seul champ de recherche, collé sous le header (haut de l'écran).
+   Le champ n'est ainsi jamais caché par le clavier : le navigateur n'a plus de raison de faire remonter
+   la page, le header reste visible et les résultats s'affichent juste en dessous.
+   Classe posée par app.js (enterSearchDock / exitSearchDock) ; --search-dock-top et --search-dock-h y sont calculées.
+   ========================================== */
+html.search-docked .fab-container .fab-menu {
+  position: fixed;
+  top: var(--search-dock-top, 140px);
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  animation: none;
+  width: calc(100% - 32px);
+  min-width: 0;
+  max-width: 568px;
+  max-height: none;
+  overflow: visible;
+  padding: 8px;
+}
+
+html.search-docked .fab-container .fab-menu > *:not(.fab-search-wrap) {
+  display: none !important;
+}
+
+html.search-docked .fab-container .fab-search-wrap {
+  padding: 0 !important;
+}
+
+/* Les résultats sont repoussés sous le champ ancré : rien n'est masqué */
+html.search-docked main#app {
+  padding-top: var(--search-dock-h, 72px);
 }
 
 /* ==========================================

@@ -479,6 +479,80 @@ function toggleFabMenu() {
   }
 }
 
+/* ==========================================
+   RECHERCHE DANS LES FAB : CHAMP ANCRÉ SOUS LE HEADER PENDANT LA SAISIE
+   Le champ de recherche des deux FAB (catalogue et planificateur) est en bas de l'écran : le clavier le
+   recouvre, donc le navigateur fait défiler / remonter la page pour le lui montrer, ce qui sort le header
+   de l'écran et repousse les résultats hors de vue. Pendant la saisie, on ancre donc le champ juste sous
+   le header (voir le CSS "html.search-docked") : il est déjà visible, la page ne bouge plus.
+   ========================================== */
+let searchDockMenu = null;
+
+function enterSearchDock(input) {
+  const menu = input.closest('.fab-menu');
+  if (!menu) return;
+  const root = document.documentElement;
+
+  if (!root.classList.contains('search-docked')) {
+    // Position mesurée AVANT d'activer le mode (le header est fixe, il ne bouge pas)
+    const header = document.querySelector('header');
+    const top = header ? Math.round(header.getBoundingClientRect().bottom) + 8 : 140;
+    root.style.setProperty('--search-dock-top', top + 'px');
+    root.classList.add('search-docked');
+  }
+  searchDockMenu = menu;
+
+  // Hauteur réelle du champ ancré : sert à décaler la liste pour qu'il ne la recouvre pas
+  requestAnimationFrame(() => {
+    root.style.setProperty('--search-dock-h', (menu.offsetHeight + 8) + 'px');
+  });
+}
+
+function exitSearchDock() {
+  const root = document.documentElement;
+  root.classList.remove('search-docked');
+  root.style.removeProperty('--search-dock-top');
+  root.style.removeProperty('--search-dock-h');
+  searchDockMenu = null;
+  if (document.activeElement?.classList?.contains('fab-search-input')) document.activeElement.blur();
+}
+
+// Le mode s'arrête dès que le menu se referme ou que son FAB disparaît (changement de page, etc.)
+(function watchSearchDock() {
+  const check = () => {
+    if (!searchDockMenu) return;
+    const container = searchDockMenu.closest('.fab-container');
+    if (
+      searchDockMenu.classList.contains('hidden') ||
+      !container ||
+      getComputedStyle(container).display === 'none'
+    ) {
+      exitSearchDock();
+    }
+  };
+  const observer = new MutationObserver(check);
+  document.querySelectorAll('.fab-menu, .fab-container').forEach(el => {
+    observer.observe(el, { attributes: true, attributeFilter: ['class', 'style'] });
+  });
+})();
+
+document.addEventListener('focusin', (e) => {
+  if (e.target.classList?.contains('fab-search-input')) enterSearchDock(e.target);
+});
+
+// Chaque frappe : on repart du haut de la liste pour voir les résultats dès le premier
+document.addEventListener('input', (e) => {
+  if (e.target.classList?.contains('fab-search-input') && window.scrollY > 0) window.scrollTo(0, 0);
+});
+
+// Touche "Rechercher" du clavier : referme le clavier, le champ reste affiché jusqu'à la fermeture du menu
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && e.target.classList?.contains('fab-search-input')) {
+    e.preventDefault();
+    e.target.blur();
+  }
+});
+
 // Ferme le menu si l'utilisateur clique en dehors de la zone du FAB
 document.addEventListener('click', (e) => {
   const container = document.getElementById('floating-actions') || document.querySelector('.fab-container');
