@@ -5327,3 +5327,109 @@ document.getElementById('itunes-search-input')?.addEventListener('keydown', (e) 
 });
 
 initData();
+
+/**
+ * Génère une pochette MiniDisc en HD via HTML5 Canvas
+ * @param {string[]} imageUrls - Tableau des URLs des pochettes d'albums
+ * @param {string} title - Titre du MiniDisc / de la compil
+ * @param {string} artist - Nom de l'artiste ou "Compilation"
+ */
+async function generateMinidiscCover(imageUrls, title, artist) {
+  // 1. Création d'un canvas HD (1200x1200px pour une qualité d'impression optimale)
+  const canvas = document.createElement('canvas');
+  canvas.width = 1200;
+  canvas.height = 1200;
+  const ctx = canvas.getContext('2d');
+
+  // 2. Chargement asynchrone des images
+  const loadImage = (url) => new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous'; // Évite les soucis CORS si l'image vient d'une API externe
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Impossible de charger l'image: ${url}`));
+    img.src = url;
+  });
+
+  try {
+    const images = await Promise.all(imageUrls.map(loadImage));
+
+    // 3. Dessin du fond (Layout selon le nombre d'images)
+    if (images.length === 1) {
+      ctx.drawImage(images[0], 0, 0, 1200, 1200);
+    } else if (images.length === 2) {
+      // Split vertical : 2 albums côte à côte
+      ctx.drawImage(images[0], 0, 0, 600, 1200, 0, 0, 600, 1200);
+      ctx.drawImage(images[1], 0, 0, 600, 1200, 600, 0, 600, 1200);
+    } else if (images.length >= 3) {
+      // Grille 2x2
+      ctx.drawImage(images[0], 0, 0, 600, 600);
+      ctx.drawImage(images[1], 600, 0, 600, 600);
+      ctx.drawImage(images[2], 0, 600, 600, 600);
+      if (images[3]) ctx.drawImage(images[3], 600, 600, 600, 600);
+    }
+
+    // 4. Overlay Rétro / Bannière inférieure
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+    ctx.fillRect(0, 950, 1200, 250); // Bandeau sombre en bas
+
+    // Ligne néon / séparateur
+    ctx.fillStyle = '#ff0055';
+    ctx.fillRect(0, 945, 1200, 5);
+
+    // 5. Ajout des Textes
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+
+    // Titre
+    ctx.font = 'bold 52px "Righteous", sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(title.toUpperCase(), 50, 1010);
+
+    // Artiste
+    ctx.font = '36px sans-serif';
+    ctx.fillStyle = '#cccccc';
+    ctx.fillText(artist, 50, 1080);
+
+    // Badge "MiniDisc / ATRAC" en haut à droite
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(980, 30, 190, 50);
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'center';
+    ctx.fillText('MINIDISC', 1075, 62);
+
+    // 6. Déclenchement du téléchargement
+    const dataUrl = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = `${title.toLowerCase().replace(/\s+/g, '_')}_cover.png`;
+    link.href = dataUrl;
+    link.click();
+
+  } catch (err) {
+    console.error('Erreur lors de la génération du visuel :', err);
+  }
+}
+
+// Fonction déclenchée au clic sur le bouton de génération
+function exportCoverForMD(mdId) {
+  // Récupère le MD dans tes données (s'adapte à ta structure de données)
+  const md = minidiscData.find(item => item.id === mdId);
+  if (!md) return;
+
+  // Récupère la ou les pochette(s)
+  let covers = [];
+  if (md.type === 'compil') {
+    if (md.cover) covers.push(md.cover);
+  } else if (md.albums && md.albums.length > 0) {
+    covers = md.albums.map(a => a.cover).filter(Boolean);
+  }
+
+  // Si aucune image n'est renseignée, on prévient l'utilisateur
+  if (covers.length === 0) {
+    alert("Aucune pochette disponible pour ce MiniDisc.");
+    return;
+  }
+
+  // Lancement de la génération
+  generateMinidiscCover(covers, md.title || md.name, md.artist || "Artistes Divers");
+}
