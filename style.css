@@ -3107,3 +3107,23 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent; /* Supprime le flash gris au clic sur mobile */
 }
+
+/* ==========================================
+   STUDIO DE COVERS
+   ========================================== */
+.cs-open-btn, .cs-use { margin-top: 8px; padding: 10px 14px; border: 2px solid #000; border-radius: 12px; background: #ff007f; color: #fff; font-weight: 800; font-family: inherit; box-shadow: 2px 2px 0 #000; cursor: pointer; }
+#cs-note { margin-top: 6px; font-size: 0.8rem; color: #7dffb0; }
+#cs-overlay { position: fixed; inset: 0; z-index: 20000; background: rgba(0, 0, 0, .92); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+#cs-overlay.hidden { display: none; }
+.cs-panel { max-width: 560px; margin: 0 auto; padding: 14px 16px 40px; display: flex; flex-direction: column; gap: 10px; color: var(--text-main, #fff); }
+.cs-panel label { display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; }
+.cs-head { display: flex; justify-content: space-between; align-items: center; }
+.cs-head button, .cs-src button { background: rgba(255, 255, 255, .12); color: #fff; border: 1px solid rgba(255, 255, 255, .3); border-radius: 8px; padding: 6px 10px; font-weight: 700; }
+#cs-canvas { align-self: center; max-width: 100%; max-height: 52vh; border-radius: 8px; box-shadow: 0 0 0 2px #000, 0 8px 24px rgba(0, 0, 0, .6); }
+.cs-src { display: flex; gap: 6px; align-items: center; }
+.cs-src img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; }
+.cs-src input { flex: 1; min-width: 0; height: 40px; padding: 0 10px; font-size: 16px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, .3); background: rgba(255, 255, 255, .08); color: #fff; }
+.cs-add { padding: 10px; text-align: center; border: 2px dashed rgba(255, 255, 255, .35); border-radius: 12px; cursor: pointer; font-weight: 700; }
+.cs-row { display: flex; gap: 10px; }
+.cs-row label { flex: 1; }
+.cs-panel select { height: 40px; font-size: 16px; border-radius: 8px; background: #222; color: #fff; border: 1px solid rgba(255, 255, 255, .3); }

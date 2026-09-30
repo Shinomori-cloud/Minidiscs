@@ -5327,3 +5327,207 @@ document.getElementById('itunes-search-input')?.addEventListener('keydown', (e) 
 });
 
 initData();
+
+/* ==========================================
+   STUDIO DE COVERS : compose une pochette de MD à partir des pochettes d'albums (canvas)
+   Point d'entrée : bouton « Créer une cover » du formulaire MD. Le résultat est placé dans le champ #md-cover :
+   il est envoyé à l'enregistrement du MD par handleImageUpload, comme une image choisie à la main.
+   ========================================== */
+const CS = { sources: [] };
+const CS_PRESETS = [
+  { f: 'Anton', k: 'white' }, { f: 'Playfair Display', w: 900, k: 'white' }, { f: 'Anton', k: 'chrome' },
+  { f: 'Permanent Marker', k: 'dark' }, { f: 'Bungee', k: 'gold' }, { f: 'Anton', k: 'tint' }
+];
+const CS_FINISH = {
+  chrome: { stops: [[0, '#fff'], [.45, '#9fb0c8'], [.5, '#3a4254'], [.55, '#c9d4e6'], [1, '#fff']], stroke: '#1b2030' },
+  gold: { stops: [[0, '#fff6c2'], [.45, '#f0b429'], [.5, '#8a5200'], [.75, '#ffd56a'], [1, '#fff0a0']], stroke: '#3a2000' }
+};
+const csEsc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+const csLoadImg = src => new Promise(ok => { const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src; });
+
+function csFit(c, img, x, y, w, h) { // recadre l'image pour remplir w × h
+  const r = Math.max(w / img.width, h / img.height), sw = w / r, sh = h / r;
+  c.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, w, h);
+}
+
+function csTint(img) { // couleur moyenne de la pochette, éclaircie pour le texte
+  const t = document.createElement('canvas'); t.width = t.height = 1;
+  const c = t.getContext('2d'); c.drawImage(img, 0, 0, 1, 1);
+  const [r, g, b] = c.getImageData(0, 0, 1, 1).data;
+  return `rgb(${Math.min(255, r * 1.3 + 70)},${Math.min(255, g * 1.3 + 70)},${Math.min(255, b * 1.3 + 70)})`;
+}
+
+function csText(c, text, x, y, maxW, maxFs, p, tint) {
+  if (!text) return;
+  const font = s => `${p.w || 400} ${s}px "${p.f}", Impact, "Arial Black", sans-serif`;
+  c.font = font(100);
+  const fs = Math.min(maxFs, 100 * maxW / c.measureText(text).width);
+  c.font = font(fs); c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round';
+  c.save();
+  const fin = CS_FINISH[p.k];
+  if (fin) {
+    const g = c.createLinearGradient(0, y - fs / 2, 0, y + fs / 2);
+    fin.stops.forEach(([o, col]) => g.addColorStop(o, col));
+    c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = 16; c.shadowOffsetY = 5;
+    c.lineWidth = fs * .07; c.strokeStyle = fin.stroke; c.strokeText(text, x, y);
+    c.shadowColor = 'transparent'; c.fillStyle = g;
+  } else if (p.k === 'dark') {
+    c.shadowColor = 'rgba(255,255,255,.55)'; c.shadowBlur = 14; c.fillStyle = '#141414';
+  } else if (p.k === 'tint') {
+    c.shadowColor = tint; c.shadowBlur = 28; c.fillStyle = tint;
+  } else {
+    c.shadowColor = 'rgba(0,0,0,.65)'; c.shadowBlur = 18; c.fillStyle = '#fff';
+  }
+  c.fillText(text, x, y);
+  c.restore();
+}
+
+async function csRender() {
+  const cv = document.getElementById('cs-canvas');
+  if (!cv) return;
+  const val = id => document.getElementById(id).value;
+  const W = 900, H = val('cs-format') === 'square' ? 900 : 1327; // portrait = même proportion que les vignettes de la liste
+  cv.width = W; cv.height = H;
+  const c = cv.getContext('2d');
+  for (const s of CS.sources) if (s.img === undefined) { s.img = await csLoadImg(s.src); if (s.img) s.tint = csTint(s.img); }
+  const items = CS.sources.filter(s => s.img), n = items.length;
+  c.fillStyle = '#111'; c.fillRect(0, 0, W, H);
+  if (!n) return;
+
+  // Fond : les pochettes étirées en bandes, puis très floutées
+  const bg = document.createElement('canvas'); bg.width = W; bg.height = H;
+  const b = bg.getContext('2d'), blur = +val('cs-blur');
+  items.forEach((s, i) => csFit(b, s.img, 0, H * i / n - 40, W, H / n + 80));
+  c.filter = `blur(${blur}px) saturate(1.35) brightness(.92)`;
+  c.drawImage(bg, -blur * 2, -blur * 2, W + blur * 4, H + blur * 4);
+  c.filter = 'none';
+
+  const m = W * .06;
+  if (val('cs-layout') === 'mosaic') {
+    const cols = n <= 2 ? 1 : n <= 6 ? 2 : 3, rows = Math.ceil(n / cols), gap = W * .025;
+    const cw = (W - gap * (cols + 1)) / cols, ch = (H - gap * (rows + 1)) / rows;
+    items.forEach((s, i) => {
+      const x = gap + (i % cols) * (cw + gap), y = gap + Math.floor(i / cols) * (ch + gap);
+      c.save(); c.shadowColor = 'rgba(0,0,0,.5)'; c.shadowBlur = 30; c.shadowOffsetY = 8;
+      csFit(c, s.img, x, y, cw, ch); c.restore();
+      const g = c.createLinearGradient(0, y + ch * .55, 0, y + ch);
+      g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.7)');
+      c.fillStyle = g; c.fillRect(x, y + ch * .55, cw, ch * .45);
+      csText(c, s.name, x + cw / 2, y + ch * .86, cw * .88, ch * .2, CS_PRESETS[s.preset], s.tint);
+    });
+  } else {
+    // Cascade : pochettes décalées gauche / droite, nom de l'artiste du côté opposé, en léger chevauchement
+    const s0 = Math.min(W * .46, (H - 2 * m) / n * .92);
+    items.forEach((s, i) => {
+      const left = i % 2 === 0, p = CS_PRESETS[s.preset];
+      const x = left ? m : W - m - s0;
+      const y = n === 1 ? (H - s0) / 2 - H * .06 : m + i * ((H - 2 * m - s0) / (n - 1));
+      c.save(); c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 45; c.shadowOffsetY = 14;
+      csFit(c, s.img, x, y, s0, s0); c.restore();
+      if (n === 1) return csText(c, s.name, W / 2, y + s0 + H * .09, W - 2 * m, 190, p, s.tint);
+      const ov = s0 * .12, x0 = left ? x + s0 - ov : m, x1 = left ? W - m : x + ov;
+      csText(c, s.name, (x0 + x1) / 2, y + s0 / 2 + (left ? s0 * .08 : -s0 * .08), x1 - x0, 190, p, s.tint);
+    });
+  }
+
+  // Grain (texture « pochette imprimée »)
+  const grain = +val('cs-grain');
+  if (grain) {
+    const nz = document.createElement('canvas'); nz.width = nz.height = 256;
+    const nc = nz.getContext('2d'), d = nc.createImageData(256, 256);
+    for (let i = 0; i < d.data.length; i += 4) { d.data[i] = d.data[i + 1] = d.data[i + 2] = Math.random() * 255; d.data[i + 3] = 255; }
+    nc.putImageData(d, 0, 0);
+    c.globalCompositeOperation = 'overlay'; c.globalAlpha = grain / 100 * .6;
+    c.fillStyle = c.createPattern(nz, 'repeat'); c.fillRect(0, 0, W, H);
+    c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
+  }
+}
+
+function csRenderList() {
+  document.getElementById('cs-list').innerHTML = CS.sources.map((s, i) => `
+    <div class="cs-src">
+      <img src="${s.src}" alt="">
+      <input type="text" value="${csEsc(s.name)}" placeholder="Nom affiché" oninput="CS.sources[${i}].name=this.value;csRender()">
+      <button type="button" title="Changer le style du texte" onclick="CS.sources[${i}].preset=(CS.sources[${i}].preset+1)%CS_PRESETS.length;csRender()">Aa</button>
+      <button type="button" title="Monter" onclick="csMove(${i})">↑</button>
+      <button type="button" title="Retirer" onclick="CS.sources.splice(${i},1);csRenderList();csRender()">✕</button>
+    </div>`).join('');
+}
+
+function csMove(i) {
+  if (i < 1) return;
+  [CS.sources[i - 1], CS.sources[i]] = [CS.sources[i], CS.sources[i - 1]];
+  csRenderList(); csRender();
+}
+
+function csBuildOverlay() {
+  if (document.getElementById('cs-overlay')) return;
+  const link = document.createElement('link'); // polices du studio (repli automatique si hors ligne)
+  link.rel = 'stylesheet';
+  link.href = 'https://fonts.googleapis.com/css2?family=Anton&family=Bungee&family=Permanent+Marker&family=Playfair+Display:wght@900&display=swap';
+  document.head.appendChild(link);
+  const o = document.createElement('div');
+  o.id = 'cs-overlay'; o.className = 'hidden';
+  o.innerHTML = `
+    <div class="cs-panel">
+      <div class="cs-head"><b>🎨 Studio de covers</b><button type="button" onclick="closeCoverStudio()">✕</button></div>
+      <canvas id="cs-canvas"></canvas>
+      <div id="cs-list"></div>
+      <label class="cs-add">➕ Ajouter des pochettes<input type="file" id="cs-files" accept="image/*" multiple hidden></label>
+      <div class="cs-row">
+        <label>Mise en page<select id="cs-layout"><option value="cascade">Cascade</option><option value="mosaic">Mosaïque</option></select></label>
+        <label>Format<select id="cs-format"><option value="portrait">Portrait</option><option value="square">Carré</option></select></label>
+      </div>
+      <label>Flou du fond<input type="range" id="cs-blur" min="0" max="80" value="40"></label>
+      <label>Grain<input type="range" id="cs-grain" min="0" max="100" value="30"></label>
+      <button type="button" class="cs-use" onclick="useCoverStudioResult()">✅ Utiliser cette cover</button>
+    </div>`;
+  document.body.appendChild(o);
+  o.addEventListener('input', e => { if (e.target.matches('select, input[type=range]')) csRender(); });
+  document.getElementById('cs-files').addEventListener('change', e => {
+    [...e.target.files].forEach(f => CS.sources.push({ name: '', src: URL.createObjectURL(f), preset: CS.sources.length % CS_PRESETS.length }));
+    e.target.value = ''; csRenderList(); csRender();
+  });
+}
+
+async function openCoverStudio() {
+  csBuildOverlay();
+  // Pochettes déjà enregistrées (mode édition) ou choisies dans le formulaire, avec le nom de l'artiste de chaque album
+  const saved = (typeof catalogData !== 'undefined' && catalogData?.[editingMDIndex]?.albums) || [];
+  CS.sources = [];
+  document.querySelectorAll('#albums-container .album-block').forEach((blk, i) => {
+    const file = blk.querySelector('.album-cover')?.files?.[0], path = saved[i]?.md_cover;
+    const src = file ? URL.createObjectURL(file) : (path && path !== 'images/default.jpg' ? resolveImageSrc(path) : null);
+    if (src) CS.sources.push({ name: (blk.querySelector('.album-artist')?.value || '').toUpperCase(), src, preset: CS.sources.length % CS_PRESETS.length });
+  });
+  document.getElementById('cs-overlay').classList.remove('hidden');
+  csRenderList(); csRender();
+  try { // une fois les polices chargées, on redessine
+    await Promise.all(CS_PRESETS.map(p => document.fonts.load(`${p.w || 400} 40px "${p.f}"`)));
+    csRender();
+  } catch (e) { /* polices de repli */ }
+}
+
+function closeCoverStudio() { document.getElementById('cs-overlay')?.classList.add('hidden'); }
+
+function useCoverStudioResult() {
+  document.getElementById('cs-canvas').toBlob(blob => {
+    const input = document.getElementById('md-cover');
+    if (!blob || !input) return;
+    const dt = new DataTransfer();
+    dt.items.add(new File([blob], `cover_${Date.now()}.jpg`, { type: 'image/jpeg' }));
+    input.files = dt.files;
+    const note = document.getElementById('cs-note') || input.insertAdjacentElement('afterend', Object.assign(document.createElement('div'), { id: 'cs-note' }));
+    note.textContent = '✅ Cover du studio prête : elle sera envoyée à l\'enregistrement du MD.';
+    closeCoverStudio();
+  }, 'image/jpeg', 0.92);
+}
+
+(function addCoverStudioButton() {
+  const add = () => {
+    const grp = document.getElementById('md-cover-group');
+    if (!grp || grp.querySelector('.cs-open-btn')) return;
+    grp.insertAdjacentHTML('beforeend', '<button type="button" class="cs-open-btn" onclick="openCoverStudio()">🎨 Créer une cover</button>');
+  };
+  document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', add) : add();
+})();
