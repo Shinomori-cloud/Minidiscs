@@ -5335,8 +5335,8 @@ initData();
    ========================================== */
 const CS = { sources: [] };
 const CS_PRESETS = [
-  { f: 'Anton', k: 'white' }, { f: 'Playfair Display', w: 900, k: 'white' }, { f: 'Anton', k: 'chrome' },
-  { f: 'Permanent Marker', k: 'dark' }, { f: 'Bungee', k: 'gold' }, { f: 'Anton', k: 'tint' }
+  { f: 'Bebas Neue', k: 'white' }, { f: 'Montserrat', w: 800, k: 'white' }, { f: 'Cinzel', w: 700, k: 'gold' },
+  { f: 'Oswald', w: 600, k: 'chrome' }, { f: 'Playfair Display', w: 700, k: 'dark' }, { f: 'Raleway', w: 800, k: 'tint' }
 ];
 const CS_FINISH = {
   chrome: { stops: [[0, '#fff'], [.45, '#9fb0c8'], [.5, '#3a4254'], [.55, '#c9d4e6'], [1, '#fff']], stroke: '#1b2030' },
@@ -5357,29 +5357,57 @@ function csTint(img) { // couleur moyenne de la pochette, éclaircie pour le tex
   return `rgb(${Math.min(255, r * 1.3 + 70)},${Math.min(255, g * 1.3 + 70)},${Math.min(255, b * 1.3 + 70)})`;
 }
 
-function csText(c, text, x, y, maxW, maxFs, p, tint) {
-  if (!text) return;
+function csText(c, text, x, y, maxW, maxFs, p, tint, o = {}) {
+  if (!text) return 0;
   const font = s => `${p.w || 400} ${s}px "${p.f}", Impact, "Arial Black", sans-serif`;
+  c.save();
+  c.letterSpacing = o.ls || '0px'; // en em : proportionnel à la taille
   c.font = font(100);
   const fs = Math.min(maxFs, 100 * maxW / c.measureText(text).width);
   c.font = font(fs); c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round';
-  c.save();
   const fin = CS_FINISH[p.k];
   if (fin) {
     const g = c.createLinearGradient(0, y - fs / 2, 0, y + fs / 2);
-    fin.stops.forEach(([o, col]) => g.addColorStop(o, col));
+    fin.stops.forEach(([s, col]) => g.addColorStop(s, col));
     c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = 16; c.shadowOffsetY = 5;
     c.lineWidth = fs * .07; c.strokeStyle = fin.stroke; c.strokeText(text, x, y);
     c.shadowColor = 'transparent'; c.fillStyle = g;
   } else if (p.k === 'dark') {
     c.shadowColor = 'rgba(255,255,255,.55)'; c.shadowBlur = 14; c.fillStyle = '#141414';
   } else if (p.k === 'tint') {
-    c.shadowColor = tint; c.shadowBlur = 28; c.fillStyle = tint;
+    c.shadowColor = 'rgba(0,0,0,.5)'; c.shadowBlur = 12; c.fillStyle = tint;
   } else {
     c.shadowColor = 'rgba(0,0,0,.65)'; c.shadowBlur = 18; c.fillStyle = '#fff';
   }
   c.fillText(text, x, y);
   c.restore();
+  return fs;
+}
+
+// Affiche : l'image en plein cadre, titre + sous-titre + petit texte (pour les MD d'un seul album)
+function csPoster(c, W, H, s, br, val) {
+  c.save(); c.filter = `brightness(${br})`; csFit(c, s.img, 0, 0, W, H); c.restore();
+  const pos = val('cs-pos'), ty = pos === 'top' ? H * .2 : pos === 'center' ? H * .48 : H * .74;
+  if (pos !== 'center') { // voile pour garder le texte lisible
+    const g = c.createLinearGradient(0, pos === 'top' ? 0 : H, 0, H * .5);
+    g.addColorStop(0, 'rgba(0,0,0,.65)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = g; c.fillRect(0, pos === 'top' ? 0 : H * .5, W, H * .5);
+  }
+  const mw = W * .84;
+  const fs = csText(c, s.name, W / 2, ty, mw, 190, CS_PRESETS[s.preset], s.tint);
+  csText(c, s.sub, W / 2, ty + fs * .55 + 36, mw, 46, { f: 'Montserrat', w: 500, k: 'tint' }, s.tint, { ls: '.3em' });
+  csText(c, val('cs-caption'), W / 2, H - W * .07, W * .8, 26, { f: 'Montserrat', w: 500, k: 'white' }, s.tint, { ls: '.08em' });
+}
+
+function csGrain(c, W, H, grain) { // texture « pochette imprimée »
+  if (!grain) return;
+  const nz = document.createElement('canvas'); nz.width = nz.height = 256;
+  const nc = nz.getContext('2d'), d = nc.createImageData(256, 256);
+  for (let i = 0; i < d.data.length; i += 4) { d.data[i] = d.data[i + 1] = d.data[i + 2] = Math.random() * 255; d.data[i + 3] = 255; }
+  nc.putImageData(d, 0, 0);
+  c.globalCompositeOperation = 'overlay'; c.globalAlpha = grain / 100 * .6;
+  c.fillStyle = c.createPattern(nz, 'repeat'); c.fillRect(0, 0, W, H);
+  c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
 }
 
 async function csRender() {
@@ -5388,17 +5416,18 @@ async function csRender() {
   const val = id => document.getElementById(id).value;
   const W = 900, H = val('cs-format') === 'square' ? 900 : 1327; // portrait = même proportion que les vignettes de la liste
   cv.width = W; cv.height = H;
-  const c = cv.getContext('2d');
+  const c = cv.getContext('2d'), br = +val('cs-bright') / 100;
   for (const s of CS.sources) if (s.img === undefined) { s.img = await csLoadImg(s.src); if (s.img) s.tint = csTint(s.img); }
   const items = CS.sources.filter(s => s.img), n = items.length;
   c.fillStyle = '#111'; c.fillRect(0, 0, W, H);
   if (!n) return;
+  if (val('cs-layout') === 'poster') { csPoster(c, W, H, items[0], br, val); return csGrain(c, W, H, +val('cs-grain')); }
 
   // Fond : les pochettes étirées en bandes, puis très floutées
   const bg = document.createElement('canvas'); bg.width = W; bg.height = H;
   const b = bg.getContext('2d'), blur = +val('cs-blur');
   items.forEach((s, i) => csFit(b, s.img, 0, H * i / n - 40, W, H / n + 80));
-  c.filter = `blur(${blur}px) saturate(1.35) brightness(.92)`;
+  c.filter = `blur(${blur}px) saturate(1.35) brightness(${br})`;
   c.drawImage(bg, -blur * 2, -blur * 2, W + blur * 4, H + blur * 4);
   c.filter = 'none';
 
@@ -5409,7 +5438,7 @@ async function csRender() {
     items.forEach((s, i) => {
       const x = gap + (i % cols) * (cw + gap), y = gap + Math.floor(i / cols) * (ch + gap);
       c.save(); c.shadowColor = 'rgba(0,0,0,.5)'; c.shadowBlur = 30; c.shadowOffsetY = 8;
-      csFit(c, s.img, x, y, cw, ch); c.restore();
+      c.filter = `brightness(${br})`; csFit(c, s.img, x, y, cw, ch); c.restore();
       const g = c.createLinearGradient(0, y + ch * .55, 0, y + ch);
       g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.7)');
       c.fillStyle = g; c.fillRect(x, y + ch * .55, cw, ch * .45);
@@ -5423,35 +5452,32 @@ async function csRender() {
       const x = left ? m : W - m - s0;
       const y = n === 1 ? (H - s0) / 2 - H * .06 : m + i * ((H - 2 * m - s0) / (n - 1));
       c.save(); c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 45; c.shadowOffsetY = 14;
-      csFit(c, s.img, x, y, s0, s0); c.restore();
+      c.filter = `brightness(${br})`; csFit(c, s.img, x, y, s0, s0); c.restore();
       if (n === 1) return csText(c, s.name, W / 2, y + s0 + H * .09, W - 2 * m, 190, p, s.tint);
       const ov = s0 * .12, x0 = left ? x + s0 - ov : m, x1 = left ? W - m : x + ov;
       csText(c, s.name, (x0 + x1) / 2, y + s0 / 2 + (left ? s0 * .08 : -s0 * .08), x1 - x0, 190, p, s.tint);
     });
   }
 
-  // Grain (texture « pochette imprimée »)
-  const grain = +val('cs-grain');
-  if (grain) {
-    const nz = document.createElement('canvas'); nz.width = nz.height = 256;
-    const nc = nz.getContext('2d'), d = nc.createImageData(256, 256);
-    for (let i = 0; i < d.data.length; i += 4) { d.data[i] = d.data[i + 1] = d.data[i + 2] = Math.random() * 255; d.data[i + 3] = 255; }
-    nc.putImageData(d, 0, 0);
-    c.globalCompositeOperation = 'overlay'; c.globalAlpha = grain / 100 * .6;
-    c.fillStyle = c.createPattern(nz, 'repeat'); c.fillRect(0, 0, W, H);
-    c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
-  }
+  csGrain(c, W, H, +val('cs-grain'));
 }
 
 function csRenderList() {
-  document.getElementById('cs-list').innerHTML = CS.sources.map((s, i) => `
+  const poster = document.getElementById('cs-layout').value === 'poster';
+  document.getElementById('cs-list').innerHTML = CS.sources.map((s, i) => poster && i > 0 ? '' : `
     <div class="cs-src">
       <img src="${s.src}" alt="">
       <input type="text" value="${csEsc(s.name)}" placeholder="Nom affiché" oninput="CS.sources[${i}].name=this.value;csRender()">
+      ${poster ? `<input type="text" value="${csEsc(s.sub || '')}" placeholder="Sous-titre" oninput="CS.sources[${i}].sub=this.value;csRender()">` : ''}
       <button type="button" title="Changer le style du texte" onclick="CS.sources[${i}].preset=(CS.sources[${i}].preset+1)%CS_PRESETS.length;csRender()">Aa</button>
       <button type="button" title="Monter" onclick="csMove(${i})">↑</button>
       <button type="button" title="Retirer" onclick="CS.sources.splice(${i},1);csRenderList();csRender()">✕</button>
     </div>`).join('');
+}
+
+function csSync() { // options propres à l'affiche + liste des sources
+  document.getElementById('cs-poster-opts').style.display = document.getElementById('cs-layout').value === 'poster' ? 'flex' : 'none';
+  csRenderList();
 }
 
 function csMove(i) {
@@ -5464,7 +5490,7 @@ function csBuildOverlay() {
   if (document.getElementById('cs-overlay')) return;
   const link = document.createElement('link'); // polices du studio (repli automatique si hors ligne)
   link.rel = 'stylesheet';
-  link.href = 'https://fonts.googleapis.com/css2?family=Anton&family=Bungee&family=Permanent+Marker&family=Playfair+Display:wght@900&display=swap';
+  link.href = 'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@700&family=Montserrat:wght@500;800&family=Oswald:wght@600&family=Playfair+Display:wght@700&family=Raleway:wght@800&display=swap';
   document.head.appendChild(link);
   const o = document.createElement('div');
   o.id = 'cs-overlay'; o.className = 'hidden';
@@ -5475,15 +5501,24 @@ function csBuildOverlay() {
       <div id="cs-list"></div>
       <label class="cs-add">➕ Ajouter des pochettes<input type="file" id="cs-files" accept="image/*" multiple hidden></label>
       <div class="cs-row">
-        <label>Mise en page<select id="cs-layout"><option value="cascade">Cascade</option><option value="mosaic">Mosaïque</option></select></label>
+        <label>Mise en page<select id="cs-layout"><option value="cascade">Cascade</option><option value="mosaic">Mosaïque</option><option value="poster">Affiche (1 album)</option></select></label>
         <label>Format<select id="cs-format"><option value="portrait">Portrait</option><option value="square">Carré</option></select></label>
       </div>
       <label>Flou du fond<input type="range" id="cs-blur" min="0" max="80" value="40"></label>
       <label>Grain<input type="range" id="cs-grain" min="0" max="100" value="30"></label>
+      <label>Luminosité<input type="range" id="cs-bright" min="40" max="160" value="100"></label>
+      <div id="cs-poster-opts" class="cs-row" style="display:none">
+        <label>Texte<select id="cs-pos"><option value="bottom">En bas</option><option value="center">Au centre</option><option value="top">En haut</option></select></label>
+        <label>Petit texte<input type="text" id="cs-caption" placeholder="(optionnel)"></label>
+      </div>
       <button type="button" class="cs-use" onclick="useCoverStudioResult()">✅ Utiliser cette cover</button>
     </div>`;
   document.body.appendChild(o);
-  o.addEventListener('input', e => { if (e.target.matches('select, input[type=range]')) csRender(); });
+  o.addEventListener('input', e => {
+    if (!e.target.matches('select, input[type=range], #cs-caption')) return;
+    if (e.target.id === 'cs-layout') csSync();
+    csRender();
+  });
   document.getElementById('cs-files').addEventListener('change', e => {
     [...e.target.files].forEach(f => CS.sources.push({ name: '', src: URL.createObjectURL(f), preset: CS.sources.length % CS_PRESETS.length }));
     e.target.value = ''; csRenderList(); csRender();
@@ -5498,12 +5533,13 @@ async function openCoverStudio() {
   document.querySelectorAll('#albums-container .album-block').forEach((blk, i) => {
     const file = blk.querySelector('.album-cover')?.files?.[0], path = saved[i]?.md_cover;
     const src = file ? URL.createObjectURL(file) : (path && path !== 'images/default.jpg' ? resolveImageSrc(path) : null);
-    if (src) CS.sources.push({ name: (blk.querySelector('.album-artist')?.value || '').toUpperCase(), src, preset: CS.sources.length % CS_PRESETS.length });
+    if (src) CS.sources.push({ name: (blk.querySelector('.album-artist')?.value || '').toUpperCase(), src, preset: CS.sources.length % CS_PRESETS.length, sub: blk.querySelector('.album-title')?.value || '' });
   });
+  document.getElementById('cs-layout').value = CS.sources.length === 1 ? 'poster' : 'cascade'; // un seul album : affiche
   document.getElementById('cs-overlay').classList.remove('hidden');
-  csRenderList(); csRender();
+  csSync(); csRender();
   try { // une fois les polices chargées, on redessine
-    await Promise.all(CS_PRESETS.map(p => document.fonts.load(`${p.w || 400} 40px "${p.f}"`)));
+    await Promise.all([...CS_PRESETS, { f: 'Montserrat', w: 500 }].map(p => document.fonts.load(`${p.w || 400} 40px "${p.f}"`)));
     csRender();
   } catch (e) { /* polices de repli */ }
 }

@@ -3127,3 +3127,5 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .cs-row { display: flex; gap: 10px; }
 .cs-row label { flex: 1; }
 .cs-panel select { height: 40px; font-size: 16px; border-radius: 8px; background: #222; color: #fff; border: 1px solid rgba(255, 255, 255, .3); }
+
+.cs-panel input[type=text]:not(.cs-src input) { height: 40px; padding: 0 10px; font-size: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.08); color: #fff; }
