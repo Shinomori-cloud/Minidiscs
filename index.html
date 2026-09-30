@@ -259,6 +259,25 @@
     </div>
   </div>
 
+  <!-- MODALE APERÇU ET GÉNÉRATION DE POCHETTE (CANVAS) -->
+  <div id="cover-generator-modal" class="modal hidden">
+    <div class="modal-content" style="text-align: center;">
+      <div class="modal-header">
+        <h3>🎨 Aperçu de la Pochette</h3>
+        <button class="close-btn" type="button" onclick="closeCoverModal()">&times;</button>
+      </div>
+      
+      <div style="margin: 15px 0; display: flex; justify-content: center;">
+        <canvas id="cover-canvas" style="max-width: 100%; height: auto; border: 2px solid #333; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"></canvas>
+      </div>
+
+      <div class="form-actions" style="display: flex; gap: 8px; margin-top: 15px;">
+        <a id="download-cover-btn" class="btn-primary" style="flex: 1; text-decoration: none; text-align: center; line-height: 2.2rem;" download="minidisc_cover.png">💾 Télécharger HD</a>
+        <button type="button" class="btn-secondary" onclick="closeCoverModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
   <!-- FILTRE DE GENRES MULTIPLE POUR LA COLLECTION PRINCIPALE -->
   <div id="genre-filter-dropdown" class="genre-filter-container hidden"></div>
 
