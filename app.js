@@ -502,17 +502,33 @@ function enterSearchDock(input) {
   }
   searchDockMenu = menu;
 
-  // Hauteur réelle du champ ancré : sert à décaler la liste pour qu'il ne la recouvre pas
-  requestAnimationFrame(() => {
-    root.style.setProperty('--search-dock-h', (menu.offsetHeight + 8) + 'px');
-  });
+  // Place le début de la liste juste sous le champ ancré (ni recouverte, ni trop éloignée)
+  requestAnimationFrame(() => positionListUnderSearchDock(menu));
+}
+
+// La liste (catalogue ou planificateur) commence plus ou moins bas selon la page : on mesure où elle démarre
+// (page remontée en haut, sans décalage) puis on la décale pour qu'elle débute juste sous le champ ancré.
+function positionListUnderSearchDock(menu) {
+  const root = document.documentElement;
+  const main = document.getElementById('app');
+  const list = document.querySelector('#ideas-grid-container, .list-container');
+  if (!main || !list || !root.classList.contains('search-docked')) return;
+
+  root.style.setProperty('--search-dock-shift', '0px');
+  window.scrollTo(0, 0);
+
+  // Le voile du header (body::before) se dégrade sur ses derniers pixels : on démarre sous lui
+  const maskH = parseFloat(getComputedStyle(document.body, '::before').height) || 0;
+  const wanted = Math.max(menu.getBoundingClientRect().bottom + 12, maskH);
+  const shift = Math.round(wanted - list.getBoundingClientRect().top);
+  root.style.setProperty('--search-dock-shift', shift + 'px');
 }
 
 function exitSearchDock() {
   const root = document.documentElement;
   root.classList.remove('search-docked');
   root.style.removeProperty('--search-dock-top');
-  root.style.removeProperty('--search-dock-h');
+  root.style.removeProperty('--search-dock-shift');
   searchDockMenu = null;
   if (document.activeElement?.classList?.contains('fab-search-input')) document.activeElement.blur();
 }
@@ -553,8 +569,19 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// Mémorise si le doigt a commencé son geste dans un FAB. Sans ça, quand on touche le champ de recherche, il
+// saute en haut de l'écran (mode "champ ancré") avant la fin du tap : le clic est alors attribué à un élément
+// hors du FAB et le menu se refermait aussitôt.
+let fabGestureStartedInside = false;
+document.addEventListener('pointerdown', (e) => {
+  fabGestureStartedInside = !!e.target.closest?.('.fab-container');
+}, true);
+
 // Ferme le menu si l'utilisateur clique en dehors de la zone du FAB
 document.addEventListener('click', (e) => {
+  const startedInside = fabGestureStartedInside;
+  fabGestureStartedInside = false;
+  if (startedInside) return;
   const container = document.getElementById('floating-actions') || document.querySelector('.fab-container');
   const menu = document.getElementById('fab-menu');
   if (container && menu && !container.contains(e.target)) {

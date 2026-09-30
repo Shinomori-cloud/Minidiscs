@@ -1899,9 +1899,9 @@ html.search-docked .fab-container .fab-search-wrap {
   padding: 0 !important;
 }
 
-/* Les résultats sont repoussés sous le champ ancré : rien n'est masqué */
+/* La liste est décalée (valeur calculée par app.js) pour démarrer juste sous le champ ancré */
 html.search-docked main#app {
-  padding-top: var(--search-dock-h, 72px);
+  top: var(--search-dock-shift, 0px);
 }
 
 /* ==========================================
