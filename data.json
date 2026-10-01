@@ -3193,6 +3193,60 @@
         "You think you're quiet"
       ],
       "toRecord": true
+    },
+    {
+      "id": "md-1790883403148",
+      "md_cover": "images/akindofmagic.jpg",
+      "albums": [
+        {
+          "id": "md-1790883403148-alb-1",
+          "md_cover": "images/akindofmagic.jpg",
+          "title": "A kind of magic",
+          "artist": "Queen",
+          "main_genre": "Rock & Blues",
+          "tags": [
+            "Rock"
+          ],
+          "release_year": "",
+          "duration": "53:37",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1790883403148-alb-2",
+          "md_cover": "images/iowa.jpg",
+          "title": "Iowa",
+          "artist": "Slipknot",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "Metal"
+          ],
+          "release_year": "",
+          "duration": "1:06:25",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1790883403148-alb-3",
+          "md_cover": "images/img_1790525551990.jpg",
+          "title": "Strassenkind",
+          "artist": "Fuoristrada",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [],
+          "release_year": "2002",
+          "duration": "21:07",
+          "tracks": [
+            "Strassenkind",
+            "Zauberland",
+            "Ein buch mit leeren seiten",
+            "Wir fliegen Montag zum mars",
+            "Winter-Zauber",
+            "Guanahani"
+          ],
+          "toRecord": true
+        }
+      ],
+      "title": "A kind of magic / Iowa / Strassenkind"
     }
   ],
   "ideaAlbums": [
@@ -3432,16 +3486,6 @@
       "md_cover": "images/isthisit.jpg"
     },
     {
-      "title": "A kind of magic",
-      "artist": "Queen",
-      "main_genre": "Rock & Blues",
-      "tags": [
-        "Rock"
-      ],
-      "duration": "53:37",
-      "md_cover": "images/akindofmagic.jpg"
-    },
-    {
       "title": "Highly Evolved",
       "artist": "The Vines",
       "main_genre": "Alternative & Grunge 90s",
@@ -3461,16 +3505,6 @@
       ],
       "duration": "1:12:17",
       "md_cover": "images/marshallmathers.jpg"
-    },
-    {
-      "title": "Iowa",
-      "artist": "Slipknot",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "Metal"
-      ],
-      "duration": "1:06:25",
-      "md_cover": "images/iowa.jpg"
     },
     {
       "title": "Tom McRae",
@@ -3830,25 +3864,6 @@
         "Nicotine Monster",
         "Vodka",
         "Nobody Cares"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790525554368",
-      "md_cover": "images/img_1790525551990.jpg",
-      "title": "Strassenkind",
-      "artist": "Fuoristrada",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [],
-      "release_year": "2002",
-      "duration": "21:07",
-      "tracks": [
-        "Strassenkind",
-        "Zauberland",
-        "Ein buch mit leeren seiten",
-        "Wir fliegen Montag zum mars",
-        "Winter-Zauber",
-        "Guanahani"
       ],
       "toRecord": false
     },
