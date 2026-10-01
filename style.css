@@ -3138,3 +3138,9 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .cs-row { align-items: flex-end; }
 .cs-panel input[type=color] { width: 100%; height: 40px; padding: 2px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, .3); background: #222; }
 .cs-auto { height: 40px; padding: 0 12px; flex: 1; background: rgba(255, 255, 255, .12); color: #fff; border: 1px solid rgba(255, 255, 255, .3); border-radius: 8px; font-weight: 700; }
+
+/* Studio : flèches de défilement des polices */
+.cs-lbl { display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; }
+.cs-fontrow { display: flex; gap: 6px; }
+.cs-fontrow select { flex: 1; min-width: 0; }
+.cs-fontrow button { width: 44px; height: 40px; background: rgba(255, 255, 255, .12); color: #fff; border: 1px solid rgba(255, 255, 255, .3); border-radius: 8px; font-size: 1rem; }

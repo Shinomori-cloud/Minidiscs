@@ -5537,6 +5537,12 @@ function csLoadSel() { // reflète la source sélectionnée dans les réglages
   set('cs-font', s.font || ''); set('cs-color', s.color || '#ffffff'); set('cs-size', s.tz * 100); set('cs-zoom', s.zoom * 100);
 }
 
+function csFontStep(d) { // flèches ◀ ▶ : police précédente / suivante (la liste boucle, « Auto » comprise)
+  const sel = document.getElementById('cs-font');
+  sel.selectedIndex = (sel.selectedIndex + d + sel.options.length) % sel.options.length;
+  sel.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
 function csPreset(i) { // style automatique suivant (annule police et couleur manuelles)
   const s = CS.sources[i]; s.preset++; s.font = null; s.color = null;
   csSel(i); csRender();
@@ -5572,7 +5578,13 @@ function csBuildOverlay() {
       <label class="cs-add">➕ Ajouter des pochettes<input type="file" id="cs-files" accept="image/*" multiple hidden></label>
       <div id="cs-selbox" class="cs-box">
         <b>Réglages de la ligne sélectionnée</b>
-        <label>Police<select id="cs-font"><option value="">Auto (selon le style)</option>${CS_FONTS.map(f => `<option>${f[0]}</option>`).join('')}</select></label>
+        <div class="cs-lbl">Police
+          <div class="cs-fontrow">
+            <button type="button" onclick="csFontStep(-1)" title="Police précédente">◀</button>
+            <select id="cs-font"><option value="">Auto (selon le style)</option>${CS_FONTS.map(f => `<option>${f[0]}</option>`).join('')}</select>
+            <button type="button" onclick="csFontStep(1)" title="Police suivante">▶</button>
+          </div>
+        </div>
         <div class="cs-row">
           <label>Couleur du texte<input type="color" id="cs-color" value="#ffffff"></label>
           <button type="button" class="cs-auto" onclick="const s=CS.sources[CS.sel];if(s){s.color=null;csRender()}">Couleur auto</button>
