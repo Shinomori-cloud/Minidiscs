@@ -3129,3 +3129,12 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .cs-panel select { height: 40px; font-size: 16px; border-radius: 8px; background: #222; color: #fff; border: 1px solid rgba(255, 255, 255, .3); }
 
 .cs-panel input[type=text]:not(.cs-src input) { height: 40px; padding: 0 10px; font-size: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.08); color: #fff; }
+
+/* Studio : aperçu fixe en haut pour régler les curseurs en le voyant, sélection, glisser */
+.cs-view { position: sticky; top: 0; z-index: 2; padding: 6px 0; background: rgba(0, 0, 0, .92); text-align: center; }
+#cs-canvas { max-height: 40vh; touch-action: none; cursor: grab; }
+.cs-src.sel { outline: 2px solid #ff007f; outline-offset: 3px; border-radius: 8px; }
+.cs-box { flex-direction: column; gap: 8px; padding: 10px; border: 1px solid rgba(255, 255, 255, .25); border-radius: 12px; }
+.cs-row { align-items: flex-end; }
+.cs-panel input[type=color] { width: 100%; height: 40px; padding: 2px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, .3); background: #222; }
+.cs-auto { height: 40px; padding: 0 12px; flex: 1; background: rgba(255, 255, 255, .12); color: #fff; border: 1px solid rgba(255, 255, 255, .3); border-radius: 8px; font-weight: 700; }
