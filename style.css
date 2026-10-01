@@ -3144,3 +3144,6 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .cs-fontrow { display: flex; gap: 6px; }
 .cs-fontrow select { flex: 1; min-width: 0; }
 .cs-fontrow button { width: 44px; height: 40px; background: rgba(255, 255, 255, .12); color: #fff; border: 1px solid rgba(255, 255, 255, .3); border-radius: 8px; font-size: 1rem; }
+
+.cs-box { display: flex; }
+.cs-box > b { font-size: 0.85rem; color: #ff7ab8; }

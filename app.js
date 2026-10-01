@@ -5463,7 +5463,7 @@ async function csRender() {
   const cv = document.getElementById('cs-canvas');
   if (!cv) return;
   const val = id => document.getElementById(id).value;
-  const W = 900, H = val('cs-format') === 'square' ? 900 : 1327; // portrait = même proportion que les vignettes de la liste
+  const W = 900, H = 1327; // portrait : même proportion que les vignettes de la liste
   cv.width = W; cv.height = H;
   const c = cv.getContext('2d'), br = +val('cs-bright') / 100;
   for (const s of CS.sources) if (s.img === undefined) { s.img = await csLoadImg(s.src); if (s.img) s.tint = csTint(s.img); }
@@ -5532,7 +5532,7 @@ function csSel(i) { // sélectionne la source sur laquelle agissent les réglage
 
 function csLoadSel() { // reflète la source sélectionnée dans les réglages
   const s = CS.sources[CS.sel], set = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
-  document.getElementById('cs-selbox').style.display = s ? 'flex' : 'none';
+  ['cs-imgbox', 'cs-selbox'].forEach(id => { document.getElementById(id).style.display = s ? 'flex' : 'none'; });
   if (!s) return;
   set('cs-font', s.font || ''); set('cs-color', s.color || '#ffffff'); set('cs-size', s.tz * 100); set('cs-zoom', s.zoom * 100);
 }
@@ -5571,13 +5571,22 @@ function csBuildOverlay() {
     <div class="cs-panel">
       <div class="cs-head"><b>🎨 Studio de covers</b><button type="button" onclick="closeCoverStudio()">✕</button></div>
       <div class="cs-view"><canvas id="cs-canvas"></canvas></div>
-      <div class="cs-row">
+      <div class="cs-box">
+        <b>Paramètres généraux</b>
+        <label class="cs-add">➕ Ajouter des pochettes<input type="file" id="cs-files" accept="image/*" multiple hidden></label>
         <label>Glisser sur l'aperçu<select id="cs-drag"><option value="text">Déplace le texte</option><option value="image">Déplace l'image</option></select></label>
+        <label>Mise en page<select id="cs-layout"><option value="cascade">Cascade</option><option value="mosaic">Mosaïque</option><option value="poster">Affiche (1 album)</option></select></label>
+        <label>Flou du fond<input type="range" id="cs-blur" min="0" max="80" value="40"></label>
+        <label>Grain<input type="range" id="cs-grain" min="0" max="100" value="30"></label>
+        <label>Luminosité<input type="range" id="cs-bright" min="40" max="160" value="100"></label>
       </div>
       <div id="cs-list"></div>
-      <label class="cs-add">➕ Ajouter des pochettes<input type="file" id="cs-files" accept="image/*" multiple hidden></label>
+      <div id="cs-imgbox" class="cs-box">
+        <b>Image</b>
+        <label>Zoom de l'image<input type="range" id="cs-zoom" min="50" max="300" value="100"></label>
+      </div>
       <div id="cs-selbox" class="cs-box">
-        <b>Réglages de la ligne sélectionnée</b>
+        <b>Texte</b>
         <div class="cs-lbl">Police
           <div class="cs-fontrow">
             <button type="button" onclick="csFontStep(-1)" title="Police précédente">◀</button>
@@ -5590,18 +5599,10 @@ function csBuildOverlay() {
           <button type="button" class="cs-auto" onclick="const s=CS.sources[CS.sel];if(s){s.color=null;csRender()}">Couleur auto</button>
         </div>
         <label>Taille du texte<input type="range" id="cs-size" min="40" max="200" value="100"></label>
-        <label>Zoom de l'image<input type="range" id="cs-zoom" min="50" max="300" value="100"></label>
-      </div>
-      <div class="cs-row">
-        <label>Mise en page<select id="cs-layout"><option value="cascade">Cascade</option><option value="mosaic">Mosaïque</option><option value="poster">Affiche (1 album)</option></select></label>
-        <label>Format<select id="cs-format"><option value="portrait">Portrait</option><option value="square">Carré</option></select></label>
-      </div>
-      <label>Flou du fond<input type="range" id="cs-blur" min="0" max="80" value="40"></label>
-      <label>Grain<input type="range" id="cs-grain" min="0" max="100" value="30"></label>
-      <label>Luminosité<input type="range" id="cs-bright" min="40" max="160" value="100"></label>
-      <div id="cs-poster-opts" class="cs-row" style="display:none">
-        <label>Texte<select id="cs-pos"><option value="bottom">En bas</option><option value="center">Au centre</option><option value="top">En haut</option></select></label>
-        <label>Petit texte<input type="text" id="cs-caption" placeholder="(optionnel)"></label>
+        <div id="cs-poster-opts" class="cs-row" style="display:none">
+          <label>Position<select id="cs-pos"><option value="bottom">En bas</option><option value="center">Au centre</option><option value="top">En haut</option></select></label>
+          <label>Petit texte<input type="text" id="cs-caption" placeholder="(optionnel)"></label>
+        </div>
       </div>
       <button type="button" class="cs-use" onclick="useCoverStudioResult()">✅ Utiliser cette cover</button>
     </div>`;
