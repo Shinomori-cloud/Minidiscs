@@ -3096,15 +3096,16 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 #global-right-back-btn {
   position: fixed;
   right: 0;
-  top: 60%;              /* Ajuste la hauteur (ex: 40% à 50% de l'écran) */
-  width: 50px;           /* Largeur de la zone tactile */
-  height: 90px;          /* Hauteur de la zone tactile */
-  transform: translateY(-50%);
+  top: var(--back-top, 35%);   /* bande mesurée sur l'accueil par updateBackBand() (app.js) */
+  height: var(--back-h, 42vh);
+  width: 40px;           /* Largeur de la zone tactile */
   background: transparent;
   border: none;
   outline: none;
-  z-index: 9999;         /* S'assure qu'il reste au-dessus des cartes */
+  padding: 0;
+  z-index: 30000;        /* au-dessus de tout : formulaires, réglages, studio de covers */
   cursor: pointer;
+  touch-action: manipulation;
   -webkit-tap-highlight-color: transparent; /* Supprime le flash gris au clic sur mobile */
 }
 
@@ -3164,3 +3165,6 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .cs-panel input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .28); }
 .cs-panel input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 34px; height: 34px; margin-top: -14px; border-radius: 50%; background: #ff007f; border: 2px solid #000; box-shadow: 2px 2px 0 #000; pointer-events: auto; cursor: pointer; }
 .cs-panel input[type=range]::-moz-range-thumb { width: 30px; height: 30px; border-radius: 50%; background: #ff007f; border: 2px solid #000; box-shadow: 2px 2px 0 #000; pointer-events: auto; cursor: pointer; }
+
+/* Studio : marge à droite pour que les jauges ne passent pas sous la bande du bouton retour */
+.cs-panel { padding-right: 48px; }

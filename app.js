@@ -967,10 +967,17 @@ function navigateTo(page, { isBack = false } = {}) {
 // Un modal ouvert doit se fermer avant de naviguer, plutôt que de rester affiché au-dessus d'une
 // autre page qui aurait changé en dessous de lui
 function closeOpenModal() {
+  // De la couche la plus haute à la plus basse : studio de covers, puis formulaires et réglages
+  const studio = document.getElementById('cs-overlay');
+  if (studio && !studio.classList.contains('hidden')) { closeCoverStudio(); return true; }
   const admin = document.getElementById('admin-modal');
   const idea = document.getElementById('idea-modal');
+  const settings = document.getElementById('idea-settings-modal');
+  if (settings && !settings.classList.contains('hidden')) { closeIdeaSettingsModal(); return true; }
   if (admin && !admin.classList.contains('hidden')) { closeAdminModal(); return true; }
   if (idea && !idea.classList.contains('hidden')) { closeIdeaModal(); return true; }
+  const other = document.querySelector('.modal:not(.hidden)'); // toute autre fenêtre ajoutée plus tard
+  if (other) { other.classList.add('hidden'); return true; }
   return false;
 }
 
@@ -1259,6 +1266,19 @@ function getCarouselSetWidth() {
   return track.children[setCount].offsetLeft - track.children[0].offsetLeft;
 }
 
+// Bande du bouton retour (côté droit) : du haut de « Sélection du jour » jusqu'au milieu de l'espace entre le carrousel
+// des genres et les boutons du bas. Mesurée sur l'accueil, puis conservée à l'identique sur toutes les autres pages.
+function updateBackBand() {
+  const top = document.querySelector('.featured-container-inline')?.getBoundingClientRect().top;
+  const genres = document.querySelector('.genres-banner')?.getBoundingClientRect().bottom;
+  const actions = document.querySelector('.dashboard-actions-row')?.getBoundingClientRect().top;
+  if (top == null || genres == null || actions == null) return;
+  const bottom = (genres + actions) / 2;
+  if (bottom - top < 80) return; // mesure incohérente (page pas encore en place) : on garde l'ancienne
+  document.documentElement.style.setProperty('--back-top', Math.round(top) + 'px');
+  document.documentElement.style.setProperty('--back-h', Math.round(bottom - top) + 'px');
+}
+
 function fitDashboardSize() {
   const lastRow = document.querySelector('.dashboard-actions-row');
   if (!lastRow) return;
@@ -1278,6 +1298,7 @@ function fitDashboardSize() {
     const newSetWidth = getCarouselSetWidth();
     if (carousel && ratio !== null && newSetWidth) carousel.scrollLeft = ratio * newSetWidth;
   }
+  updateBackBand();
 }
 
 window.addEventListener('resize', fitDashboardSize);
