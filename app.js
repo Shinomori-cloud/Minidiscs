@@ -5332,7 +5332,7 @@ initData();
    il est envoyé à l'enregistrement du MD par handleImageUpload, comme une image choisie à la main.
    Les réglages « Police / Couleur / Taille / Zoom » et le glisser sur l'aperçu agissent sur la source sélectionnée.
    ========================================== */
-const CS = { sources: [], sel: 0, fl: {}, noise: null, raf: 0 };
+const CS = { sources: [], sel: 0, selType: 'text', hits: [], fl: {}, noise: null, raf: 0 };
 // [nom, graisse, spécification Google Fonts]
 const CS_FONTS = [
   ['Bebas Neue', 400, 'Bebas+Neue'], ['Oswald', 600, 'Oswald:wght@600'], ['Anton', 400, 'Anton'], ['Archivo Black', 400, 'Archivo+Black'],
@@ -5357,7 +5357,7 @@ const CS_FINISH = {
 };
 const csEsc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const csLoadImg = src => new Promise(ok => { const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src; });
-const csNew = (name, src, sub = '') => ({ name, src, sub, preset: CS.sources.length % CS_PRESETS.length, font: null, color: null, tz: 1, dx: 0, dy: 0, zoom: 1, sz: 1, px: 0, py: 0 });
+const csNew = (name, src, sub = '') => ({ name, src, sub, preset: CS.sources.length % CS_PRESETS.length, font: null, color: null, tz: 1, dx: 0, dy: 0, zoom: 1, sz: 1, px: 0, py: 0, ox: 0, oy: 0 }); // ox/oy : position libre de l'image sur la cover
 const csQueue = () => { if (!CS.raf) CS.raf = requestAnimationFrame(() => { CS.raf = 0; csRender(); }); };
 
 function csFont(f, w) { // charge la police à la demande puis redessine
@@ -5400,6 +5400,24 @@ function csTint(img) { // couleur moyenne de la pochette, éclaircie pour le tex
   return `rgb(${Math.min(255, r * 1.3 + 70)},${Math.min(255, g * 1.3 + 70)},${Math.min(255, b * 1.3 + 70)})`;
 }
 
+// Zones touchables de l'aperçu, enregistrées dans l'ordre de dessin (la dernière est au-dessus)
+function csHit(s, type, x, y, w, h) { CS.hits.push({ type, i: CS.sources.indexOf(s), x, y, w, h }); }
+const csReg = s => b => csHit(s, 'text', b.x, b.y, b.w, b.h);
+
+// Polygone du carré [0,1]² compris entre les droites u+v=a et u+v=b (bandes diagonales du fond)
+function csStrip(a, b) {
+  const cut = (P, f) => {
+    const out = [];
+    P.forEach((p, i) => {
+      const q = P[(i + 1) % P.length], fp = f(p), fq = f(q);
+      if (fp >= 0) out.push(p);
+      if ((fp >= 0) !== (fq >= 0)) { const t = fp / (fp - fq); out.push([p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1])]); }
+    });
+    return out;
+  };
+  return cut(cut([[0, 0], [1, 0], [1, 1], [0, 1]], p => p[0] + p[1] - a), p => b - (p[0] + p[1]));
+}
+
 function csText(c, text, x, y, maxW, maxFs, p, tint, o = {}) {
   if (!text) return 0;
   const font = s => `${p.w || 400} ${s}px "${p.f}", Impact, "Arial Black", sans-serif`;
@@ -5408,6 +5426,7 @@ function csText(c, text, x, y, maxW, maxFs, p, tint, o = {}) {
   c.font = font(100);
   const fs = Math.min(maxFs, 100 * maxW / c.measureText(text).width) * (o.sc || 1);
   c.font = font(fs); c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round';
+  if (o.reg) { const w = c.measureText(text).width + 40; o.reg({ x: x - w / 2, y: y - fs * .65, w, h: fs * 1.3 }); }
   const fin = CS_FINISH[p.k];
   if (fin) {
     const g = c.createLinearGradient(0, y - fs / 2, 0, y + fs / 2);
@@ -5431,22 +5450,23 @@ function csText(c, text, x, y, maxW, maxFs, p, tint, o = {}) {
 
 // Affiche : l'image en plein cadre, titre + sous-titre + petit texte (pour les MD d'un seul album)
 function csPoster(c, W, H, s, br, val) {
-  if (s.sz < 1) { // image réduite : elle flotte sur son propre fond flou
+  const cw = W * s.sz, ch = H * s.sz, cx = W * (1 - s.sz) / 2 + s.ox, cy = H * (1 - s.sz) / 2 + s.oy;
+  if (cx <= 0 && cy <= 0 && cx + cw >= W && cy + ch >= H) csFit(c, s.img, cx, cy, cw, ch, s, br); // l'image couvre tout
+  else { // image réduite ou déplacée : elle flotte sur son propre fond flou
     const bg = document.createElement('canvas'); bg.width = W; bg.height = H;
     csFit(bg.getContext('2d'), s.img, 0, 0, W, H);
     c.filter = `blur(40px) brightness(${br})`; c.drawImage(bg, -80, -80, W + 160, H + 160); c.filter = 'none';
-    csCard(c, s.img, W * (1 - s.sz) / 2, H * (1 - s.sz) / 2, W * s.sz, H * s.sz, s, br);
-  } else {
-    csFit(c, s.img, W * (1 - s.sz) / 2, H * (1 - s.sz) / 2, W * s.sz, H * s.sz, s, br);
+    csCard(c, s.img, cx, cy, cw, ch, s, br);
   }
+  csHit(s, 'image', cx, cy, cw, ch);
   const pos = val('cs-pos'), ty = (pos === 'top' ? H * .2 : pos === 'center' ? H * .48 : H * .74) + s.dy, tx = W / 2 + s.dx;
   if (pos !== 'center') { // voile pour garder le texte lisible
     const g = c.createLinearGradient(0, pos === 'top' ? 0 : H, 0, H * .5);
     g.addColorStop(0, 'rgba(0,0,0,.65)'); g.addColorStop(1, 'rgba(0,0,0,0)');
     c.fillStyle = g; c.fillRect(0, pos === 'top' ? 0 : H * .5, W, H * .5);
   }
-  const mw = W * .84, fs = csText(c, s.name, tx, ty, mw, 190, csStyle(s), s.tint, { sc: s.tz });
-  csText(c, s.sub, tx, ty + fs * .55 + 36, mw, 46, { f: 'Montserrat', w: 500, k: s.color ? 'solid' : 'tint', color: s.color }, s.tint, { ls: '.3em', sc: s.tz });
+  const mw = W * .84, fs = csText(c, s.name, tx, ty, mw, 190, csStyle(s), s.tint, { sc: s.tz, reg: csReg(s) });
+  csText(c, s.sub, tx, ty + fs * .55 + 36, mw, 46, { f: 'Montserrat', w: 500, k: s.color ? 'solid' : 'tint', color: s.color }, s.tint, { ls: '.3em', sc: s.tz, reg: csReg(s) });
   csFont('Montserrat', 500);
   csText(c, val('cs-caption'), W / 2, H - W * .07, W * .8, 26, { f: 'Montserrat', w: 500, k: 'white' }, s.tint, { ls: '.08em' });
 }
@@ -5464,7 +5484,14 @@ function csGrain(c, W, H, grain) { // texture « pochette imprimée » (le bruit
   c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
 }
 
-async function csRender() {
+function csDone(c, W, H, val, clean) {
+  csGrain(c, W, H, +val('cs-grain'));
+  if (clean) return; // l'export n'affiche jamais le contour de sélection
+  const h = CS.hits.find(h => h.i === CS.sel && h.type === CS.selType);
+  if (h) { c.save(); c.lineWidth = 4; c.setLineDash([16, 10]); c.strokeStyle = '#ff007f'; c.strokeRect(h.x, h.y, h.w, h.h); c.restore(); }
+}
+
+async function csRender(clean = false) {
   const cv = document.getElementById('cs-canvas');
   if (!cv) return;
   const val = id => document.getElementById(id).value;
@@ -5474,14 +5501,27 @@ async function csRender() {
   for (const s of CS.sources) if (s.img === undefined) { s.img = await csLoadImg(s.src); if (s.img) s.tint = csTint(s.img); }
   const items = CS.sources.filter(s => s.img), n = items.length;
   c.fillStyle = '#111'; c.fillRect(0, 0, W, H);
+  CS.hits = [];
   if (!n) return;
   const layout = val('cs-layout');
-  if (layout === 'poster') { csPoster(c, W, H, items[0], br, val); return csGrain(c, W, H, +val('cs-grain')); }
+  if (layout === 'poster') { csPoster(c, W, H, items[0], br, val); return csDone(c, W, H, val, clean); }
 
-  // Fond : les pochettes étirées en bandes, puis très floutées
+  // Fond : une part de même taille par pochette (bandes horizontales, colonnes ou bandes diagonales), puis très flouté
   const bg = document.createElement('canvas'); bg.width = W; bg.height = H;
-  const b = bg.getContext('2d'), blur = +val('cs-blur');
-  items.forEach((s, i) => csFit(b, s.img, 0, H * i / n - 40, W, H / n + 80));
+  const b = bg.getContext('2d'), blur = +val('cs-blur'), split = val('cs-bgsplit');
+  const area = k => k <= .5 ? Math.sqrt(2 * k) : 2 - Math.sqrt(2 * (1 - k)); // droites u+v=c qui découpent des bandes de même surface
+  items.forEach((s, i) => {
+    const e0 = Math.round(i / n * (split === 'v' ? W : H)), e1 = Math.round((i + 1) / n * (split === 'v' ? W : H));
+    b.save();
+    if (split === 'd') {
+      b.beginPath();
+      csStrip(i ? area(i / n) : 0, i < n - 1 ? area((i + 1) / n) : 2).forEach(([u, v], j) => j ? b.lineTo(u * W, v * H) : b.moveTo(u * W, v * H));
+      b.closePath(); b.clip();
+      csFit(b, s.img, 0, 0, W, H);
+    } else if (split === 'v') csFit(b, s.img, e0, 0, e1 - e0, H);
+    else csFit(b, s.img, 0, e0, W, e1 - e0);
+    b.restore();
+  });
   c.filter = `blur(${blur}px) saturate(1.35) brightness(${br})`;
   c.drawImage(bg, -blur * 2, -blur * 2, W + blur * 4, H + blur * 4);
   c.filter = 'none';
@@ -5492,11 +5532,13 @@ async function csRender() {
     const cw = (W - gap * (cols + 1)) / cols, ch = (H - gap * (rows + 1)) / rows;
     items.forEach((s, i) => {
       const x = gap + (i % cols) * (cw + gap), y = gap + Math.floor(i / cols) * (ch + gap);
-      csCard(c, s.img, x + cw * (1 - s.sz) / 2, y + ch * (1 - s.sz) / 2, cw * s.sz, ch * s.sz, s, br);
+      const mx = x + cw * (1 - s.sz) / 2 + s.ox, my = y + ch * (1 - s.sz) / 2 + s.oy;
+      csCard(c, s.img, mx, my, cw * s.sz, ch * s.sz, s, br);
+      csHit(s, 'image', mx, my, cw * s.sz, ch * s.sz);
       const g = c.createLinearGradient(0, y + ch * .55, 0, y + ch);
       g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.7)');
       c.fillStyle = g; c.fillRect(x, y + ch * .55, cw, ch * .45);
-      csText(c, s.name, x + cw / 2 + s.dx, y + ch * .86 + s.dy, cw * .88, ch * .2, csStyle(s), s.tint, { sc: s.tz });
+      csText(c, s.name, x + cw / 2 + s.dx, y + ch * .86 + s.dy, cw * .88, ch * .2, csStyle(s), s.tint, { sc: s.tz, reg: csReg(s) });
     });
   } else {
     // Cascade : pochettes décalées gauche / droite, nom de l'artiste du côté opposé, en léger chevauchement
@@ -5506,13 +5548,14 @@ async function csRender() {
       const x = left ? m : W - m - s0;
       const y = n === 1 ? (H - s0) / 2 - H * .06 : m + i * ((H - 2 * m - s0) / (n - 1));
       const q = s0 * s.sz, o = (s0 - q) / 2; // la pochette reste centrée sur son emplacement
-      csCard(c, s.img, x + o, y + o, q, q, s, br);
-      if (n === 1) return csText(c, s.name, W / 2 + s.dx, y + s0 + H * .09 + s.dy, W - 2 * m, 190, p, s.tint, { sc: s.tz });
+      csCard(c, s.img, x + o + s.ox, y + o + s.oy, q, q, s, br);
+      csHit(s, 'image', x + o + s.ox, y + o + s.oy, q, q);
+      if (n === 1) return csText(c, s.name, W / 2 + s.dx, y + s0 + H * .09 + s.dy, W - 2 * m, 190, p, s.tint, { sc: s.tz, reg: csReg(s) });
       const ov = s0 * .12, x0 = left ? x + s0 - ov : m, x1 = left ? W - m : x + ov;
-      csText(c, s.name, (x0 + x1) / 2 + s.dx, y + s0 / 2 + (left ? s0 * .08 : -s0 * .08) + s.dy, x1 - x0, 190, p, s.tint, { sc: s.tz });
+      csText(c, s.name, (x0 + x1) / 2 + s.dx, y + s0 / 2 + (left ? s0 * .08 : -s0 * .08) + s.dy, x1 - x0, 190, p, s.tint, { sc: s.tz, reg: csReg(s) });
     });
   }
-  csGrain(c, W, H, +val('cs-grain'));
+  csDone(c, W, H, val, clean);
 }
 
 function csRenderList() {
@@ -5561,7 +5604,9 @@ function csMove(i) {
 }
 
 function csSync() { // options propres à l'affiche + liste des sources
-  document.getElementById('cs-poster-opts').style.display = document.getElementById('cs-layout').value === 'poster' ? 'flex' : 'none';
+  const poster = document.getElementById('cs-layout').value === 'poster';
+  document.getElementById('cs-poster-opts').style.display = poster ? 'flex' : 'none';
+  document.getElementById('cs-split-wrap').style.display = poster ? 'none' : 'flex'; // l'agencement du fond ne concerne que plusieurs pochettes
   csRenderList();
 }
 
@@ -5576,11 +5621,11 @@ function csBuildOverlay() {
   o.innerHTML = `
     <div class="cs-panel">
       <div class="cs-head"><b>🎨 Studio de covers</b><button type="button" onclick="closeCoverStudio()">✕</button></div>
-      <div class="cs-view"><canvas id="cs-canvas"></canvas></div>
+      <div class="cs-view"><canvas id="cs-canvas"></canvas><div class="cs-hint">Touche le texte ou l'image sur l'aperçu, puis glisse pour le déplacer où tu veux.</div></div>
       <div class="cs-box">
         <b>Paramètres généraux</b>
         <label class="cs-add">➕ Ajouter des pochettes<input type="file" id="cs-files" accept="image/*" multiple hidden></label>
-        <label>Glisser sur l'aperçu<select id="cs-drag"><option value="text">Déplace le texte</option><option value="image">Déplace l'image</option></select></label>
+        <label id="cs-split-wrap">Agencement du fond<select id="cs-bgsplit"><option value="h">Horizontal (bandes)</option><option value="v">Vertical (colonnes)</option><option value="d">Diagonal</option></select></label>
         <label>Mise en page<select id="cs-layout"><option value="cascade">Cascade</option><option value="mosaic">Mosaïque</option><option value="poster">Affiche (1 album)</option></select></label>
         <label>Flou du fond<input type="range" id="cs-blur" min="0" max="80" value="40"></label>
         <label>Grain<input type="range" id="cs-grain" min="0" max="100" value="30"></label>
@@ -5632,16 +5677,31 @@ function csBuildOverlay() {
     csQueue();
   });
 
-  // Glisser sur l'aperçu : déplace le texte ou l'image de la ligne sélectionnée
+  // Aperçu : toucher un texte ou une image le sélectionne, glisser le déplace (texte : position, image : cadrage)
   const cv = o.querySelector('#cs-canvas');
   let last = null;
-  cv.addEventListener('pointerdown', e => { last = { x: e.clientX, y: e.clientY }; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointerdown', e => {
+    const r = cv.getBoundingClientRect(), k = cv.width / r.width, x = (e.clientX - r.left) * k, y = (e.clientY - r.top) * k;
+    const hit = [...CS.hits].reverse().find(h => x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h);
+    if (!hit) return;
+    CS.selType = hit.type; csSel(hit.i); csQueue();
+    last = { x: e.clientX, y: e.clientY, type: hit.type };
+    cv.setPointerCapture(e.pointerId);
+  });
   cv.addEventListener('pointermove', e => {
     const s = CS.sources[CS.sel];
     if (!last || !s) return;
     const k = cv.width / cv.clientWidth, dx = (e.clientX - last.x) * k, dy = (e.clientY - last.y) * k;
-    last = { x: e.clientX, y: e.clientY };
-    if (document.getElementById('cs-drag').value === 'image') { s.px += dx; s.py += dy; } else { s.dx += dx; s.dy += dy; }
+    last.x = e.clientX; last.y = e.clientY;
+    if (last.type === 'image') { // l'image se déplace librement sur la cover (son centre reste dans le cadre)
+      const h = CS.hits.find(h => h.i === CS.sel && h.type === 'image');
+      let mx = dx, my = dy;
+      if (h) {
+        mx = Math.max(-(h.x + h.w / 2), Math.min(cv.width - (h.x + h.w / 2), dx));
+        my = Math.max(-(h.y + h.h / 2), Math.min(cv.height - (h.y + h.h / 2), dy));
+      }
+      s.ox += mx; s.oy += my;
+    } else { s.dx += dx; s.dy += dy; }
     csQueue();
   });
   ['pointerup', 'pointercancel'].forEach(t => cv.addEventListener(t, () => { last = null; }));
@@ -5697,7 +5757,8 @@ async function csFinishConversion(blob) {
   createMDFromIdeas(indices, path);
 }
 
-function useCoverStudioResult() {
+async function useCoverStudioResult() {
+  await csRender(true); // rendu sans contour de sélection
   document.getElementById('cs-canvas').toBlob(blob => {
     if (blob && CS.convert) return csFinishConversion(blob);
     const input = document.getElementById('md-cover');
@@ -5718,6 +5779,7 @@ function useCoverStudioResult() {
     note.textContent = '✅ Cover du studio prête : elle sera envoyée à l\'enregistrement du MD.';
     closeCoverStudio();
   }, 'image/jpeg', 0.92);
+  csQueue(); // l'aperçu retrouve son contour de sélection
 }
 
 (function addCoverStudioButton() {
