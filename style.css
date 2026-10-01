@@ -3147,3 +3147,10 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 
 .cs-box { display: flex; }
 .cs-box > b { font-size: 0.85rem; color: #ff7ab8; }
+
+/* Page Créer : 3e tuile */
+.create-tile-cover {
+  background-image:
+    radial-gradient(ellipse 62% 36% at 50% 82%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.38) 55%, rgba(0, 0, 0, 0) 100%),
+    url('images/Concevoir_cover.jpg');
+}

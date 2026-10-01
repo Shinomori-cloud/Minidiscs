@@ -1944,6 +1944,8 @@ function openAdminModal(indexToEdit = null) {
   // Réinitialiser le champ fichier principal avec une chaîne vide
   const mdCoverInput = document.getElementById('md-cover');
   if (mdCoverInput) mdCoverInput.value = '';
+  document.getElementById('cs-note')?.remove();
+  pendingConversion = null;
 
   if (editingMDIndex !== null) {
     // ==========================================
@@ -2029,6 +2031,7 @@ function closeAdminModal() {
   const modal = document.getElementById('admin-modal');
   if (modal) modal.classList.add('hidden');
   editingMDIndex = null;
+  pendingConversion = null; // annulation : les idées restent dans le planificateur
 }
 
 function toggleAdminType(isInit = false) {
@@ -2121,6 +2124,7 @@ async function submitNewMD(e) {
 
   const mdCoverInput = document.getElementById('md-cover');
   const existingMD = editingMDIndex !== null ? catalogData[editingMDIndex] : null;
+  const conv = editingMDIndex === null ? pendingConversion : null; // closeAdminModal() remet pendingConversion à zéro
 
   // Transforme "tag1, tag2" en tableau de tags (liste libre, secondaire au genre principal)
   function parseTagsInput(raw) {
@@ -2140,6 +2144,8 @@ async function submitNewMD(e) {
     if (uploadedPath) mdCoverPath = uploadedPath;
   } else if (existingMD && existingMD.md_cover) {
     mdCoverPath = existingMD.md_cover;
+  } else if (!existingMD && typeFormat !== 'compil') {
+    mdCoverPath = document.querySelector('.album-block')?.dataset.cover || mdCoverPath; // conversion : pochette du 1er album
   }
   targetMD.md_cover = mdCoverPath;
 
@@ -2209,6 +2215,8 @@ async function submitNewMD(e) {
         }
       } else if (existingAlbum) {
         albumCoverPath = existingAlbum.md_cover || 'images/default.jpg';
+      } else if (block.dataset.cover) {
+        albumCoverPath = block.dataset.cover;
       }
 
       const albumObj = {
@@ -2245,6 +2253,11 @@ async function submitNewMD(e) {
   } else {
     catalogData.push(targetMD);
     showToast("✅ MiniDisc ajouté !");
+    if (conv) { // conversion depuis le planificateur : les idées utilisées sont retirées de la liste
+      window.ideaAlbums = getIdeaList().filter((_, i) => !conv.indices.includes(i));
+      selectedIdeaIndices.clear();
+      if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
+    }
   }
 
   if (typeof saveLocalBackup === 'function') saveLocalBackup();
@@ -2945,64 +2958,33 @@ async function saveIdeaAlbum(e) {
   }
 }
 
+// Idées en cours de conversion (indices) : elles ne quittent la liste qu'à l'enregistrement du MiniDisc
+let pendingConversion = null;
+
+// « Convertir » : ouvre le formulaire d'ajout pré-rempli avec les albums sélectionnés (pochettes comprises).
+// On peut y créer la cover du MD avec le studio, puis enregistrer : rien n'est ajouté au catalogue avant.
 function convertSelectedToMD() {
   if (typeof selectedIdeaIndices === 'undefined' || selectedIdeaIndices.size === 0) return;
 
-  const ideas = getIdeaList();
-  const selectedAlbums = Array.from(selectedIdeaIndices).map(i => ideas[i]);
+  const ideas = getIdeaList(), indices = Array.from(selectedIdeaIndices);
+  openAdminModal(null);
+  pendingConversion = { indices };
 
-  const mdId = 'md-' + Date.now();
-  const albums = selectedAlbums.map((a, i) => ({
-    id: mdId + '-alb-' + (i + 1),
-    md_cover: a.md_cover || 'images/default.jpg',
-    title: a.title || '',
-    artist: a.artist || '',
-    main_genre: a.main_genre || '',
-    tags: a.tags || [],
-    release_year: a.release_year || '',
-    duration: a.duration || '',
-    tracks: a.tracks || [],
-    toRecord: true, // un MiniDisc créé depuis des idées reste à enregistrer
-  }));
+  const radio = document.querySelector('input[name="md-type"][value="albums"]') || document.querySelector('input[name="md-type"][value="album"]');
+  if (radio) radio.checked = true;
+  toggleAdminType(true);
 
-  let newMD;
-  if (albums.length === 1) {
-    // Un seul album sélectionné : pas de couche "albums", tout est directement sur le MD.
-    const alb = albums[0];
-    newMD = { 
-      id: mdId, 
-      md_cover: alb.md_cover, 
-      title: alb.title, 
-      artist: alb.artist,
-      main_genre: alb.main_genre, 
-      tags: alb.tags, 
-      release_year: alb.release_year,
-      duration: alb.duration, 
-      tracks: alb.tracks, 
-      toRecord: alb.toRecord 
-    };
-  } else {
-    newMD = {
-      id: mdId,
-      md_cover: albums[0].md_cover || 'images/default.jpg',
-      title: albums.map(a => a.title).filter(Boolean).join(' / '),
-      albums,
-    };
-  }
-
-  if (Array.isArray(catalogData)) {
-    catalogData.push(newMD);
-  } else if (catalogData && Array.isArray(catalogData.minidiscs)) {
-    catalogData.minidiscs.push(newMD);
-  }
-
-  window.ideaAlbums = ideas.filter((_, idx) => !selectedIdeaIndices.has(idx));
-  selectedIdeaIndices.clear();
-
-  clearPlannerHeaderInfo();
-  if (typeof saveLocalBackup === 'function') saveLocalBackup();
-  if (typeof showToast === 'function') showToast("🎉 Albums convertis en MiniDisc avec succès !");
-  if (typeof renderDashboard === 'function') renderDashboard(true);
+  const container = document.getElementById('albums-container');
+  indices.forEach(i => {
+    const a = ideas[i];
+    addAdminAlbumBlock();
+    const blk = container.lastElementChild, set = (sel, v) => { const e = blk.querySelector(sel); if (e) e.value = v; };
+    blk.dataset.cover = a.md_cover || ''; // pochette conservée si aucune nouvelle image n'est choisie
+    set('.album-title', a.title || ''); set('.album-artist', a.artist || ''); set('.album-genre', a.main_genre || '');
+    set('.album-tags', (a.tags || []).join(', ')); set('.album-year', a.release_year || ''); set('.album-duration', a.duration || '');
+    set('.album-tracks', (a.tracks || []).join('\n'));
+    const rec = blk.querySelector('.album-to-record'); if (rec) rec.checked = true; // un MD créé depuis des idées reste à enregistrer
+  });
 }
 
 /* ==========================================
@@ -3949,6 +3931,12 @@ function renderCreateHub() {
         <span class="create-tile-text">
           <span class="create-tile-title">Créer un nouveau minidisc</span>
           <span class="create-tile-desc">Composer un MiniDisc à partir de tes idées d'albums.</span>
+        </span>
+      </button>
+      <button type="button" class="create-tile create-tile-cover" onclick="openCoverStudio({ standalone: true })">
+        <span class="create-tile-text">
+          <span class="create-tile-title">Concevoir une cover</span>
+          <span class="create-tile-desc">Élaborer des images pour illustrer les minidiscs</span>
         </span>
       </button>
     </div>
@@ -5359,7 +5347,7 @@ const CS_FINISH = {
 };
 const csEsc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const csLoadImg = src => new Promise(ok => { const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src; });
-const csNew = (name, src, sub = '') => ({ name, src, sub, preset: CS.sources.length % CS_PRESETS.length, font: null, color: null, tz: 1, dx: 0, dy: 0, zoom: 1, px: 0, py: 0 });
+const csNew = (name, src, sub = '') => ({ name, src, sub, preset: CS.sources.length % CS_PRESETS.length, font: null, color: null, tz: 1, dx: 0, dy: 0, zoom: 1, sz: 1, px: 0, py: 0 });
 const csQueue = () => { if (!CS.raf) CS.raf = requestAnimationFrame(() => { CS.raf = 0; csRender(); }); };
 
 function csFont(f, w) { // charge la police à la demande puis redessine
@@ -5433,7 +5421,14 @@ function csText(c, text, x, y, maxW, maxFs, p, tint, o = {}) {
 
 // Affiche : l'image en plein cadre, titre + sous-titre + petit texte (pour les MD d'un seul album)
 function csPoster(c, W, H, s, br, val) {
-  csFit(c, s.img, 0, 0, W, H, s, br);
+  if (s.sz < 1) { // image réduite : elle flotte sur son propre fond flou
+    const bg = document.createElement('canvas'); bg.width = W; bg.height = H;
+    csFit(bg.getContext('2d'), s.img, 0, 0, W, H);
+    c.filter = `blur(40px) brightness(${br})`; c.drawImage(bg, -80, -80, W + 160, H + 160); c.filter = 'none';
+    csCard(c, s.img, W * (1 - s.sz) / 2, H * (1 - s.sz) / 2, W * s.sz, H * s.sz, s, br);
+  } else {
+    csFit(c, s.img, W * (1 - s.sz) / 2, H * (1 - s.sz) / 2, W * s.sz, H * s.sz, s, br);
+  }
   const pos = val('cs-pos'), ty = (pos === 'top' ? H * .2 : pos === 'center' ? H * .48 : H * .74) + s.dy, tx = W / 2 + s.dx;
   if (pos !== 'center') { // voile pour garder le texte lisible
     const g = c.createLinearGradient(0, pos === 'top' ? 0 : H, 0, H * .5);
@@ -5487,7 +5482,7 @@ async function csRender() {
     const cw = (W - gap * (cols + 1)) / cols, ch = (H - gap * (rows + 1)) / rows;
     items.forEach((s, i) => {
       const x = gap + (i % cols) * (cw + gap), y = gap + Math.floor(i / cols) * (ch + gap);
-      csCard(c, s.img, x, y, cw, ch, s, br);
+      csCard(c, s.img, x + cw * (1 - s.sz) / 2, y + ch * (1 - s.sz) / 2, cw * s.sz, ch * s.sz, s, br);
       const g = c.createLinearGradient(0, y + ch * .55, 0, y + ch);
       g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.7)');
       c.fillStyle = g; c.fillRect(x, y + ch * .55, cw, ch * .45);
@@ -5500,7 +5495,8 @@ async function csRender() {
       const left = i % 2 === 0, p = csStyle(s);
       const x = left ? m : W - m - s0;
       const y = n === 1 ? (H - s0) / 2 - H * .06 : m + i * ((H - 2 * m - s0) / (n - 1));
-      csCard(c, s.img, x, y, s0, s0, s, br);
+      const q = s0 * s.sz, o = (s0 - q) / 2; // la pochette reste centrée sur son emplacement
+      csCard(c, s.img, x + o, y + o, q, q, s, br);
       if (n === 1) return csText(c, s.name, W / 2 + s.dx, y + s0 + H * .09 + s.dy, W - 2 * m, 190, p, s.tint, { sc: s.tz });
       const ov = s0 * .12, x0 = left ? x + s0 - ov : m, x1 = left ? W - m : x + ov;
       csText(c, s.name, (x0 + x1) / 2 + s.dx, y + s0 / 2 + (left ? s0 * .08 : -s0 * .08) + s.dy, x1 - x0, 190, p, s.tint, { sc: s.tz });
@@ -5534,7 +5530,7 @@ function csLoadSel() { // reflète la source sélectionnée dans les réglages
   const s = CS.sources[CS.sel], set = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
   ['cs-imgbox', 'cs-selbox'].forEach(id => { document.getElementById(id).style.display = s ? 'flex' : 'none'; });
   if (!s) return;
-  set('cs-font', s.font || ''); set('cs-color', s.color || '#ffffff'); set('cs-size', s.tz * 100); set('cs-zoom', s.zoom * 100);
+  set('cs-font', s.font || ''); set('cs-color', s.color || '#ffffff'); set('cs-size', s.tz * 100); set('cs-zoom', s.zoom * 100); set('cs-imgsize', s.sz * 100);
 }
 
 function csFontStep(d) { // flèches ◀ ▶ : police précédente / suivante (la liste boucle, « Auto » comprise)
@@ -5583,6 +5579,7 @@ function csBuildOverlay() {
       <div id="cs-list"></div>
       <div id="cs-imgbox" class="cs-box">
         <b>Image</b>
+        <label>Taille de l'image<input type="range" id="cs-imgsize" min="40" max="150" value="100"></label>
         <label>Zoom de l'image<input type="range" id="cs-zoom" min="50" max="300" value="100"></label>
       </div>
       <div id="cs-selbox" class="cs-box">
@@ -5619,6 +5616,7 @@ function csBuildOverlay() {
     else if (s && t.id === 'cs-color') s.color = t.value;
     else if (s && t.id === 'cs-size') s.tz = t.value / 100;
     else if (s && t.id === 'cs-zoom') s.zoom = t.value / 100;
+    else if (s && t.id === 'cs-imgsize') s.sz = t.value / 100;
     else if (!t.matches('select, input[type=range], #cs-caption')) return;
     if (t.id === 'cs-layout') csSync();
     csQueue();
@@ -5640,17 +5638,23 @@ function csBuildOverlay() {
 
   document.getElementById('cs-files').addEventListener('change', e => {
     [...e.target.files].forEach(f => CS.sources.push(csNew('', URL.createObjectURL(f))));
-    e.target.value = ''; csRenderList(); csRender();
+    e.target.value = '';
+    const L = document.getElementById('cs-layout'); // 1 image : affiche ; plusieurs : cascade
+    if (CS.sources.length === 1) L.value = 'poster'; else if (L.value === 'poster') L.value = 'cascade';
+    csSync(); csRender();
   });
 }
 
-async function openCoverStudio() {
+async function openCoverStudio(opts = {}) {
   csBuildOverlay();
+  CS.standalone = !!opts.standalone; // hors formulaire : l'image est enregistrée / partagée au lieu d'être placée dans le MD
+  document.querySelector('.cs-use').textContent = CS.standalone ? '💾 Enregistrer l\'image' : '✅ Utiliser cette cover';
   // Pochettes déjà enregistrées (mode édition) ou choisies dans le formulaire, avec le nom de l'artiste de chaque album
   const saved = (typeof catalogData !== 'undefined' && catalogData?.[editingMDIndex]?.albums) || [];
   CS.sources = []; CS.sel = 0;
-  document.querySelectorAll('#albums-container .album-block').forEach((blk, i) => {
-    const file = blk.querySelector('.album-cover')?.files?.[0], path = saved[i]?.md_cover;
+  const blocks = CS.standalone ? [] : document.querySelectorAll('#albums-container .album-block');
+  blocks.forEach((blk, i) => {
+    const file = blk.querySelector('.album-cover')?.files?.[0], path = saved[i]?.md_cover || blk.dataset.cover; // dataset.cover : pochette d'une idée en cours de conversion
     const src = file ? URL.createObjectURL(file) : (path && path !== 'images/default.jpg' ? resolveImageSrc(path) : null);
     if (src) CS.sources.push(csNew((blk.querySelector('.album-artist')?.value || '').toUpperCase(), src, blk.querySelector('.album-title')?.value || ''));
   });
@@ -5664,6 +5668,15 @@ function closeCoverStudio() { document.getElementById('cs-overlay')?.classList.a
 function useCoverStudioResult() {
   document.getElementById('cs-canvas').toBlob(blob => {
     const input = document.getElementById('md-cover');
+    if (blob && CS.standalone) { // hors formulaire : partage (Android) ou téléchargement de l'image
+      const file = new File([blob], `cover_${Date.now()}.jpg`, { type: 'image/jpeg' });
+      if (navigator.canShare?.({ files: [file] })) navigator.share({ files: [file], title: 'Cover MiniDisc' }).catch(() => {});
+      else {
+        const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: file.name });
+        document.body.appendChild(a); a.click(); a.remove();
+      }
+      return showToast('💾 Image prête (partage ou téléchargement)');
+    }
     if (!blob || !input) return;
     const dt = new DataTransfer();
     dt.items.add(new File([blob], `cover_${Date.now()}.jpg`, { type: 'image/jpeg' }));
