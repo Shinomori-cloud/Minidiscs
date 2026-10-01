@@ -1945,7 +1945,6 @@ function openAdminModal(indexToEdit = null) {
   const mdCoverInput = document.getElementById('md-cover');
   if (mdCoverInput) mdCoverInput.value = '';
   document.getElementById('cs-note')?.remove();
-  pendingConversion = null;
 
   if (editingMDIndex !== null) {
     // ==========================================
@@ -2031,7 +2030,6 @@ function closeAdminModal() {
   const modal = document.getElementById('admin-modal');
   if (modal) modal.classList.add('hidden');
   editingMDIndex = null;
-  pendingConversion = null; // annulation : les idées restent dans le planificateur
 }
 
 function toggleAdminType(isInit = false) {
@@ -2124,7 +2122,6 @@ async function submitNewMD(e) {
 
   const mdCoverInput = document.getElementById('md-cover');
   const existingMD = editingMDIndex !== null ? catalogData[editingMDIndex] : null;
-  const conv = editingMDIndex === null ? pendingConversion : null; // closeAdminModal() remet pendingConversion à zéro
 
   // Transforme "tag1, tag2" en tableau de tags (liste libre, secondaire au genre principal)
   function parseTagsInput(raw) {
@@ -2144,8 +2141,6 @@ async function submitNewMD(e) {
     if (uploadedPath) mdCoverPath = uploadedPath;
   } else if (existingMD && existingMD.md_cover) {
     mdCoverPath = existingMD.md_cover;
-  } else if (!existingMD && typeFormat !== 'compil') {
-    mdCoverPath = document.querySelector('.album-block')?.dataset.cover || mdCoverPath; // conversion : pochette du 1er album
   }
   targetMD.md_cover = mdCoverPath;
 
@@ -2215,8 +2210,6 @@ async function submitNewMD(e) {
         }
       } else if (existingAlbum) {
         albumCoverPath = existingAlbum.md_cover || 'images/default.jpg';
-      } else if (block.dataset.cover) {
-        albumCoverPath = block.dataset.cover;
       }
 
       const albumObj = {
@@ -2253,11 +2246,6 @@ async function submitNewMD(e) {
   } else {
     catalogData.push(targetMD);
     showToast("✅ MiniDisc ajouté !");
-    if (conv) { // conversion depuis le planificateur : les idées utilisées sont retirées de la liste
-      window.ideaAlbums = getIdeaList().filter((_, i) => !conv.indices.includes(i));
-      selectedIdeaIndices.clear();
-      if (typeof clearPlannerHeaderInfo === 'function') clearPlannerHeaderInfo();
-    }
   }
 
   if (typeof saveLocalBackup === 'function') saveLocalBackup();
@@ -2958,33 +2946,55 @@ async function saveIdeaAlbum(e) {
   }
 }
 
-// Idées en cours de conversion (indices) : elles ne quittent la liste qu'à l'enregistrement du MiniDisc
-let pendingConversion = null;
-
-// « Convertir » : ouvre le formulaire d'ajout pré-rempli avec les albums sélectionnés (pochettes comprises).
-// On peut y créer la cover du MD avec le studio, puis enregistrer : rien n'est ajouté au catalogue avant.
+// « Convertir » : ouvre directement le studio de covers avec les pochettes des albums sélectionnés.
+// À la validation de la cover (csFinishConversion), l'image part sur GitHub (/images) et le MiniDisc est créé.
+// Si on ferme le studio, rien n'est créé et les idées restent dans le planificateur.
 function convertSelectedToMD() {
   if (typeof selectedIdeaIndices === 'undefined' || selectedIdeaIndices.size === 0) return;
+  openCoverStudio({ convert: Array.from(selectedIdeaIndices) });
+}
 
-  const ideas = getIdeaList(), indices = Array.from(selectedIdeaIndices);
-  openAdminModal(null);
-  pendingConversion = { indices };
-
-  const radio = document.querySelector('input[name="md-type"][value="albums"]') || document.querySelector('input[name="md-type"][value="album"]');
-  if (radio) radio.checked = true;
-  toggleAdminType(true);
-
-  const container = document.getElementById('albums-container');
-  indices.forEach(i => {
+// Crée le MiniDisc à partir des idées converties, avec la cover composée dans le studio
+function createMDFromIdeas(indices, coverPath) {
+  const ideas = getIdeaList(), mdId = 'md-' + Date.now();
+  const albums = indices.map((i, n) => {
     const a = ideas[i];
-    addAdminAlbumBlock();
-    const blk = container.lastElementChild, set = (sel, v) => { const e = blk.querySelector(sel); if (e) e.value = v; };
-    blk.dataset.cover = a.md_cover || ''; // pochette conservée si aucune nouvelle image n'est choisie
-    set('.album-title', a.title || ''); set('.album-artist', a.artist || ''); set('.album-genre', a.main_genre || '');
-    set('.album-tags', (a.tags || []).join(', ')); set('.album-year', a.release_year || ''); set('.album-duration', a.duration || '');
-    set('.album-tracks', (a.tracks || []).join('\n'));
-    const rec = blk.querySelector('.album-to-record'); if (rec) rec.checked = true; // un MD créé depuis des idées reste à enregistrer
+    return {
+      id: mdId + '-alb-' + (n + 1),
+      md_cover: a.md_cover || 'images/default.jpg',
+      title: a.title || '',
+      artist: a.artist || '',
+      main_genre: a.main_genre || '',
+      tags: a.tags || [],
+      release_year: a.release_year || '',
+      duration: a.duration || '',
+      tracks: a.tracks || [],
+      toRecord: true, // un MiniDisc créé depuis des idées reste à enregistrer
+    };
   });
+
+  let newMD;
+  if (albums.length === 1) {
+    // Un seul album sélectionné : pas de couche "albums", tout est directement sur le MD.
+    const alb = albums[0];
+    newMD = {
+      id: mdId, md_cover: coverPath, title: alb.title, artist: alb.artist, main_genre: alb.main_genre,
+      tags: alb.tags, release_year: alb.release_year, duration: alb.duration, tracks: alb.tracks, toRecord: alb.toRecord
+    };
+  } else {
+    newMD = { id: mdId, md_cover: coverPath, title: albums.map(a => a.title).filter(Boolean).join(' / '), albums };
+  }
+
+  if (Array.isArray(catalogData)) catalogData.push(newMD);
+  else if (catalogData && Array.isArray(catalogData.minidiscs)) catalogData.minidiscs.push(newMD);
+
+  window.ideaAlbums = ideas.filter((_, idx) => !indices.includes(idx));
+  selectedIdeaIndices.clear();
+
+  clearPlannerHeaderInfo();
+  if (typeof saveLocalBackup === 'function') saveLocalBackup();
+  if (typeof showToast === 'function') showToast("🎉 MiniDisc créé avec sa cover !");
+  if (typeof renderDashboard === 'function') renderDashboard(true);
 }
 
 /* ==========================================
@@ -5647,14 +5657,22 @@ function csBuildOverlay() {
 
 async function openCoverStudio(opts = {}) {
   csBuildOverlay();
+  CS.convert = opts.convert || null; // indices des idées à convertir en MiniDisc
   CS.standalone = !!opts.standalone; // hors formulaire : l'image est enregistrée / partagée au lieu d'être placée dans le MD
-  document.querySelector('.cs-use').textContent = CS.standalone ? '💾 Enregistrer l\'image' : '✅ Utiliser cette cover';
+  document.querySelector('.cs-use').textContent = CS.convert ? '✅ Valider et enregistrer le MiniDisc' : CS.standalone ? '💾 Enregistrer l\'image' : '✅ Utiliser cette cover';
   // Pochettes déjà enregistrées (mode édition) ou choisies dans le formulaire, avec le nom de l'artiste de chaque album
   const saved = (typeof catalogData !== 'undefined' && catalogData?.[editingMDIndex]?.albums) || [];
   CS.sources = []; CS.sel = 0;
-  const blocks = CS.standalone ? [] : document.querySelectorAll('#albums-container .album-block');
+  if (CS.convert) { // pochettes, artistes et titres des idées sélectionnées
+    const ideas = getIdeaList();
+    CS.convert.forEach(i => {
+      const a = ideas[i], path = a?.md_cover;
+      if (path && path !== 'images/default.jpg') CS.sources.push(csNew((a.artist || '').toUpperCase(), resolveImageSrc(path), a.title || ''));
+    });
+  }
+  const blocks = CS.standalone || CS.convert ? [] : document.querySelectorAll('#albums-container .album-block');
   blocks.forEach((blk, i) => {
-    const file = blk.querySelector('.album-cover')?.files?.[0], path = saved[i]?.md_cover || blk.dataset.cover; // dataset.cover : pochette d'une idée en cours de conversion
+    const file = blk.querySelector('.album-cover')?.files?.[0], path = saved[i]?.md_cover;
     const src = file ? URL.createObjectURL(file) : (path && path !== 'images/default.jpg' ? resolveImageSrc(path) : null);
     if (src) CS.sources.push(csNew((blk.querySelector('.album-artist')?.value || '').toUpperCase(), src, blk.querySelector('.album-title')?.value || ''));
   });
@@ -5665,8 +5683,23 @@ async function openCoverStudio(opts = {}) {
 
 function closeCoverStudio() { document.getElementById('cs-overlay')?.classList.add('hidden'); }
 
+async function csFinishConversion(blob) {
+  const btn = document.querySelector('.cs-use');
+  btn.disabled = true;
+  showToast("⏳ Envoi de la cover sur GitHub...");
+  const file = new File([blob], `cover_${Date.now()}.jpg`, { type: 'image/jpeg' });
+  const path = await handleImageUpload({ files: [file] }); // enregistrée dans /images du dépôt GitHub
+  btn.disabled = false;
+  if (!path) return showToast("⚠️ Envoi de la cover impossible (token GitHub ?) : le MiniDisc n'a pas été créé.");
+  const indices = CS.convert;
+  CS.convert = null;
+  closeCoverStudio();
+  createMDFromIdeas(indices, path);
+}
+
 function useCoverStudioResult() {
   document.getElementById('cs-canvas').toBlob(blob => {
+    if (blob && CS.convert) return csFinishConversion(blob);
     const input = document.getElementById('md-cover');
     if (blob && CS.standalone) { // hors formulaire : partage (Android) ou téléchargement de l'image
       const file = new File([blob], `cover_${Date.now()}.jpg`, { type: 'image/jpeg' });
