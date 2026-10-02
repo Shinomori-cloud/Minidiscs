@@ -166,7 +166,6 @@ body:has(.dashboard-container) .header-subtitle {
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(2px 2px 0px #000);
   letter-spacing: 1px;
-  transform: rotate(-1.5deg);
   margin: 2px 0 !important;
   margin-left: 32px !important;
 }
@@ -3168,3 +3167,6 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 
 /* Studio : marge à droite pour que les jauges ne passent pas sous la bande du bouton retour */
 .cs-panel { padding-right: 48px; }
+
+.cs-panel label.cs-check { flex-direction: row; align-items: center; gap: 8px; font-size: 0.8rem; }
+.cs-check input { width: 22px; height: 22px; accent-color: #ff007f; }
