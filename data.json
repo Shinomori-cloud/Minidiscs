@@ -4116,6 +4116,18 @@
       "duration": "50:18",
       "tracks": [],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790960825613",
+      "md_cover": "images/img_1790960824073.webp",
+      "title": "Le voyage de Chihiro",
+      "artist": "Joe Hisaishi",
+      "main_genre": "Ambient & Orchestral",
+      "tags": [],
+      "release_year": "2001",
+      "duration": "1:03:00",
+      "tracks": [],
+      "toRecord": false
     }
   ]
 }
