@@ -4118,6 +4118,18 @@
         "Last"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790976054256",
+      "md_cover": "images/img_1790976052055.jpg",
+      "title": "Strassenkind",
+      "artist": "Fuoristrada",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [],
+      "release_year": "1996",
+      "duration": "20:54",
+      "tracks": [],
+      "toRecord": false
     }
   ]
 }
