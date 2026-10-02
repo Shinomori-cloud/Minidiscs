@@ -4130,6 +4130,28 @@
       "duration": "20:54",
       "tracks": [],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790976782140",
+      "md_cover": "images/img_1790976780435.jpg",
+      "title": "The deserts call",
+      "artist": "Rogerthat",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [],
+      "release_year": "2002",
+      "duration": "30:50",
+      "tracks": [
+        "Green Room",
+        "White line",
+        "Somewhere Between",
+        "Turn To Stone",
+        "Tangerine Bird",
+        "ROGERTHAT",
+        "Into the unknow",
+        "When the Night is gone",
+        "You're not Alone"
+      ],
+      "toRecord": false
     }
   ]
 }
