@@ -5376,7 +5376,7 @@ const CS_FINISH = {
 };
 const csEsc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const csLoadImg = src => new Promise(ok => { const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src; });
-const csNew = (name, src, sub = '') => ({ name, src, sub, preset: CS.sources.length % CS_PRESETS.length, font: null, color: null, tz: 1, dx: 0, dy: 0, zoom: 1, sz: 1, px: 0, py: 0, ox: 0, oy: 0, hide: false }); // ox/oy : position libre de l'image sur la cover
+const csNew = (name, src, sub = '') => ({ name, src, sub, preset: CS.sources.length % CS_PRESETS.length, font: null, color: null, tz: 1, dx: 0, dy: 0, zoom: 1, sz: 1, px: 0, py: 0, ox: 0, oy: 0, hide: false, two: false }); // ox/oy : position libre de l'image sur la cover
 const csQueue = () => { if (!CS.raf) CS.raf = requestAnimationFrame(() => { CS.raf = 0; csRender(); }); };
 
 function csFont(f, w) { // charge la police à la demande puis redessine
@@ -5408,8 +5408,13 @@ function csFit(c, img, x, y, w, h, s = {}, br = 1) {
 }
 
 function csCard(c, img, x, y, w, h, s, br) { // pochette avec ombre portée
-  const sh = CS.shadow ?? .7;
-  c.save(); c.shadowColor = `rgba(0,0,0,${.85 * sh})`; c.shadowBlur = 70 * sh; c.shadowOffsetX = 8 * sh; c.shadowOffsetY = 24 * sh; c.fillStyle = '#000'; c.fillRect(x, y, w, h); c.restore();
+  const sh = CS.shadow ?? .6;
+  if (sh > 0) {
+    const reps = 1 + Math.round(sh * 3); // plusieurs passes : plus le curseur monte, plus l'ombre est dense et opaque
+    c.save(); c.shadowColor = '#000'; c.shadowBlur = 20 + 55 * sh; c.shadowOffsetX = 10 * sh; c.shadowOffsetY = 12 + 38 * sh; c.fillStyle = '#000';
+    for (let r = 0; r < reps; r++) c.fillRect(x, y, w, h);
+    c.restore();
+  }
   csFit(c, img, x, y, w, h, s, br);
 }
 
@@ -5441,35 +5446,58 @@ function csStrip(a, b, mu, mv) {
   return P;
 }
 
+// Texte du nom : sur 2 lignes si demandé (coupe au milieu), ou là où l'utilisateur a mis « | »
+function csLabel(s) {
+  const t = (s.name || '').trim();
+  if (t.includes('|')) return t.split('|').map(x => x.trim()).join('\n');
+  const w = t.split(/\s+/);
+  if (!s.two || w.length < 2) return t;
+  let best = 1, gap = Infinity; // coupe pour que les deux lignes aient des longueurs voisines
+  for (let i = 1; i < w.length; i++) {
+    const d = Math.abs(w.slice(0, i).join(' ').length - w.slice(i).join(' ').length);
+    if (d < gap) { gap = d; best = i; }
+  }
+  return w.slice(0, best).join(' ') + '\n' + w.slice(best).join(' ');
+}
+
 function csText(c, text, x, y, maxW, maxFs, p, tint, o = {}) {
   if (!text) return 0;
+  const lines = text.split('\n'), L = lines.length;
   const font = s => `${p.w || 400} ${s}px "${p.f}", Impact, "Arial Black", sans-serif`;
   c.save();
   c.letterSpacing = o.ls || '0px'; // en em : proportionnel à la taille
   c.font = font(100);
-  const fs = Math.min(maxFs, 100 * maxW / c.measureText(text).width) * (o.sc || 1);
+  const fs = Math.min(maxFs, 100 * maxW / Math.max(...lines.map(t => c.measureText(t).width))) * (o.sc || 1), lh = fs * .98;
   c.font = font(fs); c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round';
-  if (o.reg) { const w = c.measureText(text).width + 40; o.reg({ x: x - w / 2, y: y - fs * .65, w, h: fs * 1.3 }); }
-  const fin = CS_FINISH[p.k], sh = CS.shadow ?? .7;
-  const drop = () => { // ombre portée du texte
-    c.shadowColor = `rgba(0,0,0,${.85 * sh})`; c.shadowBlur = fs * .2 * sh; c.shadowOffsetX = fs * .05 * sh; c.shadowOffsetY = fs * .1 * sh;
-  };
-  if (fin) {
-    const g = c.createLinearGradient(0, y - fs / 2, 0, y + fs / 2);
-    fin.stops.forEach(([s, col]) => g.addColorStop(s, col));
-    drop();
-    c.lineWidth = fs * .07; c.strokeStyle = fin.stroke; c.strokeText(text, x, y);
-    c.shadowColor = 'transparent'; c.fillStyle = g;
-  } else if (p.k === 'solid') {
-    drop(); c.fillStyle = p.color;
-  } else if (p.k === 'dark') { // texte sombre : halo clair, avec un léger décalage pour le relief
-    c.shadowColor = 'rgba(255,255,255,.55)'; c.shadowBlur = 14; c.shadowOffsetY = fs * .04 * sh; c.fillStyle = '#141414';
-  } else if (p.k === 'tint') {
-    drop(); c.fillStyle = tint;
-  } else {
-    drop(); c.fillStyle = '#fff';
+  const top = y - (L - 1) * lh / 2; // centre de la 1re ligne
+  if (o.reg) {
+    const w = Math.max(...lines.map(t => c.measureText(t).width)) + 40;
+    o.reg({ x: x - w / 2, y: top - fs * .65, w, h: (L - 1) * lh + fs * 1.3 });
   }
-  c.fillText(text, x, y);
+  const fin = CS_FINISH[p.k], sh = CS.shadow ?? .6, reps = p.k === 'dark' ? 1 : 1 + Math.round(sh * 3);
+  const drop = () => { // ombre portée du texte (passes répétées : de plus en plus dense)
+    if (sh <= 0) { c.shadowColor = 'transparent'; return; }
+    c.shadowColor = '#000'; c.shadowBlur = fs * (.06 + .3 * sh); c.shadowOffsetX = fs * .08 * sh; c.shadowOffsetY = fs * (.04 + .14 * sh);
+  };
+  lines.forEach((t, i) => {
+    const ly = top + i * lh;
+    if (fin) {
+      const g = c.createLinearGradient(0, ly - fs / 2, 0, ly + fs / 2);
+      fin.stops.forEach(([s, col]) => g.addColorStop(s, col));
+      drop(); c.lineWidth = fs * .07; c.strokeStyle = fin.stroke;
+      for (let r = 0; r < reps; r++) c.strokeText(t, x, ly);
+      c.shadowColor = 'transparent'; c.fillStyle = g;
+    } else if (p.k === 'solid') {
+      drop(); c.fillStyle = p.color;
+    } else if (p.k === 'dark') { // texte sombre : halo clair, avec un léger décalage pour le relief
+      c.shadowColor = 'rgba(255,255,255,.55)'; c.shadowBlur = 14; c.shadowOffsetY = fs * .04 * sh; c.fillStyle = '#141414';
+    } else if (p.k === 'tint') {
+      drop(); c.fillStyle = tint;
+    } else {
+      drop(); c.fillStyle = '#fff';
+    }
+    for (let r = 0; r < (fin ? 1 : reps); r++) c.fillText(t, x, ly);
+  });
   c.restore();
   return fs;
 }
@@ -5492,8 +5520,8 @@ function csPoster(c, W, H, s, br, val) {
     g.addColorStop(0, 'rgba(0,0,0,.65)'); g.addColorStop(1, 'rgba(0,0,0,0)');
     c.fillStyle = g; c.fillRect(0, pos === 'top' ? 0 : H * .5, W, H * .5);
   }
-  const mw = W * .84, fs = csText(c, s.name, tx, ty, mw, 190, csStyle(s), s.tint, { sc: s.tz, reg: csReg(s) });
-  csText(c, s.sub, tx, ty + fs * .55 + 36, mw, 46, { f: 'Montserrat', w: 500, k: s.color ? 'solid' : 'tint', color: s.color }, s.tint, { ls: '.3em', sc: s.tz, reg: csReg(s) });
+  const mw = W * .84, fs = csText(c, csLabel(s), tx, ty, mw, 190, csStyle(s), s.tint, { sc: s.tz, reg: csReg(s) });
+  csText(c, s.sub, tx, ty + fs * (.55 + .49 * (csLabel(s).split('\n').length - 1)) + 36, mw, 46, { f: 'Montserrat', w: 500, k: s.color ? 'solid' : 'tint', color: s.color }, s.tint, { ls: '.3em', sc: s.tz, reg: csReg(s) });
   csFont('Montserrat', 500);
   csText(c, val('cs-caption'), W / 2, H - W * .07, W * .8, 26, { f: 'Montserrat', w: 500, k: 'white' }, s.tint, { ls: '.08em' });
 }
@@ -5560,6 +5588,21 @@ async function csRender(clean = false) {
   c.drawImage(bg, -M, -M);
   c.filter = 'none';
 
+  // Ligne de séparation sur les limites entre les parties du fond (longueur mesurée depuis le milieu de chaque limite)
+  if (document.getElementById('cs-sep').checked && n > 1) {
+    const len = +val('cs-seplen') / 100;
+    c.save(); c.globalAlpha = 1 - val('cs-sepalpha') / 100; c.strokeStyle = val('cs-sepcolor'); c.lineWidth = +val('cs-sepw');
+    for (let i = 1; i < n; i++) {
+      let p1, p2;
+      if (split === 'v') { p1 = [W * i / n, 0]; p2 = [W * i / n, H]; }
+      else if (split === 'd') { const k = area(i / n); p1 = k <= 1 ? [k * W, 0] : [W, (k - 1) * H]; p2 = k <= 1 ? [0, k * H] : [(k - 1) * W, H]; }
+      else { p1 = [0, H * i / n]; p2 = [W, H * i / n]; }
+      const mx = (p1[0] + p2[0]) / 2, my = (p1[1] + p2[1]) / 2, dx = (p2[0] - p1[0]) * len / 2, dy = (p2[1] - p1[1]) * len / 2;
+      c.beginPath(); c.moveTo(mx - dx, my - dy); c.lineTo(mx + dx, my + dy); c.stroke();
+    }
+    c.restore();
+  }
+
   const m = W * .06;
   if (layout === 'mosaic') {
     const cols = n <= 2 ? 1 : n <= 6 ? 2 : 3, rows = Math.ceil(n / cols), gap = W * .025;
@@ -5571,7 +5614,7 @@ async function csRender(clean = false) {
       const g = c.createLinearGradient(0, y + ch * .55, 0, y + ch);
       g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.7)');
       if (!s.hide) { c.fillStyle = g; c.fillRect(x, y + ch * .55, cw, ch * .45); }
-      csText(c, s.name, x + cw / 2 + s.dx, y + ch * .86 + s.dy, cw * .88, ch * .2, csStyle(s), s.tint, { sc: s.tz, reg: csReg(s) });
+      csText(c, csLabel(s), x + cw / 2 + s.dx, y + ch * .86 + s.dy, cw * .88, ch * .2, csStyle(s), s.tint, { sc: s.tz, reg: csReg(s) });
     });
   } else {
     // Cascade : pochettes décalées gauche / droite, nom de l'artiste du côté opposé, en léger chevauchement
@@ -5582,9 +5625,9 @@ async function csRender(clean = false) {
       const y = n === 1 ? (H - s0) / 2 - H * .06 : m + i * ((H - 2 * m - s0) / (n - 1));
       const q = s0 * s.sz, o = (s0 - q) / 2; // la pochette reste centrée sur son emplacement
       if (!s.hide) { csCard(c, s.img, x + o + s.ox, y + o + s.oy, q, q, s, br); csHit(s, 'image', x + o + s.ox, y + o + s.oy, q, q); }
-      if (n === 1) return csText(c, s.name, W / 2 + s.dx, y + s0 + H * .09 + s.dy, W - 2 * m, 190, p, s.tint, { sc: s.tz, reg: csReg(s) });
+      if (n === 1) return csText(c, csLabel(s), W / 2 + s.dx, y + s0 + H * .09 + s.dy, W - 2 * m, 190, p, s.tint, { sc: s.tz, reg: csReg(s) });
       const ov = s0 * .12, x0 = left ? x + s0 - ov : m, x1 = left ? W - m : x + ov;
-      csText(c, s.name, (x0 + x1) / 2 + s.dx, y + s0 / 2 + (left ? s0 * .08 : -s0 * .08) + s.dy, x1 - x0, 190, p, s.tint, { sc: s.tz, reg: csReg(s) });
+      csText(c, csLabel(s), (x0 + x1) / 2 + s.dx, y + s0 / 2 + (left ? s0 * .08 : -s0 * .08) + s.dy, x1 - x0, 190, p, s.tint, { sc: s.tz, reg: csReg(s) });
     });
   }
   csDone(c, W, H, val, clean);
@@ -5617,6 +5660,7 @@ function csLoadSel() { // reflète la source sélectionnée dans les réglages
   if (!s) return;
   set('cs-font', s.font || ''); set('cs-color', s.color || '#ffffff'); set('cs-size', s.tz * 100); set('cs-zoom', s.zoom * 100); set('cs-imgsize', s.sz * 100);
   const chk = document.getElementById('cs-showimg'); if (chk) chk.checked = !s.hide;
+  const two = document.getElementById('cs-two'); if (two) two.checked = !!s.two;
 }
 
 function csFontStep(d) { // flèches ◀ ▶ : police précédente / suivante (la liste boucle, « Auto » comprise)
@@ -5639,7 +5683,8 @@ function csMove(i) {
 function csSync() { // options propres à l'affiche + liste des sources
   const poster = document.getElementById('cs-layout').value === 'poster';
   document.getElementById('cs-poster-opts').style.display = poster ? 'flex' : 'none';
-  document.getElementById('cs-split-wrap').style.display = poster ? 'none' : 'flex'; // l'agencement du fond ne concerne que plusieurs pochettes
+  document.getElementById('cs-split-wrap').style.display = poster ? 'none' : 'flex';
+  document.getElementById('cs-sepbox').style.display = poster ? 'none' : 'flex'; // pas de parties en mode affiche // l'agencement du fond ne concerne que plusieurs pochettes
   csRenderList();
 }
 
@@ -5663,7 +5708,15 @@ function csBuildOverlay() {
         <label>Flou du fond<input type="range" id="cs-blur" min="0" max="80" value="40"></label>
         <label>Grain<input type="range" id="cs-grain" min="0" max="100" value="30"></label>
         <label>Luminosité<input type="range" id="cs-bright" min="40" max="160" value="100"></label>
-        <label>Ombre portée<input type="range" id="cs-shadow" min="0" max="100" value="70"></label>
+        <label>Ombre portée<input type="range" id="cs-shadow" min="0" max="100" value="60"></label>
+      </div>
+      <div id="cs-sepbox" class="cs-box">
+        <b>Ligne de séparation</b>
+        <label class="cs-check"><input type="checkbox" id="cs-sep"> Afficher une ligne entre les parties du fond</label>
+        <label>Couleur<input type="color" id="cs-sepcolor" value="#ffffff"></label>
+        <label>Longueur (depuis le centre)<input type="range" id="cs-seplen" min="5" max="100" value="60"></label>
+        <label>Transparence<input type="range" id="cs-sepalpha" min="0" max="95" value="25"></label>
+        <label>Épaisseur<input type="range" id="cs-sepw" min="1" max="30" value="6"></label>
       </div>
       <div id="cs-list"></div>
       <div id="cs-imgbox" class="cs-box">
@@ -5685,6 +5738,7 @@ function csBuildOverlay() {
           <label>Couleur du texte<input type="color" id="cs-color" value="#ffffff"></label>
           <button type="button" class="cs-auto" onclick="const s=CS.sources[CS.sel];if(s){s.color=null;csRender()}">Couleur auto</button>
         </div>
+        <label class="cs-check"><input type="checkbox" id="cs-two"> Texte sur 2 lignes (ou coupe-le toi-même avec « | »)</label>
         <label>Taille du texte<input type="range" id="cs-size" min="40" max="200" value="100"></label>
         <div id="cs-poster-opts" class="cs-row" style="display:none">
           <label>Position<select id="cs-pos"><option value="bottom">En bas</option><option value="center">Au centre</option><option value="top">En haut</option></select></label>
@@ -5708,7 +5762,8 @@ function csBuildOverlay() {
     else if (s && t.id === 'cs-zoom') s.zoom = t.value / 100;
     else if (s && t.id === 'cs-imgsize') s.sz = t.value / 100;
     else if (s && t.id === 'cs-showimg') s.hide = !t.checked;
-    else if (!t.matches('select, input[type=range], #cs-caption')) return;
+    else if (s && t.id === 'cs-two') s.two = t.checked;
+    else if (!t.matches('select, input[type=range], #cs-caption, #cs-sep, #cs-sepcolor')) return;
     if (t.id === 'cs-layout') csSync();
     csQueue();
   });
