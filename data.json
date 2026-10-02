@@ -4080,6 +4080,18 @@
       "duration": "53:00",
       "tracks": [],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790970481693",
+      "md_cover": "images/img_1790970479549.jpg",
+      "title": "Ghost in the shell",
+      "artist": "Kenji Kawai",
+      "main_genre": "Ambient & Orchestral",
+      "tags": [],
+      "release_year": "1995",
+      "duration": "50:43",
+      "tracks": [],
+      "toRecord": false
     }
   ]
 }
