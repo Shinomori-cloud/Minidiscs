@@ -3193,6 +3193,49 @@
         "You think you're quiet"
       ],
       "toRecord": true
+    },
+    {
+      "id": "md-1790974479428",
+      "md_cover": "images/img_1790974477336.jpg",
+      "title": "Rurouni Kenshin Tsuioku Hen / Neon Genesis Evangelion / Ghost in the shell",
+      "albums": [
+        {
+          "id": "md-1790974479428-alb-1",
+          "md_cover": "images/img_1790970426153.webp",
+          "title": "Rurouni Kenshin Tsuioku Hen",
+          "artist": "Taku Iwasaki",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "1999",
+          "duration": "53:00",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1790974479428-alb-2",
+          "md_cover": "images/img_1790970584668.webp",
+          "title": "Neon Genesis Evangelion",
+          "artist": "Shiro Sagisu",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "1995",
+          "duration": "40:02",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1790974479428-alb-3",
+          "md_cover": "images/img_1790970479549.jpg",
+          "title": "Ghost in the shell",
+          "artist": "Kenji Kawai",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "1995",
+          "duration": "50:43",
+          "tracks": [],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -4066,42 +4109,6 @@
       "tags": [],
       "release_year": "1998",
       "duration": "1:02:00",
-      "tracks": [],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790970427728",
-      "md_cover": "images/img_1790970426153.webp",
-      "title": "Rurouni Kenshin Tsuioku Hen",
-      "artist": "Taku Iwasaki",
-      "main_genre": "Ambient & Orchestral",
-      "tags": [],
-      "release_year": "1999",
-      "duration": "53:00",
-      "tracks": [],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790970481693",
-      "md_cover": "images/img_1790970479549.jpg",
-      "title": "Ghost in the shell",
-      "artist": "Kenji Kawai",
-      "main_genre": "Ambient & Orchestral",
-      "tags": [],
-      "release_year": "1995",
-      "duration": "50:43",
-      "tracks": [],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790970586662",
-      "md_cover": "images/img_1790970584668.webp",
-      "title": "Neon Genesis Evangelion",
-      "artist": "Shiro Sagisu",
-      "main_genre": "Ambient & Orchestral",
-      "tags": [],
-      "release_year": "1995",
-      "duration": "40:02",
       "tracks": [],
       "toRecord": false
     }
