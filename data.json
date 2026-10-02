@@ -3236,6 +3236,37 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1790974822258",
+      "md_cover": "images/img_1790974820138.jpg",
+      "title": "Princesse Mononoke / Le voyage de Chihiro",
+      "albums": [
+        {
+          "id": "md-1790974822258-alb-1",
+          "md_cover": "images/img_1790960941968.jpg",
+          "title": "Princesse Mononoke",
+          "artist": "Joe Hisaishi",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "1998",
+          "duration": "1:02:00",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1790974822258-alb-2",
+          "md_cover": "images/img_1790960824073.webp",
+          "title": "Le voyage de Chihiro",
+          "artist": "Joe Hisaishi",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "2001",
+          "duration": "1:03:00",
+          "tracks": [],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -4086,30 +4117,6 @@
         "Pirates",
         "Last"
       ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790960825613",
-      "md_cover": "images/img_1790960824073.webp",
-      "title": "Le voyage de Chihiro",
-      "artist": "Joe Hisaishi",
-      "main_genre": "Ambient & Orchestral",
-      "tags": [],
-      "release_year": "2001",
-      "duration": "1:03:00",
-      "tracks": [],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790960943982",
-      "md_cover": "images/img_1790960941968.jpg",
-      "title": "Princesse Mononoke",
-      "artist": "Joe Hisaishi",
-      "main_genre": "Ambient & Orchestral",
-      "tags": [],
-      "release_year": "1998",
-      "duration": "1:02:00",
-      "tracks": [],
       "toRecord": false
     }
   ]
