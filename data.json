@@ -4104,6 +4104,18 @@
         "Quiet Life"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1790923867145",
+      "md_cover": "images/img_1790923865385.jpg",
+      "title": "Ghost in the shell",
+      "artist": "Kenji Kawai",
+      "main_genre": "Ambient & Orchestral",
+      "tags": [],
+      "release_year": "1995",
+      "duration": "50:18",
+      "tracks": [],
+      "toRecord": false
     }
   ]
 }
