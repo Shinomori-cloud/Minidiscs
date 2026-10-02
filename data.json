@@ -3193,6 +3193,85 @@
         "You think you're quiet"
       ],
       "toRecord": true
+    },
+    {
+      "id": "md-1790966103033",
+      "md_cover": "images/img_1790966100637.jpg",
+      "title": "Rurouni Kenshin : Tsuioku Hen / Neon Genesis Evangelion / Ghost in the shell",
+      "albums": [
+        {
+          "id": "md-1790966103033-alb-1",
+          "md_cover": "images/img_1790533326864.webp",
+          "title": "Rurouni Kenshin : Tsuioku Hen",
+          "artist": "Taku Iwasaki",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "1999",
+          "duration": "55:21",
+          "tracks": [
+            "In Memories 'A Boy Meets the Man'",
+            "One of These Nights",
+            "Alone Again",
+            "Blood",
+            "Day After Day",
+            "In The Rain",
+            "Quiet Life piano",
+            "The Will (pf solo version)",
+            "War of the Last Wolves",
+            "The Will",
+            "Testament",
+            "Talk to the Moon",
+            "Sound of Snow Falling",
+            "Shades of Revolution",
+            "In Memories - Kotowari",
+            "Quiet Life"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1790966103033-alb-2",
+          "md_cover": "images/img_1790532555892.webp",
+          "title": "Neon Genesis Evangelion",
+          "artist": "Shirô Sagisu",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "1995",
+          "duration": "41:27",
+          "tracks": [
+            "Asuka strikes",
+            "Misato",
+            "Barefoot in the park",
+            "Hedgehog's Dilemma",
+            "Rei I",
+            "Fly me to the moon (acid bossa version)",
+            "Jikai Yokoku",
+            "Fly me to the moon",
+            "Rei II",
+            "Marking time ,waiting for death",
+            "The beast",
+            "EVA-00",
+            "EVA-02",
+            "A step forward into terror",
+            "EVA-01",
+            "Ikari Shinji",
+            "Tôkyô-3",
+            "NERV"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1790966103033-alb-3",
+          "md_cover": "images/img_1790923865385.jpg",
+          "title": "Ghost in the shell",
+          "artist": "Kenji Kawai",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [],
+          "release_year": "1995",
+          "duration": "50:18",
+          "tracks": [],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -4043,78 +4122,6 @@
         "Pirates",
         "Last"
       ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790532557487",
-      "md_cover": "images/img_1790532555892.webp",
-      "title": "Neon Genesis Evangelion",
-      "artist": "Shirô Sagisu",
-      "main_genre": "Ambient & Orchestral",
-      "tags": [],
-      "release_year": "1995",
-      "duration": "41:27",
-      "tracks": [
-        "Asuka strikes",
-        "Misato",
-        "Barefoot in the park",
-        "Hedgehog's Dilemma",
-        "Rei I",
-        "Fly me to the moon (acid bossa version)",
-        "Jikai Yokoku",
-        "Fly me to the moon",
-        "Rei II",
-        "Marking time ,waiting for death",
-        "The beast",
-        "EVA-00",
-        "EVA-02",
-        "A step forward into terror",
-        "EVA-01",
-        "Ikari Shinji",
-        "Tôkyô-3",
-        "NERV"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790533328260",
-      "md_cover": "images/img_1790533326864.webp",
-      "title": "Rurouni Kenshin : Tsuioku Hen",
-      "artist": "Taku Iwasaki",
-      "main_genre": "Ambient & Orchestral",
-      "tags": [],
-      "release_year": "1999",
-      "duration": "55:21",
-      "tracks": [
-        "In Memories 'A Boy Meets the Man'",
-        "One of These Nights",
-        "Alone Again",
-        "Blood",
-        "Day After Day",
-        "In The Rain",
-        "Quiet Life piano",
-        "The Will (pf solo version)",
-        "War of the Last Wolves",
-        "The Will",
-        "Testament",
-        "Talk to the Moon",
-        "Sound of Snow Falling",
-        "Shades of Revolution",
-        "In Memories - Kotowari",
-        "Quiet Life"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790923867145",
-      "md_cover": "images/img_1790923865385.jpg",
-      "title": "Ghost in the shell",
-      "artist": "Kenji Kawai",
-      "main_genre": "Ambient & Orchestral",
-      "tags": [],
-      "release_year": "1995",
-      "duration": "50:18",
-      "tracks": [],
       "toRecord": false
     },
     {
