@@ -3317,7 +3317,6 @@
     {
       "id": "md-1791015115269",
       "md_cover": "images/img_1791015113610.jpg",
-      "title": "The deserts call / Stuff / Raven",
       "albums": [
         {
           "id": "md-1791015115269-alb-1",
@@ -3363,7 +3362,7 @@
             "Night",
             "Stuff"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "md-1791015115269-alb-3",
@@ -3389,7 +3388,8 @@
           ],
           "toRecord": true
         }
-      ]
+      ],
+      "title": "The deserts call / Stuff / Raven"
     }
   ],
   "ideaAlbums": [
