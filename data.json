@@ -4240,6 +4240,42 @@
         "This Protector"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791039438270",
+      "md_cover": "images/img_1791039436785.jpg",
+      "title": "Roots",
+      "artist": "Sepultura",
+      "main_genre": "Metal & Hard Rock",
+      "tags": [
+        "metal",
+        "death metal",
+        "groove metal",
+        "heavy metal",
+        "nu metal"
+      ],
+      "release_year": "1996",
+      "duration": "1:06:56",
+      "tracks": [
+        "Roots Bloody Roots",
+        "Attitude",
+        "Cut‐Throat",
+        "Ratamahatta",
+        "Breed Apart",
+        "Straighthate",
+        "Spit",
+        "Lookaway",
+        "Dusted",
+        "Born Stubborn",
+        "Jasco",
+        "Itsári",
+        "Ambush",
+        "Endangered Species",
+        "Dictatorshit",
+        "Procreation (of the Wicked)",
+        "Symptom of the Universe"
+      ],
+      "toRecord": false
     }
   ]
 }
