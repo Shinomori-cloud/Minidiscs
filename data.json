@@ -4319,6 +4319,37 @@
         "The Shape"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791044021020",
+      "md_cover": "images/img_1791044019688.jpg",
+      "title": "Stories From the City, Stories From the Sea",
+      "artist": "PJ Harvey",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [
+        "alternative rock",
+        "rock",
+        "indie rock",
+        "adult alternative pop/rock",
+        "folk rock"
+      ],
+      "release_year": "2000",
+      "duration": "47:17",
+      "tracks": [
+        "Big Exit",
+        "Good Fortune",
+        "A Place Called Home",
+        "One Line",
+        "Beautiful Feeling",
+        "The Whores Hustle and the Hustlers Whore",
+        "This Mess We're In",
+        "You Said Something",
+        "Kamikaze",
+        "This Is Love",
+        "Horses in My Dreams",
+        "We Float"
+      ],
+      "toRecord": false
     }
   ]
 }
