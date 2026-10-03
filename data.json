@@ -3230,7 +3230,18 @@
           "tags": [],
           "release_year": "1995",
           "duration": "50:43",
-          "tracks": [],
+          "tracks": [
+            "Making of Cyborg",
+            "Ghosthack",
+            "Puppetmaster",
+            "Virtual Crime",
+            "Ghost City",
+            "Access",
+            "Nightstalker",
+            "Floating Museum",
+            "Ghostdive",
+            "Reincarnation"
+          ],
           "toRecord": true
         }
       ],
