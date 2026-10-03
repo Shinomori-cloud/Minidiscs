@@ -3267,6 +3267,83 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1791015115269",
+      "md_cover": "images/img_1791015113610.jpg",
+      "title": "The deserts call / Stuff / Raven",
+      "albums": [
+        {
+          "id": "md-1791015115269-alb-1",
+          "md_cover": "images/img_1790976780435.jpg",
+          "title": "The deserts call",
+          "artist": "Rogerthat",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [],
+          "release_year": "2002",
+          "duration": "30:50",
+          "tracks": [
+            "Green Room",
+            "White line",
+            "Somewhere Between",
+            "Turn To Stone",
+            "Tangerine Bird",
+            "ROGERTHAT",
+            "Into the unknow",
+            "When the Night is gone",
+            "You're not Alone"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791015115269-alb-2",
+          "md_cover": "images/img_1790525048986.jpg",
+          "title": "Stuff",
+          "artist": "Rob Sawyer",
+          "main_genre": "Pop & Folk & Variety",
+          "tags": [],
+          "release_year": "2002",
+          "duration": "54:38",
+          "tracks": [
+            "Beauty Artillery",
+            "Our Time",
+            "I'm Wrong",
+            "My Music",
+            "Unity",
+            "Truth and Eyes",
+            "Chew it up",
+            "Water",
+            "From the Heart",
+            "Night",
+            "Stuff"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791015115269-alb-3",
+          "md_cover": "images/img_1790523291591.jpg",
+          "title": "Raven",
+          "artist": "Pterodactil Plains",
+          "main_genre": "Pop & Folk & Variety",
+          "tags": [],
+          "release_year": "2005",
+          "duration": "41:09",
+          "tracks": [
+            "Horizon",
+            "Stay Awhile",
+            "Color",
+            "Clean",
+            "Right Here",
+            "Red Umbrella",
+            "Solace",
+            "Straitjacket",
+            "Carry your Soul",
+            "Strangers",
+            "Horizon II"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -3797,30 +3874,6 @@
       "toRecord": false
     },
     {
-      "id": "idea-1790523293156",
-      "md_cover": "images/img_1790523291591.jpg",
-      "title": "Raven",
-      "artist": "Pterodactil Plains",
-      "main_genre": "Pop & Folk & Variety",
-      "tags": [],
-      "release_year": "2005",
-      "duration": "41:09",
-      "tracks": [
-        "Horizon",
-        "Stay Awhile",
-        "Color",
-        "Clean",
-        "Right Here",
-        "Red Umbrella",
-        "Solace",
-        "Straitjacket",
-        "Carry your Soul",
-        "Strangers",
-        "Horizon II"
-      ],
-      "toRecord": false
-    },
-    {
       "id": "idea-1790524424067",
       "md_cover": "images/img_1790524422685.jpg",
       "title": "Super Hits",
@@ -3843,30 +3896,6 @@
         "Turtle Blues",
         "A Woman Left Lonely",
         "One Night Stand"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790525050346",
-      "md_cover": "images/img_1790525048986.jpg",
-      "title": "Stuff",
-      "artist": "Rob Sawyer",
-      "main_genre": "Pop & Folk & Variety",
-      "tags": [],
-      "release_year": "2002",
-      "duration": "54:38",
-      "tracks": [
-        "Beauty Artillery",
-        "Our Time",
-        "I'm Wrong",
-        "My Music",
-        "Unity",
-        "Truth and Eyes",
-        "Chew it up",
-        "Water",
-        "From the Heart",
-        "Night",
-        "Stuff"
       ],
       "toRecord": false
     },
@@ -4129,28 +4158,6 @@
       "release_year": "1996",
       "duration": "20:54",
       "tracks": [],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790976782140",
-      "md_cover": "images/img_1790976780435.jpg",
-      "title": "The deserts call",
-      "artist": "Rogerthat",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [],
-      "release_year": "2002",
-      "duration": "30:50",
-      "tracks": [
-        "Green Room",
-        "White line",
-        "Somewhere Between",
-        "Turn To Stone",
-        "Tangerine Bird",
-        "ROGERTHAT",
-        "Into the unknow",
-        "When the Night is gone",
-        "You're not Alone"
-      ],
       "toRecord": false
     }
   ]
