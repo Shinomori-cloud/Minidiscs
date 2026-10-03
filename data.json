@@ -3013,7 +3013,7 @@
           "release_year": "",
           "duration": "",
           "tracks": [],
-          "toRecord": false
+          "toRecord": true
         }
       ],
       "title": "Le Roi Lion / Aladdin / Le retour de Jafar / Robin des bois"
