@@ -3218,7 +3218,26 @@
           "tags": [],
           "release_year": "1995",
           "duration": "40:02",
-          "tracks": [],
+          "tracks": [
+            "Rei I",
+            "Hedgehog's Dilemma",
+            "Barefoot in the park",
+            "Misato",
+            "Asuka strikes",
+            "NERV",
+            "Tokyo-3",
+            "Ikari Shinji",
+            "EVA-01",
+            "A step forward into terror",
+            "EVA-02",
+            "EVA-00",
+            "The beast",
+            "Marking time, waiting for death",
+            "Rei II",
+            "Fly me to the moon",
+            "Jikai Yokoku",
+            "Fly me to the moon (acid bossa version)"
+          ],
           "toRecord": true
         },
         {
