@@ -1939,7 +1939,7 @@
             "Eleanor Rigby",
             "Yellow Submarine"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-45-2",
@@ -1966,7 +1966,7 @@
             "Sweet Home Chicago",
             "JailHouse Rock"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "alb-45-3",
@@ -1995,11 +1995,9 @@
             "It Serves Me Right To Suffer",
             "What Do You Say",
             "I Love You Honey",
-            "Thelma",
-            "No Shoes",
-            "She Shot Me Down"
+            "Thelma"
           ],
-          "toRecord": true
+          "toRecord": false
         }
       ],
       "title": "1962-1966 / The Blues Brothers / Jazz & Blues Collection vol.2"
