@@ -3224,7 +3224,7 @@
             "In Memories",
             "Quiet Life"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "md-1790974479428-alb-2",
@@ -3255,7 +3255,7 @@
             "Jikai Yokoku",
             "Fly me to the moon (acid bossa version)"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "md-1790974479428-alb-3",
@@ -3278,7 +3278,7 @@
             "Ghostdive",
             "Reincarnation"
           ],
-          "toRecord": true
+          "toRecord": false
         }
       ],
       "title": "Rurouni Kenshin : Tsuioku Hen / Neon Genesis Evangelion / Ghost in the shell"
