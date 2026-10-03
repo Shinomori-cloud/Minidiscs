@@ -4205,6 +4205,41 @@
       "duration": "20:54",
       "tracks": [],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791038635546",
+      "md_cover": "images/img_1791038634134.jpg",
+      "title": "White Blood Cells",
+      "artist": "The White Stripes",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [
+        "alternative rock",
+        "rock",
+        "garage rock revival",
+        "blues rock",
+        "alternative and punk"
+      ],
+      "release_year": "2001",
+      "duration": "40:31",
+      "tracks": [
+        "Dead Leaves and the Dirty Ground",
+        "Hotel Yorba",
+        "I’m Finding It Harder to Be a Gentleman",
+        "Fell in Love With a Girl",
+        "Expecting",
+        "Little Room",
+        "The Union Forever",
+        "The Same Boy You’ve Always Known",
+        "We’re Going to Be Friends",
+        "Offend in Every Way",
+        "I Think I Smell a Rat",
+        "Aluminum",
+        "I Can’t Wait",
+        "Now Mary",
+        "I Can Learn",
+        "This Protector"
+      ],
+      "toRecord": false
     }
   ]
 }
