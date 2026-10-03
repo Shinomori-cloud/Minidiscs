@@ -3390,6 +3390,41 @@
         }
       ],
       "title": "The deserts call / Stuff / Raven"
+    },
+    {
+      "id": "md-1791040262492",
+      "md_cover": "images/img_1791040260611.jpg",
+      "title": "Le combat continue / Busta Flex",
+      "albums": [
+        {
+          "id": "md-1791040262492-alb-1",
+          "md_cover": "images/idealj.jpg",
+          "title": "Le combat continue",
+          "artist": "Idéal J",
+          "main_genre": "Rap, Soul & Reggae",
+          "tags": [
+            "Rap"
+          ],
+          "release_year": "",
+          "duration": "1:15:53",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791040262492-alb-2",
+          "md_cover": "images/bustaflex.jpg",
+          "title": "Busta Flex",
+          "artist": "Busta Flex",
+          "main_genre": "Rap, Soul & Reggae",
+          "tags": [
+            "Rap"
+          ],
+          "release_year": "",
+          "duration": "52:21",
+          "tracks": [],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -3436,26 +3471,6 @@
       ],
       "duration": "53:48",
       "md_cover": "images/innuendo.jpg"
-    },
-    {
-      "title": "Busta Flex",
-      "artist": "Busta Flex",
-      "main_genre": "Rap, Soul & Reggae",
-      "tags": [
-        "Rap"
-      ],
-      "duration": "52:21",
-      "md_cover": "images/bustaflex.jpg"
-    },
-    {
-      "title": "Le combat continue",
-      "artist": "Idéal J",
-      "main_genre": "Rap, Soul & Reggae",
-      "tags": [
-        "Rap"
-      ],
-      "duration": "1:15:53",
-      "md_cover": "images/idealj.jpg"
     },
     {
       "title": "Starmania",
