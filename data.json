@@ -3425,6 +3425,77 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1791057491870",
+      "md_cover": "images/img_1791057489583.jpg",
+      "title": "Highly Evolved / White Blood Cells / Is this it",
+      "albums": [
+        {
+          "id": "md-1791057491870-alb-1",
+          "md_cover": "images/higlyevolved.jpg",
+          "title": "Highly Evolved",
+          "artist": "The Vines",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "Alternative Rock",
+            "Grunge"
+          ],
+          "release_year": "",
+          "duration": "43:40",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791057491870-alb-2",
+          "md_cover": "images/img_1791038634134.jpg",
+          "title": "White Blood Cells",
+          "artist": "The White Stripes",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "alternative rock",
+            "rock",
+            "garage rock revival",
+            "blues rock",
+            "alternative and punk"
+          ],
+          "release_year": "2001",
+          "duration": "40:31",
+          "tracks": [
+            "Dead Leaves and the Dirty Ground",
+            "Hotel Yorba",
+            "I’m Finding It Harder to Be a Gentleman",
+            "Fell in Love With a Girl",
+            "Expecting",
+            "Little Room",
+            "The Union Forever",
+            "The Same Boy You’ve Always Known",
+            "We’re Going to Be Friends",
+            "Offend in Every Way",
+            "I Think I Smell a Rat",
+            "Aluminum",
+            "I Can’t Wait",
+            "Now Mary",
+            "I Can Learn",
+            "This Protector"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791057491870-alb-3",
+          "md_cover": "images/isthisit.jpg",
+          "title": "Is this it",
+          "artist": "The Strokes",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "Alternative Rock"
+          ],
+          "release_year": "",
+          "duration": "36:28",
+          "tracks": [],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -3632,27 +3703,6 @@
       ],
       "duration": "36:31",
       "md_cover": "images/HighLow.jpg"
-    },
-    {
-      "title": "Is this it",
-      "artist": "The Strokes",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "Alternative Rock"
-      ],
-      "duration": "36:28",
-      "md_cover": "images/isthisit.jpg"
-    },
-    {
-      "title": "Highly Evolved",
-      "artist": "The Vines",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "Alternative Rock",
-        "Grunge"
-      ],
-      "duration": "43:40",
-      "md_cover": "images/higlyevolved.jpg"
     },
     {
       "title": "The Marshall Mathers LP",
@@ -4219,41 +4269,6 @@
       "release_year": "1996",
       "duration": "20:54",
       "tracks": [],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1791038635546",
-      "md_cover": "images/img_1791038634134.jpg",
-      "title": "White Blood Cells",
-      "artist": "The White Stripes",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "alternative rock",
-        "rock",
-        "garage rock revival",
-        "blues rock",
-        "alternative and punk"
-      ],
-      "release_year": "2001",
-      "duration": "40:31",
-      "tracks": [
-        "Dead Leaves and the Dirty Ground",
-        "Hotel Yorba",
-        "I’m Finding It Harder to Be a Gentleman",
-        "Fell in Love With a Girl",
-        "Expecting",
-        "Little Room",
-        "The Union Forever",
-        "The Same Boy You’ve Always Known",
-        "We’re Going to Be Friends",
-        "Offend in Every Way",
-        "I Think I Smell a Rat",
-        "Aluminum",
-        "I Can’t Wait",
-        "Now Mary",
-        "I Can Learn",
-        "This Protector"
-      ],
       "toRecord": false
     },
     {
