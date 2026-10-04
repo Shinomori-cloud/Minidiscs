@@ -3796,18 +3796,45 @@ function lfmImage(images) {
   return '';
 }
 
+// Sorties (albums et EP) d'un artiste sur MusicBrainz. Méthode principale : la liste exacte des sorties de l'artiste
+// (« browse », avec les types fiables). Repli : la recherche par identifiant puis par nom.
 async function discoverMbArtistGroups(artist, maxPages = 1) {
   const cacheKey = `mb:${artist.mbid || mbNormalize(artist.name)}:${maxPages}`;
   if (discoverCache.has(cacheKey)) return discoverCache.get(cacheKey);
 
-  // Mêmes exclusions que la recherche : albums et EP, sans remix, DJ-mix, démos, livres audio, interviews
+  // Mêmes exclusions que la recherche : sans remix, DJ-mix, démos, livres audio, interviews
+  const EXCLUDED = ['Remix', 'DJ-mix', 'Demo', 'Audiobook', 'Audio drama', 'Interview'];
+  const keep = g => !asArray(g['secondary-types']).some(t => EXCLUDED.includes(t));
+
+  // 1) Liste exacte des sorties de l'artiste (type album ou EP)
+  const browse = async mbid => {
+    let groups = [];
+    for (let page = 0; page <= maxPages; page++) {
+      const url = `${MB_API}/release-group?artist=${mbid}&type=${encodeURIComponent('album|ep')}&inc=artist-credits+tags&fmt=json&limit=100&offset=${page * 100}`;
+      let data;
+      try { data = await mbFetchJson(url); } catch (err) { if (page === 0) throw err; break; } // page suivante refusée : on garde ce qu'on a
+      groups = groups.concat(data['release-groups'] || []);
+      if (groups.length >= (data['release-group-count'] || 0)) break;
+    }
+    return groups.filter(keep);
+  };
+
+  // Identifiant MusicBrainz de l'artiste quand Last.fm n'en donne pas
+  const findMbid = async () => {
+    const data = await mbFetchJson(`${MB_API}/artist/?query=${encodeURIComponent(`artist:"${String(artist.name).replace(/["\\]/g, ' ')}"`)}&fmt=json&limit=5`);
+    const wanted = mbNormalize(artist.name);
+    const hit = asArray(data.artists).find(x => mbNormalize(x.name) === wanted);
+    return hit ? hit.id : '';
+  };
+
+  // 2) Repli : recherche (par identifiant, puis par nom)
   const run = async (who, byName) => {
     const query = `${who} AND (primarytype:Album OR primarytype:EP) AND NOT (${DISCOVER_MB_EXCLUDED})`;
     let groups = [];
     for (let page = 0; page < maxPages; page++) {
       const url = `${MB_API}/release-group/?query=${encodeURIComponent(query)}&fmt=json&limit=100&offset=${page * 100}`;
       let data;
-      try { data = await mbFetchJson(url); } catch (err) { if (page === 0) throw err; break; } // page suivante refusée : on garde ce qu'on a
+      try { data = await mbFetchJson(url); } catch (err) { if (page === 0) throw err; break; }
       groups = groups.concat(data['release-groups'] || []);
       if (groups.length >= (data.count || 0)) break;
     }
@@ -3818,13 +3845,15 @@ async function discoverMbArtistGroups(artist, maxPages = 1) {
     }
     return groups;
   };
-  const byNameQuery = `artist:"${String(artist.name).replace(/["\\]/g, ' ')}"`;
 
   let result;
   try {
-    let groups = artist.mbid ? await run(`arid:${artist.mbid}`, false) : await run(byNameQuery, true);
-    // Identifiant périmé ou inconnu de MusicBrainz (Last.fm en donne parfois) : on retente avec le nom de l'artiste
-    if (artist.mbid && groups.length === 0) groups = await run(byNameQuery, true);
+    let groups = [];
+    let mbid = artist.mbid;
+    if (!mbid) { try { mbid = await findMbid(); } catch (err) { /* on tentera la recherche par nom */ } }
+    if (mbid) { try { groups = await browse(mbid); } catch (err) { groups = []; } }
+    if (groups.length === 0 && artist.mbid) groups = await run(`arid:${artist.mbid}`, false);
+    if (groups.length === 0) groups = await run(`artist:"${String(artist.name).replace(/["\\]/g, ' ')}"`, true);
     result = { ok: true, groups };
   } catch (err) {
     result = { ok: false, groups: [] };
@@ -5059,7 +5088,10 @@ async function discoverShowDiscography(name, mbid, options = {}) {
       items.sort((a, b) => b.playcount - a.playcount);
       s.disco.status = `<span class="dc-muted">${mb.ok ? "Artiste introuvable sur MusicBrainz" : "MusicBrainz n'a pas répondu"}  : dates indisponibles, albums officiels devinés d'après leur titre.</span>`;
     } else {
-      const isStudio = g => asArray(g['secondary-types']).length === 0 && g['primary-type'] === 'Album';
+      const typesKnown = mb.groups.some(g => g['primary-type']); // sans types dans les résultats, on se rabat sur le titre
+      const isStudio = g => typesKnown
+        ? asArray(g['secondary-types']).length === 0 && String(g['primary-type'] || '').toLowerCase() === 'album'
+        : !MB_NON_STUDIO_REGEX.test(g.title || '');
       // Une fin de titre qui ressemble à une suite ("II", "Vol. 2", "Part 3"...) désigne un autre album, pas une réédition
       const isSequelTail = tail => /^(?:\d|[ivx]+\b|vol|volume|part|pt)/i.test(tail.trim());
 
@@ -5103,6 +5135,11 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         items.push(make(a.title, null, a, false));
       });
 
+      if (!items.some(r => r.official)) { // aide au diagnostic : on voit ce que MusicBrainz a renvoyé
+        const types = {};
+        mb.groups.forEach(g => { const t = [g['primary-type'] || '?', ...asArray(g['secondary-types'])].join('+'); types[t] = (types[t] || 0) + 1; });
+        s.disco.diag = `<span class="dc-warn">Aucun album studio reconnu. MusicBrainz a renvoyé ${mb.groups.length} sortie(s) : ${mbEscapeHTML(Object.entries(types).map(([t, n]) => `${n} × ${t}`).join(', '))}.</span>`;
+      }
       const byYear = (a, b) => (a.year || 9999) - (b.year || 9999) || b.playcount - a.playcount;
       items.sort((a, b) => (b.official - a.official) || byYear(a, b));
     }
@@ -5111,7 +5148,7 @@ async function discoverShowDiscography(name, mbid, options = {}) {
     s.disco.items = items;
     s.disco.loading = false;
     if (items.length === 0) s.disco.status = '<span class="dc-warn">Aucun album trouvé pour cet artiste.</span>';
-    else if (mb.ok && mb.groups.length > 0) s.disco.status = '';
+    else if (mb.ok && mb.groups.length > 0) s.disco.status = s.disco.diag || '';
     renderDiscoverResults();
   } catch (err) {
     if (runId !== s.runId) return;
