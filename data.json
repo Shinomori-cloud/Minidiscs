@@ -4393,6 +4393,25 @@
         "Dry Me Out"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791115461919",
+      "md_cover": "images/img_1791115460576.jpg",
+      "title": "Sweet Receiver + Red Spider",
+      "artist": "Troy Von Balthazar",
+      "main_genre": "Pop & Folk & Variety",
+      "tags": [],
+      "release_year": "2001",
+      "duration": "18:43",
+      "tracks": [
+        "Enemies",
+        "One Last Happiness",
+        "Sweet Receiver",
+        "You Could Ice Skate to This",
+        "I Want You to Want Me",
+        "Red Spider"
+      ],
+      "toRecord": false
     }
   ]
 }
