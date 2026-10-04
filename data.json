@@ -4370,6 +4370,29 @@
         "Iowa"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791104649532",
+      "md_cover": "images/img_1791104648006.jpg",
+      "title": "Amen",
+      "artist": "Noiseless",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [],
+      "release_year": "2002",
+      "duration": "34:52",
+      "tracks": [
+        "In the Shit",
+        "Amen",
+        "Dead or Alive",
+        "Pain",
+        "Cotton's Floor",
+        "Soak",
+        "Freaky Man",
+        "Turn Around",
+        "Drive In",
+        "Dry Me Out"
+      ],
+      "toRecord": false
     }
   ]
 }
