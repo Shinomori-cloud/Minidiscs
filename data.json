@@ -4412,6 +4412,37 @@
         "Red Spider"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791115651683",
+      "md_cover": "https://coverartarchive.org/release-group/9c2ef53f-dea9-32a9-9538-91e673b6e3f5/front-500",
+      "title": "A Part From Life",
+      "artist": "Chokebore",
+      "main_genre": "Rock & Blues",
+      "tags": [
+        "indie rock",
+        "rock"
+      ],
+      "release_year": "2003",
+      "duration": "51:41",
+      "tracks": [
+        "She Flew Alone",
+        "Snow",
+        "I Love the Waiting",
+        "Thin as Clouds",
+        "Little Dream",
+        "Days of Nothing",
+        "Tiny Boosters",
+        "You Are the Sunshine of My Life",
+        "Ciao L.A.",
+        "Geneva",
+        "Be Forceful",
+        "Narrow",
+        "Valentine",
+        "It Could Ruin Your Day",
+        "Police"
+      ],
+      "toRecord": false
     }
   ]
 }
