@@ -3496,6 +3496,68 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1791139574173",
+      "md_cover": "images/img_1791139572098.jpg",
+      "title": "From the Muddy Bank of the Wishkah / A Part from Life / Greatest Hits... Live",
+      "albums": [
+        {
+          "id": "md-1791139574173-alb-1",
+          "md_cover": "images/wishka.jpg",
+          "title": "From the Muddy Bank of the Wishkah",
+          "artist": "Nirvana",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "Alternative Rock",
+            "Grunge"
+          ],
+          "release_year": "",
+          "duration": "54:01",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791139574173-alb-2",
+          "md_cover": "images/img_1791139055046.jpg",
+          "title": "A Part from Life",
+          "artist": "Chokebore",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [],
+          "release_year": "2001",
+          "duration": "53:00",
+          "tracks": [
+            "She Flew Alone",
+            "Snow",
+            "I Love the Waiting",
+            "Thin as Clouds",
+            "Little Dream",
+            "Days of Nothing",
+            "Tiny Boosters",
+            "You Are the Sunshine of My Life",
+            "Ciao L.A.",
+            "Geneva",
+            "Be Forceful",
+            "Narrow",
+            "Valentine",
+            "It Could Ruin Your Day",
+            "Police"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791139574173-alb-3",
+          "md_cover": "images/img_1791137888006.jpg",
+          "title": "Greatest Hits... Live",
+          "artist": "The Smashing Pumpkins",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [],
+          "release_year": "1996",
+          "duration": "40",
+          "tracks": [],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -3520,17 +3582,6 @@
       ],
       "duration": "1:01:48",
       "md_cover": "images/u2bestof.jpg"
-    },
-    {
-      "title": "From the Muddy Bank of the Wishkah",
-      "artist": "Nirvana",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "Alternative Rock",
-        "Grunge"
-      ],
-      "duration": "54:01",
-      "md_cover": "images/wishka.jpg"
     },
     {
       "title": "Innuendo",
@@ -4410,46 +4461,6 @@
         "You Could Ice Skate to This",
         "I Want You to Want Me",
         "Red Spider"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1791137889467",
-      "md_cover": "images/img_1791137888006.jpg",
-      "title": "Greatest Hits... Live",
-      "artist": "The Smashing Pumpkins",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [],
-      "release_year": "1996",
-      "duration": "40",
-      "tracks": [],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1791139056537",
-      "md_cover": "images/img_1791139055046.jpg",
-      "title": "A Part from Life",
-      "artist": "Chokebore",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [],
-      "release_year": "2001",
-      "duration": "53:00",
-      "tracks": [
-        "She Flew Alone",
-        "Snow",
-        "I Love the Waiting",
-        "Thin as Clouds",
-        "Little Dream",
-        "Days of Nothing",
-        "Tiny Boosters",
-        "You Are the Sunshine of My Life",
-        "Ciao L.A.",
-        "Geneva",
-        "Be Forceful",
-        "Narrow",
-        "Valentine",
-        "It Could Ruin Your Day",
-        "Police"
       ],
       "toRecord": false
     }
