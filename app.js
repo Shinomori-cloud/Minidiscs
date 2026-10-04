@@ -3806,7 +3806,8 @@ async function discoverMbArtistGroups(artist, maxPages = 1) {
     let groups = [];
     for (let page = 0; page < maxPages; page++) {
       const url = `${MB_API}/release-group/?query=${encodeURIComponent(query)}&fmt=json&limit=100&offset=${page * 100}`;
-      const data = await mbFetchJson(url);
+      let data;
+      try { data = await mbFetchJson(url); } catch (err) { if (page === 0) throw err; break; } // page suivante refusée : on garde ce qu'on a
       groups = groups.concat(data['release-groups'] || []);
       if (groups.length >= (data.count || 0)) break;
     }
@@ -4635,7 +4636,9 @@ function adFormatTrack(sec) {
 }
 
 function adHtmlToText(html) {
-  const cleaned = String(html || '').replace(/<a\s[^>]*href="[^"]*last\.fm[^"]*"[^>]*>[^<]*<\/a>\s*$/i, ''); // lien « Lire plus sur Last.fm »
+  const cleaned = String(html || '')
+    .replace(/<a\s[^>]*href="[^"]*last\.fm[^"]*"[^>]*>[^<]*<\/a>\s*/gi, '') // lien « Lire plus sur Last.fm »
+    .replace(/(User-contributed text|Le texte (?:produit|généré) par les utilisateurs)[^.]*\.(?:\s*Additional terms may apply\.)?/gi, ''); // mention de licence
   const doc = new DOMParser().parseFromString(cleaned, 'text/html');
   return (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
 }
@@ -4676,17 +4679,28 @@ async function adToFrench(text) {
   return result;
 }
 
+// Infos Last.fm de l'album. La description (« wiki ») n'existe pas toujours dans la langue demandée : on la cherche
+// en français puis en anglais, avec le titre exact puis le titre sans sa mention entre parenthèses.
 async function adAlbumInfo(r) {
-  const tries = [r.title, r.title.replace(/\s*[\(\[][^\)\]]*[\)\]]\s*$/, '').trim()].filter((t, i, a) => t && a.indexOf(t) === i);
-  for (const album of tries) {
-    try {
-      const data = await lastfmCall('album.getInfo', { artist: r.artist, album, lang: 'fr' });
-      if (data && data.album) return data.album;
-    } catch (err) {
-      if (isFatalDiscoverError(err)) throw err; // album introuvable : on essaie le titre simplifié
+  const titles = [r.title, r.title.replace(/\s*[\(\[][^\)\]]*[\)\]]\s*$/, '').trim()].filter((t, i, a) => t && a.indexOf(t) === i);
+  let base = null, wiki = null;
+  for (const album of titles) {
+    for (const lang of ['fr', 'en']) {
+      let data;
+      try {
+        data = await lastfmCall('album.getInfo', { artist: r.artist, album, lang });
+      } catch (err) {
+        if (isFatalDiscoverError(err)) throw err; // album introuvable sous ce titre : on essaie la suite
+        continue;
+      }
+      const a = data && data.album;
+      if (!a) continue;
+      if (!base) base = a;
+      if (a.wiki && adHtmlToText(a.wiki.summary || a.wiki.content || '')) { wiki = a.wiki; break; }
     }
+    if (wiki) break;
   }
-  return null;
+  return base ? { ...base, wiki: wiki || base.wiki } : null;
 }
 
 async function adMbTracks(mbid) {
@@ -4733,10 +4747,10 @@ function renderAlbumDetail(r) {
       <h2 class="ad-title">${mbEscapeHTML(r.title)}</h2>
       <div class="ad-artist">${mbEscapeHTML(r.artist)}</div>
       <div id="ad-facts" class="ad-facts"></div>
-      <section class="ad-sec"><h3>Description</h3><div id="ad-desc" class="ad-text ad-note">⏳ Chargement…</div></section>
-      <section id="ad-tags-sec" class="ad-sec"><h3>Tags</h3><div id="ad-tags" class="ad-tags ad-note">⏳ Chargement…</div></section>
-      <section class="ad-sec"><h3>Tracklist</h3><div id="ad-tracks" class="ad-note">⏳ Chargement…</div></section>
-      <section class="ad-sec"><h3>Albums similaires</h3><div id="ad-similar" class="ad-note">⏳ Chargement…</div></section>
+      <section class="ad-sec list-item"><h3>Description</h3><div id="ad-desc" class="ad-text ad-note">⏳ Chargement…</div></section>
+      <section id="ad-tags-sec" class="ad-sec list-item"><h3>Tags</h3><div id="ad-tags" class="ad-tags ad-note">⏳ Chargement…</div></section>
+      <section class="ad-sec list-item"><h3>Tracklist</h3><div id="ad-tracks" class="ad-note">⏳ Chargement…</div></section>
+      <section class="ad-sec list-item"><h3>Albums similaires</h3><div id="ad-similar" class="ad-note">⏳ Chargement…</div></section>
     </div>`;
   loadAlbumDetail(r, token);
 }
@@ -4812,7 +4826,8 @@ async function loadAlbumDetail(r, token) {
 
   // Description : en français (Last.fm la fournit parfois déjà), sinon traduite
   const wiki = info && info.wiki;
-  const text = adHtmlToText((wiki && (wiki.summary || wiki.content)) || '');
+  let text = adHtmlToText((wiki && (wiki.summary || wiki.content)) || '');
+  if (text.length > 1500) text = (text.slice(0, 1500).match(/^[\s\S]*[.!?](?=\s|$)/) || [text.slice(0, 1500)])[0]; // texte long : on s'arrête à une fin de phrase
   if (!text) return note('ad-desc', 'Aucune description disponible pour cet album.');
   if (adLooksFrench(text)) return set('ad-desc', mbEscapeHTML(text));
   note('ad-desc', '⏳ Traduction en cours…');
@@ -4952,6 +4967,9 @@ function discoverShowDiscographyFromForm() {
   goToArtistDiscographyFromResults(name, '');
 }
 
+// Titres qui désignent presque toujours autre chose qu'un album studio (repli quand MusicBrainz n'est pas disponible)
+const MB_NON_STUDIO_REGEX = /\b(live|compilation|best of|greatest hits|hits|collection|anthology|essentials?|sessions?|unplugged|demos?|singles?|eps?|remix(?:es)?|b-sides?|rarities|box set|soundtrack|ost|instrumental|acoustic|bootleg|mixtape|in concert|dvd)\b/i;
+
 async function discoverShowDiscography(name, mbid, options = {}) {
   const s = discoverState;
   if (!name) return;
@@ -5037,9 +5055,9 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         if (!cur || a.title.length < cur.title.length) byKey.set(a.key, { ...a, playcount: (cur ? cur.playcount : 0) + a.playcount });
         else cur.playcount += a.playcount;
       });
-      byKey.forEach(pop => items.push(make(pop.title, null, pop, true)));
+      byKey.forEach(pop => items.push(make(pop.title, null, pop, !MB_NON_STUDIO_REGEX.test(pop.title))));
       items.sort((a, b) => b.playcount - a.playcount);
-      s.disco.status = `<span class="dc-muted">${mb.ok ? "Artiste introuvable sur MusicBrainz" : "MusicBrainz n'a pas répondu"} : les dates ne sont pas disponibles.</span>`;
+      s.disco.status = `<span class="dc-muted">${mb.ok ? "Artiste introuvable sur MusicBrainz" : "MusicBrainz n'a pas répondu"}  : dates indisponibles, albums officiels devinés d'après leur titre.</span>`;
     } else {
       const isStudio = g => asArray(g['secondary-types']).length === 0 && g['primary-type'] === 'Album';
       // Une fin de titre qui ressemble à une suite ("II", "Vol. 2", "Part 3"...) désigne un autre album, pas une réédition
@@ -5070,11 +5088,12 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         else unmatched.push(a);
       });
 
-      // 4. Albums officiels = albums studio connus de Last.fm ; le reste passera sous le trait de séparation
+      // 4. Albums officiels = albums studio de MusicBrainz (type « Album », sans mention live / compilation / etc.).
+      //    Last.fm n'apporte que la popularité et les images ; tout le reste passe sous le trait de séparation
       kept.forEach(e => {
         const best = e.lfm.slice().sort((x, y) => y.playcount - x.playcount)[0];
         const pop = best ? { playcount: e.lfm.reduce((n, x) => n + x.playcount, 0), image: best.image, url: best.url } : null;
-        items.push(make(e.g.title, e.g, pop, e.studio && e.lfm.length > 0));
+        items.push(make(e.g.title, e.g, pop, e.studio));
       });
       // Albums Last.fm inconnus de MusicBrainz : une seule ligne par titre de base
       const seenUnmatched = new Set();
@@ -5084,8 +5103,6 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         items.push(make(a.title, null, a, false));
       });
 
-      // Aucun album officiel reconnu (titres différents entre Last.fm et MusicBrainz...) : on retient les albums classiques (ni EP, ni live, ni compilation)
-      if (!items.some(r => r.official)) items.forEach(r => { if (r.primary !== 'EP' && r.secondary.length === 0) r.official = true; });
       const byYear = (a, b) => (a.year || 9999) - (b.year || 9999) || b.playcount - a.playcount;
       items.sort((a, b) => (b.official - a.official) || byYear(a, b));
     }
