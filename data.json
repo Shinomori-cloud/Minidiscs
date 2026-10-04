@@ -4424,6 +4424,34 @@
       "duration": "40",
       "tracks": [],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791139056537",
+      "md_cover": "images/img_1791139055046.jpg",
+      "title": "A Part from Life",
+      "artist": "Chokebore",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [],
+      "release_year": "2001",
+      "duration": "53:00",
+      "tracks": [
+        "She Flew Alone",
+        "Snow",
+        "I Love the Waiting",
+        "Thin as Clouds",
+        "Little Dream",
+        "Days of Nothing",
+        "Tiny Boosters",
+        "You Are the Sunshine of My Life",
+        "Ciao L.A.",
+        "Geneva",
+        "Be Forceful",
+        "Narrow",
+        "Valentine",
+        "It Could Ruin Your Day",
+        "Police"
+      ],
+      "toRecord": false
     }
   ]
 }
