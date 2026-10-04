@@ -4443,6 +4443,18 @@
         "Police"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791137889467",
+      "md_cover": "images/img_1791137888006.jpg",
+      "title": "Greatest Hits... Live",
+      "artist": "The Smashing Pumpkins",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [],
+      "release_year": "1996",
+      "duration": "40",
+      "tracks": [],
+      "toRecord": false
     }
   ]
 }
