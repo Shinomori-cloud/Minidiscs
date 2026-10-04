@@ -3097,7 +3097,7 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
   right: 0;
   top: var(--back-top, 35%);   /* bande mesurée sur l'accueil par updateBackBand() (app.js) */
   height: var(--back-h, 42vh);
-  width: 40px;           /* Largeur de la zone tactile */
+  width: 26px;           /* Largeur de la zone tactile (assez fine pour ne pas gêner les boutons du bord droit) */
   background: transparent;
   border: none;
   outline: none;
@@ -3166,7 +3166,37 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .cs-panel input[type=range]::-moz-range-thumb { width: 30px; height: 30px; border-radius: 50%; background: #ff007f; border: 2px solid #000; box-shadow: 2px 2px 0 #000; pointer-events: auto; cursor: pointer; }
 
 /* Studio : marge à droite pour que les jauges ne passent pas sous la bande du bouton retour */
-.cs-panel { padding-right: 48px; }
+.cs-panel { padding-right: 34px; }
 
 .cs-panel label.cs-check { flex-direction: row; align-items: center; gap: 8px; font-size: 0.8rem; }
 .cs-check input { width: 22px; height: 22px; accent-color: #ff007f; }
+
+/* Page Découverte : tuiles cliquables */
+.dc-open { cursor: pointer; }
+.dc-open:active { filter: brightness(1.15); }
+
+/* Page « Détails » d'un album */
+.ad-page { --ad: #ff4fa3; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 4px 4px 110px; }
+.ad-cover { position: relative; width: min(62vw, 260px); aspect-ratio: 1; border-radius: 10px; border: 3px solid var(--ad); box-shadow: 4px 4px 0 #000, 0 0 22px rgba(255, 255, 255, .12); background: rgba(255, 255, 255, .06); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+.ad-cover img, .ad-sim-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ad-title { margin: 0; text-align: center; font-size: 1.35rem; line-height: 1.2; color: var(--text-main); }
+.ad-artist { font-size: 1rem; font-weight: 700; color: var(--ad); text-align: center; }
+.ad-facts { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; font-size: 0.85rem; color: var(--text-sub); }
+.ad-sec { width: 100%; box-sizing: border-box; padding: 12px 14px; border: 2px solid rgba(255, 255, 255, .14); border-left: 5px solid var(--ad); border-radius: 12px; background: rgba(255, 255, 255, .04); }
+.ad-sec.hidden { display: none; }
+.ad-sec h3 { margin: 0 0 8px; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; color: var(--ad); }
+.ad-text { font-size: 0.9rem; line-height: 1.5; color: var(--text-main); text-align: left; }
+.ad-note { font-size: 0.8rem; color: var(--text-sub); font-style: italic; }
+.ad-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.ad-tag { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--ad); font-size: 0.75rem; color: var(--text-main); }
+.ad-tracks { list-style: none; margin: 0; padding: 0; }
+.ad-tracks li { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(255, 255, 255, .08); font-size: 0.88rem; color: var(--text-main); }
+.ad-tracks li:last-child { border-bottom: none; }
+.ad-n { width: 24px; flex: none; text-align: right; color: var(--text-sub); }
+.ad-t { flex: 1; min-width: 0; }
+.ad-d { flex: none; color: var(--text-sub); font-variant-numeric: tabular-nums; }
+.ad-sim { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.ad-sim-item { display: flex; flex-direction: column; gap: 4px; min-width: 0; text-align: center; cursor: pointer; }
+.ad-sim-cover { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid rgba(255, 255, 255, .25); background: rgba(255, 255, 255, .06); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
+.ad-sim-title { font-size: 0.72rem; font-weight: 700; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ad-sim-artist { font-size: 0.66rem; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
