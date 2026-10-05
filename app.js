@@ -4897,19 +4897,23 @@ function renderDiscoverResults() {
       <div class="dc-disco-title">📀 Discographie de <span class="dc-disco-artist">${mbEscapeHTML(d.artist)}</span></div>`;
     discoBar.classList.remove('hidden');
 
-    // Albums (studio) affichés d'office ; live, compilations et autres sorties derrière un bouton chacun
-    let html = d.items.filter(r => r.section === 'albums').map(r => discoverAlbumHTML(mark(r))).join('');
+    // Albums (studio) affichés d'office ; live et compilations : les 3 premiers puis un bouton ; autres sorties : un bouton seul
+    let html = d.items.filter(r => r.sections.includes('albums')).map(r => discoverAlbumHTML(mark(r))).join('');
     [
-      { id: 'live', title: 'Albums live', button: 'les albums live' },
-      { id: 'compil', title: 'Compilations', button: 'les compilations' },
-      { id: 'other', title: 'Autres sorties', button: 'les autres sorties' },
+      { id: 'live', title: 'Albums live', preview: 3, more: 'autres albums live' },
+      { id: 'compil', title: 'Compilations', preview: 3, more: 'autres compilations' },
+      { id: 'other', title: 'Autres sorties', preview: 0, more: 'les autres sorties' },
     ].forEach(sec => {
-      const list = d.items.filter(r => r.section === sec.id);
+      const list = d.items.filter(r => r.sections.includes(sec.id));
       if (list.length === 0) return;
       const open = !!(d.open && d.open[sec.id]);
+      const rest = list.length - sec.preview;
+      const button = (sec.preview === 0 || rest > 0)
+        ? `<button type="button" class="btn-secondary dc-others-toggle" onclick="discoverToggleSection('${sec.id}')">${open ? 'Réduire' : 'Afficher'} ${open ? '' : (sec.preview ? rest + ' ' : '') + sec.more}${sec.preview === 0 && !open ? ` (${list.length})` : ''}</button>`.replace(/ <\/button>/, '</button>')
+        : '';
+      const cards = (open ? list : list.slice(0, sec.preview)).map(r => discoverAlbumHTML(mark(r))).join('');
       html += discoverSeparatorHTML(sec.title);
-      html += `<button type="button" class="btn-secondary dc-others-toggle" onclick="discoverToggleSection('${sec.id}')">${open ? 'Masquer' : 'Afficher'} ${sec.button} (${list.length})</button>`;
-      if (open) html += list.map(r => discoverAlbumHTML(mark(r))).join('');
+      html += sec.preview === 0 ? button + (open ? cards : '') : cards + button;
     });
     box.innerHTML = html;
 
@@ -5017,19 +5021,25 @@ function discoverShowDiscographyFromForm() {
 function discoverSectionOf(group) {
   const primary = String(group['primary-type'] || '').toLowerCase();
   const secondary = asArray(group['secondary-types']).map(t => String(t).toLowerCase());
-  if (primary !== 'album') return 'other';
-  if (secondary.length === 0) return 'albums';
-  if (secondary.every(t => t === 'live' || t === 'compilation')) return secondary.includes('compilation') ? 'compil' : 'live';
-  return 'other';
+  if (primary !== 'album') return ['other'];
+  if (secondary.length === 0) return ['albums'];
+  if (secondary.every(t => t === 'live' || t === 'compilation')) {
+    const sections = []; // à la fois live et compilation : présent dans les deux sections
+    if (secondary.includes('live')) sections.push('live');
+    if (secondary.includes('compilation')) sections.push('compil');
+    return sections;
+  }
+  return ['other'];
 }
 
 // Repli sans types (MusicBrainz muet) : on devine la section d'après le titre
 function discoverSectionOfTitle(title) {
   const t = String(title || '');
-  if (/\b(demos?|singles?|eps?|remix(?:es)?|b-sides?|soundtrack|ost|instrumentals?|bootleg|mixtape|dvd|sessions?)\b/i.test(t)) return 'other';
-  if (/\b(compilation|best of|greatest hits|hits|collection|anthology|essentials?|box set|rarities)\b/i.test(t)) return 'compil';
-  if (/\b(live|unplugged|in concert|acoustic)\b/i.test(t)) return 'live';
-  return 'albums';
+  if (/\b(demos?|singles?|eps?|remix(?:es)?|b-sides?|soundtrack|ost|instrumentals?|bootleg|mixtape|dvd|sessions?)\b/i.test(t)) return ['other'];
+  const sections = [];
+  if (/\b(live|unplugged|in concert|acoustic)\b/i.test(t)) sections.push('live');
+  if (/\b(compilation|best of|greatest hits|hits|collection|anthology|essentials?|box set|rarities)\b/i.test(t)) sections.push('compil');
+  return sections.length ? sections : ['albums'];
 }
 
 async function discoverShowDiscography(name, mbid, options = {}) {
@@ -5088,7 +5098,7 @@ async function discoverShowDiscography(name, mbid, options = {}) {
     });
 
     const items = [];
-    const make = (title, group, pop, section) => {
+    const make = (title, group, pop, sections) => {
       const tags = discoverGroupTags(group);
       return {
         key: `${mbNormalize(artist.name)}|${mbBaseTitle(title)}`,
@@ -5105,8 +5115,9 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         lastfmUrl: pop ? pop.url : '',
         tags,
         mainGenre: discoverGuessGenre(tags),
-        section,
-        official: section === 'albums',
+        sections,
+        section: sections[0], // section principale (tri)
+        official: sections.includes('albums'),
       };
     };
 
@@ -5130,13 +5141,13 @@ async function discoverShowDiscography(name, mbid, options = {}) {
       // 1. Sorties MusicBrainz : une seule entrée par titre de base (l'originale, la plus ancienne)
       const entries = Array.from(discoverIndexGroups(mb.groups).entries())
         .filter(([, e]) => !MB_PARASITE_REGEX.test(e.g.title || ''))
-        .map(([key, e]) => ({ key, g: e.g, year: discoverYearOf(e.g), section: sectionOf(e.g), lfm: [] }));
+        .map(([key, e]) => ({ key, g: e.g, year: discoverYearOf(e.g), sections: sectionOf(e.g), lfm: [] }));
 
       // 2. Les rééditions d'albums au titre rallongé ("OK Computer OKNOTOK 1997 2017") sont écartées au profit de l'original
       const kept = entries.filter(a => {
-        if (a.section !== 'albums') return true;
+        if (!a.sections.includes('albums')) return true;
         return !entries.some(b =>
-          b !== a && b.section === 'albums' && b.key.length >= 5 && a.key.startsWith(b.key + ' ') &&
+          b !== a && b.sections.includes('albums') && b.key.length >= 5 && a.key.startsWith(b.key + ' ') &&
           !isSequelTail(a.key.slice(b.key.length)) && (!b.year || !a.year || b.year <= a.year)
         );
       });
@@ -5156,14 +5167,14 @@ async function discoverShowDiscography(name, mbid, options = {}) {
       kept.forEach(e => {
         const best = e.lfm.slice().sort((x, y) => y.playcount - x.playcount)[0];
         const pop = best ? { playcount: e.lfm.reduce((n, x) => n + x.playcount, 0), image: best.image, url: best.url } : null;
-        items.push(make(e.g.title, e.g, pop, e.section));
+        items.push(make(e.g.title, e.g, pop, e.sections));
       });
       // Albums Last.fm inconnus de MusicBrainz : une seule ligne par titre de base, dans « Autres sorties »
       const seenUnmatched = new Set();
       unmatched.forEach(a => {
         if (seenUnmatched.has(a.key)) return;
         seenUnmatched.add(a.key);
-        items.push(make(a.title, null, a, 'other'));
+        items.push(make(a.title, null, a, ['other']));
       });
       const byYear = (a, b) => (a.year || 9999) - (b.year || 9999) || b.playcount - a.playcount;
       const rank = { albums: 0, live: 1, compil: 2, other: 3 };
