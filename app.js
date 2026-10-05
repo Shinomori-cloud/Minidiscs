@@ -3052,18 +3052,24 @@ const MB_REISSUE_REGEX = /\b(deluxe|remaster(?:ed)?|anniversary|expanded|re-?iss
 let mbLastCallAt = 0;
 
 async function mbFetchJson(url) {
-  const wait = mbLastCallAt + MB_MIN_DELAY_MS - Date.now();
-  if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
-  mbLastCallAt = Date.now();
+  for (let attempt = 0; ; attempt++) {
+    const wait = mbLastCallAt + MB_MIN_DELAY_MS - Date.now();
+    if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
+    mbLastCallAt = Date.now();
 
-  const response = await fetch(url, { headers: MB_HEADERS });
-  if (response.status === 503 || response.status === 429) {
-    const err = new Error("MusicBrainz limite le nombre de requêtes");
-    err.rateLimited = true;
-    throw err;
+    const response = await fetch(url, { headers: MB_HEADERS });
+    if (response.status === 503 || response.status === 429) {
+      if (attempt < 2) { // débit limité : on patiente puis on réessaie (2 fois au plus)
+        await new Promise(resolve => setTimeout(resolve, 2500 * (attempt + 1)));
+        continue;
+      }
+      const err = new Error("MusicBrainz limite le nombre de requêtes");
+      err.rateLimited = true;
+      throw err;
+    }
+    if (!response.ok) throw new Error(`Erreur réseau MusicBrainz (${response.status})`);
+    return response.json();
   }
-  if (!response.ok) throw new Error(`Erreur réseau MusicBrainz (${response.status})`);
-  return response.json();
 }
 
 // minuscules, sans accents ni ponctuation
@@ -4996,8 +5002,9 @@ function discoverShowDiscographyFromForm() {
   goToArtistDiscographyFromResults(name, '');
 }
 
-// Titres qui désignent presque toujours autre chose qu'un album studio (repli quand MusicBrainz n'est pas disponible)
-const MB_NON_STUDIO_REGEX = /\b(live|compilation|best of|greatest hits|hits|collection|anthology|essentials?|sessions?|unplugged|demos?|singles?|eps?|remix(?:es)?|b-sides?|rarities|box set|soundtrack|ost|instrumental|acoustic|bootleg|mixtape|in concert|dvd)\b/i;
+// Titres qui désignent presque toujours une sortie « annexe » (EP, single, remix, démo, bande originale...).
+// Sert seulement de repli quand MusicBrainz ne donne pas les types.
+const MB_NON_STUDIO_REGEX = /\b(demos?|singles?|eps?|remix(?:es)?|b-sides?|rarities|soundtrack|ost|instrumentals?|bootleg|mixtape|dvd)\b/i;
 
 async function discoverShowDiscography(name, mbid, options = {}) {
   const s = discoverState;
@@ -5089,8 +5096,11 @@ async function discoverShowDiscography(name, mbid, options = {}) {
       s.disco.status = `<span class="dc-muted">${mb.ok ? "Artiste introuvable sur MusicBrainz" : "MusicBrainz n'a pas répondu"}  : dates indisponibles, albums officiels devinés d'après leur titre.</span>`;
     } else {
       const typesKnown = mb.groups.some(g => g['primary-type']); // sans types dans les résultats, on se rabat sur le titre
+      // Sorties officielles : les albums, qu'ils soient studio, live ou compilation (ex. Nirvana : « Incesticide »,
+      // « From the Muddy Banks of the Wishkah »). Ni EP, ni single, ni remix, démo, bande originale...
+      const OFFICIAL_SECONDARY = ['live', 'compilation'];
       const isStudio = g => typesKnown
-        ? asArray(g['secondary-types']).length === 0 && String(g['primary-type'] || '').toLowerCase() === 'album'
+        ? String(g['primary-type'] || '').toLowerCase() === 'album' && asArray(g['secondary-types']).every(t => OFFICIAL_SECONDARY.includes(String(t).toLowerCase()))
         : !MB_NON_STUDIO_REGEX.test(g.title || '');
       // Une fin de titre qui ressemble à une suite ("II", "Vol. 2", "Part 3"...) désigne un autre album, pas une réédition
       const isSequelTail = tail => /^(?:\d|[ivx]+\b|vol|volume|part|pt)/i.test(tail.trim());
@@ -5120,7 +5130,7 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         else unmatched.push(a);
       });
 
-      // 4. Albums officiels = albums studio de MusicBrainz (type « Album », sans mention live / compilation / etc.).
+      // 4. Albums officiels = albums de MusicBrainz (type « Album » : studio, live ou compilation).
       //    Last.fm n'apporte que la popularité et les images ; tout le reste passe sous le trait de séparation
       kept.forEach(e => {
         const best = e.lfm.slice().sort((x, y) => y.playcount - x.playcount)[0];
@@ -5138,7 +5148,7 @@ async function discoverShowDiscography(name, mbid, options = {}) {
       if (!items.some(r => r.official)) { // aide au diagnostic : on voit ce que MusicBrainz a renvoyé
         const types = {};
         mb.groups.forEach(g => { const t = [g['primary-type'] || '?', ...asArray(g['secondary-types'])].join('+'); types[t] = (types[t] || 0) + 1; });
-        s.disco.diag = `<span class="dc-warn">Aucun album studio reconnu. MusicBrainz a renvoyé ${mb.groups.length} sortie(s) : ${mbEscapeHTML(Object.entries(types).map(([t, n]) => `${n} × ${t}`).join(', '))}.</span>`;
+        s.disco.diag = `<span class="dc-warn">Aucun album officiel reconnu. MusicBrainz a renvoyé ${mb.groups.length} sortie(s) : ${mbEscapeHTML(Object.entries(types).map(([t, n]) => `${n} × ${t}`).join(', '))}.</span>`;
       }
       const byYear = (a, b) => (a.year || 9999) - (b.year || 9999) || b.playcount - a.playcount;
       items.sort((a, b) => (b.official - a.official) || byYear(a, b));
