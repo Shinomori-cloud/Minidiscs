@@ -3716,7 +3716,7 @@ const discoverState = {
   searchedArtist: null, // l'artiste recherché lui-même, affiché avant ses artistes similaires
   formOpen: true,       // le formulaire se replie une fois la recherche lancée
   view: 'results',      // 'results' | 'disco' (discographie complète d'un artiste)
-  disco: null,          // { artist, mbid, items, showOthers, loading, status }
+  disco: null,          // { artist, mbid, items, open, loading, status }
 };
 const discoverCache = new Map();
 
@@ -4897,15 +4897,20 @@ function renderDiscoverResults() {
       <div class="dc-disco-title">📀 Discographie de <span class="dc-disco-artist">${mbEscapeHTML(d.artist)}</span></div>`;
     discoBar.classList.remove('hidden');
 
-    let html = '';
-    html += d.items.filter(r => r.official).map(r => discoverAlbumHTML(mark(r))).join('');
-
-    const others = d.items.filter(r => !r.official);
-    if (others.length > 0) {
-      html += discoverSeparatorHTML('Autres sorties');
-      html += `<button type="button" class="btn-secondary dc-others-toggle" onclick="discoverToggleOthers()">${d.showOthers ? 'Masquer' : 'Afficher'} les autres sorties (${others.length}) · live, compilations, EP…</button>`;
-      if (d.showOthers) html += others.map(r => discoverAlbumHTML(mark(r))).join('');
-    }
+    // Albums (studio) affichés d'office ; live, compilations et autres sorties derrière un bouton chacun
+    let html = d.items.filter(r => r.section === 'albums').map(r => discoverAlbumHTML(mark(r))).join('');
+    [
+      { id: 'live', title: 'Albums live', button: 'les albums live' },
+      { id: 'compil', title: 'Compilations', button: 'les compilations' },
+      { id: 'other', title: 'Autres sorties', button: 'les autres sorties' },
+    ].forEach(sec => {
+      const list = d.items.filter(r => r.section === sec.id);
+      if (list.length === 0) return;
+      const open = !!(d.open && d.open[sec.id]);
+      html += discoverSeparatorHTML(sec.title);
+      html += `<button type="button" class="btn-secondary dc-others-toggle" onclick="discoverToggleSection('${sec.id}')">${open ? 'Masquer' : 'Afficher'} ${sec.button} (${list.length})</button>`;
+      if (open) html += list.map(r => discoverAlbumHTML(mark(r))).join('');
+    });
     box.innerHTML = html;
 
     statusEl.classList.remove('dc-status-running');
@@ -4985,9 +4990,11 @@ function discoverScrollToResults() {
   if (target) window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - 175), behavior: 'smooth' });
 }
 
-function discoverToggleOthers() {
-  if (!discoverState.disco) return;
-  discoverState.disco.showOthers = !discoverState.disco.showOthers;
+function discoverToggleSection(id) {
+  const d = discoverState.disco;
+  if (!d) return;
+  d.open = d.open || {};
+  d.open[id] = !d.open[id];
   renderDiscoverResults();
 }
 
@@ -5002,9 +5009,28 @@ function discoverShowDiscographyFromForm() {
   goToArtistDiscographyFromResults(name, '');
 }
 
-// Titres qui désignent presque toujours autre chose qu'un album studio (live, compilation, EP, single, remix...).
-// Sert seulement de repli quand MusicBrainz ne donne ni types ni albums.
-const MB_NON_STUDIO_REGEX = /\b(live|compilation|best of|greatest hits|hits|collection|anthology|essentials?|sessions?|unplugged|demos?|singles?|eps?|remix(?:es)?|b-sides?|rarities|box set|soundtrack|ost|instrumentals?|acoustic|bootleg|mixtape|in concert|dvd)\b/i;
+// Sections de la discographie, d'après les types MusicBrainz :
+//   albums  = « Album » seul (albums studio), affichés d'office
+//   live    = « Album + En public »
+//   compil  = « Album + Compilation »
+//   other   = tout le reste (EP, bandes originales, sorties connues de Last.fm seul...)
+function discoverSectionOf(group) {
+  const primary = String(group['primary-type'] || '').toLowerCase();
+  const secondary = asArray(group['secondary-types']).map(t => String(t).toLowerCase());
+  if (primary !== 'album') return 'other';
+  if (secondary.length === 0) return 'albums';
+  if (secondary.every(t => t === 'live' || t === 'compilation')) return secondary.includes('compilation') ? 'compil' : 'live';
+  return 'other';
+}
+
+// Repli sans types (MusicBrainz muet) : on devine la section d'après le titre
+function discoverSectionOfTitle(title) {
+  const t = String(title || '');
+  if (/\b(demos?|singles?|eps?|remix(?:es)?|b-sides?|soundtrack|ost|instrumentals?|bootleg|mixtape|dvd|sessions?)\b/i.test(t)) return 'other';
+  if (/\b(compilation|best of|greatest hits|hits|collection|anthology|essentials?|box set|rarities)\b/i.test(t)) return 'compil';
+  if (/\b(live|unplugged|in concert|acoustic)\b/i.test(t)) return 'live';
+  return 'albums';
+}
 
 async function discoverShowDiscography(name, mbid, options = {}) {
   const s = discoverState;
@@ -5026,7 +5052,7 @@ async function discoverShowDiscography(name, mbid, options = {}) {
 
   s.formOpen = false;
   s.view = 'disco';
-  s.disco = { artist: name, mbid: mbid || '', items: [], showOthers: false, loading: true, direct, status: `Chargement de la discographie de <strong>${mbEscapeHTML(name)}</strong>…` };
+  s.disco = { artist: name, mbid: mbid || '', items: [], open: {}, loading: true, direct, status: `Chargement de la discographie de <strong>${mbEscapeHTML(name)}</strong>…` };
   refreshDiscoverPage();
   discoverScrollToResults();
 
@@ -5062,7 +5088,7 @@ async function discoverShowDiscography(name, mbid, options = {}) {
     });
 
     const items = [];
-    const make = (title, group, pop, official) => {
+    const make = (title, group, pop, section) => {
       const tags = discoverGroupTags(group);
       return {
         key: `${mbNormalize(artist.name)}|${mbBaseTitle(title)}`,
@@ -5079,7 +5105,8 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         lastfmUrl: pop ? pop.url : '',
         tags,
         mainGenre: discoverGuessGenre(tags),
-        official,
+        section,
+        official: section === 'albums',
       };
     };
 
@@ -5091,32 +5118,31 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         if (!cur || a.title.length < cur.title.length) byKey.set(a.key, { ...a, playcount: (cur ? cur.playcount : 0) + a.playcount });
         else cur.playcount += a.playcount;
       });
-      byKey.forEach(pop => items.push(make(pop.title, null, pop, !MB_NON_STUDIO_REGEX.test(pop.title))));
+      byKey.forEach(pop => items.push(make(pop.title, null, pop, discoverSectionOfTitle(pop.title))));
       items.sort((a, b) => b.playcount - a.playcount);
-      s.disco.status = `<span class="dc-muted">${mb.ok ? "Artiste introuvable sur MusicBrainz" : "MusicBrainz n'a pas répondu"}  : dates indisponibles, albums officiels devinés d'après leur titre.</span>`;
+      s.disco.status = `<span class="dc-muted">${mb.ok ? "Artiste introuvable sur MusicBrainz" : "MusicBrainz n'a pas répondu"}  : dates indisponibles, sorties classées d'après leur titre.</span>`;
     } else {
       const typesKnown = mb.groups.some(g => g['primary-type']); // sans types dans les résultats, on se rabat sur le titre
-      const isStudio = g => typesKnown
-        ? String(g['primary-type'] || '').toLowerCase() === 'album' && asArray(g['secondary-types']).length === 0
-        : !MB_NON_STUDIO_REGEX.test(g.title || '');
+      const sectionOf = g => typesKnown ? discoverSectionOf(g) : discoverSectionOfTitle(g.title || '');
       // Une fin de titre qui ressemble à une suite ("II", "Vol. 2", "Part 3"...) désigne un autre album, pas une réédition
       const isSequelTail = tail => /^(?:\d|[ivx]+\b|vol|volume|part|pt)/i.test(tail.trim());
 
-      // 1. Albums MusicBrainz : une seule entrée par titre de base (l'originale, la plus ancienne)
+      // 1. Sorties MusicBrainz : une seule entrée par titre de base (l'originale, la plus ancienne)
       const entries = Array.from(discoverIndexGroups(mb.groups).entries())
         .filter(([, e]) => !MB_PARASITE_REGEX.test(e.g.title || ''))
-        .map(([key, e]) => ({ key, g: e.g, year: discoverYearOf(e.g), studio: isStudio(e.g), lfm: [] }));
+        .map(([key, e]) => ({ key, g: e.g, year: discoverYearOf(e.g), section: sectionOf(e.g), lfm: [] }));
 
-      // 2. Les rééditions au titre rallongé ("OK Computer OKNOTOK 1997 2017") sont écartées au profit de l'original
+      // 2. Les rééditions d'albums au titre rallongé ("OK Computer OKNOTOK 1997 2017") sont écartées au profit de l'original
       const kept = entries.filter(a => {
-        if (!a.studio) return true;
+        if (a.section !== 'albums') return true;
         return !entries.some(b =>
-          b !== a && b.studio && b.key.length >= 5 && a.key.startsWith(b.key + ' ') &&
+          b !== a && b.section === 'albums' && b.key.length >= 5 && a.key.startsWith(b.key + ' ') &&
           !isSequelTail(a.key.slice(b.key.length)) && (!b.year || !a.year || b.year <= a.year)
         );
       });
 
-      // 3. Chaque album Last.fm est rattaché à l'album MusicBrainz d'origine (titre identique ou édition rallongée)
+      // 3. Chaque album Last.fm est rattaché à la sortie MusicBrainz d'origine (titre identique ou édition rallongée).
+      //    Last.fm ne sert plus qu'à la popularité et aux images : le classement vient de MusicBrainz.
       const unmatched = [];
       lfmAlbums.forEach(a => {
         let target = kept.find(e => e.key === a.key);
@@ -5127,41 +5153,29 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         else unmatched.push(a);
       });
 
-      // 4. Albums officiels = albums studio connus de Last.fm ; le reste passera sous le trait de séparation.
-      //    Replis, uniquement si cette règle ne donne aucun album (artistes pour lesquels la liste restait vide) :
-      //    a) les albums studio de MusicBrainz, même sans confirmation de Last.fm ;
-      //    b) à défaut d'album studio chez MusicBrainz, les albums Last.fm dont le titre n'évoque ni live, ni compilation, ni EP.
-      const strict = kept.some(e => e.studio && e.lfm.length > 0);
-      const isOfficial = e => e.studio && (strict ? e.lfm.length > 0 : !MB_NON_STUDIO_REGEX.test(e.g.title || ''));
       kept.forEach(e => {
         const best = e.lfm.slice().sort((x, y) => y.playcount - x.playcount)[0];
         const pop = best ? { playcount: e.lfm.reduce((n, x) => n + x.playcount, 0), image: best.image, url: best.url } : null;
-        items.push(make(e.g.title, e.g, pop, isOfficial(e)));
+        items.push(make(e.g.title, e.g, pop, e.section));
       });
-      // Albums Last.fm inconnus de MusicBrainz : une seule ligne par titre de base
+      // Albums Last.fm inconnus de MusicBrainz : une seule ligne par titre de base, dans « Autres sorties »
       const seenUnmatched = new Set();
       unmatched.forEach(a => {
         if (seenUnmatched.has(a.key)) return;
         seenUnmatched.add(a.key);
-        items.push(make(a.title, null, a, false));
+        items.push(make(a.title, null, a, 'other'));
       });
-
-      s.disco.diag = '';
-      if (!strict && items.some(r => r.official)) {
-        s.disco.diag = '<span class="dc-muted">Albums officiels d\'après MusicBrainz seul : Last.fm n\'a confirmé aucun titre.</span>';
-      } else if (!items.some(r => r.official)) {
-        items.forEach(r => { if (!r.mbGroup && !MB_NON_STUDIO_REGEX.test(r.title)) r.official = true; });
-        s.disco.diag = '<span class="dc-muted">Albums officiels devinés d\'après leur titre : MusicBrainz ne donne aucun album studio pour cet artiste.</span>';
-      }
       const byYear = (a, b) => (a.year || 9999) - (b.year || 9999) || b.playcount - a.playcount;
-      items.sort((a, b) => (b.official - a.official) || byYear(a, b));
+      const rank = { albums: 0, live: 1, compil: 2, other: 3 };
+      const byPop = (a, b) => b.playcount - a.playcount || byYear(a, b); // live, compilations, autres : les plus écoutés d'abord
+      items.sort((a, b) => (rank[a.section] - rank[b.section]) || (a.section === 'albums' ? byYear(a, b) : byPop(a, b)));
     }
 
     items.forEach((r, i) => { r.idx = i; });
     s.disco.items = items;
     s.disco.loading = false;
     if (items.length === 0) s.disco.status = '<span class="dc-warn">Aucun album trouvé pour cet artiste.</span>';
-    else if (mb.ok && mb.groups.length > 0) s.disco.status = s.disco.diag || '';
+    else if (mb.ok && mb.groups.length > 0) s.disco.status = '';
     renderDiscoverResults();
   } catch (err) {
     if (runId !== s.runId) return;
