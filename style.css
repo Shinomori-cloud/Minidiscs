@@ -19,8 +19,8 @@
   --accent-light: #d8b4fe;
   --export-color: #06d6a0;
 
-  /* Encombrement ajouté au header quand un genre filtré y est affiché (encart 20px + 4px d'espace) */
-  --header-genre-h: 24px;
+  /* Encombrement ajouté au header quand un genre filtré y est affiché (encart 26px + 4px d'espace) */
+  --header-genre-h: 30px;
 
   /* Accueil : taille des vignettes du carrousel et hauteur des boutons du bas.
      --dash-tile est ajustée automatiquement par app.js (fitDashboardSize) selon la hauteur de l'écran. */
@@ -1569,15 +1569,15 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   bottom: 450px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #403f40;
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #1a1a1a;
   padding: 12px 20px;
   border-radius: 10px;
   font-size: 0.88rem;
   font-weight: 700;
   border: 4px solid #d60611;
   box-shadow: 3px 3px 0px #000;
-  z-index: 9999;
+  z-index: 31000; /* au-dessus du studio de covers et de la bande de retour */
   transition: opacity 0.25s ease, transform 0.25s ease;
   text-align: center;
   max-width: 260px;
@@ -1999,7 +1999,7 @@ html, body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 20px;
+  height: 26px;
   margin-top: 4px;
   padding: 0 8px;
   flex-shrink: 0;

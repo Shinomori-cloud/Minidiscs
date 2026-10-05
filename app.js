@@ -704,6 +704,7 @@ function populateFabGenreMenu() {
 /* ==========================================
    UTILITAIRE TOAST
    ========================================== */
+// duration = 0 : la notification reste affichée jusqu'au prochain showToast() ou hideToast()
 function showToast(message, duration = 3000) {
   const toast = document.getElementById('toast');
   if (!toast) return;
@@ -712,9 +713,16 @@ function showToast(message, duration = 3000) {
   toast.textContent = message;
   toast.classList.remove('hidden');
 
-  toastTimeout = setTimeout(() => {
-    toast.classList.add('hidden');
-  }, duration);
+  if (duration > 0) {
+    toastTimeout = setTimeout(() => {
+      toast.classList.add('hidden');
+    }, duration);
+  }
+}
+
+function hideToast() {
+  clearTimeout(toastTimeout);
+  document.getElementById('toast')?.classList.add('hidden');
 }
 
 /* ==========================================
@@ -4567,11 +4575,55 @@ async function discoverRevealMore(runId) {
 }
 
 /* ---------- Affichage ---------- */
-function discoverCoverHTML(image, placeholder = '🎤', extra = '') {
+// photoFor : nom d'un artiste dont la photo sera chargée après l'affichage (voir discoverLoadArtistPhotos)
+function discoverCoverHTML(image, placeholder = '🎤', extra = '', photoFor = '') {
   const img = image
     ? `<img src="${mbEscapeHTML(image)}" alt="" loading="lazy" onerror="this.style.display='none'">`
     : '';
-  return `<div class="dc-cover"><span class="dc-cover-ph">${placeholder}</span>${img}${extra}</div>`;
+  const attr = photoFor && !image ? ` data-photo="${mbEscapeHTML(photoFor)}"` : '';
+  return `<div class="dc-cover"${attr}><span class="dc-cover-ph">${placeholder}</span>${img}${extra}</div>`;
+}
+
+const artistPhotoCache = new Map(); // nom normalisé -> URL de la photo ('' si aucune)
+
+function discoverJsonp(url, timeout = 7000) {
+  return new Promise((resolve, reject) => {
+    const cb = 'dzcb_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+    const script = document.createElement('script');
+    const done = () => { clearTimeout(timer); delete window[cb]; script.remove(); };
+    const timer = setTimeout(() => { done(); reject(new Error('délai dépassé')); }, timeout);
+    window[cb] = data => { done(); resolve(data); };
+    script.onerror = () => { done(); reject(new Error('requête impossible')); };
+    script.src = `${url}${url.includes('?') ? '&' : '?'}output=jsonp&callback=${cb}`;
+    document.head.appendChild(script);
+  });
+}
+
+async function discoverArtistPhoto(name) {
+  const key = mbNormalize(name);
+  if (artistPhotoCache.has(key)) return artistPhotoCache.get(key);
+  let url = '';
+  try {
+    const data = await discoverJsonp(`https://api.deezer.com/search/artist?q=${encodeURIComponent(name)}&limit=5`);
+    // Seul un artiste de même nom est retenu (le plus suivi en cas d'homonymes) : pas de photo plutôt qu'une mauvaise photo
+    const match = ((data && data.data) || []).filter(x => mbNormalize(x.name) === key).sort((a, b) => (b.nb_fan || 0) - (a.nb_fan || 0))[0];
+    const pic = match && (match.picture_medium || match.picture_big || '');
+    url = pic && !/\/artist\/\//.test(pic) ? pic : ''; // les artistes sans photo ont une image par défaut : ignorée
+  } catch (err) { /* pas de photo : le pictogramme reste */ }
+  artistPhotoCache.set(key, url);
+  return url;
+}
+
+async function discoverLoadArtistPhotos() {
+  for (const el of Array.from(document.querySelectorAll('.dc-cover[data-photo]'))) {
+    const name = el.dataset.photo;
+    el.removeAttribute('data-photo');
+    const url = await discoverArtistPhoto(name);
+    if (!url || !el.isConnected) continue;
+    const img = document.createElement('img');
+    img.alt = ''; img.loading = 'lazy'; img.onerror = () => img.remove(); img.src = url;
+    el.appendChild(img);
+  }
 }
 
 function discoverArtistHTML(a) {
@@ -4585,7 +4637,7 @@ function discoverArtistHTML(a) {
   return `
     <div class="list-item dc-item dc-open" style="border-color:${color}; --glow:${color}; border-left-width:6px;" data-artist="${mbEscapeHTML(a.artist)}" data-mbid="${mbEscapeHTML(a.mbid || '')}" onclick="discoverOpenArtist(event, this)">
       ${discoverPlayButton('artist', a.artist, '', 'dc-play-side')}
-      ${discoverCoverHTML(a.topAlbum && a.topAlbum.image, '🎤')}
+      ${discoverCoverHTML(artistPhotoCache.get(mbNormalize(a.artist)), '🎤', '', a.artist)}
       <div class="dc-info">
         ${genreLabel}
         <div class="dc-title">${mbEscapeHTML(a.artist)}</div>
@@ -4848,8 +4900,9 @@ async function loadAlbumDetail(r, token) {
   set('ad-facts', facts.join(' · ') || '');
 
   // Tags
-  const tags = asArray(info && info.tags && info.tags.tag).map(t => t.name).filter(Boolean);
-  const shownTags = (tags.length ? tags : (r.tags || [])).slice(0, 8);
+  const isDateTag = t => /\b(19|20)\d{2}\b/.test(t) || /^\d{2}s$/i.test(String(t).trim()); // « 1991 », « 90s »... : la date est déjà affichée
+  const tags = asArray(info && info.tags && info.tags.tag).map(t => t.name).filter(t => t && !isDateTag(t));
+  const shownTags = (tags.length ? tags : (r.tags || []).filter(t => !isDateTag(t))).slice(0, 8);
   if (shownTags.length) set('ad-tags', shownTags.map(t => `<span class="ad-tag">${mbEscapeHTML(t)}</span>`).join(''));
   else document.getElementById('ad-tags-sec')?.classList.add('hidden');
 
@@ -4916,6 +4969,7 @@ function renderDiscoverResults() {
       html += sec.preview === 0 ? button + (open ? cards : '') : cards + button;
     });
     box.innerHTML = html;
+    discoverLoadArtistPhotos();
 
     statusEl.classList.remove('dc-status-running');
     statusEl.innerHTML = d.status || '';
@@ -4959,6 +5013,7 @@ function renderDiscoverResults() {
     html += discoverArtistHTML(a);
   });
   box.innerHTML = html;
+  discoverLoadArtistPhotos(); // photos des groupes, chargées après l'affichage
 
   let status = s.status || '';
   if (s.started && visible.length > 0) {
@@ -6148,7 +6203,6 @@ function closeCoverStudio() { document.getElementById('cs-overlay')?.classList.a
 async function csFinishConversion(blob) {
   const btn = document.querySelector('.cs-use');
   btn.disabled = true;
-  showToast("⏳ Envoi de la cover sur GitHub...");
   const file = new File([blob], `cover_${Date.now()}.jpg`, { type: 'image/jpeg' });
   const path = await handleImageUpload({ files: [file] }); // enregistrée dans /images du dépôt GitHub
   btn.disabled = false;
@@ -6160,8 +6214,13 @@ async function csFinishConversion(blob) {
 }
 
 async function useCoverStudioResult() {
+  if (CS.convert) { // retour immédiat au toucher : le reste (rendu, envoi GitHub) prend quelques secondes
+    document.querySelector('.cs-use').disabled = true;
+    showToast('⏳ Enregistrement en cours…', 0);
+  }
   await csRender(true); // rendu sans contour de sélection
   document.getElementById('cs-canvas').toBlob(blob => {
+    if (CS.convert && !blob) { document.querySelector('.cs-use').disabled = false; return showToast("⚠️ La cover n'a pas pu être générée."); }
     if (blob && CS.convert) return csFinishConversion(blob);
     const input = document.getElementById('md-cover');
     if (blob && CS.standalone) { // hors formulaire : partage (Android) ou téléchargement de l'image
