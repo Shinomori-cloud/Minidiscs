@@ -3652,6 +3652,43 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1791238572258",
+      "md_cover": "images/img_1791238563982.jpg",
+      "title": "Ten / Superunknown",
+      "albums": [
+        {
+          "id": "md-1791238572258-alb-1",
+          "md_cover": "images/img_1789505500904.jpg",
+          "title": "Ten",
+          "artist": "Pearl Jam",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "Alternative Rock",
+            "Rock"
+          ],
+          "release_year": "",
+          "duration": "53:26",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791238572258-alb-2",
+          "md_cover": "images/Superunknown.jpg",
+          "title": "Superunknown",
+          "artist": "Soundgarden",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "Alternative Rock",
+            "Grunge"
+          ],
+          "release_year": "",
+          "duration": "1:10:19",
+          "tracks": [],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -3751,17 +3788,6 @@
       ],
       "duration": "1:18:31",
       "md_cover": "images/sadhill.jpg"
-    },
-    {
-      "title": "Superunknown",
-      "artist": "Soundgarden",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "Alternative Rock",
-        "Grunge"
-      ],
-      "duration": "1:10:19",
-      "md_cover": "images/Superunknown.jpg"
     },
     {
       "title": "Fight Club",
@@ -3921,17 +3947,6 @@
       ],
       "duration": "49:21",
       "md_cover": "images/img_1789505381171.jpg"
-    },
-    {
-      "title": "Ten",
-      "artist": "Pearl Jam",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "Alternative Rock",
-        "Rock"
-      ],
-      "duration": "53:26",
-      "md_cover": "images/img_1789505500904.jpg"
     },
     {
       "title": "Led Zeppelin IV",
