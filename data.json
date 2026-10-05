@@ -3615,6 +3615,43 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1791230042466",
+      "md_cover": "images/img_1791230040710.jpg",
+      "title": "Mystery White Boy / MTV Unplugged",
+      "albums": [
+        {
+          "id": "md-1791230042466-alb-1",
+          "md_cover": "images/mysterywhite.jpg",
+          "title": "Mystery White Boy",
+          "artist": "Jeff Buckley",
+          "main_genre": "Rock & Blues",
+          "tags": [
+            "Rock",
+            "Blues"
+          ],
+          "release_year": "",
+          "duration": "1:23:00",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791230042466-alb-2",
+          "md_cover": "images/alanisunplugged.jpg",
+          "title": "MTV Unplugged",
+          "artist": "Alanis Morissette",
+          "main_genre": "Pop & Folk & Variety",
+          "tags": [
+            "Pop Rock",
+            "Folk"
+          ],
+          "release_year": "",
+          "duration": "53:18",
+          "tracks": [],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -3716,17 +3753,6 @@
       "md_cover": "images/sadhill.jpg"
     },
     {
-      "title": "MTV Unplugged",
-      "artist": "Alanis Morissette",
-      "main_genre": "Pop & Folk & Variety",
-      "tags": [
-        "Pop Rock",
-        "Folk"
-      ],
-      "duration": "53:18",
-      "md_cover": "images/alanisunplugged.jpg"
-    },
-    {
       "title": "Superunknown",
       "artist": "Soundgarden",
       "main_genre": "Alternative & Grunge 90s",
@@ -3768,17 +3794,6 @@
       ],
       "duration": "44:44",
       "md_cover": "images/incesticide.jpg"
-    },
-    {
-      "title": "Mystery White Boy",
-      "artist": "Jeff Buckley",
-      "main_genre": "Rock & Blues",
-      "tags": [
-        "Rock",
-        "Blues"
-      ],
-      "duration": "1:23:00",
-      "md_cover": "images/mysterywhite.jpg"
     },
     {
       "title": "Boys don't cry",
