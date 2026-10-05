@@ -5002,9 +5002,9 @@ function discoverShowDiscographyFromForm() {
   goToArtistDiscographyFromResults(name, '');
 }
 
-// Titres qui désignent presque toujours une sortie « annexe » (EP, single, remix, démo, bande originale...).
-// Sert seulement de repli quand MusicBrainz ne donne pas les types.
-const MB_NON_STUDIO_REGEX = /\b(demos?|singles?|eps?|remix(?:es)?|b-sides?|rarities|soundtrack|ost|instrumentals?|bootleg|mixtape|dvd)\b/i;
+// Titres qui désignent presque toujours autre chose qu'un album studio (live, compilation, EP, single, remix...).
+// Sert seulement de repli quand MusicBrainz ne donne ni types ni albums.
+const MB_NON_STUDIO_REGEX = /\b(live|compilation|best of|greatest hits|hits|collection|anthology|essentials?|sessions?|unplugged|demos?|singles?|eps?|remix(?:es)?|b-sides?|rarities|box set|soundtrack|ost|instrumentals?|acoustic|bootleg|mixtape|in concert|dvd)\b/i;
 
 async function discoverShowDiscography(name, mbid, options = {}) {
   const s = discoverState;
@@ -5096,11 +5096,8 @@ async function discoverShowDiscography(name, mbid, options = {}) {
       s.disco.status = `<span class="dc-muted">${mb.ok ? "Artiste introuvable sur MusicBrainz" : "MusicBrainz n'a pas répondu"}  : dates indisponibles, albums officiels devinés d'après leur titre.</span>`;
     } else {
       const typesKnown = mb.groups.some(g => g['primary-type']); // sans types dans les résultats, on se rabat sur le titre
-      // Sorties officielles : les albums, qu'ils soient studio, live ou compilation (ex. Nirvana : « Incesticide »,
-      // « From the Muddy Banks of the Wishkah »). Ni EP, ni single, ni remix, démo, bande originale...
-      const OFFICIAL_SECONDARY = ['live', 'compilation'];
       const isStudio = g => typesKnown
-        ? String(g['primary-type'] || '').toLowerCase() === 'album' && asArray(g['secondary-types']).every(t => OFFICIAL_SECONDARY.includes(String(t).toLowerCase()))
+        ? String(g['primary-type'] || '').toLowerCase() === 'album' && asArray(g['secondary-types']).length === 0
         : !MB_NON_STUDIO_REGEX.test(g.title || '');
       // Une fin de titre qui ressemble à une suite ("II", "Vol. 2", "Part 3"...) désigne un autre album, pas une réédition
       const isSequelTail = tail => /^(?:\d|[ivx]+\b|vol|volume|part|pt)/i.test(tail.trim());
@@ -5130,12 +5127,16 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         else unmatched.push(a);
       });
 
-      // 4. Albums officiels = albums de MusicBrainz (type « Album » : studio, live ou compilation).
-      //    Last.fm n'apporte que la popularité et les images ; tout le reste passe sous le trait de séparation
+      // 4. Albums officiels = albums studio connus de Last.fm ; le reste passera sous le trait de séparation.
+      //    Replis, uniquement si cette règle ne donne aucun album (artistes pour lesquels la liste restait vide) :
+      //    a) les albums studio de MusicBrainz, même sans confirmation de Last.fm ;
+      //    b) à défaut d'album studio chez MusicBrainz, les albums Last.fm dont le titre n'évoque ni live, ni compilation, ni EP.
+      const strict = kept.some(e => e.studio && e.lfm.length > 0);
+      const isOfficial = e => e.studio && (strict ? e.lfm.length > 0 : !MB_NON_STUDIO_REGEX.test(e.g.title || ''));
       kept.forEach(e => {
         const best = e.lfm.slice().sort((x, y) => y.playcount - x.playcount)[0];
         const pop = best ? { playcount: e.lfm.reduce((n, x) => n + x.playcount, 0), image: best.image, url: best.url } : null;
-        items.push(make(e.g.title, e.g, pop, e.studio));
+        items.push(make(e.g.title, e.g, pop, isOfficial(e)));
       });
       // Albums Last.fm inconnus de MusicBrainz : une seule ligne par titre de base
       const seenUnmatched = new Set();
@@ -5145,10 +5146,12 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         items.push(make(a.title, null, a, false));
       });
 
-      if (!items.some(r => r.official)) { // aide au diagnostic : on voit ce que MusicBrainz a renvoyé
-        const types = {};
-        mb.groups.forEach(g => { const t = [g['primary-type'] || '?', ...asArray(g['secondary-types'])].join('+'); types[t] = (types[t] || 0) + 1; });
-        s.disco.diag = `<span class="dc-warn">Aucun album officiel reconnu. MusicBrainz a renvoyé ${mb.groups.length} sortie(s) : ${mbEscapeHTML(Object.entries(types).map(([t, n]) => `${n} × ${t}`).join(', '))}.</span>`;
+      s.disco.diag = '';
+      if (!strict && items.some(r => r.official)) {
+        s.disco.diag = '<span class="dc-muted">Albums officiels d\'après MusicBrainz seul : Last.fm n\'a confirmé aucun titre.</span>';
+      } else if (!items.some(r => r.official)) {
+        items.forEach(r => { if (!r.mbGroup && !MB_NON_STUDIO_REGEX.test(r.title)) r.official = true; });
+        s.disco.diag = '<span class="dc-muted">Albums officiels devinés d\'après leur titre : MusicBrainz ne donne aucun album studio pour cet artiste.</span>';
       }
       const byYear = (a, b) => (a.year || 9999) - (b.year || 9999) || b.playcount - a.playcount;
       items.sort((a, b) => (b.official - a.official) || byYear(a, b));
