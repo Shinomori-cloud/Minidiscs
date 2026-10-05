@@ -3558,6 +3558,63 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1791205192695",
+      "md_cover": "images/img_1791205190470.jpg",
+      "title": "The Miseducation of Lauryn Hill / Aquemini",
+      "albums": [
+        {
+          "id": "md-1791205192695-alb-1",
+          "md_cover": "images/miseduation.jpg",
+          "title": "The Miseducation of Lauryn Hill",
+          "artist": "Lauryn Hill",
+          "main_genre": "Rap, Soul & Reggae",
+          "tags": [
+            "Rap",
+            "Soul Funk",
+            "Reggae"
+          ],
+          "release_year": "",
+          "duration": "1:17:39",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791205192695-alb-2",
+          "md_cover": "images/img_1791203754368.jpg",
+          "title": "Aquemini",
+          "artist": "OutKast",
+          "main_genre": "Rap, Soul & Reggae",
+          "tags": [
+            "hip hop",
+            "southern rap",
+            "dirty south",
+            "alternative hip hop",
+            "alternative rap"
+          ],
+          "release_year": "1998",
+          "duration": "1:02:33",
+          "tracks": [
+            "Hold On, Be Strong",
+            "Return of the “G”",
+            "Rosa Parks",
+            "Skew It on the Bar‐B",
+            "Aquemini",
+            "Synthesizer",
+            "Slump",
+            "West Savannah",
+            "Da Art of Storytellin’ (Pt. 1)",
+            "Da Art of Storytellin’ (Pt. 2)",
+            "Mamacita",
+            "Spottieottiedopaliscious",
+            "Y’all Scared",
+            "Liberation",
+            "Chonkyfire"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -3657,18 +3714,6 @@
       ],
       "duration": "1:18:31",
       "md_cover": "images/sadhill.jpg"
-    },
-    {
-      "title": "The Miseducation of Lauryn Hill",
-      "artist": "Lauryn Hill",
-      "main_genre": "Rap, Soul & Reggae",
-      "tags": [
-        "Rap",
-        "Soul Funk",
-        "Reggae"
-      ],
-      "duration": "1:17:39",
-      "md_cover": "images/miseduation.jpg"
     },
     {
       "title": "MTV Unplugged",
@@ -4460,40 +4505,6 @@
         "Maybe",
         "Caravan Holiday",
         "Rooftop"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1791203755723",
-      "md_cover": "images/img_1791203754368.jpg",
-      "title": "Aquemini",
-      "artist": "OutKast",
-      "main_genre": "Rap, Soul & Reggae",
-      "tags": [
-        "hip hop",
-        "southern rap",
-        "dirty south",
-        "alternative hip hop",
-        "alternative rap"
-      ],
-      "release_year": "1998",
-      "duration": "1:02:33",
-      "tracks": [
-        "Hold On, Be Strong",
-        "Return of the “G”",
-        "Rosa Parks",
-        "Skew It on the Bar‐B",
-        "Aquemini",
-        "Synthesizer",
-        "Slump",
-        "West Savannah",
-        "Da Art of Storytellin’ (Pt. 1)",
-        "Da Art of Storytellin’ (Pt. 2)",
-        "Mamacita",
-        "Spottieottiedopaliscious",
-        "Y’all Scared",
-        "Liberation",
-        "Chonkyfire"
       ],
       "toRecord": false
     }
