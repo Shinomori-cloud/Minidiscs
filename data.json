@@ -4496,6 +4496,42 @@
         "Rooftop"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791228165154",
+      "md_cover": "images/img_1791228163575.jpg",
+      "title": "Antichrist Superstar",
+      "artist": "Marilyn Manson",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [
+        "industrial metal",
+        "alternative metal",
+        "industrial rock",
+        "alternative rock",
+        "heavy metal"
+      ],
+      "release_year": "1996",
+      "duration": "1:11:49",
+      "tracks": [
+        "Irresponsible Hate Anthem",
+        "The Beautiful People",
+        "Dried Up, Tied and Dead to the World",
+        "Tourniquet",
+        "Little Horn",
+        "Cryptorchid",
+        "Deformography",
+        "Wormboy",
+        "Mister Superstar",
+        "Angel With the Scabbed Wings",
+        "Kinderfeld",
+        "Antichrist Superstar",
+        "1996",
+        "Minute of Decay",
+        "The Reflecting God",
+        "Man That You Fear",
+        "[unknown]"
+      ],
+      "toRecord": false
     }
   ]
 }
