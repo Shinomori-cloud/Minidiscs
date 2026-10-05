@@ -4432,6 +4432,36 @@
         "Red Spider"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791203490400",
+      "md_cover": "images/img_1791203488594.jpg",
+      "title": "Just Enough Education to Perform",
+      "artist": "Stereophonics",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [
+        "britpop",
+        "rock",
+        "alternative rock",
+        "brit pop",
+        "neo-psychedelia"
+      ],
+      "release_year": "2001",
+      "duration": "45:55",
+      "tracks": [
+        "Vegas Two Times",
+        "Lying in the Sun",
+        "Mr Writer",
+        "Step on My Old Size Nines",
+        "Have a Nice Day",
+        "Nice to Be Out",
+        "Watch Them Fly Sundays",
+        "Everyday I Think of Money",
+        "Maybe",
+        "Caravan Holiday",
+        "Rooftop"
+      ],
+      "toRecord": false
     }
   ]
 }
