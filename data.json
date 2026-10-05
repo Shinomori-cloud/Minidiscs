@@ -4462,6 +4462,40 @@
         "Rooftop"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791203755723",
+      "md_cover": "images/img_1791203754368.jpg",
+      "title": "Aquemini",
+      "artist": "OutKast",
+      "main_genre": "Rap, Soul & Reggae",
+      "tags": [
+        "hip hop",
+        "southern rap",
+        "dirty south",
+        "alternative hip hop",
+        "alternative rap"
+      ],
+      "release_year": "1998",
+      "duration": "1:02:33",
+      "tracks": [
+        "Hold On, Be Strong",
+        "Return of the “G”",
+        "Rosa Parks",
+        "Skew It on the Bar‐B",
+        "Aquemini",
+        "Synthesizer",
+        "Slump",
+        "West Savannah",
+        "Da Art of Storytellin’ (Pt. 1)",
+        "Da Art of Storytellin’ (Pt. 2)",
+        "Mamacita",
+        "Spottieottiedopaliscious",
+        "Y’all Scared",
+        "Liberation",
+        "Chonkyfire"
+      ],
+      "toRecord": false
     }
   ]
 }
