@@ -2800,24 +2800,30 @@ main#app:has(.titles-actions) {
   background: linear-gradient(135deg, #ff4fa3 0%, #b57bff 55%, #00c2d6 100%);
 }
 
-/* Tuile de l'artiste recherché : cadre rose lumineux + invitation à ouvrir la discographie */
+/* Tuile de l'artiste recherché : plus grande, cadre épais et halo rose, teinte rosée en fond */
 .dc-item.dc-featured {
+  padding: 14px 14px;
+  gap: 14px;
   border-color: #ff5cad !important;
-  box-shadow: 4px 4px 0 #000, 0 0 22px -2px rgba(255, 79, 163, 0.75), var(--card-rim);
-  margin-bottom: 4px;
+  border-width: 3px !important;
+  border-left-width: 8px !important;
+  background-image: linear-gradient(135deg, rgba(255, 79, 163, 0.32) 0%, rgba(123, 44, 191, 0.28) 100%), var(--card-sheen);
+  box-shadow: 5px 5px 0 #000, 0 0 28px -2px rgba(255, 79, 163, 0.9), var(--card-rim);
+  margin-bottom: 6px;
 }
 
-.dc-cta {
-  align-self: flex-start;
-  margin-top: 4px;
-  padding: 4px 11px;
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: #ffffff;
-  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
-  border: 1.5px solid #000;
-  border-radius: 999px;
-  box-shadow: 2px 2px 0 #000;
+.dc-item.dc-featured .dc-cover {
+  width: 104px;
+  height: 104px;
+  border-width: 3px;
+  box-shadow: 4px 4px 0 #000, 0 0 14px rgba(255, 79, 163, 0.55);
+}
+
+.dc-item.dc-featured .dc-title {
+  font-family: 'Righteous', cursive;
+  font-size: 1.3rem;
+  line-height: 1.15;
+  text-shadow: 0 0 14px rgba(255, 79, 163, 0.6);
 }
 
 .dc-others-toggle {

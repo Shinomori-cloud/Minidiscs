@@ -4642,7 +4642,6 @@ function discoverArtistHTML(a, featured = false) { // featured : tuile de l'arti
         ${genreLabel}
         <div class="dc-title">${mbEscapeHTML(a.artist)}</div>
         ${facts.length ? `<div class="dc-facts">${facts.join('<br>')}</div>` : ''}
-        ${featured ? '<div class="dc-cta">📀 Voir la discographie ›</div>' : ''}
         ${discoverNowPlaying(discoverPreviewKey('artist', a.artist, ''))}
       </div>
     </div>`;
@@ -4952,7 +4951,8 @@ function renderDiscoverResults() {
     discoBar.classList.remove('hidden');
 
     // Albums (studio) affichés d'office ; live et compilations : les 3 premiers puis un bouton ; autres sorties : un bouton seul
-    let html = d.items.filter(r => r.sections.includes('albums')).map(r => discoverAlbumHTML(mark(r))).join('');
+    const studio = d.items.filter(r => r.sections.includes('albums'));
+    let html = studio.length ? discoverSeparatorHTML('Albums') + studio.map(r => discoverAlbumHTML(mark(r))).join('') : '';
     [
       { id: 'ep', title: 'EP et B-sides', preview: 3, more: 'autres EP et B-sides' },
       { id: 'live', title: 'Albums live', preview: 3, more: 'autres albums live' },
