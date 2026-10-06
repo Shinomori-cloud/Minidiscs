@@ -4626,7 +4626,7 @@ async function discoverLoadArtistPhotos() {
   }
 }
 
-function discoverArtistHTML(a) {
+function discoverArtistHTML(a, featured = false) { // featured : tuile de l'artiste recherché, qui ouvre sa discographie
   const color = getSingleGenreColor(a.mainGenre ? a.mainGenre.toUpperCase() : 'AUTRE');
   const genreLabel = a.mainGenre ? `<div class="dc-genre" style="color:${color}">${mbEscapeHTML(a.mainGenre)}</div>` : '';
 
@@ -4635,13 +4635,14 @@ function discoverArtistHTML(a) {
   if (a.match != null) facts.push(`≈ ${Math.round(a.match * 100)} % similaire`);
 
   return `
-    <div class="list-item dc-item dc-open" style="border-color:${color}; --glow:${color}; border-left-width:6px;" data-artist="${mbEscapeHTML(a.artist)}" data-mbid="${mbEscapeHTML(a.mbid || '')}" onclick="discoverOpenArtist(event, this)">
+    <div class="list-item dc-item dc-open${featured ? ' dc-featured' : ''}" style="border-color:${color}; --glow:${color}; border-left-width:6px;" data-artist="${mbEscapeHTML(a.artist)}" data-mbid="${mbEscapeHTML(a.mbid || '')}" onclick="discoverOpenArtist(event, this)">
       ${discoverPlayButton('artist', a.artist, '', 'dc-play-side')}
       ${discoverCoverHTML(artistPhotoCache.get(mbNormalize(a.artist)), '🎤', '', a.artist)}
       <div class="dc-info">
         ${genreLabel}
         <div class="dc-title">${mbEscapeHTML(a.artist)}</div>
         ${facts.length ? `<div class="dc-facts">${facts.join('<br>')}</div>` : ''}
+        ${featured ? '<div class="dc-cta">📀 Voir la discographie ›</div>' : ''}
         ${discoverNowPlaying(discoverPreviewKey('artist', a.artist, ''))}
       </div>
     </div>`;
@@ -4926,8 +4927,8 @@ async function loadAlbumDetail(r, token) {
   }
 }
 
-function discoverSeparatorHTML(label) {
-  return `<div class="dc-separator"><span>${mbEscapeHTML(label)}</span></div>`;
+function discoverSeparatorHTML(label, extraClass = '') {
+  return `<div class="dc-separator ${extraClass}"><span>${mbEscapeHTML(label)}</span></div>`;
 }
 
 function renderDiscoverResults() {
@@ -4953,6 +4954,7 @@ function renderDiscoverResults() {
     // Albums (studio) affichés d'office ; live et compilations : les 3 premiers puis un bouton ; autres sorties : un bouton seul
     let html = d.items.filter(r => r.sections.includes('albums')).map(r => discoverAlbumHTML(mark(r))).join('');
     [
+      { id: 'ep', title: 'EP et B-sides', preview: 3, more: 'autres EP et B-sides' },
       { id: 'live', title: 'Albums live', preview: 3, more: 'autres albums live' },
       { id: 'compil', title: 'Compilations', preview: 3, more: 'autres compilations' },
       { id: 'other', title: 'Autres sorties', preview: 0, more: 'les autres sorties' },
@@ -5003,7 +5005,8 @@ function renderDiscoverResults() {
 
   let html = '';
   if (s.mode === 'similar' && s.searchedArtist) {
-    html += discoverArtistHTML(s.searchedArtist);
+    html += discoverSeparatorHTML('📀 Discographie', 'dc-sep-main');
+    html += discoverArtistHTML(s.searchedArtist, true);
     html += discoverSeparatorHTML('Artistes similaires');
   }
   let previousLow = false;
@@ -5070,13 +5073,17 @@ function discoverShowDiscographyFromForm() {
 
 // Sections de la discographie, d'après les types MusicBrainz :
 //   albums  = « Album » seul (albums studio), affichés d'office
+//   ep      = EP et B-sides
 //   live    = « Album + En public »
 //   compil  = « Album + Compilation »
 //   other   = tout le reste (EP, bandes originales, sorties connues de Last.fm seul...)
 function discoverSectionOf(group) {
   const primary = String(group['primary-type'] || '').toLowerCase();
   const secondary = asArray(group['secondary-types']).map(t => String(t).toLowerCase());
+  const plain = secondary.every(t => t === 'live' || t === 'compilation');
+  if (primary === 'ep') return plain ? ['ep'] : ['other'];
   if (primary !== 'album') return ['other'];
+  if (plain && /\b(b-?sides?|rarities)\b/i.test(group.title || '')) return ['ep']; // « B-Sides & Rarities »...
   if (secondary.length === 0) return ['albums'];
   if (secondary.every(t => t === 'live' || t === 'compilation')) {
     const sections = []; // à la fois live et compilation : présent dans les deux sections
@@ -5090,7 +5097,8 @@ function discoverSectionOf(group) {
 // Repli sans types (MusicBrainz muet) : on devine la section d'après le titre
 function discoverSectionOfTitle(title) {
   const t = String(title || '');
-  if (/\b(demos?|singles?|eps?|remix(?:es)?|b-sides?|soundtrack|ost|instrumentals?|bootleg|mixtape|dvd|sessions?)\b/i.test(t)) return ['other'];
+  if (/\b(eps?|b-?sides?|rarities)\b/i.test(t)) return ['ep'];
+  if (/\b(demos?|singles?|remix(?:es)?|soundtrack|ost|instrumentals?|bootleg|mixtape|dvd|sessions?)\b/i.test(t)) return ['other'];
   const sections = [];
   if (/\b(live|unplugged|in concert|acoustic)\b/i.test(t)) sections.push('live');
   if (/\b(compilation|best of|greatest hits|hits|collection|anthology|essentials?|box set|rarities)\b/i.test(t)) sections.push('compil');
@@ -5229,12 +5237,12 @@ async function discoverShowDiscography(name, mbid, options = {}) {
       unmatched.forEach(a => {
         if (seenUnmatched.has(a.key)) return;
         seenUnmatched.add(a.key);
-        items.push(make(a.title, null, a, ['other']));
+        items.push(make(a.title, null, a, [discoverSectionOfTitle(a.title)[0] === 'ep' ? 'ep' : 'other']));
       });
       const byYear = (a, b) => (a.year || 9999) - (b.year || 9999) || b.playcount - a.playcount;
-      const rank = { albums: 0, live: 1, compil: 2, other: 3 };
+      const rank = { albums: 0, ep: 1, live: 2, compil: 3, other: 4 };
       const byPop = (a, b) => b.playcount - a.playcount || byYear(a, b); // live, compilations, autres : les plus écoutés d'abord
-      items.sort((a, b) => (rank[a.section] - rank[b.section]) || (a.section === 'albums' ? byYear(a, b) : byPop(a, b)));
+      items.sort((a, b) => (rank[a.section] - rank[b.section]) || ((a.section === 'albums' || a.section === 'ep') ? byYear(a, b) : byPop(a, b)));
     }
 
     items.forEach((r, i) => { r.idx = i; });
