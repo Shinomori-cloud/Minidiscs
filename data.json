@@ -3689,6 +3689,66 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1791313486692",
+      "md_cover": "images/img_1791313484622.jpg",
+      "title": "Mamagubida / À plus tard crocodile",
+      "albums": [
+        {
+          "id": "md-1791313486692-alb-1",
+          "md_cover": "images/tryo.jpg",
+          "title": "Mamagubida",
+          "artist": "Tryo",
+          "main_genre": "Rap, Soul & Reggae",
+          "tags": [
+            "Français",
+            "Reggae",
+            "Folk"
+          ],
+          "release_year": "",
+          "duration": "1:13:53",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791313486692-alb-2",
+          "md_cover": "images/img_1790525724880.jpg",
+          "title": "À plus tard crocodile",
+          "artist": "Louise Attaque",
+          "main_genre": "Rock & Blues",
+          "tags": [
+            "rock",
+            "alternative rock",
+            "indie rock",
+            "nouvelle chanson française",
+            "folk rock"
+          ],
+          "release_year": "2005",
+          "duration": "1:01:29",
+          "tracks": [
+            "La Traversée du désert",
+            "Revolver",
+            "Shibuya Station",
+            "Sean Penn, Mitchum",
+            "Si l’on marchait jusqu’à demain",
+            "Salomé",
+            "Si c’était hier",
+            "Oui, non",
+            "Nos sourires",
+            "Depuis toujours",
+            "À l’envers",
+            "Manhattan",
+            "See You Later Alligator",
+            "La Nuit",
+            "Oui, non, encore ?",
+            "Est‐ce que tu m’aimes encore ?",
+            "La Valse",
+            "Ça m’aurait plu"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -3861,18 +3921,6 @@
       ],
       "duration": "45:10",
       "md_cover": "images/tommcrae.jpg"
-    },
-    {
-      "title": "Mamagubida",
-      "artist": "Tryo",
-      "main_genre": "Rap, Soul & Reggae",
-      "tags": [
-        "Français",
-        "Reggae",
-        "Folk"
-      ],
-      "duration": "1:13:53",
-      "md_cover": "images/tryo.jpg"
     },
     {
       "title": "Load",
@@ -4139,43 +4187,6 @@
         "Nicotine Monster",
         "Vodka",
         "Nobody Cares"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790525726514",
-      "md_cover": "images/img_1790525724880.jpg",
-      "title": "À plus tard crocodile",
-      "artist": "Louise Attaque",
-      "main_genre": "Rock & Blues",
-      "tags": [
-        "rock",
-        "alternative rock",
-        "indie rock",
-        "nouvelle chanson française",
-        "folk rock"
-      ],
-      "release_year": "2005",
-      "duration": "1:01:29",
-      "tracks": [
-        "La Traversée du désert",
-        "Revolver",
-        "Shibuya Station",
-        "Sean Penn, Mitchum",
-        "Si l’on marchait jusqu’à demain",
-        "Salomé",
-        "Si c’était hier",
-        "Oui, non",
-        "Nos sourires",
-        "Depuis toujours",
-        "À l’envers",
-        "Manhattan",
-        "See You Later Alligator",
-        "La Nuit",
-        "Oui, non, encore ?",
-        "Est‐ce que tu m’aimes encore ?",
-        "La Valse",
-        "Ça m’aurait plu"
       ],
       "toRecord": false
     },
