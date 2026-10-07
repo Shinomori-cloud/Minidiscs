@@ -5024,7 +5024,7 @@ function renderDiscoverResults() {
 
   let html = '';
   if (s.mode === 'similar' && s.searchedArtist) {
-    html += discoverSeparatorHTML('📀 Discographie', 'dc-sep-main');
+    html += discoverSeparatorHTML('Discographie', 'dc-sep-main');
     html += discoverArtistHTML(s.searchedArtist, true);
     html += discoverSeparatorHTML('Artistes similaires');
   }
