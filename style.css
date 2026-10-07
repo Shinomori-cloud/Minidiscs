@@ -2763,22 +2763,22 @@ main#app:has(.titles-actions) {
   background: rgba(255, 255, 255, 0.14);
 }
 
-/* Titres de sections (Artistes similaires, Albums live...) : tache d'aquarelle bleu / rose (images/bandeau_tache.png).
+/* Titres de sections (Artistes similaires, Albums live...) : tache d'aquarelle rose / violet (images/bandeau_tache.png).
    Le PNG est transparent autour de la tache ; l'ombre portée douce suit sa forme irrégulière */
 .dc-separator {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 66px;
-  margin: 22px 0 12px;
-  padding: 0 34px;
+  height: 46px;
+  margin: 18px 0 10px;
+  padding: 0 30px;
   font-family: 'Righteous', cursive;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0, 20, 60, 0.85), 1px 1px 0 rgba(0, 20, 60, 0.6);
+  text-shadow: 0 1px 3px rgba(40, 0, 70, 0.8), 1px 1px 0 rgba(40, 0, 70, 0.5);
   background: url('images/bandeau_tache.png') center / 100% 100% no-repeat;
   filter: drop-shadow(2px 3px 4px rgba(0, 0, 0, 0.55));
 }
@@ -2791,9 +2791,9 @@ main#app:has(.titles-actions) {
 
 /* Titre principal : la discographie de l'artiste recherché (un peu plus grand) */
 .dc-separator.dc-sep-main {
-  height: 76px;
+  height: 54px;
   margin-top: 4px;
-  font-size: 1.05rem;
+  font-size: 0.98rem;
 }
 
 /* Tuile de l'artiste recherché : plus grande, cadre épais et halo rose, teinte rosée en fond */
