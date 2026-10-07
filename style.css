@@ -2763,37 +2763,49 @@ main#app:has(.titles-actions) {
   background: rgba(255, 255, 255, 0.14);
 }
 
-/* Titres de sections (Artistes similaires, Albums live...) : tache d'aquarelle rose / violet (images/bandeau_tache.png).
-   Le PNG est transparent autour de la tache ; l'ombre portée douce suit sa forme irrégulière */
+/* Titres de sections (Artistes similaires, Albums live...) : titre blanc encadré de deux traits de pinceau blancs
+   (images/trait_pinceau.png) */
 .dc-separator {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 46px;
-  margin: 18px 0 10px;
-  padding: 0 30px;
+  gap: 10px;
+  margin: 20px 0 10px;
   font-family: 'Righteous', cursive;
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #ffffff;
-  text-shadow: 0 1px 3px rgba(40, 0, 70, 0.8), 1px 1px 0 rgba(40, 0, 70, 0.5);
-  background: url('images/bandeau_tache.png') center / 100% 100% no-repeat;
-  filter: drop-shadow(2px 3px 4px rgba(0, 0, 0, 0.55));
+}
+
+.dc-separator::before,
+.dc-separator::after {
+  content: "";
+  flex: 0 1 64px;
+  height: 14px;
+  background: url('images/trait_pinceau.png') center / 100% 100% no-repeat;
+  opacity: 0.9;
+}
+
+/* le trait de droite est retourné pour que les deux ne soient pas identiques */
+.dc-separator::after {
+  transform: scaleX(-1) scaleY(-1);
 }
 
 .dc-separator span {
-  position: relative;
-  z-index: 1;
   white-space: nowrap;
 }
 
 /* Titre principal : la discographie de l'artiste recherché (un peu plus grand) */
 .dc-separator.dc-sep-main {
-  height: 54px;
   margin-top: 4px;
-  font-size: 0.98rem;
+  font-size: 1.1rem;
+}
+
+.dc-separator.dc-sep-main::before,
+.dc-separator.dc-sep-main::after {
+  flex-basis: 76px;
+  height: 16px;
 }
 
 /* Tuile de l'artiste recherché : plus grande, cadre épais et halo rose, teinte rosée en fond */
