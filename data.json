@@ -4552,6 +4552,36 @@
         "[unknown]"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791347957141",
+      "md_cover": "images/img_1791347955729.jpg",
+      "title": "Turn On the Bright Lights",
+      "artist": "Interpol",
+      "main_genre": "Rock & Blues",
+      "tags": [
+        "rock",
+        "indie rock",
+        "post-punk revival",
+        "post-punk",
+        "alternative"
+      ],
+      "release_year": "2002",
+      "duration": "48:54",
+      "tracks": [
+        "Untitled",
+        "Obstacle 1",
+        "NYC",
+        "PDA",
+        "Say Hello to the Angels",
+        "Hands Away",
+        "Obstacle 2",
+        "Stella was a diver and she was always down",
+        "Roland",
+        "The New",
+        "Leif Erikson"
+      ],
+      "toRecord": false
     }
   ]
 }
