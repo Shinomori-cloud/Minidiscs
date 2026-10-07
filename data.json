@@ -3749,6 +3749,41 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1791410069679",
+      "md_cover": "images/img_1791410067688.jpg",
+      "title": "Le 5eme Element / Fight Club",
+      "albums": [
+        {
+          "id": "md-1791410069679-alb-1",
+          "md_cover": "images/cinqelement.jpg",
+          "title": "Le 5eme Element",
+          "artist": "Eric Serra",
+          "main_genre": "Ambient & Orchestral",
+          "tags": [
+            "Orchestral"
+          ],
+          "release_year": "",
+          "duration": "1:06:04",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791410069679-alb-2",
+          "md_cover": "images/fightclub.jpg",
+          "title": "Fight Club",
+          "artist": "The Dust Brothers",
+          "main_genre": "Électro, Trip-Hop & Expérimental",
+          "tags": [
+            "Experimental"
+          ],
+          "release_year": "",
+          "duration": "1:04:00",
+          "tracks": [],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -3785,16 +3820,6 @@
       ],
       "duration": "1:12:00",
       "md_cover": "images/starmania.jpg"
-    },
-    {
-      "title": "Le 5eme Element",
-      "artist": "Eric Serra",
-      "main_genre": "Ambient & Orchestral",
-      "tags": [
-        "Orchestral"
-      ],
-      "duration": "1:06:04",
-      "md_cover": "images/cinqelement.jpg"
     },
     {
       "title": "Number #1's",
@@ -3837,16 +3862,6 @@
       ],
       "duration": "1:18:31",
       "md_cover": "images/sadhill.jpg"
-    },
-    {
-      "title": "Fight Club",
-      "artist": "The Dust Brothers",
-      "main_genre": "Électro, Trip-Hop & Expérimental",
-      "tags": [
-        "Experimental"
-      ],
-      "duration": "1:04:00",
-      "md_cover": "images/fightclub.jpg"
     },
     {
       "title": "666.667 Club",
