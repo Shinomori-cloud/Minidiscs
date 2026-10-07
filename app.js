@@ -3942,7 +3942,15 @@ async function discoverAddToIdeas(listName, idx) {
   const list = listName === 'd' ? (discoverState.disco ? discoverState.disco.items : []) : discoverState.results;
   const r = list[idx];
   if (!r) return;
+  return discoverAddItemToIdeas(r);
+}
 
+// Page « Détails » : même action, à partir de l'album affiché (AD.current)
+function adAddToIdeas() {
+  if (AD.current) discoverAddItemToIdeas(AD.current);
+}
+
+async function discoverAddItemToIdeas(r) {
   openIdeaModal();
   const set = (id, value) => {
     const el = document.getElementById(id);
@@ -4685,7 +4693,7 @@ function discoverAlbumHTML(r) {
    Jaquette, titre, artiste, puis date, durée, description (traduite en français si besoin), tags, tracklist et
    3 albums similaires. Données : Last.fm (album.getInfo, artist.getSimilar), MusicBrainz en complément.
    ========================================== */
-const AD = { token: 0, similar: [] };
+const AD = { token: 0, similar: [], current: null };
 
 function discoverOpenAlbum(event, idx) {
   if (event.target.closest('button, a')) return; // « Ajouter aux idées », ▶ : ils gardent leur rôle
@@ -4818,10 +4826,20 @@ async function adSimilarAlbums(r) {
   return found.filter(Boolean).sort((a, b) => b.playcount - a.playcount).slice(0, 3);
 }
 
+// Bouton « Ajouter aux idées » de la page Détails (ou mention si l'album est déjà possédé / dans les idées)
+function adActionHTML(r) {
+  const { owned, ideas } = discoverOwnedAlbumKeys();
+  const key = `${mbNormalize(r.artist)}|${mbBaseTitle(r.title)}`;
+  if (r.isOwned || owned.has(key)) return `<span class="dc-owned">✔ Dans ma collection</span>`;
+  if (r.isIdea || ideas.has(key)) return `<span class="dc-owned">💡 Déjà dans mes idées</span>`;
+  return `<button type="button" class="dc-add" onclick="adAddToIdeas()">＋ Ajouter aux idées</button>`;
+}
+
 function renderAlbumDetail(r) {
   prepareSubPage('DÉTAILS');
   const token = ++AD.token;
   AD.similar = [];
+  AD.current = r;
   const color = getSingleGenreColor(r.mainGenre ? r.mainGenre.toUpperCase() : 'AUTRE');
   const caa = r.mbid ? `https://coverartarchive.org/release-group/${r.mbid}/front-500` : '';
   const src = r.image || caa;
@@ -4834,6 +4852,7 @@ function renderAlbumDetail(r) {
       <h2 class="ad-title">${mbEscapeHTML(r.title)}</h2>
       <div class="ad-artist">${mbEscapeHTML(r.artist)}</div>
       <div id="ad-facts" class="ad-facts"></div>
+      <div class="ad-actions">${adActionHTML(r)}</div>
       <section class="ad-sec list-item"><h3>Description</h3><div id="ad-desc" class="ad-text ad-note">⏳ Chargement…</div></section>
       <section id="ad-tags-sec" class="ad-sec list-item"><h3>Tags</h3><div id="ad-tags" class="ad-tags ad-note">⏳ Chargement…</div></section>
       <section class="ad-sec list-item"><h3>Tracklist</h3><div id="ad-tracks" class="ad-note">⏳ Chargement…</div></section>

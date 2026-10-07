@@ -2763,32 +2763,24 @@ main#app:has(.titles-actions) {
   background: rgba(255, 255, 255, 0.14);
 }
 
-/* Titres de sections (Artistes similaires, Albums live...) : trait de pinceau grunge (images/bandeau_grunge.png)
-   rempli par le dégradé de l'appli ; l'ombre noire suit la forme irrégulière du pinceau */
+/* Titres de sections (Artistes similaires, Albums live...) : tache d'aquarelle bleu / rose (images/bandeau_tache.png).
+   Le PNG est transparent autour de la tache ; l'ombre portée douce suit sa forme irrégulière */
 .dc-separator {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 52px;
-  margin: 24px 0 14px;
-  padding: 0 28px;
+  height: 66px;
+  margin: 22px 0 12px;
+  padding: 0 34px;
   font-family: 'Righteous', cursive;
   font-size: 0.95rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #ffffff;
-  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
-  filter: drop-shadow(3px 3px 0 #000);
-}
-
-.dc-separator::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
-  -webkit-mask: url('images/bandeau_grunge.png') center / 100% 100% no-repeat;
-  mask: url('images/bandeau_grunge.png') center / 100% 100% no-repeat;
+  text-shadow: 0 1px 3px rgba(0, 20, 60, 0.85), 1px 1px 0 rgba(0, 20, 60, 0.6);
+  background: url('images/bandeau_tache.png') center / 100% 100% no-repeat;
+  filter: drop-shadow(2px 3px 4px rgba(0, 0, 0, 0.55));
 }
 
 .dc-separator span {
@@ -2797,15 +2789,11 @@ main#app:has(.titles-actions) {
   white-space: nowrap;
 }
 
-/* Titre principal : la discographie de l'artiste recherché (dégradé du titre de l'appli) */
+/* Titre principal : la discographie de l'artiste recherché (un peu plus grand) */
 .dc-separator.dc-sep-main {
-  height: 60px;
-  margin-top: 6px;
+  height: 76px;
+  margin-top: 4px;
   font-size: 1.05rem;
-}
-
-.dc-separator.dc-sep-main::before {
-  background: linear-gradient(135deg, #ff4fa3 0%, #b57bff 55%, #00c2d6 100%);
 }
 
 /* Tuile de l'artiste recherché : plus grande, cadre épais et halo rose, teinte rosée en fond */
@@ -3228,6 +3216,9 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .ad-cover img, .ad-sim-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .ad-title { margin: 0; text-align: center; font-size: 1.35rem; line-height: 1.2; color: var(--text-main); }
 .ad-artist { font-size: 1rem; font-weight: 700; color: var(--ad); text-align: center; }
+/* Bouton « Ajouter aux idées » de la page Détails */
+.ad-actions { display: flex; justify-content: center; align-items: center; }
+.ad-actions .dc-add { padding: 8px 18px; font-size: 0.85rem; }
 .ad-facts { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; font-size: 0.85rem; color: var(--text-sub); }
 /* Sections = tuiles du même style que le reste de l'appli (classe .list-item), à la couleur du genre */
 .ad-sec.list-item { flex-direction: column; align-items: stretch; gap: 0; width: 100%; box-sizing: border-box; margin-bottom: 0; cursor: default; border-color: var(--ad); --glow: var(--ad); border-left-width: 6px; }
