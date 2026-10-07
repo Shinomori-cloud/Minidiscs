@@ -2763,40 +2763,48 @@ main#app:has(.titles-actions) {
   background: rgba(255, 255, 255, 0.14);
 }
 
-/* Titres de sections (Artistes similaires, Albums live...) : bandeau franc, repérable même en défilant vite */
+/* Titres de sections (Artistes similaires, Albums live...) : trait de pinceau grunge (images/bandeau_grunge.png)
+   rempli par le dégradé de l'appli ; l'ombre noire suit la forme irrégulière du pinceau */
 .dc-separator {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin: 26px 0 16px;
-  padding: 9px 14px;
+  height: 52px;
+  margin: 24px 0 14px;
+  padding: 0 28px;
   font-family: 'Righteous', cursive;
   font-size: 0.95rem;
-  font-weight: 400;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #ffffff;
-  text-shadow: 1px 1px 0 #000, 0 0 10px rgba(0, 0, 0, 0.45);
-  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
-  border: 2px solid #000;
-  border-radius: 12px;
-  box-shadow: 3px 3px 0 #000, inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+  filter: drop-shadow(3px 3px 0 #000);
 }
 
-.dc-separator::before,
-.dc-separator::after {
+.dc-separator::before {
   content: "";
-  flex: 1;
-  height: 2px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.55);
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #ff007f 0%, #7b2cbf 100%);
+  -webkit-mask: url('images/bandeau_grunge.png') center / 100% 100% no-repeat;
+  mask: url('images/bandeau_grunge.png') center / 100% 100% no-repeat;
+}
+
+.dc-separator span {
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
 }
 
 /* Titre principal : la discographie de l'artiste recherché (dégradé du titre de l'appli) */
 .dc-separator.dc-sep-main {
+  height: 60px;
   margin-top: 6px;
   font-size: 1.05rem;
+}
+
+.dc-separator.dc-sep-main::before {
   background: linear-gradient(135deg, #ff4fa3 0%, #b57bff 55%, #00c2d6 100%);
 }
 
