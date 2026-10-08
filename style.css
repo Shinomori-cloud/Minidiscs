@@ -3226,8 +3226,8 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .ad-page { --ad: #ff4fa3; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 4px 4px 110px; }
 .ad-cover { position: relative; width: min(62vw, 260px); aspect-ratio: 1; border-radius: 10px; border: 3px solid var(--ad); box-shadow: 4px 4px 0 #000, 0 0 22px rgba(255, 255, 255, .12); background: rgba(255, 255, 255, .06); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
 .ad-cover img, .ad-sim-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.ad-title { margin: 0; text-align: center; font-size: 1.35rem; line-height: 1.2; color: var(--text-main); }
-.ad-artist { font-size: 1rem; font-weight: 700; color: var(--ad); text-align: center; }
+.ad-title { margin: 0; text-align: center; font-size: 1.35rem; line-height: 1.2; color: var(--text-main); text-shadow: 2px 2px 0 #000, 0 0 8px rgba(0, 0, 0, .7); }
+.ad-artist { font-size: 1rem; font-weight: 700; color: var(--ad); text-align: center; text-shadow: 2px 2px 0 #000, 0 0 8px rgba(0, 0, 0, .7); }
 /* Bouton « Ajouter aux idées » de la page Détails */
 .ad-actions { display: flex; justify-content: center; align-items: center; }
 .ad-actions .dc-add { padding: 8px 18px; font-size: 0.85rem; }
@@ -3244,6 +3244,15 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 /* Pages « Titres » : la jaquette (cover-wrapper) remplit le cadre comme sur la page Détails */
 .ad-cover .cover-wrapper { position: absolute !important; inset: 0; width: 100%; height: 100%; border: none !important; }
 .ad-page .badge-to-record-header { margin: 0; }
+/* Jaquette : remplit tout le cadre (l'ancienne classe album-cover-large la limitait à 140 px) */
+.ad-cover .cover-wrapper.ad-cover-fill { width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; border-radius: 0; box-shadow: none; }
+.fab-main-btn .fab-emoji { font-size: 1.6rem; line-height: 1; }
+/* Infos retrouvées automatiquement + bouton d'enregistrement */
+.td-auto { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 12px; width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px dashed var(--ad); border-radius: 8px; font-size: .78rem; color: var(--text-sub); text-align: center; }
+.td-auto.hidden { display: none; }
+.td-save { padding: 5px 12px; border-radius: 8px; border: 2px solid #000; background: var(--ad); color: #000; font-weight: 700; font-size: .78rem; box-shadow: 2px 2px 0 #000; cursor: pointer; }
+.td-save:active { transform: translate(2px, 2px); box-shadow: none; }
+.ad-tag-lfm { border-style: dashed; opacity: .8; }
 /* Genres : discrets (puces fines, serrées, couleur de chaque genre) */
 .ad-sec.ad-sec-compact.list-item { padding-top: 8px; padding-bottom: 8px; }
 .ad-sec-compact h3 { margin-bottom: 5px; color: var(--text-sub); }

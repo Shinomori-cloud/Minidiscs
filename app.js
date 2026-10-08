@@ -10,6 +10,7 @@ let currentTypeFilter = null;
 let currentSearchQuery = '';
 let adminAlbumCount = 0;
 let editingMDIndex = null;
+let adminReturnTo = null; // fonction à rappeler après une modification faite depuis une page « Titres » (on y reste)
 let toastTimeout = null;
 let selectedIdeaIndices = new Set();
 let currentRecordFilter = 'all'; // 'all', 'toRecord', 'recorded'
@@ -1682,7 +1683,7 @@ const fabHTML = `
     <div id="md-detail-fab-menu" class="fab-menu hidden">
       <!-- Section Options -->
       <div class="fab-section-title">Options</div>
-      <button type="button" class="fab-item accent" onclick="openAdminModal(${index});">
+      <button type="button" class="fab-item accent" onclick="editFromTitles(${index}, null);">
         ✏️ Modifier
       </button>
       <button type="button" class="fab-item danger" onclick="deleteMD(${index});">
@@ -1714,7 +1715,7 @@ if (!md.albums || md.albums.length === 0) {
     ? `<div class="badge-to-record-header">💽 À enregistrer</div>` 
     : '';
 
-  const coverHTML = createLoadingCoverHTML(md.md_cover, 'album-cover-large', '💽');
+  const coverHTML = createLoadingCoverHTML(md.md_cover, 'ad-cover-fill');
   const isKnownValue = (v) => v && String(v).trim() && String(v).trim().toLowerCase() !== 'unknow' && String(v).trim().toLowerCase() !== 'unknown';
   const metaLine = [md.release_year, md.duration].filter(isKnownValue).join(' · ');
 
@@ -1728,9 +1729,14 @@ if (!md.albums || md.albums.length === 0) {
     genres: allMdGenres,
     badgeHTML: badgeCompilHTML,
     tracksHTML,
-    withDescription: isRealArtist(md.artist) && !!md.title
+    withLastfm: isRealArtist(md.artist) && !!md.title
   }) + fabHTML + titlesActionsHTML(index, null, true);
-  if (isRealArtist(md.artist) && md.title) titlesLoadDescription(md.artist, md.title);
+  titlesLoadExtras({
+    withLastfm: isRealArtist(md.artist) && !!md.title,
+    artist: md.artist, title: md.title, mdIndex: index, albumIndex: null, trackOffset: 0,
+    genres: allMdGenres,
+    hasTracks: !!(md.tracks && md.tracks.length), hasYear: titlesKnown(md.release_year), hasDuration: titlesKnown(md.duration)
+  });
   window.scrollTo(0, 0);
   return;
 }
@@ -1769,57 +1775,202 @@ app.innerHTML = html;
 window.scrollTo(0, 0);
 }
 
-/* Page « Titres » (MiniDisc simple, compilation ou album d'une série) : même présentation que la page
-   Détails d'un album de la recherche (jaquette, titre, artiste, infos, sections), sans les écoutes ni le bouton
-   « Ajouter aux idées », puisque l'album est déjà sur un MiniDisc. La description est chargée depuis Last.fm (titlesLoadDescription), sauf pour les compilations « Artistes divers ». */
-function titlesPageHTML({ color, coverHTML, title, artist, year, duration, genres, badgeHTML, tracksHTML, withDescription }) {
-  const known = v => v && String(v).trim() && !['unknow', 'unknown'].includes(String(v).trim().toLowerCase());
+/* Page « Titres » (MiniDisc simple, compilation ou album d'une série) : même présentation que la page Détails
+   d'un album de la recherche, sans les écoutes ni « Ajouter aux idées » (l'album est déjà sur un MiniDisc).
+   Les données du catalogue s'affichent tout de suite ; Last.fm / MusicBrainz complètent ensuite (titlesLoadExtras). */
+function titlesKnown(v) {
+  const t = String(v == null ? '' : v).trim().toLowerCase();
+  return !!t && t !== 'unknow' && t !== 'unknown';
+}
+
+function titlesFactsHTML(year, duration) {
   const facts = [];
-  if (known(year)) facts.push(`📅 ${year}`);
-  if (known(duration)) facts.push(`⏱ ${duration}`);
-  const genresHTML = (genres || []).map(g => `<span class="ad-tag" style="--tc:${getSingleGenreColor(g)}">${g}</span>`).join('');
+  if (titlesKnown(year)) facts.push(`📅 ${mbEscapeHTML(String(year))}`);
+  if (titlesKnown(duration)) facts.push(`⏱ ${mbEscapeHTML(String(duration))}`);
+  return facts.join(' · ');
+}
+
+// Genres du catalogue (colorés) puis tags Last.fm (neutres)
+function titlesGenreChips(local, extra) {
+  return (local || []).map(g => `<span class="ad-tag" style="--tc:${getSingleGenreColor(String(g).toUpperCase())}">${mbEscapeHTML(g)}</span>`).join('')
+    + (extra || []).map(t => `<span class="ad-tag ad-tag-lfm">${mbEscapeHTML(t)}</span>`).join('');
+}
+
+function titlesPageHTML({ color, coverHTML, title, artist, year, duration, genres, badgeHTML, tracksHTML, withLastfm }) {
+  const genresHTML = titlesGenreChips(genres, []);
   return `
-    <div class="ad-page" style="--ad:${color}">
+    <div id="td-page" class="ad-page" style="--ad:${color}">
       <div class="ad-cover">${coverHTML}</div>
       <h2 class="ad-title">${title}</h2>
       <div class="ad-artist">${artist}</div>
-      ${facts.length ? `<div class="ad-facts">${facts.join(' · ')}</div>` : ''}
+      <div id="td-facts" class="ad-facts">${titlesFactsHTML(year, duration)}</div>
       ${badgeHTML || ''}
-      ${withDescription ? `<section class="ad-sec list-item"><h3>Description</h3><div id="td-desc" class="ad-text ad-note">⏳ Chargement…</div></section>` : ''}
-      ${genresHTML ? `<section class="ad-sec ad-sec-compact list-item"><h3>Genres</h3><div class="ad-tags ad-tags-compact">${genresHTML}</div></section>` : ''}
-      <section class="ad-sec list-item"><h3>Tracklist</h3><ol class="ad-tracks">${tracksHTML}</ol></section>
+      <div id="td-auto" class="td-auto hidden"></div>
+      ${withLastfm ? `<section class="ad-sec list-item"><h3>Description</h3><div id="td-desc" class="ad-text ad-note">⏳ Chargement…</div></section>` : ''}
+      <section id="td-genres-sec" class="ad-sec ad-sec-compact list-item ${genresHTML ? '' : 'hidden'}"><h3>Genres</h3><div id="td-genres" class="ad-tags ad-tags-compact">${genresHTML}</div></section>
+      <section class="ad-sec list-item"><h3>Tracklist</h3><ol id="td-tracks" class="ad-tracks">${tracksHTML}</ol></section>
+      ${withLastfm ? `<section class="ad-sec list-item"><h3>Albums similaires</h3><div id="td-similar" class="ad-note">⏳ Chargement…</div></section>` : ''}
     </div>`;
 }
 
-// Description d'un album de la collection : Last.fm, en français (traduite si besoin), comme sur la page Détails
-const TD = { token: 0 };
-async function titlesLoadDescription(artist, title) {
-  const token = ++TD.token;
-  const alive = () => TD.token === token && document.getElementById('td-desc');
-  const show = html => { const el = alive(); if (el) { el.innerHTML = html; el.classList.remove('ad-note'); } };
-  const note = text => { const el = alive(); if (el) { el.classList.add('ad-note'); el.textContent = text; } };
+// Bouton rond « Modifier » en bas à droite (même emplacement que les FAB), pour les albums d'une série
+function titlesEditFabHTML(mdIndex, albumIndex) {
+  return `<div id="md-detail-floating-actions" class="fab-container">
+    <button type="button" class="fab-main-btn" onclick="editFromTitles(${mdIndex}, ${albumIndex})" title="Modifier cet album"><span class="fab-emoji" aria-hidden="true">✏️</span></button>
+  </div>`;
+}
 
-  let info = null;
-  try {
-    info = await adAlbumInfo({ artist, title });
-  } catch (err) {
-    if (!alive()) return;
-    return note(isNetworkError(err) ? 'Hors ligne : description indisponible.' : 'Description indisponible.');
+// Ouvre le formulaire de modification (sur le bon album) et revient sur la page Titres une fois enregistré
+function editFromTitles(mdIndex, albumIndex) {
+  adminReturnTo = () => {
+    const md = catalogData[mdIndex];
+    if (!md) return false;
+    if (albumIndex != null && md.albums && md.albums[albumIndex]) openAlbum(mdIndex, albumIndex, false);
+    else openMD(mdIndex, false);
+    return true;
+  };
+  openAdminModal(mdIndex);
+  if (albumIndex != null) {
+    requestAnimationFrame(() => {
+      const block = document.querySelectorAll('#albums-container .album-block')[albumIndex];
+      if (block) block.scrollIntoView({ block: 'start' });
+    });
   }
+}
+
+const TD = { token: 0, auto: null };
+const titlesSecondsToDuration = sec => `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, '0')}`;
+
+async function titlesLoadExtras(ctx) {
+  const token = ++TD.token;
+  TD.auto = null;
+  if (!ctx.withLastfm) return; // compilation « Artistes divers » : rien à chercher
+  const alive = () => TD.token === token && !!document.getElementById('td-page');
+  const el = id => (alive() ? document.getElementById(id) : null);
+  const note = (id, text) => { const e = el(id); if (e) { e.classList.add('ad-note'); e.textContent = text; } };
+  const show = (id, html) => { const e = el(id); if (e) { e.classList.remove('ad-note'); e.innerHTML = html; } };
+  const lead = err => (isNetworkError(err) ? 'Hors ligne : ' : '');
+
+  // 1) Albums similaires (en parallèle)
+  adSimilarAlbums({ artist: ctx.artist }).then(list => {
+    if (!alive()) return;
+    AD.similar = list;
+    if (!list.length) return note('td-similar', 'Aucun album similaire trouvé.');
+    show('td-similar', `<div class="ad-sim">${list.map((s, i) => `
+      <div class="ad-sim-item" onclick="adOpenSimilar(${i})">
+        <div class="ad-sim-cover"><span>💿</span>${s.image ? `<img src="${mbEscapeHTML(s.image)}" alt="" loading="lazy" onerror="discoverCoverError(this)">` : ''}</div>
+        <div class="ad-sim-title">${mbEscapeHTML(s.title)}</div>
+        <div class="ad-sim-artist">${mbEscapeHTML(s.artist)}</div>
+      </div>`).join('')}</div>`);
+  }).catch(err => note('td-similar', lead(err) + 'albums similaires indisponibles.'));
+
+  // 2) Infos Last.fm de l'album
+  let info = null, infoErr = null;
+  try { info = await adAlbumInfo({ artist: ctx.artist, title: ctx.title }); } catch (err) { infoErr = err; }
   if (!alive()) return;
 
+  // 3) Genres : ceux du catalogue + tous les tags Last.fm (album, puis artiste s'il y en a peu)
+  try {
+    const isDateTag = t => /\b(19|20)\d{2}\b/.test(t) || /^\d{2}s$/i.test(String(t).trim());
+    let tags = asArray(info && info.tags && info.tags.tag).map(t => t.name);
+    if (tags.length < 5) {
+      try {
+        const top = await lastfmCall('artist.getTopTags', { artist: ctx.artist });
+        tags = tags.concat(asArray(top.toptags && top.toptags.tag).slice(0, 8).map(t => t.name));
+      } catch (err) { /* on garde ce qu'on a */ }
+    }
+    const seen = new Set((ctx.genres || []).map(g => String(g).trim().toLowerCase()));
+    const extra = [];
+    tags.forEach(t => {
+      const k = String(t || '').trim().toLowerCase();
+      if (!k || isDateTag(k) || seen.has(k)) return;
+      seen.add(k); extra.push(String(t).trim());
+    });
+    const maxExtra = Math.max(4, 10 - (ctx.genres || []).length);
+    if (extra.length && alive()) {
+      document.getElementById('td-genres').innerHTML = titlesGenreChips(ctx.genres, extra.slice(0, maxExtra));
+      document.getElementById('td-genres-sec').classList.remove('hidden');
+    }
+  } catch (err) { /* les genres du catalogue restent affichés */ }
+  if (!alive()) return;
+
+  // 4) Infos manquantes dans le catalogue (pistes, durée, année) : Last.fm puis MusicBrainz
+  try {
+    const need = { tracks: !ctx.hasTracks, duration: !ctx.hasDuration, year: !ctx.hasYear };
+    if (need.tracks || need.duration || need.year) {
+      let tracks = asArray(info && info.tracks && info.tracks.track).map(t => ({ name: t.name, seconds: parseInt(t.duration, 10) || 0 }));
+      let total = tracks.reduce((n, t) => n + t.seconds, 0);
+      let year = '';
+      if (need.year || (need.tracks && !tracks.length) || (need.duration && !total)) {
+        let mbid = '';
+        try {
+          const tokens = mbQueryTokens(`${ctx.artist} ${ctx.title}`);
+          const group = mbFilterAndRank(await mbSearchReleaseGroups(tokens, 'and'), tokens, 1)[0];
+          if (group) { mbid = group.id; year = String(group['first-release-date'] || '').slice(0, 4); }
+        } catch (err) { /* MusicBrainz indisponible */ }
+        if (mbid && (!tracks.length || !total)) {
+          try {
+            const mbTracks = await adMbTracks(mbid);
+            if (!tracks.length) tracks = mbTracks;
+            total = mbTracks.reduce((n, t) => n + t.seconds, 0) || total;
+          } catch (err) { /* pistes non disponibles */ }
+        }
+      }
+      if (!alive()) return;
+      const fill = {
+        tracks: need.tracks && tracks.length ? tracks : null,
+        duration: need.duration && total ? total : 0,
+        year: need.year && /^\d{4}$/.test(year) ? year : ''
+      };
+      if (fill.tracks || fill.duration || fill.year) {
+        TD.auto = { mdIndex: ctx.mdIndex, albumIndex: ctx.albumIndex, ...fill, durationStr: fill.duration ? titlesSecondsToDuration(fill.duration) : '' };
+        const md = catalogData[ctx.mdIndex];
+        const target = ctx.albumIndex == null ? md : (md && md.albums && md.albums[ctx.albumIndex]);
+        const year2 = fill.year || (target && target.release_year);
+        const dur2 = TD.auto.durationStr || (target && target.duration);
+        el('td-facts').innerHTML = titlesFactsHTML(year2, dur2);
+        if (fill.tracks) {
+          el('td-tracks').innerHTML = fill.tracks.map((t, i) => `<li><span class="ad-n">${String(ctx.trackOffset + i + 1).padStart(2, '0')}</span><span class="ad-t">${mbEscapeHTML(t.name)}</span><span class="ad-d">${adFormatTrack(t.seconds)}</span></li>`).join('');
+        }
+        const what = [fill.tracks && 'pistes', fill.duration && 'durée', fill.year && 'année'].filter(Boolean).join(', ');
+        const box = el('td-auto');
+        box.innerHTML = `<span>ℹ️ Infos absentes de ta fiche, complétées via Last.fm / MusicBrainz : ${what}.</span><button type="button" class="td-save" onclick="titlesSaveAuto()">💾 Enregistrer dans la fiche</button>`;
+        box.classList.remove('hidden');
+      }
+    }
+  } catch (err) { /* pas de complément : la page garde les données du catalogue */ }
+  if (!alive()) return;
+
+  // 5) Description (en dernier : la traduction peut être longue)
+  if (infoErr) return note('td-desc', infoErr.code === 'nokey' ? 'Description indisponible (clé Last.fm manquante).' : lead(infoErr) + 'description indisponible.');
   const wiki = info && info.wiki;
   let text = adHtmlToText((wiki && (wiki.summary || wiki.content)) || '');
   if (text.length > 1500) text = (text.slice(0, 1500).match(/^[\s\S]*[.!?](?=\s|$)/) || [text.slice(0, 1500)])[0];
-  if (!text) return note('Aucune description disponible pour cet album.');
-  if (adLooksFrench(text)) return show(mbEscapeHTML(text));
-  note('⏳ Traduction en cours…');
+  if (!text) return note('td-desc', 'Aucune description disponible pour cet album.');
+  if (adLooksFrench(text)) return show('td-desc', mbEscapeHTML(text));
+  note('td-desc', '⏳ Traduction en cours…');
   try {
-    const fr = await adToFrench(text);
-    if (alive()) show(mbEscapeHTML(fr));
+    show('td-desc', mbEscapeHTML(await adToFrench(text)));
   } catch (err) {
-    if (alive()) show(`${mbEscapeHTML(text)}<div class="ad-note">(Traduction indisponible : texte original en anglais.)</div>`);
+    show('td-desc', `${mbEscapeHTML(text)}<div class="ad-note">(Traduction indisponible : texte original en anglais.)</div>`);
   }
+}
+
+// Enregistre dans le catalogue les infos retrouvées (uniquement sur demande : une erreur d'identification reste possible)
+function titlesSaveAuto() {
+  const a = TD.auto;
+  if (!a) return;
+  const md = catalogData[a.mdIndex];
+  const target = a.albumIndex == null ? md : (md && md.albums && md.albums[a.albumIndex]);
+  if (!target) return;
+  if (a.tracks && a.tracks.length) target.tracks = a.tracks.map(t => t.name);
+  if (a.durationStr) target.duration = a.durationStr;
+  if (a.year) target.release_year = a.year;
+  saveLocalBackup();
+  showToast('✅ Fiche mise à jour');
+  const box = document.getElementById('td-auto');
+  if (box) box.innerHTML = '<span>✔ Infos enregistrées dans la fiche.</span>';
+  TD.auto = null;
 }
 
 /* GESTION DU MENU FAB DÉTAIL MINIDISC */
@@ -1890,7 +2041,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     ? `<div class="badge-to-record-header">💽 À enregistrer</div>` 
     : '';
 
-  const coverHTML = createLoadingCoverHTML(album.md_cover, 'album-cover-large', '🎵');
+  const coverHTML = createLoadingCoverHTML(album.md_cover, 'ad-cover-fill');
   const isKnownAlbumValue = (v) => v && String(v).trim() && String(v).trim().toLowerCase() !== 'unknow' && String(v).trim().toLowerCase() !== 'unknown';
   const albumMetaLine = [album.release_year, album.duration].filter(isKnownAlbumValue).join(' · ');
 
@@ -1904,9 +2055,14 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     genres: albumGenres,
     badgeHTML: badgeAlbumHTML,
     tracksHTML,
-    withDescription: isRealArtist(album.artist) && !!album.title
-  }) + titlesActionsHTML(mdIndex, albumIndex, false);
-  if (isRealArtist(album.artist) && album.title) titlesLoadDescription(album.artist, album.title);
+    withLastfm: isRealArtist(album.artist) && !!album.title
+  }) + titlesEditFabHTML(mdIndex, albumIndex) + titlesActionsHTML(mdIndex, albumIndex, true);
+  titlesLoadExtras({
+    withLastfm: isRealArtist(album.artist) && !!album.title,
+    artist: album.artist, title: album.title, mdIndex, albumIndex: Number(albumIndex), trackOffset,
+    genres: albumGenres,
+    hasTracks: !!(album.tracks && album.tracks.length), hasYear: titlesKnown(album.release_year), hasDuration: titlesKnown(album.duration)
+  });
   window.scrollTo(0, 0);
 }
 /* ==========================================
@@ -2109,6 +2265,7 @@ function closeAdminModal() {
   const modal = document.getElementById('admin-modal');
   if (modal) modal.classList.add('hidden');
   editingMDIndex = null;
+  adminReturnTo = null;
 }
 
 function toggleAdminType(isInit = false) {
@@ -2327,8 +2484,11 @@ async function submitNewMD(e) {
     showToast("✅ MiniDisc ajouté !");
   }
 
+  const backToTitles = adminReturnTo;
+  adminReturnTo = null;
   if (typeof saveLocalBackup === 'function') saveLocalBackup();
   if (typeof closeAdminModal === 'function') closeAdminModal();
+  if (backToTitles && backToTitles() !== false) return; // modification lancée depuis une page « Titres » : on y reste
 
   // Rechargement de la vue Catalogue active
   if (typeof renderMDList === 'function') {
