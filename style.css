@@ -3244,6 +3244,23 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 /* Pages « Titres » : la jaquette (cover-wrapper) remplit le cadre comme sur la page Détails */
 .ad-cover .cover-wrapper { position: absolute !important; inset: 0; width: 100%; height: 100%; border: none !important; }
 .ad-page .badge-to-record-header { margin: 0; }
+/* ---- Page « Titres » : titres de section façon Découverte, sections sans tuile ---- */
+#td-page { gap: 12px; }
+#td-page .ad-artist { font-size: 1.45rem; line-height: 1.2; }
+#td-page .td-sec { width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+#td-page .td-sec.hidden { display: none; }
+#td-page .dc-separator { margin: 8px 0 0; }
+#td-page .ad-tags { justify-content: center; }
+#td-page .ad-tags-compact .ad-tag { background: rgba(18, 10, 36, .6); }
+#td-page .td-desc { font-size: .9rem; line-height: 1.5; color: var(--text-main); text-align: left; white-space: pre-line; text-shadow: 0 1px 3px rgba(0, 0, 0, .95), 0 0 6px rgba(0, 0, 0, .6); }
+#td-page .ad-note { text-shadow: 0 1px 3px rgba(0, 0, 0, .95); }
+#td-page .td-desc.ad-note { text-align: center; }
+.td-more { display: inline; padding: 0; margin: 0; border: none; background: none; color: var(--ad); font: inherit; font-weight: 700; text-shadow: inherit; cursor: pointer; }
+#td-page .ad-sim-title, #td-page .ad-sim-artist { text-shadow: 0 1px 2px rgba(0, 0, 0, .9); }
+/* Bouton « Discographie et Artistes similaires » : pleine largeur, comme les autres blocs */
+.td-disco { width: 100%; box-sizing: border-box; margin-top: 4px; padding: 14px 16px; border-radius: 16px; border: 2px solid #000; border-left-width: 6px; border-color: #000; border-left-color: var(--ad); background-color: var(--card-bg); background-image: var(--tile-gloss), var(--card-sheen); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: 4px 4px 0 #000, 0 0 14px -3px var(--ad), var(--tile-rim); color: var(--text-main); font-size: .95rem; font-weight: 800; text-align: center; cursor: pointer; touch-action: manipulation; }
+.td-disco:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000, 0 0 10px -3px var(--ad), var(--tile-rim); }
+
 /* Jaquette : remplit tout le cadre (l'ancienne classe album-cover-large la limitait à 140 px) */
 .ad-cover .cover-wrapper.ad-cover-fill { width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; border-radius: 0; box-shadow: none; }
 .fab-main-btn .fab-emoji { font-size: 1.6rem; line-height: 1; }

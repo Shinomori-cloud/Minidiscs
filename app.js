@@ -1727,14 +1727,16 @@ if (!md.albums || md.albums.length === 0) {
     year: md.release_year,
     duration: md.duration,
     genres: allMdGenres,
+    tags: md.tags,
     badgeHTML: badgeCompilHTML,
     tracksHTML,
-    withLastfm: isRealArtist(md.artist) && !!md.title
-  }) + fabHTML + titlesActionsHTML(index, null, true);
+    withLastfm: !!md.title,
+    mdIndex: index, albumIndex: null
+  }) + fabHTML;
   titlesLoadExtras({
-    withLastfm: isRealArtist(md.artist) && !!md.title,
+    withLastfm: !!md.title,
     artist: md.artist, title: md.title, mdIndex: index, albumIndex: null, trackOffset: 0,
-    genres: allMdGenres,
+    genres: allMdGenres, storedTags: md.tags || [], tracks: md.tracks || [], description: md.description,
     hasTracks: !!(md.tracks && md.tracks.length), hasYear: titlesKnown(md.release_year), hasDuration: titlesKnown(md.duration)
   });
   window.scrollTo(0, 0);
@@ -1776,8 +1778,10 @@ window.scrollTo(0, 0);
 }
 
 /* Page « Titres » (MiniDisc simple, compilation ou album d'une série) : même présentation que la page Détails
-   d'un album de la recherche, sans les écoutes ni « Ajouter aux idées » (l'album est déjà sur un MiniDisc).
-   Les données du catalogue s'affichent tout de suite ; Last.fm / MusicBrainz complètent ensuite (titlesLoadExtras). */
+   d'un album de la recherche, sans les écoutes ni « Ajouter aux idées » (l'album est déjà sur un MiniDisc),
+   avec les titres de section stylisés de la page Découverte. Les données du catalogue s'affichent tout de suite ;
+   Last.fm / MusicBrainz complètent ensuite (titlesLoadExtras), SANS jamais remplacer une info déjà présente
+   dans le catalogue (seule exception : les tags, remplacés à la demande). */
 function titlesKnown(v) {
   const t = String(v == null ? '' : v).trim().toLowerCase();
   return !!t && t !== 'unknow' && t !== 'unknown';
@@ -1785,31 +1789,48 @@ function titlesKnown(v) {
 
 function titlesFactsHTML(year, duration) {
   const facts = [];
-  if (titlesKnown(year)) facts.push(`📅 ${mbEscapeHTML(String(year))}`);
+  if (titlesKnown(year)) facts.push(mbEscapeHTML(String(year)));
   if (titlesKnown(duration)) facts.push(`⏱ ${mbEscapeHTML(String(duration))}`);
   return facts.join(' · ');
 }
 
-// Genres du catalogue (colorés) puis tags Last.fm (neutres)
-function titlesGenreChips(local, extra) {
-  return (local || []).map(g => `<span class="ad-tag" style="--tc:${getSingleGenreColor(String(g).toUpperCase())}">${mbEscapeHTML(g)}</span>`).join('')
-    + (extra || []).map(t => `<span class="ad-tag ad-tag-lfm">${mbEscapeHTML(t)}</span>`).join('');
+// Genre principal (coloré) puis tags (catalogue + Last.fm)
+function titlesGenreChips(main, tags) {
+  return (main || []).map(g => `<span class="ad-tag" style="--tc:${getSingleGenreColor(String(g).toUpperCase())}">${mbEscapeHTML(g)}</span>`).join('')
+    + (tags || []).map(t => `<span class="ad-tag ad-tag-lfm">${mbEscapeHTML(t)}</span>`).join('');
 }
 
-function titlesPageHTML({ color, coverHTML, title, artist, year, duration, genres, badgeHTML, tracksHTML, withLastfm }) {
-  const genresHTML = titlesGenreChips(genres, []);
+// Durée par piste : clé de rapprochement entre la tracklist du catalogue et celle de Last.fm / MusicBrainz
+function titlesTrackKey(name) {
+  return mbNormalize(String(name || '').replace(/\s*[\(\[][^\)\]]*[\)\]]/g, ''));
+}
+
+function titlesTracksHTML(tracks, offset, durMap) {
+  if (!tracks || !tracks.length) return `<li><span class="ad-t ad-note">Aucune piste disponible.</span></li>`;
+  return tracks.map((t, i) => {
+    const sec = durMap && durMap.get(titlesTrackKey(t));
+    return `<li><span class="ad-n">${String(offset + i + 1).padStart(2, '0')}</span><span class="ad-t">${t}</span>${sec ? `<span class="ad-d">${adFormatTrack(sec)}</span>` : ''}</li>`;
+  }).join('');
+}
+
+function titlesPageHTML({ color, coverHTML, title, artist, year, duration, genres, tags, badgeHTML, tracksHTML, withLastfm, mdIndex, albumIndex }) {
+  const main = genres || [];
+  const tagList = (tags || []).filter(t => !main.some(g => String(g).toLowerCase() === String(t).toLowerCase()));
+  const chips = titlesGenreChips(main, tagList);
+  const albumArg = albumIndex === null || albumIndex === undefined ? 'null' : albumIndex;
   return `
     <div id="td-page" class="ad-page" style="--ad:${color}">
+      <div class="ad-artist">${artist}</div>
       <div class="ad-cover">${coverHTML}</div>
       <h2 class="ad-title">${title}</h2>
-      <div class="ad-artist">${artist}</div>
       <div id="td-facts" class="ad-facts">${titlesFactsHTML(year, duration)}</div>
       ${badgeHTML || ''}
       <div id="td-auto" class="td-auto hidden"></div>
-      ${withLastfm ? `<section class="ad-sec list-item"><h3>Description</h3><div id="td-desc" class="ad-text ad-note">⏳ Chargement…</div></section>` : ''}
-      <section id="td-genres-sec" class="ad-sec ad-sec-compact list-item ${genresHTML ? '' : 'hidden'}"><h3>Genres</h3><div id="td-genres" class="ad-tags ad-tags-compact">${genresHTML}</div></section>
-      <section class="ad-sec list-item"><h3>Tracklist</h3><ol id="td-tracks" class="ad-tracks">${tracksHTML}</ol></section>
-      ${withLastfm ? `<section class="ad-sec list-item"><h3>Albums similaires</h3><div id="td-similar" class="ad-note">⏳ Chargement…</div></section>` : ''}
+      <div id="td-genres-sec" class="td-sec ${chips ? '' : 'hidden'}">${discoverSeparatorHTML('Genres')}<div id="td-genres" class="ad-tags ad-tags-compact">${chips}</div></div>
+      ${withLastfm ? `<div id="td-desc-sec" class="td-sec">${discoverSeparatorHTML('Description')}<div id="td-desc" class="td-desc ad-note">⏳ Chargement…</div></div>` : ''}
+      <div class="td-sec">${discoverSeparatorHTML('Tracklist')}<div class="ad-sec list-item"><ol id="td-tracks" class="ad-tracks">${tracksHTML}</ol></div></div>
+      ${withLastfm ? `<div id="td-similar-sec" class="td-sec">${discoverSeparatorHTML('Albums similaires')}<div id="td-similar" class="ad-note">⏳ Chargement…</div></div>` : ''}
+      <button type="button" class="td-disco" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">🔎 Discographie et Artistes similaires</button>
     </div>`;
 }
 
@@ -1838,73 +1859,215 @@ function editFromTitles(mdIndex, albumIndex) {
   }
 }
 
-const TD = { token: 0, auto: null };
+/* ---------- Description : 4 lignes puis « … voir plus » à la suite du texte ---------- */
+function titlesDescHTML(text) { return mbEscapeHTML(text); }
+
+function titlesFitDesc() {
+  const d = document.getElementById('td-desc');
+  if (!d || !d.dataset.full) return;
+  const full = d.dataset.full;
+  const btn = label => `<button type="button" class="td-more" onclick="titlesToggleDesc()">${label}</button>`;
+  d.classList.remove('ad-note');
+  if (d.dataset.open === '1') { d.innerHTML = `${titlesDescHTML(full)} ${btn('voir moins')}`; return; }
+  const lh = parseFloat(getComputedStyle(d).lineHeight) || 20;
+  const max = lh * 4 + 2;
+  d.innerHTML = titlesDescHTML(full);
+  if (d.offsetHeight <= max) return; // tient en 4 lignes : pas de bouton
+  let lo = 0, hi = full.length;
+  while (hi - lo > 1) {
+    const mid = (lo + hi) >> 1;
+    d.innerHTML = `${titlesDescHTML(full.slice(0, mid).trimEnd())}… ${btn('voir plus')}`;
+    if (d.offsetHeight <= max) lo = mid; else hi = mid;
+  }
+  let cut = full.slice(0, lo).trimEnd();
+  if (/\s/.test(cut)) cut = cut.replace(/\s+\S*$/, ''); // pas de mot coupé en deux
+  d.innerHTML = `${titlesDescHTML(cut)}… ${btn('voir plus')}`;
+}
+
+function titlesToggleDesc() {
+  const d = document.getElementById('td-desc');
+  if (!d) return;
+  d.dataset.open = d.dataset.open === '1' ? '0' : '1';
+  titlesFitDesc();
+}
+
+function titlesSetDesc(text) {
+  const d = document.getElementById('td-desc');
+  if (!d) return;
+  d.dataset.full = text;
+  d.dataset.open = '0';
+  titlesFitDesc();
+}
+window.addEventListener('resize', () => {
+  const d = document.getElementById('td-desc');
+  if (d && d.dataset.full && d.dataset.open !== '1') titlesFitDesc();
+});
+
+/* ---------- Compléments Last.fm / MusicBrainz ---------- */
+const TD = { token: 0, auto: null, mbTracks: new Map() };
 const titlesSecondsToDuration = sec => `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, '0')}`;
+
+// Albums « Divers » (souvent des OST) : on cherche l'album par son titre. On n'accepte un résultat que si le titre
+// correspond exactement et que le résultat est « Various Artists » ou le seul candidat (sinon : trop risqué).
+async function titlesResolveVarious(title) {
+  const base = mbBaseTitle(title);
+  if (!base) return null;
+  const variants = [title, String(title).replace(/\s*[\(\[][^\)\]]*[\)\]]\s*$/, '').trim()].filter((t, i, a) => t && a.indexOf(t) === i);
+  for (const t of variants) {
+    let data;
+    try { data = await lastfmCall('album.search', { album: t, limit: 10 }); }
+    catch (err) { if (isFatalDiscoverError(err)) throw err; continue; }
+    const list = asArray(data && data.results && data.results.albummatches && data.results.albummatches.album);
+    const exact = list.filter(a => a && a.name && mbBaseTitle(a.name) === base);
+    if (!exact.length) continue;
+    const va = exact.find(a => /^various( artists)?$/i.test(String(a.artist || '').trim()));
+    const pick = va || (exact.length === 1 ? exact[0] : null);
+    if (pick) return { artist: pick.artist, title: pick.name };
+  }
+  return null;
+}
+
+function titlesRenderAuto() {
+  const a = TD.auto;
+  const box = document.getElementById('td-auto');
+  if (!box) return;
+  const what = a ? [a.tracks && 'pistes', a.durationStr && 'durée', a.year && 'année', a.description && 'description',
+    a.tags && 'tags (ils remplaceront les actuels)'].filter(Boolean) : [];
+  if (!what.length) { box.classList.add('hidden'); return; }
+  const src = a.source ? ` (« ${mbEscapeHTML(a.source)} »)` : '';
+  box.innerHTML = `<span>ℹ️ Trouvé via Last.fm / MusicBrainz${src} : ${what.join(', ')}.</span><button type="button" class="td-save" onclick="titlesSaveAuto()">💾 Enregistrer dans la fiche</button>`;
+  box.classList.remove('hidden');
+}
 
 async function titlesLoadExtras(ctx) {
   const token = ++TD.token;
-  TD.auto = null;
-  if (!ctx.withLastfm) return; // compilation « Artistes divers » : rien à chercher
+  TD.auto = { mdIndex: ctx.mdIndex, albumIndex: ctx.albumIndex, source: '' };
+  if (!ctx.withLastfm) return;
   const alive = () => TD.token === token && !!document.getElementById('td-page');
   const el = id => (alive() ? document.getElementById(id) : null);
   const note = (id, text) => { const e = el(id); if (e) { e.classList.add('ad-note'); e.textContent = text; } };
-  const show = (id, html) => { const e = el(id); if (e) { e.classList.remove('ad-note'); e.innerHTML = html; } };
+  const hide = id => { const e = el(id); if (e) e.classList.add('hidden'); };
   const lead = err => (isNetworkError(err) ? 'Hors ligne : ' : '');
+  const hasStoredDesc = titlesKnown(ctx.description);
 
-  // 1) Albums similaires (en parallèle)
-  adSimilarAlbums({ artist: ctx.artist }).then(list => {
+  // Description déjà dans le catalogue : on l'affiche telle quelle, sans rien chercher
+  if (hasStoredDesc) titlesSetDesc(String(ctx.description).trim());
+
+  // 0) Artiste « Divers » : on tente de retrouver l'album (OST...) par son titre
+  const various = !isRealArtist(ctx.artist);
+  let lfmArtist = ctx.artist, lfmTitle = ctx.title;
+  if (various) {
+    hide('td-similar-sec'); // pas d'albums « similaires » à un album multi-artistes
+    let found = null;
+    try { found = await titlesResolveVarious(ctx.title); } catch (err) { /* hors ligne / clé manquante */ }
     if (!alive()) return;
-    AD.similar = list;
-    if (!list.length) return note('td-similar', 'Aucun album similaire trouvé.');
-    show('td-similar', `<div class="ad-sim">${list.map((s, i) => `
-      <div class="ad-sim-item" onclick="adOpenSimilar(${i})">
-        <div class="ad-sim-cover"><span>💿</span>${s.image ? `<img src="${mbEscapeHTML(s.image)}" alt="" loading="lazy" onerror="discoverCoverError(this)">` : ''}</div>
-        <div class="ad-sim-title">${mbEscapeHTML(s.title)}</div>
-        <div class="ad-sim-artist">${mbEscapeHTML(s.artist)}</div>
-      </div>`).join('')}</div>`);
-  }).catch(err => note('td-similar', lead(err) + 'albums similaires indisponibles.'));
+    if (!found) { if (!hasStoredDesc) hide('td-desc-sec'); return; }
+    lfmArtist = found.artist; lfmTitle = found.title;
+    TD.auto.source = `${found.artist} – ${found.title}`;
+  } else {
+    // 1) Albums similaires (en parallèle)
+    adSimilarAlbums({ artist: ctx.artist }).then(list => {
+      if (!alive()) return;
+      AD.similar = list;
+      if (!list.length) return note('td-similar', 'Aucun album similaire trouvé.');
+      const e = el('td-similar');
+      e.classList.remove('ad-note');
+      e.innerHTML = `<div class="ad-sim">${list.map((s2, i) => `
+        <div class="ad-sim-item" onclick="adOpenSimilar(${i})">
+          <div class="ad-sim-cover"><span>💿</span>${s2.image ? `<img src="${mbEscapeHTML(s2.image)}" alt="" loading="lazy" onerror="discoverCoverError(this)">` : ''}</div>
+          <div class="ad-sim-title">${mbEscapeHTML(s2.title)}</div>
+          <div class="ad-sim-artist">${mbEscapeHTML(s2.artist)}</div>
+        </div>`).join('')}</div>`;
+    }).catch(err => note('td-similar', lead(err) + 'albums similaires indisponibles.'));
+  }
 
   // 2) Infos Last.fm de l'album
   let info = null, infoErr = null;
-  try { info = await adAlbumInfo({ artist: ctx.artist, title: ctx.title }); } catch (err) { infoErr = err; }
+  try { info = await adAlbumInfo({ artist: lfmArtist, title: lfmTitle }); } catch (err) { infoErr = err; }
   if (!alive()) return;
 
-  // 3) Genres : ceux du catalogue + tous les tags Last.fm (album, puis artiste s'il y en a peu)
+  const target = () => {
+    const md = catalogData[ctx.mdIndex];
+    return ctx.albumIndex == null ? md : (md && md.albums && md.albums[ctx.albumIndex]);
+  };
+
+  // 3) Tags : tous ceux de Last.fm (album, puis artiste s'il y en a peu). Ils remplacent les tags du catalogue
+  //    quand on enregistre ; en attendant, on affiche ceux du catalogue + ceux de Last.fm.
   try {
     const isDateTag = t => /\b(19|20)\d{2}\b/.test(t) || /^\d{2}s$/i.test(String(t).trim());
-    let tags = asArray(info && info.tags && info.tags.tag).map(t => t.name);
-    if (tags.length < 5) {
+    let raw = asArray(info && info.tags && info.tags.tag).map(t => t.name);
+    if (!various && raw.length < 5) {
       try {
-        const top = await lastfmCall('artist.getTopTags', { artist: ctx.artist });
-        tags = tags.concat(asArray(top.toptags && top.toptags.tag).slice(0, 8).map(t => t.name));
+        const top = await lastfmCall('artist.getTopTags', { artist: lfmArtist });
+        raw = raw.concat(asArray(top.toptags && top.toptags.tag).slice(0, 8).map(t => t.name));
       } catch (err) { /* on garde ce qu'on a */ }
     }
-    const seen = new Set((ctx.genres || []).map(g => String(g).trim().toLowerCase()));
-    const extra = [];
-    tags.forEach(t => {
+    const mainSet = new Set((ctx.genres || []).map(g => String(g).trim().toLowerCase()));
+    const seen = new Set(mainSet);
+    const fetched = [];
+    raw.forEach(t => {
       const k = String(t || '').trim().toLowerCase();
       if (!k || isDateTag(k) || seen.has(k)) return;
-      seen.add(k); extra.push(String(t).trim());
+      seen.add(k); fetched.push(String(t).trim());
     });
-    const maxExtra = Math.max(4, 10 - (ctx.genres || []).length);
-    if (extra.length && alive()) {
-      document.getElementById('td-genres').innerHTML = titlesGenreChips(ctx.genres, extra.slice(0, maxExtra));
-      document.getElementById('td-genres-sec').classList.remove('hidden');
+    const fetchedTags = fetched.slice(0, 10);
+    const shown = [];
+    const shownSeen = new Set(mainSet);
+    (ctx.storedTags || []).concat(fetchedTags).forEach(t => {
+      const k = String(t).trim().toLowerCase();
+      if (!k || shownSeen.has(k)) return;
+      shownSeen.add(k); shown.push(String(t).trim());
+    });
+    if (alive() && shown.length) {
+      el('td-genres').innerHTML = titlesGenreChips(ctx.genres, shown);
+      el('td-genres-sec').classList.remove('hidden');
     }
+    const stored = new Set((ctx.storedTags || []).map(t => String(t).trim().toLowerCase()).filter(Boolean));
+    const fetchedSet = new Set(fetchedTags.map(t => t.toLowerCase()));
+    const same = stored.size === fetchedSet.size && [...stored].every(t => fetchedSet.has(t));
+    if (fetchedTags.length && !same) { TD.auto.tags = fetchedTags; titlesRenderAuto(); }
   } catch (err) { /* les genres du catalogue restent affichés */ }
   if (!alive()) return;
 
-  // 4) Infos manquantes dans le catalogue (pistes, durée, année) : Last.fm puis MusicBrainz
+  // 4) Durée de chaque piste (affichage seulement : les pistes sont de simples textes dans le catalogue).
+  //    D'abord Last.fm (déjà chargé, gratuit), sinon MusicBrainz ; on rapproche les pistes par leur titre.
+  const lfmTracks = asArray(info && info.tracks && info.tracks.track).map(t => ({ name: t.name, seconds: parseInt(t.duration, 10) || 0 }));
+  if (ctx.hasTracks) {
+    try {
+      let pool = lfmTracks.filter(t => t.seconds > 0);
+      if (!pool.length) {
+        const key = `${lfmArtist}|${lfmTitle}`;
+        if (!TD.mbTracks.has(key)) {
+          let list = [];
+          try {
+            const tokens = mbQueryTokens(various ? lfmTitle : `${lfmArtist} ${lfmTitle}`);
+            const group = mbFilterAndRank(await mbSearchReleaseGroups(tokens, 'and'), tokens, 1)[0];
+            if (group) list = await adMbTracks(group.id);
+          } catch (err) { /* MusicBrainz indisponible */ }
+          TD.mbTracks.set(key, list);
+        }
+        pool = (TD.mbTracks.get(key) || []).filter(t => t.seconds > 0);
+      }
+      if (alive() && pool.length) {
+        const map = new Map();
+        pool.forEach(t => { const k = titlesTrackKey(t.name); if (k && !map.has(k)) map.set(k, t.seconds); });
+        el('td-tracks').innerHTML = titlesTracksHTML(ctx.tracks, ctx.trackOffset, map);
+      }
+    } catch (err) { /* pas de durées : la liste reste telle quelle */ }
+  }
+  if (!alive()) return;
+
+  // 5) Infos absentes du catalogue (pistes, durée, année) : jamais de remplacement d'une info existante
   try {
     const need = { tracks: !ctx.hasTracks, duration: !ctx.hasDuration, year: !ctx.hasYear };
     if (need.tracks || need.duration || need.year) {
-      let tracks = asArray(info && info.tracks && info.tracks.track).map(t => ({ name: t.name, seconds: parseInt(t.duration, 10) || 0 }));
+      let tracks = lfmTracks;
       let total = tracks.reduce((n, t) => n + t.seconds, 0);
       let year = '';
       if (need.year || (need.tracks && !tracks.length) || (need.duration && !total)) {
         let mbid = '';
         try {
-          const tokens = mbQueryTokens(`${ctx.artist} ${ctx.title}`);
+          const tokens = mbQueryTokens(various ? lfmTitle : `${lfmArtist} ${lfmTitle}`);
           const group = mbFilterAndRank(await mbSearchReleaseGroups(tokens, 'and'), tokens, 1)[0];
           if (group) { mbid = group.id; year = String(group['first-release-date'] || '').slice(0, 4); }
         } catch (err) { /* MusicBrainz indisponible */ }
@@ -1923,54 +2086,61 @@ async function titlesLoadExtras(ctx) {
         year: need.year && /^\d{4}$/.test(year) ? year : ''
       };
       if (fill.tracks || fill.duration || fill.year) {
-        TD.auto = { mdIndex: ctx.mdIndex, albumIndex: ctx.albumIndex, ...fill, durationStr: fill.duration ? titlesSecondsToDuration(fill.duration) : '' };
-        const md = catalogData[ctx.mdIndex];
-        const target = ctx.albumIndex == null ? md : (md && md.albums && md.albums[ctx.albumIndex]);
-        const year2 = fill.year || (target && target.release_year);
-        const dur2 = TD.auto.durationStr || (target && target.duration);
-        el('td-facts').innerHTML = titlesFactsHTML(year2, dur2);
+        Object.assign(TD.auto, fill, { durationStr: fill.duration ? titlesSecondsToDuration(fill.duration) : '' });
+        const t0 = target();
+        el('td-facts').innerHTML = titlesFactsHTML(fill.year || (t0 && t0.release_year), TD.auto.durationStr || (t0 && t0.duration));
         if (fill.tracks) {
-          el('td-tracks').innerHTML = fill.tracks.map((t, i) => `<li><span class="ad-n">${String(ctx.trackOffset + i + 1).padStart(2, '0')}</span><span class="ad-t">${mbEscapeHTML(t.name)}</span><span class="ad-d">${adFormatTrack(t.seconds)}</span></li>`).join('');
+          el('td-tracks').innerHTML = fill.tracks.map((t, i) => `<li><span class="ad-n">${String(ctx.trackOffset + i + 1).padStart(2, '0')}</span><span class="ad-t">${mbEscapeHTML(t.name)}</span>${t.seconds ? `<span class="ad-d">${adFormatTrack(t.seconds)}</span>` : ''}</li>`).join('');
         }
-        const what = [fill.tracks && 'pistes', fill.duration && 'durée', fill.year && 'année'].filter(Boolean).join(', ');
-        const box = el('td-auto');
-        box.innerHTML = `<span>ℹ️ Infos absentes de ta fiche, complétées via Last.fm / MusicBrainz : ${what}.</span><button type="button" class="td-save" onclick="titlesSaveAuto()">💾 Enregistrer dans la fiche</button>`;
-        box.classList.remove('hidden');
+        titlesRenderAuto();
       }
     }
   } catch (err) { /* pas de complément : la page garde les données du catalogue */ }
   if (!alive()) return;
 
-  // 5) Description (en dernier : la traduction peut être longue)
-  if (infoErr) return note('td-desc', infoErr.code === 'nokey' ? 'Description indisponible (clé Last.fm manquante).' : lead(infoErr) + 'description indisponible.');
+  // 6) Description (en dernier : la traduction peut être longue). Jamais si le catalogue en a déjà une.
+  if (hasStoredDesc) return;
+  if (infoErr) {
+    if (various) return hide('td-desc-sec');
+    return note('td-desc', infoErr.code === 'nokey' ? 'Description indisponible (clé Last.fm manquante).' : lead(infoErr) + 'description indisponible.');
+  }
   const wiki = info && info.wiki;
   let text = adHtmlToText((wiki && (wiki.summary || wiki.content)) || '');
   if (text.length > 1500) text = (text.slice(0, 1500).match(/^[\s\S]*[.!?](?=\s|$)/) || [text.slice(0, 1500)])[0];
-  if (!text) return note('td-desc', 'Aucune description disponible pour cet album.');
-  if (adLooksFrench(text)) return show('td-desc', mbEscapeHTML(text));
+  if (!text) return various ? hide('td-desc-sec') : note('td-desc', 'Aucune description disponible pour cet album.');
+  const done = fr => {
+    if (!alive()) return;
+    titlesSetDesc(fr);
+    TD.auto.description = fr;
+    titlesRenderAuto();
+  };
+  if (adLooksFrench(text)) return done(text);
   note('td-desc', '⏳ Traduction en cours…');
   try {
-    show('td-desc', mbEscapeHTML(await adToFrench(text)));
+    done(await adToFrench(text));
   } catch (err) {
-    show('td-desc', `${mbEscapeHTML(text)}<div class="ad-note">(Traduction indisponible : texte original en anglais.)</div>`);
+    if (alive()) titlesSetDesc(text); // texte original : affiché, mais non proposé à l'enregistrement
   }
 }
 
-// Enregistre dans le catalogue les infos retrouvées (uniquement sur demande : une erreur d'identification reste possible)
+// Enregistre dans le catalogue ce qui a été retrouvé, uniquement sur demande (une erreur d'identification reste possible).
+// Rien d'existant n'est remplacé, sauf les tags.
 function titlesSaveAuto() {
   const a = TD.auto;
   if (!a) return;
   const md = catalogData[a.mdIndex];
   const target = a.albumIndex == null ? md : (md && md.albums && md.albums[a.albumIndex]);
   if (!target) return;
-  if (a.tracks && a.tracks.length) target.tracks = a.tracks.map(t => t.name);
-  if (a.durationStr) target.duration = a.durationStr;
-  if (a.year) target.release_year = a.year;
+  if (a.tracks && a.tracks.length && !(target.tracks && target.tracks.length)) target.tracks = a.tracks.map(t => t.name);
+  if (a.durationStr && !titlesKnown(target.duration)) target.duration = a.durationStr;
+  if (a.year && !titlesKnown(target.release_year)) target.release_year = a.year;
+  if (a.description && !titlesKnown(target.description)) target.description = a.description;
+  if (a.tags && a.tags.length) target.tags = a.tags.slice();
   saveLocalBackup();
   showToast('✅ Fiche mise à jour');
   const box = document.getElementById('td-auto');
   if (box) box.innerHTML = '<span>✔ Infos enregistrées dans la fiche.</span>';
-  TD.auto = null;
+  TD.auto = { mdIndex: a.mdIndex, albumIndex: a.albumIndex, source: '' };
 }
 
 /* GESTION DU MENU FAB DÉTAIL MINIDISC */
@@ -2053,14 +2223,16 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     year: album.release_year,
     duration: album.duration,
     genres: albumGenres,
+    tags: album.tags,
     badgeHTML: badgeAlbumHTML,
     tracksHTML,
-    withLastfm: isRealArtist(album.artist) && !!album.title
-  }) + titlesEditFabHTML(mdIndex, albumIndex) + titlesActionsHTML(mdIndex, albumIndex, true);
+    withLastfm: !!album.title,
+    mdIndex, albumIndex: Number(albumIndex)
+  }) + titlesEditFabHTML(mdIndex, albumIndex);
   titlesLoadExtras({
-    withLastfm: isRealArtist(album.artist) && !!album.title,
+    withLastfm: !!album.title,
     artist: album.artist, title: album.title, mdIndex, albumIndex: Number(albumIndex), trackOffset,
-    genres: albumGenres,
+    genres: albumGenres, storedTags: album.tags || [], tracks: album.tracks || [], description: album.description,
     hasTracks: !!(album.tracks && album.tracks.length), hasYear: titlesKnown(album.release_year), hasDuration: titlesKnown(album.duration)
   });
   window.scrollTo(0, 0);
@@ -2206,6 +2378,7 @@ function openAdminModal(indexToEdit = null) {
       if (document.getElementById('compil-year')) document.getElementById('compil-year').value = md.release_year || '';
       if (document.getElementById('compil-duration')) document.getElementById('compil-duration').value = md.duration || '';
       document.getElementById('compil-tracks').value = md.tracks ? md.tracks.join('\n') : '';
+      if (document.getElementById('compil-description')) document.getElementById('compil-description').value = md.description || '';
       if (document.getElementById('compil-to-record')) {
         document.getElementById('compil-to-record').checked = !!md.toRecord;
       }
@@ -2220,6 +2393,7 @@ function openAdminModal(indexToEdit = null) {
         block.querySelector('.album-year').value = album.release_year || '';
         if (block.querySelector('.album-duration')) block.querySelector('.album-duration').value = album.duration || '';
         block.querySelector('.album-tracks').value = album.tracks ? album.tracks.join('\n') : '';
+        if (block.querySelector('.album-description')) block.querySelector('.album-description').value = album.description || '';
         if (block.querySelector('.album-to-record')) {
           block.querySelector('.album-to-record').checked = !!album.toRecord;
         }
@@ -2244,6 +2418,7 @@ function openAdminModal(indexToEdit = null) {
     if (document.getElementById('compil-year')) document.getElementById('compil-year').value = '';
     if (document.getElementById('compil-duration')) document.getElementById('compil-duration').value = '';
     if (document.getElementById('compil-tracks')) document.getElementById('compil-tracks').value = '';
+    if (document.getElementById('compil-description')) document.getElementById('compil-description').value = '';
     
     if (document.getElementById('compil-to-record')) {
       document.getElementById('compil-to-record').checked = false;
@@ -2313,6 +2488,10 @@ function addAdminAlbumBlock() {
     <div class="form-divider form-divider-sm"><span>Pistes et pochette</span></div>
     <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne, sans numéro)"></textarea></div>
     <div class="form-group">
+      <label>Description (optionnelle)</label>
+      <textarea class="album-description" placeholder="Quelques lignes sur l'album"></textarea>
+    </div>
+    <div class="form-group">
       <label>Pochette Album</label>
       <input type="file" class="album-cover" accept="image/*">
     </div>
@@ -2345,6 +2524,7 @@ function flattenSingleAlbum(targetMD) {
   targetMD.release_year = alb.release_year;
   targetMD.duration = alb.duration;
   targetMD.tracks = alb.tracks;
+  if (alb.description) targetMD.description = alb.description;
   targetMD.toRecord = alb.toRecord;
   delete targetMD.albums;
 }
@@ -2401,6 +2581,8 @@ async function submitNewMD(e) {
 
     const rawTracks = document.getElementById('compil-tracks').value.split('\n');
     targetMD.tracks = rawTracks.map(t => t.trim()).filter(t => t !== '');
+    const compilDesc = document.getElementById('compil-description') ? document.getElementById('compil-description').value.trim() : '';
+    if (compilDesc) targetMD.description = compilDesc;
 
     const compilCheckbox = document.getElementById('compil-to-record');
     targetMD.toRecord = compilCheckbox ? compilCheckbox.checked : false;
@@ -2460,6 +2642,8 @@ async function submitNewMD(e) {
         tracks: formattedTracks,
         toRecord: block.querySelector('.album-to-record') ? block.querySelector('.album-to-record').checked : false
       };
+      const albumDesc = block.querySelector('.album-description') ? block.querySelector('.album-description').value.trim() : '';
+      if (albumDesc) albumObj.description = albumDesc;
 
       targetMD.albums.push(albumObj);
     }
