@@ -3659,9 +3659,22 @@
             "Pop Rock",
             "Folk"
           ],
-          "release_year": "",
+          "release_year": "1999",
           "duration": "53:18",
-          "tracks": [],
+          "tracks": [
+            "You Learn",
+            "Joining You",
+            "No Pressure Over Cappuccino",
+            "That I Would Be Good",
+            "Head Over Feet",
+            "Princes Familiar",
+            "I Was Hoping",
+            "Ironic",
+            "These R the Thoughts",
+            "King of Pain",
+            "You Oughta Know",
+            "Uninvited"
+          ],
           "toRecord": true
         }
       ]
