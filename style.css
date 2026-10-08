@@ -3241,6 +3241,14 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .ad-note { font-size: 0.8rem; color: var(--text-sub); font-style: italic; }
 .ad-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .ad-tag { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--ad); font-size: 0.75rem; color: var(--text-main); }
+/* Pages « Titres » : la jaquette (cover-wrapper) remplit le cadre comme sur la page Détails */
+.ad-cover .cover-wrapper { position: absolute !important; inset: 0; width: 100%; height: 100%; border: none !important; }
+.ad-page .badge-to-record-header { margin: 0; }
+/* Genres : discrets (puces fines, serrées, couleur de chaque genre) */
+.ad-sec.ad-sec-compact.list-item { padding-top: 8px; padding-bottom: 8px; }
+.ad-sec-compact h3 { margin-bottom: 5px; color: var(--text-sub); }
+.ad-tags-compact { gap: 4px; }
+.ad-tags-compact .ad-tag { padding: 1px 8px; font-size: 0.66rem; letter-spacing: .3px; border-color: var(--tc, var(--ad)); color: var(--tc, var(--text-sub)); opacity: .9; }
 .ad-tracks { list-style: none; margin: 0; padding: 0; }
 .ad-tracks li { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(255, 255, 255, .08); font-size: 0.88rem; color: var(--text-main); }
 .ad-tracks li:last-child { border-bottom: none; }

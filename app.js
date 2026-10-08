@@ -1704,10 +1704,10 @@ if (!md.albums || md.albums.length === 0) {
   if (md.tracks && md.tracks.length > 0) {
     md.tracks.forEach((track, i) => {
       const num = String(i + 1).padStart(2, '0');
-      tracksHTML += `<li class="track-item"><strong class="track-num">${num}.</strong> ${track}</li>`;
+      tracksHTML += `<li><span class="ad-n">${num}</span><span class="ad-t">${track}</span></li>`;
     });
   } else {
-    tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
+    tracksHTML = `<li><span class="ad-t ad-note">Aucune piste disponible.</span></li>`;
   }
 
   const badgeCompilHTML = md.toRecord 
@@ -1718,23 +1718,19 @@ if (!md.albums || md.albums.length === 0) {
   const isKnownValue = (v) => v && String(v).trim() && String(v).trim().toLowerCase() !== 'unknow' && String(v).trim().toLowerCase() !== 'unknown';
   const metaLine = [md.release_year, md.duration].filter(isKnownValue).join(' · ');
 
-  app.innerHTML = `
-    <div class="track-container" style="padding-bottom: 90px;">
-      <div class="album-header">
-        ${coverHTML}
-        <div class="album-header-info">
-          ${badgeCompilHTML}
-          <h2 style="font-size: 1.2rem; font-weight: 800;">${md.title || 'Compilation'}</h2>
-          <p style="color: var(--text-sub); font-size: 0.95rem;">${md.artist || 'Artistes divers'}</p>
-          <p style="color: ${borderColor}; font-size: 0.8rem; font-weight: 800;">${allMdGenres.join(' / ')}</p>
-          ${metaLine ? `<p class="meta-line" style="font-size: 0.8rem;">${metaLine}</p>` : ''}
-        </div>
-      </div>
-      <ul class="track-list">${tracksHTML}</ul>
-    </div>
-    ${fabHTML}
-    ${titlesActionsHTML(index, null, true)}
-  `;
+  app.innerHTML = titlesPageHTML({
+    color: borderColor,
+    coverHTML,
+    title: md.title || 'Compilation',
+    artist: md.artist || 'Artistes divers',
+    year: md.release_year,
+    duration: md.duration,
+    genres: allMdGenres,
+    badgeHTML: badgeCompilHTML,
+    tracksHTML,
+    withDescription: isRealArtist(md.artist) && !!md.title
+  }) + fabHTML + titlesActionsHTML(index, null, true);
+  if (isRealArtist(md.artist) && md.title) titlesLoadDescription(md.artist, md.title);
   window.scrollTo(0, 0);
   return;
 }
@@ -1771,6 +1767,59 @@ md.albums.forEach((album, aIndex) => {
 html += `${fabHTML}</div>`;
 app.innerHTML = html;
 window.scrollTo(0, 0);
+}
+
+/* Page « Titres » (MiniDisc simple, compilation ou album d'une série) : même présentation que la page
+   Détails d'un album de la recherche (jaquette, titre, artiste, infos, sections), sans les écoutes ni le bouton
+   « Ajouter aux idées », puisque l'album est déjà sur un MiniDisc. La description est chargée depuis Last.fm (titlesLoadDescription), sauf pour les compilations « Artistes divers ». */
+function titlesPageHTML({ color, coverHTML, title, artist, year, duration, genres, badgeHTML, tracksHTML, withDescription }) {
+  const known = v => v && String(v).trim() && !['unknow', 'unknown'].includes(String(v).trim().toLowerCase());
+  const facts = [];
+  if (known(year)) facts.push(`📅 ${year}`);
+  if (known(duration)) facts.push(`⏱ ${duration}`);
+  const genresHTML = (genres || []).map(g => `<span class="ad-tag" style="--tc:${getSingleGenreColor(g)}">${g}</span>`).join('');
+  return `
+    <div class="ad-page" style="--ad:${color}">
+      <div class="ad-cover">${coverHTML}</div>
+      <h2 class="ad-title">${title}</h2>
+      <div class="ad-artist">${artist}</div>
+      ${facts.length ? `<div class="ad-facts">${facts.join(' · ')}</div>` : ''}
+      ${badgeHTML || ''}
+      ${withDescription ? `<section class="ad-sec list-item"><h3>Description</h3><div id="td-desc" class="ad-text ad-note">⏳ Chargement…</div></section>` : ''}
+      ${genresHTML ? `<section class="ad-sec ad-sec-compact list-item"><h3>Genres</h3><div class="ad-tags ad-tags-compact">${genresHTML}</div></section>` : ''}
+      <section class="ad-sec list-item"><h3>Tracklist</h3><ol class="ad-tracks">${tracksHTML}</ol></section>
+    </div>`;
+}
+
+// Description d'un album de la collection : Last.fm, en français (traduite si besoin), comme sur la page Détails
+const TD = { token: 0 };
+async function titlesLoadDescription(artist, title) {
+  const token = ++TD.token;
+  const alive = () => TD.token === token && document.getElementById('td-desc');
+  const show = html => { const el = alive(); if (el) { el.innerHTML = html; el.classList.remove('ad-note'); } };
+  const note = text => { const el = alive(); if (el) { el.classList.add('ad-note'); el.textContent = text; } };
+
+  let info = null;
+  try {
+    info = await adAlbumInfo({ artist, title });
+  } catch (err) {
+    if (!alive()) return;
+    return note(isNetworkError(err) ? 'Hors ligne : description indisponible.' : 'Description indisponible.');
+  }
+  if (!alive()) return;
+
+  const wiki = info && info.wiki;
+  let text = adHtmlToText((wiki && (wiki.summary || wiki.content)) || '');
+  if (text.length > 1500) text = (text.slice(0, 1500).match(/^[\s\S]*[.!?](?=\s|$)/) || [text.slice(0, 1500)])[0];
+  if (!text) return note('Aucune description disponible pour cet album.');
+  if (adLooksFrench(text)) return show(mbEscapeHTML(text));
+  note('⏳ Traduction en cours…');
+  try {
+    const fr = await adToFrench(text);
+    if (alive()) show(mbEscapeHTML(fr));
+  } catch (err) {
+    if (alive()) show(`${mbEscapeHTML(text)}<div class="ad-note">(Traduction indisponible : texte original en anglais.)</div>`);
+  }
 }
 
 /* GESTION DU MENU FAB DÉTAIL MINIDISC */
@@ -1831,10 +1880,10 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   if (album.tracks && album.tracks.length > 0) {
     album.tracks.forEach((track, i) => {
       const num = String(trackOffset + i + 1).padStart(2, '0');
-      tracksHTML += `<li class="track-item"><strong class="track-num">${num}.</strong> ${track}</li>`;
+      tracksHTML += `<li><span class="ad-n">${num}</span><span class="ad-t">${track}</span></li>`;
     });
   } else {
-    tracksHTML = `<li class="track-item">Aucune piste disponible.</li>`;
+    tracksHTML = `<li><span class="ad-t ad-note">Aucune piste disponible.</span></li>`;
   }
 
   const badgeAlbumHTML = album.toRecord 
@@ -1845,22 +1894,19 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   const isKnownAlbumValue = (v) => v && String(v).trim() && String(v).trim().toLowerCase() !== 'unknow' && String(v).trim().toLowerCase() !== 'unknown';
   const albumMetaLine = [album.release_year, album.duration].filter(isKnownAlbumValue).join(' · ');
 
-  app.innerHTML = `
-    <div class="track-container">
-      <div class="album-header">
-        ${coverHTML}
-        <div class="album-header-info">
-          ${badgeAlbumHTML}
-          <h2 style="font-size: 1.2rem; font-weight: 800;">${album.title || 'Album sans titre'}</h2>
-          <p style="color: var(--text-sub); font-size: 0.95rem;">${album.artist || 'Artiste inconnu'}</p>
-          <p style="color: ${albumColor}; font-size: 0.8rem; font-weight: 800;">${albumGenres.join(' / ')}</p>
-          ${albumMetaLine ? `<p class="meta-line" style="font-size: 0.8rem;">${albumMetaLine}</p>` : ''}
-        </div>
-      </div>
-      <ul class="track-list">${tracksHTML}</ul>
-    </div>
-    ${titlesActionsHTML(mdIndex, albumIndex, false)}
-  `;
+  app.innerHTML = titlesPageHTML({
+    color: albumColor,
+    coverHTML,
+    title: album.title || 'Album sans titre',
+    artist: album.artist || 'Artiste inconnu',
+    year: album.release_year,
+    duration: album.duration,
+    genres: albumGenres,
+    badgeHTML: badgeAlbumHTML,
+    tracksHTML,
+    withDescription: isRealArtist(album.artist) && !!album.title
+  }) + titlesActionsHTML(mdIndex, albumIndex, false);
+  if (isRealArtist(album.artist) && album.title) titlesLoadDescription(album.artist, album.title);
   window.scrollTo(0, 0);
 }
 /* ==========================================
