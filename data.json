@@ -3694,9 +3694,21 @@
             "Alternative Rock",
             "Rock"
           ],
-          "release_year": "",
+          "release_year": "1991",
           "duration": "53:26",
-          "tracks": [],
+          "tracks": [
+            "Once",
+            "Even Flow",
+            "Alive",
+            "Why Go",
+            "Black",
+            "Jeremy",
+            "Oceans",
+            "Porch",
+            "Garden",
+            "Deep",
+            "Release / Master/Slave"
+          ],
           "toRecord": true
         },
         {
