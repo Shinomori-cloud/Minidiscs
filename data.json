@@ -3850,9 +3850,25 @@
           "tags": [
             "Experimental"
           ],
-          "release_year": "",
+          "release_year": "1999",
           "duration": "1:04:00",
-          "tracks": [],
+          "tracks": [
+            "Who Is Tyler Durden?",
+            "Homework",
+            "What Is Fight Club?",
+            "Single Serving Jack",
+            "Corporate World",
+            "Psycho Boy Jack",
+            "Hessel, Raymond K.",
+            "Medula Oblongata",
+            "Jack's Smirking Revenge",
+            "Stealing Fat",
+            "Chemical Burn",
+            "Marla",
+            "Commissioner Castration",
+            "Space Monkeys",
+            "Finding the Bomb"
+          ],
           "toRecord": true
         }
       ]
