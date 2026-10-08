@@ -3706,9 +3706,26 @@
             "Reggae",
             "Folk"
           ],
-          "release_year": "",
+          "release_year": "1998",
           "duration": "1:13:53",
-          "tracks": [],
+          "tracks": [
+            "L'Hymne de nos campagnes",
+            "Pour un flirt avec la crise",
+            "C'est du roots - live",
+            "Salut Ô - LIVE",
+            "La Révolution - Live",
+            "Regardez-Les - Live",
+            "La misère d'en face",
+            "Un homme qui aime les femmes",
+            "La main verte - LIVE",
+            "France Telecom",
+            "Yakamonéyé - LIVE",
+            "Les soldats de plomb",
+            "Suprématie - Live",
+            "Babylone - Live",
+            "J'ai rien prévu pour demain",
+            "Sketch"
+          ],
           "toRecord": true
         },
         {
