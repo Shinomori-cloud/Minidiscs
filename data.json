@@ -3721,9 +3721,26 @@
             "Alternative Rock",
             "Grunge"
           ],
-          "release_year": "",
+          "release_year": "1994",
           "duration": "1:10:19",
-          "tracks": [],
+          "tracks": [
+            "Let Me Drown",
+            "My Wave",
+            "Fell on Black Days",
+            "Mailman",
+            "Superunknown",
+            "Head Down",
+            "Black Hole Sun",
+            "Spoonman",
+            "Limo Wreck",
+            "The Day I Tried to Live",
+            "Kickstand",
+            "Fresh Tendrils",
+            "4th of July",
+            "Half",
+            "Like Suicide",
+            "She Likes Surprises"
+          ],
           "toRecord": true
         }
       ]
