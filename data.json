@@ -3631,9 +3631,22 @@
             "Rock",
             "Blues"
           ],
-          "release_year": "",
+          "release_year": "2007",
           "duration": "1:23:00",
-          "tracks": [],
+          "tracks": [
+            "Dream Brother - Live at Club Logo",
+            "I Woke Up in a Strange Place - Live at Palais Theatre",
+            "Mojo Pin - Live at the Theatre de Fourviere",
+            "Lilac Wine - Live at Palais Theatre",
+            "What Will You Say - Live at Theatre de Fourviere",
+            "Last Goodbye - Live at Olympia",
+            "Eternal Life - Live at Palais Theatre",
+            "Grace - Live at Palais Theatre",
+            "Moodswing Whiskey - Live at Palais Theatre",
+            "The Man That Got Away - Live at Great American Music Hall",
+            "Kanga Roo - Live at The Phoenician Theatre",
+            "Hallelujah/I Know It's Over (Medley) - Live at King Theater"
+          ],
           "toRecord": true
         },
         {
