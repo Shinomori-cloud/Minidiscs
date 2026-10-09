@@ -3295,7 +3295,13 @@
           "title": "Ghost in the shell",
           "artist": "Kenji Kawai",
           "main_genre": "Ambient & Orchestral",
-          "tags": [],
+          "tags": [
+            "soundtrack",
+            "ambient",
+            "anime",
+            "japanese",
+            "film music"
+          ],
           "release_year": "1995",
           "duration": "50:43",
           "tracks": [
