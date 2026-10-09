@@ -529,8 +529,11 @@
           "artist": "Radiohead",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Experimental"
+            "alternative",
+            "alternative rock",
+            "radiohead",
+            "rock",
+            "electronic"
           ],
           "release_year": "2001",
           "duration": "Unknow",
