@@ -3235,7 +3235,16 @@
           "title": "Rurouni Kenshin : Tsuioku Hen",
           "artist": "Taku Iwasaki",
           "main_genre": "Ambient & Orchestral",
-          "tags": [],
+          "tags": [
+            "Soundtrack",
+            "japanese",
+            "anime",
+            "instrumental",
+            "ost",
+            "composer",
+            "Classical",
+            "electronic"
+          ],
           "release_year": "1999",
           "duration": "53:00",
           "tracks": [
