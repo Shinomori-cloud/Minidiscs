@@ -203,10 +203,14 @@
           "artist": "Doc Gynéco",
           "main_genre": "Rap, Soul & Reggae",
           "tags": [
-            "Rap"
+            "rap",
+            "hip-hop",
+            "france",
+            "francais",
+            "french rap"
           ],
           "release_year": "1998",
-          "duration": "Unknow",
+          "duration": "63:47",
           "tracks": [
             "Dans ma ruche",
             "Viens faire un tour dans les cités",
