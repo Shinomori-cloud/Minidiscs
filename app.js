@@ -1731,6 +1731,7 @@ if (!md.albums || md.albums.length === 0) {
     badgeHTML: badgeCompilHTML,
     tracksHTML,
     withLastfm: !!md.title,
+    coverPath: md.md_cover,
     mdIndex: index, albumIndex: null
   }) + fabHTML;
   titlesLoadExtras({
@@ -1794,10 +1795,19 @@ function titlesFactsHTML(year, duration) {
   return facts.join(' · ');
 }
 
-// Genre principal (coloré) puis tags (catalogue + Last.fm)
+// Tags affichés sur la fiche (catalogue + Last.fm). Le genre principal (les 8 genres de filtrage) n'y figure pas.
 function titlesGenreChips(main, tags) {
   return (main || []).map(g => `<span class="ad-tag" style="--tc:${getSingleGenreColor(String(g).toUpperCase())}">${mbEscapeHTML(g)}</span>`).join('')
     + (tags || []).map(t => `<span class="ad-tag ad-tag-lfm">${mbEscapeHTML(t)}</span>`).join('');
+}
+
+// Un tag qui n'est que le nom de l'artiste (ou le contient) n'apporte rien sur la fiche
+function titlesIsArtistTag(tag, artists) {
+  const t = ` ${mbNormalize(tag)} `;
+  return (artists || []).some(a => {
+    const n = mbNormalize(a);
+    return n.length >= 3 && t.includes(` ${n} `);
+  });
 }
 
 // Durée d'un album : on ne l'accepte que si une source donne la durée de TOUTES les pistes (sinon la somme serait
@@ -1827,18 +1837,24 @@ async function titlesMbReleases(mbid) {
     .filter(list => list.length);
 }
 
-function titlesPageHTML({ color, coverHTML, title, artist, year, duration, genres, tags, badgeHTML, tracksHTML, withLastfm, mdIndex, albumIndex }) {
+function titlesPageHTML({ color, coverHTML, coverPath, title, artist, year, duration, genres, tags, badgeHTML, tracksHTML, withLastfm, mdIndex, albumIndex }) {
   const main = genres || [];
-  const tagList = (tags || []).filter(t => !main.some(g => String(g).toLowerCase() === String(t).toLowerCase()));
-  const chips = titlesGenreChips(main, tagList);
+  const tagList = (tags || []).filter(t => !main.some(g => String(g).toLowerCase() === String(t).toLowerCase()) && !titlesIsArtistTag(t, [artist]));
+  const chips = titlesGenreChips([], tagList);
   const albumArg = albumIndex === null || albumIndex === undefined ? 'null' : albumIndex;
+  // Fond de l'en-tête : la jaquette elle-même, très floutée (rien de plus à télécharger : l'image est déjà chargée)
+  const hasCover = coverPath && String(coverPath).trim() && coverPath !== 'images/' && coverPath !== 'images/default.jpg';
+  const bgUrl = hasCover ? String(resolveImageSrc(coverPath)).replace(/'/g, '%27').replace(/"/g, '%22') : '';
   return `
     <div id="td-page" class="ad-page" style="--ad:${color}">
-      <div class="ad-artist">${artist}</div>
-      <div class="ad-cover">${coverHTML}</div>
-      <h2 class="ad-title">${title}</h2>
-      <div id="td-facts" class="ad-facts">${titlesFactsHTML(year, duration)}</div>
-      <div id="td-genres-sec" class="td-tags ${chips ? '' : 'hidden'}"><div id="td-genres" class="ad-tags ad-tags-compact">${chips}</div></div>
+      <div class="td-hero">
+        <div class="td-hero-bg"${bgUrl ? ` style="background-image:url('${bgUrl}')"` : ''}></div>
+        <div class="ad-artist">${artist}</div>
+        <div class="ad-cover">${coverHTML}</div>
+        <h2 class="ad-title">${title}</h2>
+        <div id="td-facts" class="ad-facts">${titlesFactsHTML(year, duration)}</div>
+        <div id="td-genres-sec" class="td-tags ${chips ? '' : 'hidden'}"><div id="td-genres" class="ad-tags ad-tags-compact">${chips}</div></div>
+      </div>
       ${badgeHTML || ''}
       <div id="td-auto" class="td-auto hidden"></div>
       ${withLastfm ? `<div id="td-desc-sec" class="td-sec">${discoverSeparatorHTML('Description')}<div id="td-desc" class="td-desc ad-note">⏳ Chargement…</div></div>` : ''}
@@ -2018,10 +2034,11 @@ async function titlesLoadExtras(ctx) {
     }
     const mainSet = new Set((ctx.genres || []).map(g => String(g).trim().toLowerCase()));
     const seen = new Set(mainSet);
+    const artistNames = [ctx.artist, lfmArtist].filter(a => isRealArtist(a));
     const fetched = [];
     raw.forEach(t => {
       const k = String(t || '').trim().toLowerCase();
-      if (!k || isDateTag(k) || seen.has(k)) return;
+      if (!k || isDateTag(k) || seen.has(k) || titlesIsArtistTag(k, artistNames)) return;
       seen.add(k); fetched.push(String(t).trim());
     });
     const fetchedTags = fetched.slice(0, 10);
@@ -2029,11 +2046,11 @@ async function titlesLoadExtras(ctx) {
     const shownSeen = new Set(mainSet);
     (ctx.storedTags || []).concat(fetchedTags).forEach(t => {
       const k = String(t).trim().toLowerCase();
-      if (!k || shownSeen.has(k)) return;
+      if (!k || shownSeen.has(k) || titlesIsArtistTag(k, artistNames)) return;
       shownSeen.add(k); shown.push(String(t).trim());
     });
     if (alive() && shown.length) {
-      el('td-genres').innerHTML = titlesGenreChips(ctx.genres, shown);
+      el('td-genres').innerHTML = titlesGenreChips([], shown);
       el('td-genres-sec').classList.remove('hidden');
     }
     const stored = new Set((ctx.storedTags || []).map(t => String(t).trim().toLowerCase()).filter(Boolean));
@@ -2211,6 +2228,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     badgeHTML: badgeAlbumHTML,
     tracksHTML,
     withLastfm: !!album.title,
+    coverPath: album.md_cover,
     mdIndex, albumIndex: Number(albumIndex)
   }) + titlesEditFabHTML(mdIndex, albumIndex);
   titlesLoadExtras({
