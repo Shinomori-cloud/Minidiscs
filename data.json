@@ -1949,8 +1949,11 @@
           "artist": "The Blues Brothers",
           "main_genre": "Rock & Blues",
           "tags": [
-            "Rock",
-            "Blues"
+            "blues",
+            "soundtrack",
+            "rhythm and blues",
+            "blues rock",
+            "rock"
           ],
           "release_year": "1980",
           "duration": "92:37",
