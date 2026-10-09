@@ -1238,8 +1238,9 @@
           "artist": "Tracy Chapman",
           "main_genre": "Pop & Folk & Variety",
           "tags": [
-            "Pop Rock",
-            "Folk"
+            "folk",
+            "female vocalists",
+            "acoustic"
           ],
           "release_year": "1988",
           "duration": "39:02",
@@ -1256,7 +1257,8 @@
             "If Not Now...",
             "For You"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Tracy Chapman est le premier album studio éponyme de l'auteure-compositrice-interprète américaine Tracy Chapman, sorti le 5 avril 1988 chez Elektra Records. Produit par David Kershenbaum, l'album se distingue par ses arrangements acoustiques clairsemés et ses paroles socialement conscientes, qui contrastent fortement avec la pop synthétisée et le glam metal qui dominent les charts à l'époque. La percée commerciale de l'album est attribuée à la performance impromptue de Chapman au concert Nelson Mandela 70th Birthday Tribute en juin 1988. Après que Stevie Wonder ait subi une panne d'équipement, Chapman est montée sur scène seule avec sa guitare pendant les heures de grande écoute, captivant un public mondial."
         },
         {
           "id": "alb-12-2",
