@@ -1293,8 +1293,9 @@
           "artist": "R.E.M.",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Pop Rock"
+            "alternative rock",
+            "rock",
+            "alternative"
           ],
           "release_year": "1991",
           "duration": "44:20",
@@ -1311,7 +1312,8 @@
             "Country Feedback",
             "Me in Honey"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Out of Time est le septième album du groupe de rock alternatif américain R.E.M., sorti sur Warner Bros. Records en 1991. Avec Out of Time, le statut de R.E.M.est passé de celui d'un groupe culte à celui d'un groupe international massif. Le disque a atteint le sommet des ventes d'albums aux États-Unis. et le Royaume-Uni, passant 109 semaines dans les charts américains et profitant de deux périodes distinctes au sommet, et 183 semaines dans les charts britanniques, et passant une seule semaine au sommet. L'album a été certifié quatre fois disque de platine aux États-Unis et s'est vendu à plus de dix millions d'exemplaires."
         }
       ],
       "title": "Tracy Chapman / Greatest Hits / Out of Time"
