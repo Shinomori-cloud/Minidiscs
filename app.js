@@ -1842,16 +1842,18 @@ function titlesPageHTML({ color, coverHTML, coverPath, title, artist, year, dura
   const tagList = (tags || []).filter(t => !main.some(g => String(g).toLowerCase() === String(t).toLowerCase()) && !titlesIsArtistTag(t, [artist]));
   const chips = titlesGenreChips([], tagList);
   const albumArg = albumIndex === null || albumIndex === undefined ? 'null' : albumIndex;
-  // Fond de l'en-tête : la jaquette elle-même, très floutée (rien de plus à télécharger : l'image est déjà chargée)
+  // Halo derrière artiste / jaquette / titre : la jaquette elle-même, floutée (rien de plus à télécharger)
   const hasCover = coverPath && String(coverPath).trim() && coverPath !== 'images/' && coverPath !== 'images/default.jpg';
   const bgUrl = hasCover ? String(resolveImageSrc(coverPath)).replace(/'/g, '%27').replace(/"/g, '%22') : '';
   return `
     <div id="td-page" class="ad-page" style="--ad:${color}">
       <div class="td-hero">
-        <div class="td-hero-bg"${bgUrl ? ` style="background-image:url('${bgUrl}')"` : ''}></div>
-        <div class="ad-artist">${artist}</div>
-        <div class="ad-cover">${coverHTML}</div>
-        <h2 class="ad-title">${title}</h2>
+        <div class="td-hero-top">
+          <div class="td-hero-bg"><div class="td-hero-bg-img"${bgUrl ? ` style="background-image:url('${bgUrl}')"` : ''}></div></div>
+          <div class="ad-artist">${artist}</div>
+          <div class="ad-cover">${coverHTML}</div>
+          <h2 class="ad-title">${title}</h2>
+        </div>
         <div id="td-facts" class="ad-facts">${titlesFactsHTML(year, duration)}</div>
         <div id="td-genres-sec" class="td-tags ${chips ? '' : 'hidden'}"><div id="td-genres" class="ad-tags ad-tags-compact">${chips}</div></div>
       </div>

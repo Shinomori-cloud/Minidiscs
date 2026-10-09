@@ -3246,11 +3246,17 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .ad-page .badge-to-record-header { margin: 0; }
 /* ---- Page « Titres » : titres de section façon Découverte, sections sans tuile ---- */
 #td-page { gap: 12px; }
-/* En-tête (« hero ») : la jaquette, très floutée, sert de fond et s'efface vers le bas dans le fond de l'appli.
-   Sans image, un halo à la couleur du genre prend le relais. Au-dessus : artiste, jaquette, titre, année / durée, tags. */
-#td-page .td-hero { position: relative; isolation: isolate; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 22px 14px 18px; border-radius: 22px 22px 0 0; overflow: hidden; }
-#td-page .td-hero-bg { position: absolute; inset: 0; z-index: -1; background: radial-gradient(circle at 50% 35%, var(--ad), transparent 72%) center / cover no-repeat; opacity: .55; -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 100%); mask-image: linear-gradient(to bottom, #000 62%, transparent 100%); }
-#td-page .td-hero-bg[style] { background-size: cover; background-position: center; filter: blur(26px) saturate(1.35) brightness(.7); transform: scale(1.35); opacity: .95; }
+/* En-tête : un halo discret, fait de la jaquette floutée, habille la zone artiste / jaquette / titre.
+   Il est le plus intense au centre et s'estompe vers les bords (masque elliptique) pour être totalement
+   transparent au niveau du nom de l'artiste (haut) et du titre (bas) : aucun bord net.
+   Sans image, un halo à la couleur du genre prend le relais. */
+#td-page .td-hero { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-top: 6px; }
+#td-page .td-hero-top { position: relative; isolation: isolate; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 4px 0; }
+#td-page .td-hero-bg { position: absolute; inset: -4px -18px; z-index: -1; pointer-events: none; opacity: .8;
+  -webkit-mask-image: radial-gradient(ellipse closest-side at 50% 50%, #000 0%, #000 50%, rgba(0, 0, 0, .55) 78%, transparent 100%);
+  mask-image: radial-gradient(ellipse closest-side at 50% 50%, #000 0%, #000 50%, rgba(0, 0, 0, .55) 78%, transparent 100%);
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
+#td-page .td-hero-bg-img { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, var(--ad), transparent 70%) center / cover no-repeat; background-size: cover; background-position: center; filter: blur(20px) saturate(1.5) brightness(.9); transform: scale(1.2); }
 /* artiste en capitales espacées (même police que les titres de section) */
 #td-page .ad-artist { font-family: 'Righteous', cursive; font-size: 1.3rem; line-height: 1.2; letter-spacing: 2px; text-transform: uppercase; }
 #td-page .ad-cover { width: min(66vw, 270px); border-radius: 14px; box-shadow: 4px 4px 0 #000, 0 0 30px -4px var(--ad), 0 12px 30px rgba(0, 0, 0, .55); }
