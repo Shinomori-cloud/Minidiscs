@@ -1800,17 +1800,31 @@ function titlesGenreChips(main, tags) {
     + (tags || []).map(t => `<span class="ad-tag ad-tag-lfm">${mbEscapeHTML(t)}</span>`).join('');
 }
 
-// Durée par piste : clé de rapprochement entre la tracklist du catalogue et celle de Last.fm / MusicBrainz
-function titlesTrackKey(name) {
-  return mbNormalize(String(name || '').replace(/\s*[\(\[][^\)\]]*[\)\]]/g, ''));
+// Durée d'un album : on ne l'accepte que si une source donne la durée de TOUTES les pistes (sinon la somme serait
+// fausse) et, quand le catalogue a déjà une tracklist, le même nombre de pistes. Entre plusieurs éditions, on garde
+// le nombre de pistes le plus courant, puis la durée médiane.
+function titlesPickDuration(cands, localCount) {
+  const sum = c => c.reduce((n, t) => n + t.seconds, 0);
+  const ok = (cands || []).filter(c => c.length && c.every(t => t.seconds > 0) && sum(c) >= 120 && (!localCount || c.length === localCount));
+  if (!ok.length) return null;
+  const groups = new Map();
+  ok.forEach(c => { if (!groups.has(c.length)) groups.set(c.length, []); groups.get(c.length).push(c); });
+  let best = null;
+  groups.forEach((list, n) => {
+    if (!best || list.length > best.list.length || (list.length === best.list.length && n < best.n)) best = { n, list };
+  });
+  const sorted = best.list.slice().sort((x, y) => sum(x) - sum(y));
+  const mid = sorted[Math.floor((sorted.length - 1) / 2)];
+  return { tracks: mid, total: sum(mid) };
 }
 
-function titlesTracksHTML(tracks, offset, durMap) {
-  if (!tracks || !tracks.length) return `<li><span class="ad-t ad-note">Aucune piste disponible.</span></li>`;
-  return tracks.map((t, i) => {
-    const sec = durMap && durMap.get(titlesTrackKey(t));
-    return `<li><span class="ad-n">${String(offset + i + 1).padStart(2, '0')}</span><span class="ad-t">${t}</span>${sec ? `<span class="ad-d">${adFormatTrack(sec)}</span>` : ''}</li>`;
-  }).join('');
+// Toutes les éditions officielles d'un album sur MusicBrainz, avec la liste de leurs pistes
+async function titlesMbReleases(mbid) {
+  const data = await mbFetchJson(`${MB_API}/release?release-group=${mbid}&inc=recordings+media&fmt=json&limit=25`);
+  return asArray(data.releases)
+    .filter(r => !r.status || r.status === 'Official')
+    .map(r => asArray(r.media).flatMap(m => asArray(m.tracks)).map(t => ({ name: t.title, seconds: Math.round((t.length || 0) / 1000) })))
+    .filter(list => list.length);
 }
 
 function titlesPageHTML({ color, coverHTML, title, artist, year, duration, genres, tags, badgeHTML, tracksHTML, withLastfm, mdIndex, albumIndex }) {
@@ -1824,9 +1838,9 @@ function titlesPageHTML({ color, coverHTML, title, artist, year, duration, genre
       <div class="ad-cover">${coverHTML}</div>
       <h2 class="ad-title">${title}</h2>
       <div id="td-facts" class="ad-facts">${titlesFactsHTML(year, duration)}</div>
+      <div id="td-genres-sec" class="td-tags ${chips ? '' : 'hidden'}"><div id="td-genres" class="ad-tags ad-tags-compact">${chips}</div></div>
       ${badgeHTML || ''}
       <div id="td-auto" class="td-auto hidden"></div>
-      <div id="td-genres-sec" class="td-sec ${chips ? '' : 'hidden'}">${discoverSeparatorHTML('Genres')}<div id="td-genres" class="ad-tags ad-tags-compact">${chips}</div></div>
       ${withLastfm ? `<div id="td-desc-sec" class="td-sec">${discoverSeparatorHTML('Description')}<div id="td-desc" class="td-desc ad-note">⏳ Chargement…</div></div>` : ''}
       <div class="td-sec">${discoverSeparatorHTML('Tracklist')}<div class="ad-sec list-item"><ol id="td-tracks" class="ad-tracks">${tracksHTML}</ol></div></div>
       ${withLastfm ? `<div id="td-similar-sec" class="td-sec">${discoverSeparatorHTML('Albums similaires')}<div id="td-similar" class="ad-note">⏳ Chargement…</div></div>` : ''}
@@ -1904,7 +1918,7 @@ window.addEventListener('resize', () => {
 });
 
 /* ---------- Compléments Last.fm / MusicBrainz ---------- */
-const TD = { token: 0, auto: null, mbTracks: new Map() };
+const TD = { token: 0, auto: null };
 const titlesSecondsToDuration = sec => `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, '0')}`;
 
 // Albums « Divers » (souvent des OST) : on cherche l'album par son titre. On n'accepte un résultat que si le titre
@@ -2029,60 +2043,30 @@ async function titlesLoadExtras(ctx) {
   } catch (err) { /* les genres du catalogue restent affichés */ }
   if (!alive()) return;
 
-  // 4) Durée de chaque piste (affichage seulement : les pistes sont de simples textes dans le catalogue).
-  //    D'abord Last.fm (déjà chargé, gratuit), sinon MusicBrainz ; on rapproche les pistes par leur titre.
+  // 4) Infos absentes du catalogue (pistes, durée, année) : jamais de remplacement d'une info existante
   const lfmTracks = asArray(info && info.tracks && info.tracks.track).map(t => ({ name: t.name, seconds: parseInt(t.duration, 10) || 0 }));
-  if (ctx.hasTracks) {
-    try {
-      let pool = lfmTracks.filter(t => t.seconds > 0);
-      if (!pool.length) {
-        const key = `${lfmArtist}|${lfmTitle}`;
-        if (!TD.mbTracks.has(key)) {
-          let list = [];
-          try {
-            const tokens = mbQueryTokens(various ? lfmTitle : `${lfmArtist} ${lfmTitle}`);
-            const group = mbFilterAndRank(await mbSearchReleaseGroups(tokens, 'and'), tokens, 1)[0];
-            if (group) list = await adMbTracks(group.id);
-          } catch (err) { /* MusicBrainz indisponible */ }
-          TD.mbTracks.set(key, list);
-        }
-        pool = (TD.mbTracks.get(key) || []).filter(t => t.seconds > 0);
-      }
-      if (alive() && pool.length) {
-        const map = new Map();
-        pool.forEach(t => { const k = titlesTrackKey(t.name); if (k && !map.has(k)) map.set(k, t.seconds); });
-        el('td-tracks').innerHTML = titlesTracksHTML(ctx.tracks, ctx.trackOffset, map);
-      }
-    } catch (err) { /* pas de durées : la liste reste telle quelle */ }
-  }
-  if (!alive()) return;
-
-  // 5) Infos absentes du catalogue (pistes, durée, année) : jamais de remplacement d'une info existante
   try {
     const need = { tracks: !ctx.hasTracks, duration: !ctx.hasDuration, year: !ctx.hasYear };
     if (need.tracks || need.duration || need.year) {
-      let tracks = lfmTracks;
-      let total = tracks.reduce((n, t) => n + t.seconds, 0);
+      const localCount = ctx.hasTracks ? ctx.tracks.length : 0;
+      const cands = lfmTracks.length ? [lfmTracks] : [];
       let year = '';
-      if (need.year || (need.tracks && !tracks.length) || (need.duration && !total)) {
-        let mbid = '';
+      if (need.year || (need.tracks && !cands.length) || (need.duration && !titlesPickDuration(cands, localCount))) {
         try {
           const tokens = mbQueryTokens(various ? lfmTitle : `${lfmArtist} ${lfmTitle}`);
           const group = mbFilterAndRank(await mbSearchReleaseGroups(tokens, 'and'), tokens, 1)[0];
-          if (group) { mbid = group.id; year = String(group['first-release-date'] || '').slice(0, 4); }
+          if (group) {
+            year = String(group['first-release-date'] || '').slice(0, 4);
+            cands.push(...await titlesMbReleases(group.id));
+          }
         } catch (err) { /* MusicBrainz indisponible */ }
-        if (mbid && (!tracks.length || !total)) {
-          try {
-            const mbTracks = await adMbTracks(mbid);
-            if (!tracks.length) tracks = mbTracks;
-            total = mbTracks.reduce((n, t) => n + t.seconds, 0) || total;
-          } catch (err) { /* pistes non disponibles */ }
-        }
       }
       if (!alive()) return;
+      const pick = titlesPickDuration(cands, localCount);
+      const trackList = need.tracks ? ((pick && pick.tracks) || cands[0] || null) : null;
       const fill = {
-        tracks: need.tracks && tracks.length ? tracks : null,
-        duration: need.duration && total ? total : 0,
+        tracks: trackList && trackList.length ? trackList : null,
+        duration: need.duration && pick ? pick.total : 0,
         year: need.year && /^\d{4}$/.test(year) ? year : ''
       };
       if (fill.tracks || fill.duration || fill.year) {
@@ -2090,7 +2074,7 @@ async function titlesLoadExtras(ctx) {
         const t0 = target();
         el('td-facts').innerHTML = titlesFactsHTML(fill.year || (t0 && t0.release_year), TD.auto.durationStr || (t0 && t0.duration));
         if (fill.tracks) {
-          el('td-tracks').innerHTML = fill.tracks.map((t, i) => `<li><span class="ad-n">${String(ctx.trackOffset + i + 1).padStart(2, '0')}</span><span class="ad-t">${mbEscapeHTML(t.name)}</span>${t.seconds ? `<span class="ad-d">${adFormatTrack(t.seconds)}</span>` : ''}</li>`).join('');
+          el('td-tracks').innerHTML = fill.tracks.map((t, i) => `<li><span class="ad-n">${String(ctx.trackOffset + i + 1).padStart(2, '0')}</span><span class="ad-t">${mbEscapeHTML(t.name)}</span></li>`).join('');
         }
         titlesRenderAuto();
       }
@@ -2098,7 +2082,7 @@ async function titlesLoadExtras(ctx) {
   } catch (err) { /* pas de complément : la page garde les données du catalogue */ }
   if (!alive()) return;
 
-  // 6) Description (en dernier : la traduction peut être longue). Jamais si le catalogue en a déjà une.
+  // 5) Description (en dernier : la traduction peut être longue). Jamais si le catalogue en a déjà une.
   if (hasStoredDesc) return;
   if (infoErr) {
     if (various) return hide('td-desc-sec');

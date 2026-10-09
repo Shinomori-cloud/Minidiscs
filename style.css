@@ -3246,8 +3246,16 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
 .ad-page .badge-to-record-header { margin: 0; }
 /* ---- Page « Titres » : titres de section façon Découverte, sections sans tuile ---- */
 #td-page { gap: 12px; }
-#td-page .ad-artist { font-size: 1.45rem; line-height: 1.2; }
-#td-page .td-sec { width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+/* En-tête : artiste en capitales espacées (même police que les titres de section), jaquette avec halo coloré,
+   titre, puis une pastille année / durée et les tags juste dessous */
+#td-page .ad-artist { font-family: 'Righteous', cursive; font-size: 1.3rem; line-height: 1.2; letter-spacing: 2px; text-transform: uppercase; }
+#td-page .ad-cover { width: min(68vw, 280px); border-radius: 14px; box-shadow: 4px 4px 0 #000, 0 0 30px -4px var(--ad), 0 10px 26px rgba(0, 0, 0, .45); }
+#td-page .ad-title { margin-top: 8px; }
+#td-page .ad-facts { margin-top: 6px; padding: 3px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .18); background: rgba(18, 10, 36, .6); font-size: .8rem; letter-spacing: .3px; }
+#td-page .ad-facts:empty { display: none; }
+#td-page .td-tags { width: 100%; margin-top: -5px; }
+#td-page .td-tags.hidden { display: none; }
+#td-page .td-sec { width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 11px; margin-top: 6px; }
 #td-page .td-sec.hidden { display: none; }
 #td-page .dc-separator { margin: 8px 0 0; }
 #td-page .ad-tags { justify-content: center; }
