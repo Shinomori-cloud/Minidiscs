@@ -2352,11 +2352,14 @@
       "artist": "Ben Harper",
       "main_genre": "Rock & Blues",
       "tags": [
-        "Rock",
-        "Folk"
+        "alt rock jam rock",
+        "blues",
+        "acoustic",
+        "singer-songwriter",
+        "folk"
       ],
       "release_year": "2001",
-      "duration": "Unknow",
+      "duration": "137:46",
       "tracks": [
         "Glory & Consequence",
         "Excuse Me Mr.",
@@ -2384,7 +2387,8 @@
         "Another Lonely Day",
         "Medley: Like A King/I'll Rise"
       ],
-      "toRecord": false
+      "toRecord": false,
+      "description": "Live From Mars est un(des) concert(s) live de Ben Harper & the Innocent Criminals qui reprend des morceaux de lieux anonymes tout au long de sa tournée de 2000 et les place sur un disque électrique (disque 1) ou acoustique (disque 2). Il est sorti en 2001. L'album contient trois reprises, que Harper interprète souvent en concert."
     },
     {
       "id": "md-06",
