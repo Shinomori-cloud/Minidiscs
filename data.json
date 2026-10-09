@@ -308,11 +308,12 @@
           "artist": "The Smashing Pumpkins",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Experimental"
+            "alternative rock",
+            "alternative",
+            "rock"
           ],
           "release_year": "1998",
-          "duration": "Unknow",
+          "duration": "85:56",
           "tracks": [
             "To Sheila",
             "Ava Adore",
