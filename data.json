@@ -3264,7 +3264,13 @@
           "title": "Neon Genesis Evangelion",
           "artist": "Shiro Sagisu",
           "main_genre": "Ambient & Orchestral",
-          "tags": [],
+          "tags": [
+            "instrumental",
+            "anime",
+            "soundtrack",
+            "piano",
+            "japanese"
+          ],
           "release_year": "1995",
           "duration": "40:02",
           "tracks": [
@@ -3287,7 +3293,8 @@
             "Jikai Yokoku",
             "Fly me to the moon (acid bossa version)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Neon Genesis Evangelion est le premier album de la bande originale de la série animée. Il a été produit par Hideaki Anno et publié sous le label King Record Starchild avec le numéro de catalogue KICA-286 le 6 décembre 1995. Il a été enregistré le 22 novembre 1995 et a culminé au numéro 12 du classement des albums d'Oricon, restant dans le classement pendant 22 semaines. L'album a été réédité sur DVD-Audio avec le numéro de catalogue KIAW-21 le 22 décembre 2004. L'album est sorti aux États-Unis par Geneon Entertainment le 1er janvier 2004. La piste #1 est la version éditée par le réalisateur du thème d'ouverture « La thèse d'un ange cruel » ."
         },
         {
           "id": "md-1790974479428-alb-3",
