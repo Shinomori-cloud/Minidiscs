@@ -2093,7 +2093,11 @@
           "artist": "Deftones",
           "main_genre": "Metal & Hard Rock",
           "tags": [
-            "Metal"
+            "alternative metal",
+            "metal",
+            "nu metal",
+            "alternative",
+            "alternative rock"
           ],
           "release_year": "2000",
           "duration": "47:35",
@@ -2111,7 +2115,8 @@
             "Change (In the House of Flies)",
             "Pink Maggit"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "White Pony est le troisième album studio du groupe de métal alternatif américain Deftones, sorti le 20 juin 2000 chez Maverick Records. Il a été produit par Terry Date, qui a produit les deux premiers albums du groupe, Adrenaline et Around the Fur. Les sessions d'enregistrement ont eu lieu entre août et décembre 1999 aux Larrabee Sound Studios à West Hollywood et aux Plant Recording Studios à Sausalito, en Californie. L'album marque une croissance significative du son du groupe, incorporant des influences du post-hardcore, du trip-hop, du shoegaze, du rock progressif et du post-rock dans le son métal alternatif pour lequel ils sont devenus connus. White Pony fut également le premier."
         }
       ],
       "title": "Slipknot / Toxicity / White Pony"
