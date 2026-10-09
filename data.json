@@ -2044,7 +2044,11 @@
           "artist": "System of a Down",
           "main_genre": "Metal & Hard Rock",
           "tags": [
-            "Metal"
+            "alternative metal",
+            "metal",
+            "rock",
+            "system of a down",
+            "alternative"
           ],
           "release_year": "2001",
           "duration": "9:36",
@@ -2065,7 +2069,8 @@
             "Aerials",
             "Der Voghormia"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "\"Toxicity\" est le deuxième album studio du groupe de heavy metal américain System of a Down, sorti le 4 septembre 2001, par American Recordings et Columbia Records. Développant le premier album éponyme du groupe en 1998, \"Toxicity\" intègre une utilisation accrue de la mélodie, des harmonies et du chant vocal par rapport au premier album. Il est principalement classé comme métal alternatif et nu metal et comprend également des éléments de genres tels que le folk, le rock progressif, le jazz et la musique arménienne et grecque. L'instrumentation comprend, entre autres, du sitar, du banjo, des claviers et du piano. Les paroles de l'album abordent un éventail de thèmes politiques et non politiques, y compris la masse ."
         },
         {
           "id": "alb-40-3",
