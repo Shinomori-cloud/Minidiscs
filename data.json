@@ -1533,10 +1533,12 @@
           "artist": "Radiohead",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock"
+            "alternative rock",
+            "alternative",
+            "rock"
           ],
           "release_year": "1995",
-          "duration": "Unknow",
+          "duration": "52:37",
           "tracks": [
             "Planet Telex",
             "The Bends",
