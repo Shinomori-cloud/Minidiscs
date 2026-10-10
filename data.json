@@ -389,8 +389,9 @@
           "artist": "The Smashing Pumpkins",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Grunge"
+            "alternative rock",
+            "rock",
+            "alternative"
           ],
           "release_year": "1993",
           "duration": "65:05",
@@ -409,7 +410,8 @@
             "Sweet Sweet",
             "Luna"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "\"Siamese Dream\" est le deuxième album studio du groupe de rock alternatif américain The Smashing Pumpkins, sorti le 27 juillet 1993 sur Virgin Records. L'album fusionne diverses influences telles que le shoegazing, la dream pop, le heavy metal classique et le rock progressif. Malgré des sessions d'enregistrement chargées de difficultés et de tensions, \"Siamese Dream\" a fait ses débuts au numéro dix des charts Billboard, s'est vendu à plus de quatre millions d'exemplaires aux États-Unis et à plus de six millions dans le monde, cimentant The Smashing Pumpkins comme une force majeure dans le mouvement rock alternatif. \"Siamese Dream\" a sorti quatre singles à succès, dont \"Cherub Rock\", \"Today\", \"Disarm\" et \"Rocket\". The Smashing Pumpkins"
         },
         {
           "id": "alb-31-2",
