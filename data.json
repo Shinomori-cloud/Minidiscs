@@ -1862,7 +1862,10 @@
           "artist": "Placebo",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock"
+            "alternative rock",
+            "rock",
+            "alternative",
+            "indie"
           ],
           "release_year": "1996",
           "duration": "Unknow",
@@ -1879,7 +1882,8 @@
             "Swallow",
             "H.K. Farewell (Hidden Track)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Placebo est le premier album éponyme du groupe de rock alternatif Placebo, sorti sur le label Virgin Records le 16 juillet 1996. En 1998, les lecteurs du magazine Q l'ont élu 87e meilleur album de tous les temps. Virgin a placé l'album 154e meilleur album de tous les temps sur sa liste des 1000 meilleurs albums. L'album associe un son punk pop heavy (Come Home, 36 Degrees) à un son plus doux, plus lyrique (« I Know », « Lady of the Flowers »). Il contient des influences de groupes tels que PJ Harvey et Sonic Youth. Placebo a été remasterisé et réédité le 18 septembre 2006 pour sa dixième édition ."
         },
         {
           "id": "alb-39-3",
