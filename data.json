@@ -1557,12 +1557,13 @@
           "artist": "Divers",
           "main_genre": "Rock & Blues",
           "tags": [
-            "Rock",
-            "Folk",
-            "Soul Funk"
+            "soundtrack",
+            "soul",
+            "oldies",
+            "pulp fiction"
           ],
           "release_year": "1994",
-          "duration": "Unknow",
+          "duration": "41:02",
           "tracks": [
             "Pumpkin and Honey Bunny (Dialogue)",
             "Misirlou (Dick Dale)",
@@ -1585,7 +1586,8 @@
             "Surf Rider (The Lively Ones)",
             "Ezekiel 25:17 (Dialogue)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "La musique du film Pulp Fiction est la bande originale du film Pulp Fiction de 1994 de Quentin Tarantino. Aucune partition de film traditionnelle n'a été commandée pour Pulp Fiction. Le film contient un mélange de rock and roll américain, de surf music, de pop et de soul. La bande-son est également non traditionnelle, composée de neuf chansons du film, de quatre morceaux d'extraits de dialogues suivis d'une chanson et de trois morceaux de dialogues seuls. Sept chansons présentées dans le film n'étaient pas incluses dans la bande originale de 41 minutes. L'album a atteint la 21e place du Billboard 200, tandis que la reprise de la chanson de Neil Diamond par Urge Overkill."
         },
         {
           "id": "alb-18-2",
