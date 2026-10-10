@@ -3766,13 +3766,29 @@
           "artist": "The Vines",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Grunge"
+            "rock",
+            "alternative rock",
+            "garage rock",
+            "indie rock"
           ],
-          "release_year": "",
+          "release_year": "2002",
           "duration": "43:40",
-          "tracks": [],
-          "toRecord": true
+          "tracks": [
+            "Highly Evolved",
+            "Autumn Shade",
+            "Outtathaway",
+            "Sunshinin’",
+            "Homesick",
+            "Get Free",
+            "Country Yard",
+            "Factory",
+            "In the Jungle",
+            "Mary Jane",
+            "Ain’t No Room",
+            "1969"
+          ],
+          "toRecord": true,
+          "description": "Highly Evolved est le premier album des garage rockers australiens The Vines, sorti en juillet 2002 (voir 2002 en musique). Produit par Rob Schnapf, Highly Evolved a été un début extrêmement populaire, faisant partie d'une tendance vers des groupes de garage d'inspiration post-punk connus autant pour le battage médiatique incessant de la presse musicale britannique que pour leur musique ; The Vines ont souvent été comparés à Nirvana. Le premier single, \"Highly Evolved\", a été choisi comme single de la semaine par l'influent magazine de musique britannique New Musical Express. Ils l'ont également élu 2ème meilleur album de l'année en 2002. La pochette de l'album est une ."
         },
         {
           "id": "md-1791057491870-alb-2",
