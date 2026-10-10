@@ -2270,8 +2270,8 @@
             "Alternative Rock",
             "Pop Rock"
           ],
-          "release_year": "1999",
-          "duration": "Unknow",
+          "release_year": "1998",
+          "duration": "50:59",
           "tracks": [
             "Another Brick In The Wall (Part 2) (Class of '99, Layne Staley, Tom Morello, Stephen P...)",
             "The Kids Aren't Alright (The Offspring)",
@@ -2287,7 +2287,8 @@
             "Stay Young (Oasis)",
             "Another Brick In the Wall (Part1) (Class of '99)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Sortie en 1998 pour accompagner le film culte de science-fiction/horreur de Robert Rodriguez, la bande originale de The Faculty est une capsule temporelle idéale du rock alternatif et du post-grunge de la fin des années 90.\nL’album brille particulièrement par son concept de reprises de classiques des années 70 revisités par les icônes de la génération X. La pièce maîtresse du disque reste la relecture sombre et puissante de Another Brick in the Wall (Part 2) de Pink Floyd par Class of '99, un supergroupe éphémère composé de Layne Staley (Alice in Chains), Tom Morello (Rage Against the Machine) et Stephen Perkins (Jane's Addiction). On y retrouve également des reprises mémorables de Creed (I'm Eighteen d'Alice Cooper) et de Soul Asylum (School's Out).\nComplétée par des morceaux originaux d'artistes incontournables de l'époque comme The Offspring (avec le tube The Kids Aren't Alright), Garbage et Sheryl Crow, cette compilation capture à la perfection l'énergie rebelle, la paranoïa et l'angoisse adolescente du film. Un disque hautement nostalgique, indispensable pour les amateurs du son rock de la fin des 90s."
         },
         {
           "id": "alb-41-2",
@@ -2300,7 +2301,7 @@
             "Pop Rock"
           ],
           "release_year": "1997",
-          "duration": "Unknow",
+          "duration": "1:25:56",
           "tracks": [
             "Til I Hear It From You (Gin Blossoms)",
             "Video Killed The Radio Star (The Buggles)",
@@ -2323,7 +2324,8 @@
             "Plowed (Sponge)",
             "Sugarhigh (Coyote Shivers)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "La bande originale du film Empire Records (1995) s'impose comme une capsule temporelle majeure du rock alternatif des années 90, mêlant des têtes d'affiche de l'époque à des morceaux plus confidentiels. Porté par les tubes de Gin Blossoms et d'Edwyn Collins, le disque incarne l'énergie adolescente et l'esprit rebelle des disquaires indépendants de la fin du siècle."
         }
       ],
       "title": "The Faculty / Empire Records"
