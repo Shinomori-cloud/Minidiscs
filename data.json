@@ -3493,7 +3493,6 @@
     {
       "id": "md-1790974822258",
       "md_cover": "images/img_1790974820138.jpg",
-      "title": "Princesse Mononoke / Le voyage de Chihiro",
       "albums": [
         {
           "id": "md-1790974822258-alb-1",
@@ -3511,10 +3510,11 @@
             "piano",
             "contemporary classical"
           ],
-          "release_year": "1998",
+          "release_year": "1997",
           "duration": "1:02:00",
           "tracks": [],
-          "toRecord": true
+          "toRecord": true,
+          "description": "Sortie initialement le 2 juillet 1997 au Japon par Tokuma Japan Communications (puis en Europe via Milan Records), la bande originale de Princesse Mononoké (Mononoke Hime) est un chef-d'œuvre de la musique de film. Entièrement composée, arrangée et produite par Joe Hisaishi, elle marque la sixième collaboration entre le compositeur et le réalisateur légendaire Hayao Miyazaki.\nInterprété par l'Orchestre philharmonique de la ville de Tokyo, cet album de 33 titres capte à la perfection le souffle épique, la violence tragique et la poésie sauvage du film. Les compositions mêlent des envolées orchestrales denses, des textures de synthétiseurs éthérées et des instruments traditionnels japonais, créant une atmosphère à la fois mystique et intemporelle. L'album est également célèbre pour son thème principal éponyme, une complainte lancinante sublimée par la voix du contre-ténor Yoshikazu Mera, dont les paroles ont été écrites par Miyazaki lui-même. De la puissance dramatique du Dieu de la Malédiction à la mélancolie déchirante d'Ashitaka et San, cette œuvre magistrale transcende le cinéma d'animation pour s'imposer comme un monument de la musique néo-classique contemporaine."
         },
         {
           "id": "md-1790974822258-alb-2",
@@ -3528,7 +3528,8 @@
           "tracks": [],
           "toRecord": true
         }
-      ]
+      ],
+      "title": "Princesse Mononoke / Le voyage de Chihiro"
     },
     {
       "id": "md-1791015115269",
