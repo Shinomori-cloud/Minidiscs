@@ -3683,7 +3683,6 @@
     {
       "id": "md-1791230042466",
       "md_cover": "images/img_1791230040710.jpg",
-      "title": "Mystery White Boy / MTV Unplugged",
       "albums": [
         {
           "id": "md-1791230042466-alb-1",
@@ -3709,7 +3708,8 @@
             "Moodswing Whiskey - Live at Palais Theatre",
             "The Man That Got Away - Live at Great American Music Hall",
             "Kanga Roo - Live at The Phoenician Theatre",
-            "Hallelujah/I Know It's Over (Medley) - Live at King Theater"
+            "Hallelujah/I Know It's Over (Medley) - Live at King Theater",
+            "That's All I Ask - Live at..."
           ],
           "toRecord": true
         },
@@ -3741,7 +3741,8 @@
           ],
           "toRecord": true
         }
-      ]
+      ],
+      "title": "Mystery White Boy / MTV Unplugged"
     },
     {
       "id": "md-1791238572258",
