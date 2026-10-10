@@ -472,10 +472,13 @@
           "artist": "Korn",
           "main_genre": "Metal & Hard Rock",
           "tags": [
-            "Metal"
+            "nu metal",
+            "metal",
+            "alternative metal",
+            "rock"
           ],
           "release_year": "1998",
-          "duration": "Unknow",
+          "duration": "63:59",
           "tracks": [
             "It's On!",
             "Freak on a Leash",
@@ -492,7 +495,8 @@
             "My Gift to You",
             "Earache My Eye"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Follow the Leader est le troisième album studio du groupe de nu metal américain Korn. Il est sorti le 18 août 1998 chez Immortal et Epic Records. L'album marque la première sortie du groupe non produite par Ross Robinson, mais plutôt par Steve Thompson et Toby Wright. L'album a atteint la première place de plusieurs charts nationaux, dont le Billboard 200 américain, avec 268 000 unités vendues au cours de sa première semaine. Il est devenu l'album le plus réussi commercialement de Korn et a été certifié cinq fois disque de platine par la RIAA. Les singles de l'album comprenaient « Got the Life » et « Freak on a Leash », tous deux."
         },
         {
           "id": "alb-32-2",
