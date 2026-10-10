@@ -3501,7 +3501,16 @@
           "title": "Princesse Mononoke",
           "artist": "Joe Hisaishi",
           "main_genre": "Ambient & Orchestral",
-          "tags": [],
+          "tags": [
+            "Soundtrack",
+            "japanese",
+            "instrumental",
+            "Classical",
+            "anime",
+            "composer",
+            "piano",
+            "contemporary classical"
+          ],
           "release_year": "1998",
           "duration": "1:02:00",
           "tracks": [],
