@@ -3789,11 +3789,10 @@
           "artist": "OutKast",
           "main_genre": "Rap, Soul & Reggae",
           "tags": [
+            "hip-hop",
+            "rap",
             "hip hop",
-            "southern rap",
-            "dirty south",
-            "alternative hip hop",
-            "alternative rap"
+            "funk"
           ],
           "release_year": "1998",
           "duration": "1:02:33",
@@ -3814,7 +3813,8 @@
             "Liberation",
             "Chonkyfire"
           ],
-          "toRecord": true
+          "toRecord": true,
+          "description": "Un album vaguement futuriste, imprégné de synthétiseurs, ponctué de refrains hymiques et de rythmes bluesy, Aquemini aborde de nombreux sujets tels que l'émancipation, la toxicomanie et les relations problématiques, tout en explorant les aspects les plus sombres de l'humanité. Contrairement à une grande partie de la musique hip hop à la fin des années 1990, OutKast n'a pas atténué les qualités régionales, comme la pause harmonica sur \"Rosa Parks\" et l'argot et la diction distinctifs d'Atlanta. \"Rosa Parks\" a ensuite été nominé pour le Grammy Award 1999 de la meilleure performance rap par un duo ou un groupe. La chanson a suscité beaucoup de controverse avec Rosa Parks qui a intenté une action en diffamation contre OutKast. Aquemini ."
         }
       ]
     },
