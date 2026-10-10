@@ -3683,11 +3683,30 @@
           "artist": "Busta Flex",
           "main_genre": "Rap, Soul & Reggae",
           "tags": [
-            "Rap"
+            "hiphop fr",
+            "rap",
+            "hip hop",
+            "hip-hop",
+            "french hip-hop"
           ],
-          "release_year": "",
+          "release_year": "1998",
           "duration": "52:21",
-          "tracks": [],
+          "tracks": [
+            "Intro",
+            "J'fais mon job à plein temps",
+            "Ma force",
+            "Yeah Yeah Yo",
+            "What Can I Do?",
+            "Ça se dégrade",
+            "Majeur",
+            "1 pour la basse",
+            "Kick avec mes Nike",
+            "Esprit mafieux",
+            "Pourquoi ?",
+            "Le Zedou",
+            "Freestyle Session",
+            "Outro"
+          ],
           "toRecord": true
         }
       ],
