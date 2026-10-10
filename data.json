@@ -1563,10 +1563,12 @@
           "artist": "Travis",
           "main_genre": "Pop & Folk & Variety",
           "tags": [
-            "Pop Rock"
+            "britpop",
+            "indie",
+            "rock"
           ],
           "release_year": "1999",
-          "duration": "Unknow",
+          "duration": "44:22",
           "tracks": [
             "Writing to Reach You",
             "The Fear",
@@ -1580,7 +1582,8 @@
             "Slide Show",
             "Blue Flashing Light (Hidden track)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "\"The Man Who\" est le deuxième album studio du groupe de rock écossais Travis. Il a été publié le 24 mai 1999 par Independiente. L'album marque un changement de direction musicale pour le groupe, s'éloignant du son plus rock de leur premier album \"Good Feeling\" (1997). Quatre singles ont été publiés à partir de la sortie : \"Writing to Reach You\", \"Driftwood\", et les dix premiers succès \"Why Does It Always Rain on Me ?\" et \"Turn\". « The Man Who » a d'abord reçu un accueil critique mitigé et des ventes modestes. Suite au succès commercial de « Why Does It Always Rain on Me ? » et à l'apparition du groupe."
         }
       ],
       "title": "Origin of Symmetry / The Bends / The Man Who"
