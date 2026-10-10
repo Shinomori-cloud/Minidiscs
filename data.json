@@ -1831,11 +1831,12 @@
           "artist": "Nirvana",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Grunge"
+            "grunge",
+            "rock",
+            "alternative"
           ],
           "release_year": "1991",
-          "duration": "Unknow",
+          "duration": "52:50",
           "tracks": [
             "Smells Like Teen Spirit",
             "In Bloom",
@@ -1851,7 +1852,8 @@
             "Something in the Way",
             "Endless, Nameless (Hidden Track)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Nevermind est le deuxième album studio du groupe de grunge américain Nirvana, sorti le 24 septembre 1991. Produit par Butch Vig, Nevermind a été la première sortie du groupe sur Geffen Records, ce qui a marqué son éloignement du label indépendant Sub Pop basé à Seattle. Le chanteur Kurt Cobain a cherché à faire de la musique en dehors des limites restrictives de la scène grunge de Seattle, en s'inspirant de groupes tels que les Pixies et son utilisation de la dynamique des chansons bruyantes/calmes. Nevermind a été un succès surprise à la fin de 1991, en grande partie grâce au succès de son single principal \"Smells Like Teen Spirit\". En janvier 1992, il ."
         },
         {
           "id": "alb-39-2",
