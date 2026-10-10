@@ -3127,7 +3127,12 @@
       "title": "90's Greatest Hits",
       "artist": "Divers",
       "main_genre": "Pop & Folk & Variety",
-      "tags": [],
+      "tags": [
+        "rock",
+        "nu metal",
+        "alternative rock",
+        "metal"
+      ],
       "release_year": "1999",
       "duration": "2h25",
       "tracks": [
