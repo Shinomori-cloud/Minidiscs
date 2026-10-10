@@ -142,8 +142,10 @@
           "artist": "Alanis Morissette",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Pop Rock"
+            "rock",
+            "female vocalists",
+            "alternative rock",
+            "alternative"
           ],
           "release_year": "1995",
           "duration": "55:39",
@@ -161,7 +163,8 @@
             "Not the Doctor",
             "Wake Up"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Jagged Little Pill est le 3e album studio d'Alanis Morissette et le premier album sorti dans plusieurs pays. Il a reçu un Grammy Award de l'album de l'année et est classé 327e dans la liste des 500 plus grands albums de tous les temps du magazine Rolling Stone. ."
         }
       ],
       "title": "MTV Unplugged in New York / No Need to Argue / Jagged Little Pill"
