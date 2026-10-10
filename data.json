@@ -2789,7 +2789,7 @@
           "main_genre": "Pop & Folk & Variety",
           "tags": [],
           "release_year": "1994",
-          "duration": "",
+          "duration": "1:30:34",
           "tracks": [
             "Intro",
             "Rubrique animaux : les animaux en voie de disparition",
@@ -2830,7 +2830,8 @@
             "Rubrique animaux : les animaux de mer",
             "🎼 Sherlock Holmes"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "La radio des cousins est une émission animée par Deborah et Nicolas, reproduisant une journée radio, avec des rubriques, les informations et une session dédiée aux titres musicaux.\nLes titres originaux n'étant pas présents sur la cassette d'origine, ils ont été remplacés par des morceaux de Dorothée et des génériques de dessins animés, en cohérence avec l'ambiance générale de l'enregistrement."
         },
         {
           "id": "md-1789932267449-alb-2",
@@ -2840,11 +2841,12 @@
           "main_genre": "Talks & Humour",
           "tags": [],
           "release_year": "1994",
-          "duration": "",
+          "duration": "24:34",
           "tracks": [
             "Apéro au terrain"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Enregistré à Attin, dans le Pas-de-Calais, ces 25 minutes de discussion autour d'un verre rassemblent parents et enfants pour qu'ils nous comptent de véritables tranches de vie !"
         },
         {
           "id": "md-1789932267449-alb-3",
@@ -2888,7 +2890,8 @@
             "L'intrépide soldat de plomb",
             "Raconte moi des histoires - Générique"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Raconte-moi des histoires était un magazine pour enfants qui était publié à tous les 2 semaines entre 1982 et 1985 par Marshall Cavendish. Chaque livre était accompagné d'une cassette audio de 55 minutes qui reprenait les histoires du livre. \n\n\nLa série de magazines reprenait différents contes folkloriques traditionnels, des contes plus modernes, des bandes dessinées, des histoires humoristiques mais il y avait aussi de nouvelles histoires dont certaines pouvaient s'échelonner sur plusieurs livres."
         }
       ],
       "title": "Cosmic Radio / Apéro au terrain / Raconte moi des histoires"
