@@ -3594,7 +3594,12 @@
           "title": "The deserts call",
           "artist": "Rogerthat",
           "main_genre": "Alternative & Grunge 90s",
-          "tags": [],
+          "tags": [
+            "indie",
+            "alternative",
+            "indie rock",
+            "alternative rock"
+          ],
           "release_year": "2002",
           "duration": "30:50",
           "tracks": [
