@@ -3819,8 +3819,9 @@
           "artist": "Soundgarden",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Grunge"
+            "grunge",
+            "rock",
+            "alternative rock"
           ],
           "release_year": "1994",
           "duration": "1:10:19",
@@ -3842,7 +3843,8 @@
             "Like Suicide",
             "She Likes Surprises"
           ],
-          "toRecord": true
+          "toRecord": true,
+          "description": "Superunknown est le quatrième album du groupe grunge américain Soundgarden. Il est sorti le 8 mars 1994 chez A&M Records. Le groupe a commencé à travailler sur l'album après une tournée en soutien à son précédent album, Badmotorfinger. L'album qui en a résulté a capturé la créativité et la lourdeur des sorties précédentes du groupe tout en affichant une gamme d'influences plus diversifiée. L'album a été un succès critique et commercial et est devenu l'album phare du groupe. Il a culminé à la première place du Billboard 200 et a atteint des positions élevées dans les charts du monde entier. Cinq singles sont sortis de l'album : The Day I Tried to ."
         }
       ]
     },
