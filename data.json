@@ -2589,8 +2589,9 @@
           "artist": "Bruce Springsteen",
           "main_genre": "Rock & Blues",
           "tags": [
-            "Rock",
-            "Folk"
+            "rock",
+            "classic rock",
+            "singer-songwriter"
           ],
           "release_year": "1995",
           "duration": "",
