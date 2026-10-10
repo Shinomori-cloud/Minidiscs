@@ -353,11 +353,12 @@
           "artist": "Mercury Rev",
           "main_genre": "Électro, Trip-Hop & Expérimental",
           "tags": [
-            "Pop Rock",
-            "Experimental"
+            "dream pop",
+            "neo-psychedelia",
+            "chamber pop"
           ],
           "release_year": "1998",
-          "duration": "Unknow",
+          "duration": "44:36",
           "tracks": [
             "Holes",
             "Tonite It Shows",
@@ -371,7 +372,8 @@
             "Pick Up If You're There",
             "Delta Sun Bottleneck Stomp"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Cet album de 12 titres a été publié en 1998 par V2, et a catapulté Mercury Rev dans le courant dominant."
         }
       ],
       "title": "Adore / Deserter's Songs"
