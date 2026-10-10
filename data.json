@@ -1388,7 +1388,10 @@
           "artist": "Muse",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock"
+            "alternative rock",
+            "rock",
+            "alternative",
+            "progressive rock"
           ],
           "release_year": "1999",
           "duration": "51:07",
@@ -1406,7 +1409,8 @@
             "Overdue",
             "Hate This & I'll Love You"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Showbiz est le premier album du groupe de rock alternatif anglais Muse, sorti le 4 octobre 1999 au Royaume-Uni. Enregistré entre avril et mai aux RAK Studios de Londres et au Sawmills Studio de Cornouailles, l'album a été produit par John Leckie et Paul Reeve en collaboration avec le groupe. Showbiz a été un succès commercial mineur, atteignant la vingt-neuvième place du UK Albums Chart. Showbiz est sorti dans diverses régions du monde sous les différents labels régionaux du groupe : Naïve en France ; Motor en Allemagne, en Russie, en Turquie et en Ukraine ; Maverick aux États-Unis ; Play It Again Sam au Benelux ; et Avex ."
         },
         {
           "id": "alb-13-3",
