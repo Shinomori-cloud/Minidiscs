@@ -79,9 +79,10 @@
           "artist": "Nirvana",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Acoustic",
-            "Folk"
+            "grunge",
+            "rock",
+            "alternative",
+            "alternative rock"
           ],
           "release_year": "1994",
           "duration": "79:31",
@@ -101,7 +102,8 @@
             "All Apologies",
             "Where Did You Sleep Last Night"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "MTV Unplugged in New York est un album live du groupe américain de grunge Nirvana, publié le 1er novembre 1994 en CD par DGC Records, puis le 20 novembre 2007 en DVD. Alors en tournée pour promouvoir In Utero, mais dont les ventes sont plus faibles que celles espérées, le groupe accepte de participer à l'émission MTV Unplugged. Dans une ambiance tendue entre Kurt Cobain et les représentants de la chaîne, ils répètent deux jours avant d'enregistrer en une seule prise l'intégralité du concert le 18 novembre 1993 dans les studios Sony Music de New York. Diffusée le 12 décembre, ."
         },
         {
           "id": "alb-24-2",
