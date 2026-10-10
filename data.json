@@ -2617,8 +2617,10 @@
           "artist": "Neil Young",
           "main_genre": "Pop & Folk & Variety",
           "tags": [
-            "Rock",
-            "Folk"
+            "classic rock",
+            "folk",
+            "folk rock",
+            "rock"
           ],
           "release_year": "1972",
           "duration": "38:12",
@@ -2634,7 +2636,8 @@
             "The Needle and the Damage Done",
             "Words (Between the Lines of Age)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Harvest est un album de Neil Young, qui a été l'album le plus vendu de 1972. L'album comprenait plusieurs invités de haut calibre, dont le London Symphony Orchestra, Linda Ronstadt, Stephen Stills, Graham Nash, David Crosby et James Taylor. La récolte a atteint la première place du palmarès des albums pop du Billboard Music Charts (Amérique du Nord), donnant naissance à deux singles à succès, « Old Man », qui a culminé à la 31e place du Billboard Hot 100, et « Heart of Gold », qui a culminé à la première place. Après la séparation du supergroupe Crosby, Stills, Nash & Young, Young a recruté un nouveau groupe de musiciens de session country, qu'il a baptisé The Stray Gators et a enregistré un ."
         },
         {
           "id": "alb-29-3",
