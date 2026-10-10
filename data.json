@@ -2653,10 +2653,15 @@
           "artist": "Scorpions",
           "main_genre": "Metal & Hard Rock",
           "tags": [
-            "Metal"
+            "hard rock",
+            "classic rock",
+            "heavy metal",
+            "rock",
+            "german",
+            "metal"
           ],
           "release_year": "1989",
-          "duration": "",
+          "duration": "68:31",
           "tracks": [
             "Rock you like a hurricane",
             "I can't explain",
