@@ -4188,7 +4188,6 @@
     {
       "id": "md-1791410069679",
       "md_cover": "images/img_1791410067688.jpg",
-      "title": "Le 5eme Element / Fight Club",
       "albums": [
         {
           "id": "md-1791410069679-alb-1",
@@ -4205,10 +4204,11 @@
             "ambient",
             "score"
           ],
-          "release_year": "",
+          "release_year": "1997",
           "duration": "1:06:04",
           "tracks": [],
-          "toRecord": true
+          "toRecord": true,
+          "description": "Parue en 1997, la bande originale du Cinquième Élément, composée par Éric Serra, est à l’image du film de Luc Besson : spectaculaire, excentrique et résolument futuriste. Fidèle complice du réalisateur, Serra imagine une partition qui mélange musique électronique, orchestrations symphoniques, sonorités industrielles et influences venues des quatre coins du monde. Le résultat est une œuvre hybride, où l’énergie d’un film de science-fiction côtoie des passages contemplatifs, des envolées épiques et des moments d’une étrangeté fascinante.\n\nDès « Little Light of Love », qui ouvre l’album avec ses sonorités aériennes et son refrain envoûtant, l’atmosphère est posée. Les compositions alternent ensuite entre tension et émerveillement, accompagnant aussi bien les courses-poursuites futuristes que les paysages cosmiques. Mais c’est évidemment « The Diva Dance » qui constitue le morceau le plus emblématique : interprétée à l’écran par la Diva Plavalaguna, cette aria mêle la virtuosité du bel canto à des ruptures rythmiques et des envolées vocales impossibles, devenant l’un des moments musicaux les plus mémorables du cinéma des années 90. À l’opposé, « Lucia Di Lammermoor » rappelle la dimension classique et lyrique de cette séquence, tandis que les passages plus électroniques soulignent l’agitation permanente de ce futur foisonnant.\n\nPlus qu’un simple accompagnement cinématographique, cette bande originale possède une véritable identité musicale. Éric Serra y développe un langage sonore audacieux, parfois déconcertant, mais toujours étroitement lié à l’univers visuel du film. Entre science-fiction, opéra et expérimentations électroniques, Le Cinquième Élément offre une expérience musicale aussi dépaysante que son univers, indissociable de l’imaginaire futuriste et coloré du film de 1997."
         },
         {
           "id": "md-1791410069679-alb-2",
@@ -4240,7 +4240,8 @@
           ],
           "toRecord": true
         }
-      ]
+      ],
+      "title": "Le 5eme Element / Fight Club"
     }
   ],
   "ideaAlbums": [
