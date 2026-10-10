@@ -2652,7 +2652,7 @@
             "folk rock"
           ],
           "release_year": "1967",
-          "duration": "",
+          "duration": "40:21",
           "tracks": [
             "Rainy Day Women #12 & 35",
             "Blowin' in the Wind",
@@ -2665,7 +2665,8 @@
             "Positively 4th Street",
             "Just like a Woman"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Bob Dylan's Greatest Hits est la première compilation officielle du légendaire auteur-compositeur-interprète américain, sortie en 1967. Synthèse parfaite de la première moitié de sa carrière, cet album incontournable regroupe 10 chefs-d'œuvre intemporels (dont Like a Rolling Stone, Blowin' in the Wind et Mr. Tambourine Man) qui ont redéfini la musique folk et rock des années 1960. Une porte d'entrée idéale et indispensable pour découvrir le répertoire d'une icône de la culture populaire."
         }
       ],
       "title": "Greatest Hits Live / Harvest / Greatest Hits"
