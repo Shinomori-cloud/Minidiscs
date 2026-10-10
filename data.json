@@ -1322,8 +1322,10 @@
           "artist": "The Police",
           "main_genre": "Rock & Blues",
           "tags": [
-            "Rock",
-            "Pop Rock"
+            "rock",
+            "classic rock",
+            "new wave",
+            "pop"
           ],
           "release_year": "1992",
           "duration": "69:32",
@@ -1345,7 +1347,8 @@
             "Wrappe Around Your Finger",
             "Tea in the Sahara"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "\"Greatest Hits\" est le deuxième album des plus grands succès de The Police, sorti en septembre 1992 par A&M Records. Il s'agit de la deuxième compilation du groupe après \"Every Breath You Take : The Singles\". Contrairement à la compilation précédente, elle comprend les 14 singles originaux du Top 20 britannique du groupe sortis entre 1978 et 1984, dont cinq singles numéro un au Royaume-Uni. Il comporte également \"Synchronicity II\" et la version originale de \"Don' t Stand So Close to Me\", qui avait été remplacée par une version réenregistrée de 1986 sur la compilation précédente. En plus des singles, l'album comprend les titres « The Bed's Too ."
         },
         {
           "id": "alb-12-3",
