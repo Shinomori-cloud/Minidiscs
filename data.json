@@ -3790,8 +3790,9 @@
           "artist": "Pearl Jam",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Rock"
+            "grunge",
+            "rock",
+            "alternative rock"
           ],
           "release_year": "1991",
           "duration": "53:26",
@@ -3808,7 +3809,8 @@
             "Deep",
             "Release / Master/Slave"
           ],
-          "toRecord": true
+          "toRecord": true,
+          "description": "\"Ten\" est le premier album de The Pearl Jam, sorti le 27 août 1991 chez Epic Records. Suite à la dissolution du bassiste Jeff Ament et du groupe précédent du guitariste Stone Gossard, Mother Love Bone, les deux ont recruté le chanteur Eddie Vedder, le guitariste Mike McCready et le batteur Dave Krusen pour former Pearl Jam en 1990. La plupart des chansons ont commencé comme des jams instrumentales, auxquelles Vedder a ajouté des paroles sur des sujets tels que la dépression, le sans-abrisme et les abus. \"Ten\" n'a pas été un succès immédiat, mais à la fin de 1992, il avait atteint la deuxième place du palmarès Billboard 200. L'album a produit trois singles à succès : \"Alive\", ."
         },
         {
           "id": "md-1791238572258-alb-2",
