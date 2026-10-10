@@ -3878,8 +3878,10 @@
           "artist": "Alanis Morissette",
           "main_genre": "Pop & Folk & Variety",
           "tags": [
-            "Pop Rock",
-            "Folk"
+            "rock",
+            "female vocalists",
+            "alternative",
+            "acoustic"
           ],
           "release_year": "1999",
           "duration": "53:18",
@@ -3897,7 +3899,8 @@
             "You Oughta Know",
             "Uninvited"
           ],
-          "toRecord": true
+          "toRecord": true,
+          "description": "MTV Unplugged est le premier album live de l'auteure-compositrice-interprète canadienne Alanis Morissette, publié par Maverick Records aux États-Unis le 9 novembre 1999. Il comprend des chansons interprétées par Morissette sur l'émission de télévision MTV Unplugged. Douze titres ont été inclus sur l'album, mais Morissette en a interprété plusieurs autres, dont \"Baba\", \"Thank U\" (tous deux de Supposed Former Infatuation Junkie de 1998) et \"Your House\" (le titre caché de Jagged Little Pill de 1995), lors de son concert Unplugged. Le premier single, \"That I Would Be Good\", a connu un succès modéré, et deux autres titres, \"King of Pain\" (une reprise de la chanson par The Police) ."
         }
       ],
       "title": "Mystery White Boy / MTV Unplugged"
