@@ -2839,7 +2839,14 @@
           "title": "Apéro au terrain",
           "artist": "La famille",
           "main_genre": "Talks & Humour",
-          "tags": [],
+          "tags": [
+            "summer",
+            "Cruising",
+            "drinking",
+            "Beach",
+            "treehorn",
+            "Logjammin"
+          ],
           "release_year": "1994",
           "duration": "24:34",
           "tracks": [
