@@ -1356,7 +1356,10 @@
           "artist": "Placebo",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock"
+            "alternative rock",
+            "alternative",
+            "rock",
+            "indie"
           ],
           "release_year": "1998",
           "duration": "54:14",
@@ -1375,7 +1378,8 @@
             "Burger Queen",
             "Evil Dildo"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Without You I' m Nothing est le deuxième album du groupe alternatif Placebo, sorti en 1998. Il comporte une chanson du même nom. La chanson Pure Morning a été le premier single Placebo à connaître un succès modéré aux États-Unis. L'album a été produit par Steve Osborne. Les sessions d'enregistrement n'ont pas semblé faciles, notamment parce que Placebo a choisi Phil Vinall à la dernière minute pour ce qui serait le premier single de l'album, \"Pure Morning\". Plus tard, le leader de Placebo, Brian Molko, a déclaré que, malgré l'appréciation des compétences de production d'Osborne, la chimie entre le groupe et le producteur \"ne s'est pas déclenchée ."
         },
         {
           "id": "alb-13-2",
