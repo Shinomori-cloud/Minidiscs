@@ -3796,11 +3796,11 @@
           "artist": "The White Stripes",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "alternative rock",
             "rock",
-            "garage rock revival",
-            "blues rock",
-            "alternative and punk"
+            "alternative rock",
+            "alternative",
+            "garage rock",
+            "indie rock"
           ],
           "release_year": "2001",
           "duration": "40:31",
@@ -3822,7 +3822,8 @@
             "I Can Learn",
             "This Protector"
           ],
-          "toRecord": true
+          "toRecord": true,
+          "description": "White Blood Cells est le troisième album du groupe de garage rock américain The White Stripes, sorti en 2001. Considéré comme la percée commerciale du groupe, White Blood Cells a atteint la 61e place du Billboard 200, devenant disque d'or et vendant plus de 500 000 unités. L'album a également atteint la 55e place au Royaume-Uni, soutenu dans les deux territoires par le single Fell in Love with a Girl et son clip d'animation Lego. Le magazine Stylus l'a classé quinzième meilleur album de 2000-2005 tandis que Pitchfork Media l'a classé neuvième sur sa liste des 100 meilleurs albums de 2000-2004. L'album était dédié ."
         },
         {
           "id": "md-1791057491870-alb-3",
