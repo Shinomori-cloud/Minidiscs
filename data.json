@@ -112,8 +112,9 @@
           "artist": "The Cranberries",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Pop Rock"
+            "rock",
+            "alternative",
+            "alternative rock"
           ],
           "release_year": "1994",
           "duration": "50:28",
@@ -131,7 +132,8 @@
             "Yeat's Grave",
             "No Need to Argue"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "No Need to Argue est le deuxième album des Cranberries sorti en 1994. L'album est le plus grand succès du groupe avec 16,7 millions d'exemplaires vendus dans le monde. En France, l'album s'est écoule a 1 500 000 exemplaires et certifié disque de diamant en 1996 et se classe deuxième des albums irlandais les plus vendus en France juste derrière l'album The Joshua Tree de U2 (2 000 000 d'exemplaires). Toutes les paroles sont de Dolores O'Riordan, les musiques sont signées O'Riordan et Noel Hogan en dehors des pistes 4, 7, 10-13 composées seulement par O'Riordan. La chanson Yeat's Grave ."
         },
         {
           "id": "alb-24-3",
