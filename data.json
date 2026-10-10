@@ -505,10 +505,13 @@
           "artist": "Soulfly",
           "main_genre": "Metal & Hard Rock",
           "tags": [
-            "Metal"
+            "metal",
+            "thrash metal",
+            "nu metal",
+            "metalcore"
           ],
           "release_year": "2000",
-          "duration": "Unknow",
+          "duration": "52:22",
           "tracks": [
             "Back to the Primitive",
             "Pain",
@@ -523,7 +526,8 @@
             "In Memory of...",
             "Flyhigh"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Primitive est le deuxième album du groupe de metal Soulfly sorti en 2000 chez Roadrunner Records. Une variété d'influences, y compris le nu metal, est apparu sur Primitive, et c'était l'album le plus réussi du groupe aux États-Unis, atteignant la 32e place du Billboard 200 et la 11e place des charts indépendants. Joe Nunez, de Chicago, a remplacé Roy Mayorga à la batterie pour Primitive. L'album a comporté un certain nombre d'apparitions, y compris Corey Taylor de Slipknot et Stone Sour, Sean Lennon, Chino Moreno de Deftones, Tom Araya de Slayer, Grady Avenell de Will Haven et a été produit par ."
         }
       ],
       "title": "Follow the Leader / Primitive"
