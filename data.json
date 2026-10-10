@@ -3754,14 +3754,33 @@
           "artist": "Lauryn Hill",
           "main_genre": "Rap, Soul & Reggae",
           "tags": [
-            "Rap",
-            "Soul Funk",
-            "Reggae"
+            "soul",
+            "hip-hop",
+            "rnb",
+            "female vocalists"
           ],
-          "release_year": "",
+          "release_year": "1998",
           "duration": "1:17:39",
-          "tracks": [],
-          "toRecord": true
+          "tracks": [
+            "Intro",
+            "Lost Ones",
+            "Ex-Factor",
+            "To Zion",
+            "Doo Wop (That Thing)",
+            "Superstar",
+            "Final Hour",
+            "When It Hurts So Bad",
+            "I Used to Love Him",
+            "Forgive Them Father",
+            "Every Ghetto, Every City",
+            "Nothing Even Matters",
+            "Everything Is Everything",
+            "The Miseducation of Lauryn Hill",
+            "Can’t Take My Eyes Off of You",
+            "Tell Him"
+          ],
+          "toRecord": true,
+          "description": "\"The Miseducation of Lauryn Hill\" est le premier album studio solo de la rappeuse et auteure-compositrice-interprète américaine Lauryn Hill, sorti le 25 août 1998 par Ruffhouse Records et Columbia Records. Enregistré après la pause des Fugees, l'album a été écrit et produit principalement par Hill. C'est un album concept centré sur les thèmes de l'auto-éducation par l'amour, explorant des sujets tels que les relations amoureuses, la croissance personnelle, la maternité et la foi. Musicalement, il mélange des éléments de néo soul et de R&B avec des influences de hip-hop, de reggae et de soul, et présente des apparitions de Carlos Santana, Mary J. Blige et D'Angelo. Suivre son temps avec ."
         },
         {
           "id": "md-1791205192695-alb-2",
