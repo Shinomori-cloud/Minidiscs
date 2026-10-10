@@ -3622,7 +3622,9 @@
           "title": "Stuff",
           "artist": "Rob Sawyer",
           "main_genre": "Pop & Folk & Variety",
-          "tags": [],
+          "tags": [
+            "australian"
+          ],
           "release_year": "2002",
           "duration": "54:38",
           "tracks": [
