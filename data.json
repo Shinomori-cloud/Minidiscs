@@ -2618,7 +2618,13 @@
           "artist": "Toto",
           "main_genre": "Rock & Blues",
           "tags": [
-            "Pop Rock"
+            "rock",
+            "classic rock",
+            "Progressive rock",
+            "pop",
+            "AOR",
+            "soft rock",
+            "hard rock"
           ],
           "release_year": "1997",
           "duration": "",
