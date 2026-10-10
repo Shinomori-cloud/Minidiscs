@@ -451,11 +451,13 @@
           "artist": "Hole",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Grunge"
+            "grunge",
+            "rock",
+            "female vocalists",
+            "alternative"
           ],
           "release_year": "1994",
-          "duration": "Unknow",
+          "duration": "39:24",
           "tracks": [
             "Violet",
             "Miss World",
@@ -470,7 +472,8 @@
             "Gutless",
             "Rock Star (Olympia)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Live Through This est le deuxième album studio du groupe de rock alternatif américain Hole, sorti le 12 avril 1994 chez DGC Records. Enregistré à la fin de 1993, il a quitté l'esthétique hardcore non polie du groupe pour des mélodies et une structure de chansons plus raffinées. La frontwoman Courtney Love a déclaré qu'elle voulait que l'album soit « choquant pour les gens qui pensent que nous n'avons pas un côté doux », mais maintiennent une sensibilité dure. L'album a été produit par Sean Slade et Paul Q. Kolderie et mixé par Scott Litt et J Mascis. Les paroles et l'emballage reflètent les préoccupations thématiques de Love avec la beauté, et ."
         }
       ],
       "title": "Siamese Dream / In Utero / Live Through This"
