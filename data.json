@@ -2794,10 +2794,13 @@
           "artist": "Stomy Bugsy",
           "main_genre": "Rap, Soul & Reggae",
           "tags": [
-            "Rap"
+            "rap",
+            "french",
+            "hip hop",
+            "french rap"
           ],
           "release_year": "1998",
-          "duration": "",
+          "duration": "72:22",
           "tracks": [
             "Quand Bugsy et son gang dégomment (feat. Nèg'Marrons, Ärsenik & Hamed Daye)",
             "J'prie Dieu",
