@@ -1419,8 +1419,10 @@
           "artist": "Radiohead",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Pop Rock"
+            "alternative rock",
+            "alternative",
+            "rock",
+            "indie"
           ],
           "release_year": "1993",
           "duration": "43:44",
@@ -1438,7 +1440,8 @@
             "Lurgee",
             "Blow Out"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Pablo Honey est le premier album du groupe Radiohead, sorti en 1993. Le single Creep, extrait de cet album, est le premier morceau qui ait fait connaître Radiohead sur le plan international. En 1995, ce single est utilisé dans la bande originale du film Cyclo de Trần Anh Hùng. La chanson a été classée 23ème meilleure chanson britannique de tous les temps par XFM en 2010. ."
         }
       ],
       "title": "Without You I'm Nothing / Showbiz / Pablo Honey"
