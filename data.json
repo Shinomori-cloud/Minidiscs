@@ -3843,7 +3843,7 @@
             "Babylone - Live",
             "J'ai rien prévu pour demain"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "md-1791313486692-alb-2",
@@ -3880,7 +3880,7 @@
             "La Valse",
             "Ça m’aurait plu"
           ],
-          "toRecord": true
+          "toRecord": false
         }
       ],
       "title": "Mamagubida / À plus tard crocodile"
