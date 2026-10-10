@@ -420,8 +420,10 @@
           "artist": "Nirvana",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Grunge"
+            "grunge",
+            "rock",
+            "alternative",
+            "alternative rock"
           ],
           "release_year": "1993",
           "duration": "58:52",
@@ -439,7 +441,8 @@
             "Tourette's",
             "All Apologies"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "In Utero est le troisième et dernier album studio du groupe de rock alternatif américain Nirvana, sorti le 21 septembre 1993 par DGC Records. Après le succès de l'album révolutionnaire du groupe Nevermind en 1991, Nirvana a cherché à éviter la production soignée de cet album et a embauché l'ingénieur du son Steve Albini pour produire le disque. Le groupe a enregistré In Utero avec Albini en deux semaines en février 1993, capturant un son abrasif et naturaliste pour l'enregistrement. Alors que certaines des chansons avaient été écrites des années auparavant, les paroles traitaient en grande partie des réflexions du chanteur Kurt Cobain sur sa nouvelle renommée et sa récente personnalité ."
         },
         {
           "id": "alb-31-3",
