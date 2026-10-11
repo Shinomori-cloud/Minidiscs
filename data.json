@@ -4008,7 +4008,15 @@
           "title": "Greatest Hits... Live",
           "artist": "The Smashing Pumpkins",
           "main_genre": "Alternative & Grunge 90s",
-          "tags": [],
+          "tags": [
+            "alternative rock",
+            "Grunge",
+            "alternative",
+            "rock",
+            "american",
+            "shoegaze",
+            "indie rock"
+          ],
           "release_year": "1996",
           "duration": "40:43",
           "tracks": [],
