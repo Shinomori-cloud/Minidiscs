@@ -902,10 +902,12 @@
           "artist": "IAM",
           "main_genre": "Rap, Soul & Reggae",
           "tags": [
-            "Rap"
+            "french hip hop",
+            "classic",
+            "rap"
           ],
           "release_year": "1997",
-          "duration": "Unknow",
+          "duration": "73:40",
           "tracks": [
             "L'école du micro d'argent",
             "Dangereux",
@@ -924,7 +926,8 @@
             "Independanza",
             "Demain, c'est loin"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "L'École du micro d'argent est le troisième album studio du groupe de rap français IAM, sorti le 18 mars 1997 sur les labels EMI, Delabel et Virgin. L'album a été enregistré en partie aux États-Unis, avec des influences de RZA, membre du Wu-Tang Clan. Les textes de l'album sont souvent considérés comme d'une rare finesse par comparaison avec l'essentiel de la scène du rap français. Peu de rappeurs sont parvenus à aborder les thèmes sociaux avec autant de justesse. Ce sont des textes sérieux, graves, accompagnés de jeux extrêmement sophistiqués sur les sonorités du langage (par exemple, Chez le mac ."
         },
         {
           "id": "alb-05-2",
