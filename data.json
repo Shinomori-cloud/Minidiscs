@@ -262,11 +262,13 @@
           "artist": "Radiohead",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Experimental"
+            "alternative",
+            "alternative rock",
+            "rock",
+            "indie"
           ],
           "release_year": "1997",
-          "duration": "Unknow",
+          "duration": "57:36",
           "tracks": [
             "Airbag",
             "Paranoid Android",
@@ -281,7 +283,8 @@
             "Lucky",
             "The Tourist"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "OK Computer est le troisième album du groupe britanique Radiohead. Sorti en 1997, il rencontre un succès critique et commercial énorme. Il est propulsé en tête des charts anglais et américain dès sa sortie. Une simple écoute suffit à justifier les éloges qui ont déferlé à sa sortie. L'album est une succession de chansons à base rock essentiellement, toutes sublimes, avec une atmosphère nostalgique où la fatalité se mêle au désespoir. Les paroles puisent leur source dans le rêve. Du fait de sa grande popularité, Ok Computer est aujourd'hui encore cité comme un de ces albums qui auront marqué les ."
         },
         {
           "id": "alb-28-2",
