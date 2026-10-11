@@ -717,11 +717,12 @@
           "artist": "The Cranberries",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Pop Rock"
+            "rock",
+            "alternative",
+            "alternative rock"
           ],
           "release_year": "1999",
-          "duration": "Unknow",
+          "duration": "47:44",
           "tracks": [
             "Animal Instinct",
             "Loud and Clear",
@@ -737,7 +738,8 @@
             "Fee Fi Fo",
             "Dying in the Sun"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Bury the Hatchet est le quatrième album des Cranberries sorti en 1999. Les chansons ont toutes été écrites par Dolores O'Riordan et ont toutes été composées par Noel Hogan et Dolores O'Riordan sauf les pistes 3, 8, 10 et 13 composées par Dolores O'Riordan uniquement. L'album s'est vendu à 3 500 000 exemplaires, un million de copies avait été écoulées en un mois. Il a été numéro un des charts de plusieurs pays. ."
         },
         {
           "id": "alb-03-2",
