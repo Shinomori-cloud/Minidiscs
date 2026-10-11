@@ -1,5 +1,6 @@
-// Thèmes de couleurs (Paramètres > Apparence). « sw » = aperçu : fond sombre, violet, accent, secondaire. Les palettes sont dans style.css.
-const THEMES = [{"id": "default", "name": "Par défaut", "sw": ["#140c2a", "#7b2cbf", "#ff007f", "#00f0ff"]}, {"id": "ocean", "name": "Océan", "sw": ["#0c1d2a", "#2c58bf", "#00d8ff", "#00ffa4"]}, {"id": "foret", "name": "Forêt", "sw": ["#0c2a19", "#2cbf94", "#7bff00", "#ffbd00"]}, {"id": "braise", "name": "Braise", "sw": ["#2a0d0c", "#bf592c", "#ff6200", "#ffbd00"]}, {"id": "ardoise", "name": "Ardoise", "sw": ["#151b21", "#5a6891", "#4f8bb0", "#4f9fb0"]}, {"id": "minuit", "name": "Minuit", "sw": ["#0c132a", "#312cbf", "#ffc800", "#00b9ff"]}, {"id": "menthe", "name": "Menthe", "sw": ["#0c2a22", "#2cbebf", "#00ff84", "#00caff"]}, {"id": "carbone", "name": "Carbone", "sw": ["#1c1a1a", "#7a7371", "#ff0015", "#a38f90"]}, {"id": "olive", "name": "Olive", "sw": ["#22270f", "#79af3c", "#af00ff", "#ff6800"]}, {"id": "pasteque", "name": "Pastèque", "sw": ["#290d1a", "#bb304b", "#00ff1e", "#ffce00"]}, {"id": "sable", "name": "Sable", "sw": ["#221a14", "#9a8751", "#478dff", "#19cfe6"]}, {"id": "neon", "name": "Néon", "sw": ["#18181e", "#706586", "#ffea00", "#ff00b0"]}];
+// Thèmes de couleurs (Paramètres > Apparence). « sw » = aperçu : fond sombre, violet, accent, secondaire. « g » = palette des genres :
+// rotation de teinte (r, en degrés : le même décalage que l'accent du thème) et facteur de saturation (s). Les palettes de l'interface sont dans style.css.
+const THEMES = [{"id": "default", "name": "Par défaut", "sw": ["#140c2a", "#7b2cbf", "#ff007f", "#00f0ff"]}, {"id": "ocean", "name": "Océan", "sw": ["#0c1d2a", "#2c58bf", "#00d8ff", "#00ffa4"], "g": {"r": -141, "s": 1}}, {"id": "foret", "name": "Forêt", "sw": ["#0c2a19", "#2cbf94", "#7bff00", "#ffbd00"], "g": {"r": 121, "s": 1}}, {"id": "braise", "name": "Braise", "sw": ["#2a0d0c", "#bf592c", "#ff6200", "#ffbd00"], "g": {"r": 53, "s": 1}}, {"id": "ardoise", "name": "Ardoise", "sw": ["#151b21", "#5a6891", "#4f8bb0", "#4f9fb0"], "g": {"r": -127, "s": 0.72}}, {"id": "minuit", "name": "Minuit", "sw": ["#0c132a", "#312cbf", "#ffc800", "#00b9ff"], "g": {"r": 77, "s": 1}}, {"id": "menthe", "name": "Menthe", "sw": ["#0c2a22", "#2cbebf", "#00ff84", "#00caff"], "g": {"r": -179, "s": 1}}, {"id": "carbone", "name": "Carbone", "sw": ["#1c1a1a", "#7a7371", "#ff0015", "#a38f90"], "g": {"r": 25, "s": 0.65}}, {"id": "olive", "name": "Olive", "sw": ["#22270f", "#79af3c", "#af00ff", "#ff6800"], "g": {"r": -49, "s": 1}}, {"id": "pasteque", "name": "Pastèque", "sw": ["#290d1a", "#bb304b", "#00ff1e", "#ffce00"], "g": {"r": 157, "s": 1}}, {"id": "sable", "name": "Sable", "sw": ["#221a14", "#9a8751", "#478dff", "#19cfe6"], "g": {"r": -113, "s": 0.78}}, {"id": "neon", "name": "Néon", "sw": ["#18181e", "#706586", "#ffea00", "#ff00b0"], "g": {"r": 85, "s": 1}}];
 const THEME_STORAGE_KEY = 'minidisc_theme';
 
 // Appliqué dès le chargement du script, avant tout affichage, pour éviter un flash aux couleurs par défaut
@@ -956,6 +957,8 @@ function pageHash(page) {
     case 'create': return '#create';
     case 'planner': return '#planner';
     case 'settings': return '#settings';
+    case 'settings-appearance': return '#settings-appearance';
+    case 'settings-images': return '#settings-images';
     case 'discover-results': return '#discover' + q;
     case 'discover-disco': return '#discover';
     case 'discover-detail': return '#discover';
@@ -974,6 +977,8 @@ function parentOfPage(page) {
     case 'discover-disco': return page.direct ? (page.parent || { key: 'create' }) : { key: 'discover-results' };
     case 'discover-detail': return page.parent || { key: 'create' };
     case 'create': return { key: 'dashboard' };
+    case 'settings-appearance':
+    case 'settings-images': return { key: 'settings' };
     default: return { key: 'dashboard' };
   }
 }
@@ -1041,6 +1046,8 @@ function renderForPage(page) {
     case 'create': renderCreateHub(); break;
     case 'planner': renderCompilPlanner(false); break;
     case 'settings': renderSettings(); break;
+    case 'settings-appearance': renderSettingsAppearance(); break;
+    case 'settings-images': renderSettingsImages(); break;
     case 'discover-results': renderDiscover(page.params || new URLSearchParams()); break;
     case 'discover-disco':
       // Le cadre de la page Découverte doit exister avant d'y afficher le chargement de la discographie
@@ -1058,6 +1065,8 @@ function goToDashboard() { navigateTo({ key: 'dashboard' }); }
 function goToCreateHub() { navigateTo({ key: 'create' }); }
 function goToPlanner() { navigateTo({ key: 'planner' }); }
 function goToSettings() { navigateTo({ key: 'settings' }); }
+function goToSettingsAppearance() { navigateTo({ key: 'settings-appearance' }); }
+function goToSettingsImages() { navigateTo({ key: 'settings-images' }); }
 function goToMD(mdIndex) { navigateTo({ key: 'md', mdIndex }); }
 function goToAlbum(mdIndex, albumIndex) { navigateTo({ key: 'track', mdIndex, albumIndex }); }
 
@@ -1167,14 +1176,38 @@ const genreColorMap = {
 // Couleurs de secours si jamais un genre hors de cette liste apparaît (données à corriger)
 const genreColorPalette = ['#ff4d5e', '#ff3d9a', '#00f0ff', '#ffc933', '#b46cff', '#70e000', '#ff70a6', '#5aa2ff'];
 
-// Couleur d'un genre (attribue une couleur de la palette aux genres inconnus)
+// Couleur d'un genre : toujours UNE couleur par genre, mais la palette entière suit le thème choisi
+// (Paramètres > Apparence). Les couleurs de base ci-dessus sont celles du thème « Par défaut » : pour les autres thèmes,
+// chacune subit la même rotation de teinte (le thème lui donne une valeur, voir « g » dans THEMES), ce qui conserve les écarts
+// entre genres. La saturation est réduite pour les thèmes sobres, et la clarté relevée si une couleur devenait trop sombre
+// pour rester lisible sur le fond.
 function getSingleGenreColor(genre) {
-  if (genreColorMap[genre]) return genreColorMap[genre];
+  if (!genreColorMap[genre]) {
+    const assignedCount = Object.keys(genreColorMap).length;
+    genreColorMap[genre] = genreColorPalette[assignedCount % genreColorPalette.length];
+  }
+  return themedGenreHex(genreColorMap[genre]);
+}
 
-  const assignedCount = Object.keys(genreColorMap).length;
-  const color = genreColorPalette[assignedCount % genreColorPalette.length];
-  genreColorMap[genre] = color;
-  return color;
+const themedGenreCache = new Map();
+function relativeLuminance(hex) {
+  const lin = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  const [r, g, b] = hexToRgb(hex);
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+}
+function themedGenreHex(hex) {
+  const id = document.documentElement.getAttribute('data-theme');
+  const theme = id && THEMES.find(t => t.id === id);
+  if (!theme || !theme.g) return hex; // thème par défaut : couleurs d'origine, inchangées
+  const key = id + hex;
+  if (themedGenreCache.has(key)) return themedGenreCache.get(key);
+  let [h, s, l] = rgbToHsl(...hexToRgb(hex));
+  h = (h + theme.g.r + 360) % 360;
+  s = Math.min(1, s * theme.g.s);
+  let out = hslToHex(h, s, l);
+  while (relativeLuminance(out) < 0.22 && l < 0.85) { l += 0.02; out = hslToHex(h, s, l); }
+  themedGenreCache.set(key, out);
+  return out;
 }
 
 function hexToRgb(hex) {
@@ -4473,20 +4506,51 @@ function selectTheme(id) {
   if (id === 'default') document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme', id);
   try { localStorage.setItem(THEME_STORAGE_KEY, id); } catch (e) { /* non enregistré : valable jusqu'à la fermeture de l'appli */ }
+  themedGenreCache.clear();
   document.querySelectorAll('.theme-tile').forEach(b => b.classList.toggle('selected', b.dataset.themeId === id));
   showToast(`Thème « ${theme.name} » appliqué`);
 }
 
+// Entrée du menu : titre à gauche, flèche à droite, une phrase de description dessous
+function settingsEntryHTML(title, description, onclick) {
+  return `
+    <button type="button" class="settings-entry list-item" onclick="${onclick}">
+      <span class="settings-entry-title">${title}</span>
+      <span class="settings-entry-desc">${description}</span>
+    </button>`;
+}
+
+// Page « Paramètres » : uniquement le menu. Chaque réglage est sur sa propre page.
 function renderSettings() {
   prepareSubPage('PARAMÈTRES');
   app.innerHTML = `
+    <div id="settings-page" class="settings-page settings-menu">
+      <div class="settings-group">
+        ${discoverSeparatorHTML('Personnalisation', 'dc-left')}
+        ${settingsEntryHTML('Apparence', "Choisis les couleurs de l'appli.", 'goToSettingsAppearance()')}
+      </div>
+      <div class="settings-group">
+        ${discoverSeparatorHTML('Maintenance', 'dc-left')}
+        ${settingsEntryHTML('Images inutilisées', 'Retrouve et supprime les images devenues inutiles sur GitHub.', 'goToSettingsImages()')}
+      </div>
+    </div>`;
+}
+
+function renderSettingsAppearance() {
+  prepareSubPage('APPARENCE');
+  app.innerHTML = `
     <div id="settings-page" class="settings-page">
-      ${discoverSeparatorHTML('Apparence')}
       <section class="settings-card list-item">
-        <p class="settings-help">Choisis les couleurs de l'appli. Les jaquettes et les couleurs des genres ne changent pas. Ce choix est propre à cet appareil.</p>
+        <p class="settings-help">Choisis le thème de l'appli : les fonds, les accents et les couleurs des genres s'adaptent au thème. Les jaquettes ne changent pas. Ce choix est propre à cet appareil.</p>
         <div class="theme-grid">${themeTilesHTML()}</div>
       </section>
-      ${discoverSeparatorHTML('Images')}
+    </div>`;
+}
+
+function renderSettingsImages() {
+  prepareSubPage('IMAGES');
+  app.innerHTML = `
+    <div id="settings-page" class="settings-page">
       <section class="settings-card list-item">
         <p class="settings-help">Retrouve, dans le dossier « images » de GitHub, les images qui ne servent plus : jaquettes de MiniDiscs ou d'idées supprimés, images remplacées, fichiers oubliés. Rien n'est supprimé sans ta confirmation.</p>
         <button type="button" id="imgc-scan-btn" class="settings-btn" onclick="imgCleanScan()">Rechercher les images inutilisées</button>

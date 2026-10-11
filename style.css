@@ -3363,6 +3363,17 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
    ========================================== */
 .settings-page { display: flex; flex-direction: column; gap: 12px; padding-top: 6px; }
 .settings-page .dc-separator { margin: 4px 0 0; }
+/* Menu Paramètres : titres de groupe alignés à gauche (trait de pinceau à droite seulement) + entrées avec une phrase de description */
+.dc-separator.dc-left { justify-content: flex-start; }
+.dc-separator.dc-left::before { display: none; }
+.settings-menu { gap: 20px; }
+.settings-group { display: flex; flex-direction: column; gap: 10px; }
+.settings-group .dc-separator { margin: 2px 0 0; padding: 0 2px; }
+.settings-entry { flex-direction: column; align-items: stretch; gap: 6px; width: 100%; box-sizing: border-box; margin-bottom: 0; text-align: left; font: inherit; color: var(--text-main); -webkit-appearance: none; appearance: none; touch-action: manipulation; }
+.settings-entry:active { transform: translate(2px, 2px); }
+.settings-entry-title { position: relative; display: block; padding-right: 26px; font-size: 1.02rem; font-weight: 800; }
+.settings-entry-title::after { content: ""; position: absolute; right: 5px; top: 50%; width: 9px; height: 9px; border-top: 2.5px solid var(--text-sub); border-right: 2.5px solid var(--text-sub); transform: translateY(-50%) rotate(45deg); }
+.settings-entry-desc { font-size: 0.85rem; line-height: 1.4; font-weight: 400; color: var(--text-sub); }
 .settings-card { display: flex; flex-direction: column; gap: 12px; padding: 14px; }
 .settings-help { font-size: 0.85rem; line-height: 1.45; color: var(--text-sub); }
 .settings-status { font-size: 0.85rem; line-height: 1.4; color: var(--text-main); }
