@@ -780,12 +780,12 @@
           "artist": "Garbage",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Pop Rock",
-            "Experimental"
+            "alternative rock",
+            "rock",
+            "alternative"
           ],
           "release_year": "1998",
-          "duration": "Unknow",
+          "duration": "50:10",
           "tracks": [
             "Temptation Waits",
             "I Think I'm Paranoid",
