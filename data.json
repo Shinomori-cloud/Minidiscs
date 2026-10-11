@@ -4471,6 +4471,94 @@
         }
       ],
       "title": "Le 5eme Element / Fight Club"
+    },
+    {
+      "id": "md-1791754958619",
+      "md_cover": "images/img_1791754954684.jpg",
+      "title": "En passant / D'eux / Samedi soir sur la Terre",
+      "albums": [
+        {
+          "id": "md-1791754958619-alb-1",
+          "md_cover": "images/img_1790526396415.jpg",
+          "title": "En passant",
+          "artist": "Jean‐Jacques Goldman",
+          "main_genre": "Pop & Folk & Variety",
+          "tags": [
+            "pop"
+          ],
+          "release_year": "1997",
+          "duration": "47:35",
+          "tracks": [
+            "Sache que je",
+            "Bonne idée",
+            "Tout était dit",
+            "Quand tu danses",
+            "Le Coureur",
+            "Juste quelques hommes",
+            "Nos mains",
+            "Natacha",
+            "Les Murailles",
+            "On ira",
+            "En passant"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791754958619-alb-2",
+          "md_cover": "images/img_1790526223454.jpg",
+          "title": "D'eux",
+          "artist": "Céline Dion",
+          "main_genre": "Pop & Folk & Variety",
+          "tags": [
+            "pop",
+            "pop rock",
+            "rock",
+            "ballad"
+          ],
+          "release_year": "1995",
+          "duration": "47:08",
+          "tracks": [
+            "Pour que tu m’aimes encore",
+            "Le Ballet",
+            "Regarde‐moi",
+            "Je sais pas",
+            "La Mémoire d’Abraham",
+            "Cherche encore",
+            "Destin",
+            "Les derniers seront les premiers",
+            "J’irai où tu iras",
+            "J’attendais",
+            "Prière païenne",
+            "Vole"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791754958619-alb-3",
+          "md_cover": "images/img_1790525864869.jpg",
+          "title": "Samedi soir sur la Terre",
+          "artist": "Francis Cabrel",
+          "main_genre": "Pop & Folk & Variety",
+          "tags": [
+            "pop"
+          ],
+          "release_year": "1994",
+          "duration": "50:48",
+          "tracks": [
+            "La Corrida",
+            "Assis sur le rebord du monde",
+            "La Cabane du pêcheur",
+            "Samedi soir sur la Terre",
+            "Je t’aimais, je t’aime, je t’aimerai",
+            "Les Vidanges du diable",
+            "L’arbre va tomber",
+            "Octobre",
+            "Le Noceur",
+            "Tôt ou tard s’en aller"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -4938,31 +5026,6 @@
       "toRecord": false
     },
     {
-      "id": "idea-1790525866288",
-      "md_cover": "images/img_1790525864869.jpg",
-      "title": "Samedi soir sur la Terre",
-      "artist": "Francis Cabrel",
-      "main_genre": "Pop & Folk & Variety",
-      "tags": [
-        "pop"
-      ],
-      "release_year": "1994",
-      "duration": "50:48",
-      "tracks": [
-        "La Corrida",
-        "Assis sur le rebord du monde",
-        "La Cabane du pêcheur",
-        "Samedi soir sur la Terre",
-        "Je t’aimais, je t’aime, je t’aimerai",
-        "Les Vidanges du diable",
-        "L’arbre va tomber",
-        "Octobre",
-        "Le Noceur",
-        "Tôt ou tard s’en aller"
-      ],
-      "toRecord": false
-    },
-    {
       "id": "idea-1790526120753",
       "md_cover": "images/img_1790526119024.jpg",
       "title": "Si t’en reveux, y’en re n’a",
@@ -4987,62 +5050,6 @@
         "62 méfie-te",
         "Ma puberté",
         "Fuite de fantaisie (acoustique)"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790526224791",
-      "md_cover": "images/img_1790526223454.jpg",
-      "title": "D'eux",
-      "artist": "Céline Dion",
-      "main_genre": "Pop & Folk & Variety",
-      "tags": [
-        "pop",
-        "pop rock",
-        "rock",
-        "ballad"
-      ],
-      "release_year": "1995",
-      "duration": "47:08",
-      "tracks": [
-        "Pour que tu m’aimes encore",
-        "Le Ballet",
-        "Regarde‐moi",
-        "Je sais pas",
-        "La Mémoire d’Abraham",
-        "Cherche encore",
-        "Destin",
-        "Les derniers seront les premiers",
-        "J’irai où tu iras",
-        "J’attendais",
-        "Prière païenne",
-        "Vole"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790526398050",
-      "md_cover": "images/img_1790526396415.jpg",
-      "title": "En passant",
-      "artist": "Jean‐Jacques Goldman",
-      "main_genre": "Pop & Folk & Variety",
-      "tags": [
-        "pop"
-      ],
-      "release_year": "1997",
-      "duration": "47:35",
-      "tracks": [
-        "Sache que je",
-        "Bonne idée",
-        "Tout était dit",
-        "Quand tu danses",
-        "Le Coureur",
-        "Juste quelques hommes",
-        "Nos mains",
-        "Natacha",
-        "Les Murailles",
-        "On ira",
-        "En passant"
       ],
       "toRecord": false
     },
