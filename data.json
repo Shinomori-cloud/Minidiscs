@@ -5353,6 +5353,35 @@
         "Michael & Geri"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791755182393",
+      "md_cover": "images/img_1791755180371.jpg",
+      "title": "Last Fair Deal Gone Down",
+      "artist": "Katatonia",
+      "main_genre": "Rock & Blues",
+      "tags": [
+        "rock",
+        "alternative metal",
+        "alternative rock",
+        "gothic rock"
+      ],
+      "release_year": "2001",
+      "duration": "50:45",
+      "tracks": [
+        "Dispossession",
+        "Chrome",
+        "We Must Bury You",
+        "Teargas",
+        "I Transpire",
+        "Tonight’s Music",
+        "Clean Today",
+        "The Future of Speech",
+        "Passing Bird",
+        "Sweet Nurse",
+        "Don’t Tell a Soul"
+      ],
+      "toRecord": false
     }
   ]
 }
