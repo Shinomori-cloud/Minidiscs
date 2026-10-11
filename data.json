@@ -1815,11 +1815,14 @@
           "artist": "ACDC",
           "main_genre": "Metal & Hard Rock",
           "tags": [
-            "Hard Rock",
-            "Blues rock"
+            "hard rock",
+            "rock",
+            "australian artist",
+            "english lyrics",
+            "classic rock"
           ],
           "release_year": "1999",
-          "duration": "Unknow",
+          "duration": "46:55",
           "tracks": [
             "Stiff UpperLip",
             "Meltdown",
@@ -1834,7 +1837,8 @@
             "All Screwed Up",
             "Give It Up"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "\"Stiff Upper Lip\" est le quatorzième album studio du groupe de hard rock australien AC/DC. Il a été publié le 28 février 2000. L'album a été produit par George Young, frère aîné de Malcolm et Angus Young. C'était le dernier album d'AC/DC qu'il produisait avant sa mort en 2017. L'album a été réédité aux États-Unis en 2007 dans le cadre de la série AC/DC Remasters et au Royaume-Uni en 2005. Les jeunes frères ont commencé à écrire du matériel pour ce qui allait devenir « Stiff Upper Lip » à l'été 1997 à Londres et aux Pays-Bas, avec Malcolm Young."
         }
       ],
       "title": "Americana / Buckcherry / Stiff Upper Lip"
