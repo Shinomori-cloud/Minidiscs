@@ -5250,6 +5250,35 @@
         "Leif Erikson"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791724585649",
+      "md_cover": "images/img_1791724583855.jpg",
+      "title": "Around the Fur",
+      "artist": "Deftones",
+      "main_genre": "Metal & Hard Rock",
+      "tags": [
+        "alternative metal",
+        "nu metal",
+        "alternative pop/rock",
+        "heavy metal",
+        "nsfw cover art"
+      ],
+      "release_year": "1997",
+      "duration": "46:11",
+      "tracks": [
+        "My Own Summer (Shove It)",
+        "Lhabia",
+        "Mascara",
+        "Around the Fur",
+        "Rickets",
+        "Be Quiet and Drive (Far Away)",
+        "Lotion",
+        "Dai the Flu",
+        "Headup",
+        "MX / Bong Hit / Damone"
+      ],
+      "toRecord": false
     }
   ]
 }
