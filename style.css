@@ -3405,6 +3405,10 @@ html[data-theme]:not([data-theme="default"])::before {
   background: url('/Minidiscs/images/pattern.jpg') center center / cover no-repeat;
   filter: hue-rotate(var(--wall-hue, 0deg)) saturate(var(--wall-sat, 1)) brightness(var(--wall-bright, 1));
 }
+/* La bande fixe du haut (cache de scroll, sous le header) repeint ce même fond d'écran : elle reçoit donc la même teinte, sinon elle resterait aux couleurs d'origine */
+html[data-theme]:not([data-theme="default"]) body::before {
+  filter: hue-rotate(var(--wall-hue, 0deg)) saturate(var(--wall-sat, 1)) brightness(var(--wall-bright, 1));
+}
 
 
 /* Choix du thème (page Paramètres) */
@@ -3450,7 +3454,7 @@ html[data-theme]:not([data-theme="default"])::before {
   --c-ff5cad: 92, 230, 255;
   --c-ff7ab8: 122, 231, 255;
   --c-ff8cc4: 140, 236, 255;
-  --wall-hue: -150deg;
+  --wall-hue: -142deg;
   --wall-sat: 1;
   --wall-bright: 1;
 }
@@ -3478,9 +3482,9 @@ html[data-theme]:not([data-theme="default"])::before {
   --c-ff5cad: 170, 255, 92;
   --c-ff7ab8: 182, 255, 122;
   --c-ff8cc4: 194, 255, 140;
-  --wall-hue: 115deg;
+  --wall-hue: 125deg;
   --wall-sat: 1;
-  --wall-bright: 1;
+  --wall-bright: 1.0;
 }
 :root[data-theme="foret"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b4fee4' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
 :root[data-theme="braise"] {
@@ -3506,67 +3510,11 @@ html[data-theme]:not([data-theme="default"])::before {
   --c-ff5cad: 255, 155, 92;
   --c-ff7ab8: 255, 177, 122;
   --c-ff8cc4: 255, 186, 140;
-  --wall-hue: 55deg;
+  --wall-hue: 50deg;
   --wall-sat: 1;
   --wall-bright: 1;
 }
 :root[data-theme="braise"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fec7b4' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
-:root[data-theme="bonbon"] {
-  --c-00d2ff: 134, 0, 255;
-  --c-00f0ff: 104, 0, 255;
-  --c-120a24: 36, 10, 31;
-  --c-140828: 40, 8, 31;
-  --c-140c2a: 42, 12, 37;
-  --c-1a1030: 48, 16, 41;
-  --c-1b1233: 51, 18, 45;
-  --c-241a3d: 61, 26, 54;
-  --c-2a1f45: 69, 31, 62;
-  --c-67e8f9: 171, 103, 249;
-  --c-7b2cbf: 191, 44, 127;
-  --c-9b51e0: 224, 81, 164;
-  --c-b57bff: 255, 123, 210;
-  --c-c4b5fd: 253, 181, 245;
-  --c-d8b4fe: 254, 180, 225;
-  --c-f3edff: 255, 237, 251;
-  --c-ff007f: 255, 0, 106;
-  --c-ff3d9a: 255, 61, 138;
-  --c-ff4fa3: 255, 79, 148;
-  --c-ff5cad: 255, 92, 159;
-  --c-ff7ab8: 255, 122, 173;
-  --c-ff8cc4: 255, 140, 186;
-  --wall-hue: 20deg;
-  --wall-sat: 1;
-  --wall-bright: 1;
-}
-:root[data-theme="bonbon"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23feb4e1' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
-:root[data-theme="ambre"] {
-  --c-00d2ff: 255, 83, 0;
-  --c-00f0ff: 255, 53, 0;
-  --c-120a24: 36, 22, 10;
-  --c-140828: 40, 25, 8;
-  --c-140c2a: 42, 25, 12;
-  --c-1a1030: 48, 31, 16;
-  --c-1b1233: 51, 32, 18;
-  --c-241a3d: 61, 42, 26;
-  --c-2a1f45: 69, 48, 31;
-  --c-67e8f9: 249, 142, 103;
-  --c-7b2cbf: 191, 148, 44;
-  --c-9b51e0: 224, 179, 81;
-  --c-b57bff: 255, 203, 123;
-  --c-c4b5fd: 253, 208, 181;
-  --c-d8b4fe: 254, 228, 180;
-  --c-f3edff: 255, 246, 237;
-  --c-ff007f: 255, 175, 0;
-  --c-ff3d9a: 255, 198, 61;
-  --c-ff4fa3: 255, 203, 79;
-  --c-ff5cad: 255, 204, 92;
-  --c-ff7ab8: 255, 217, 122;
-  --c-ff8cc4: 255, 220, 140;
-  --wall-hue: 38deg;
-  --wall-sat: 0.9;
-  --wall-bright: 0.95;
-}
-:root[data-theme="ambre"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fee4b4' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
 :root[data-theme="ardoise"] {
   --c-00d2ff: 79, 148, 176;
   --c-00f0ff: 79, 159, 176;
@@ -3618,39 +3566,11 @@ html[data-theme]:not([data-theme="default"])::before {
   --c-ff5cad: 255, 220, 92;
   --c-ff7ab8: 255, 231, 122;
   --c-ff8cc4: 255, 232, 140;
-  --wall-hue: -105deg;
-  --wall-sat: 1;
-  --wall-bright: 0.85;
+  --wall-hue: -90deg;
+  --wall-sat: 0.85;
+  --wall-bright: 0.9;
 }
 :root[data-theme="minuit"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b4b5fe' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
-:root[data-theme="cerise"] {
-  --c-00d2ff: 255, 117, 0;
-  --c-00f0ff: 255, 87, 0;
-  --c-120a24: 36, 10, 17;
-  --c-140828: 40, 8, 14;
-  --c-140c2a: 42, 12, 21;
-  --c-1a1030: 48, 16, 24;
-  --c-1b1233: 51, 18, 28;
-  --c-241a3d: 61, 26, 36;
-  --c-2a1f45: 69, 31, 42;
-  --c-67e8f9: 249, 161, 103;
-  --c-7b2cbf: 191, 44, 48;
-  --c-9b51e0: 224, 81, 88;
-  --c-b57bff: 255, 123, 140;
-  --c-c4b5fd: 253, 181, 207;
-  --c-d8b4fe: 254, 180, 186;
-  --c-f3edff: 255, 237, 241;
-  --c-ff007f: 255, 0, 25;
-  --c-ff3d9a: 255, 61, 76;
-  --c-ff4fa3: 255, 79, 93;
-  --c-ff5cad: 255, 92, 108;
-  --c-ff7ab8: 255, 122, 131;
-  --c-ff8cc4: 255, 140, 150;
-  --wall-hue: -15deg;
-  --wall-sat: 1;
-  --wall-bright: 1;
-}
-:root[data-theme="cerise"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23feb4ba' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
 :root[data-theme="menthe"] {
   --c-00d2ff: 0, 172, 255;
   --c-00f0ff: 0, 202, 255;
@@ -3674,64 +3594,148 @@ html[data-theme]:not([data-theme="default"])::before {
   --c-ff5cad: 92, 255, 177;
   --c-ff7ab8: 122, 255, 195;
   --c-ff8cc4: 140, 255, 201;
-  --wall-hue: 150deg;
-  --wall-sat: 1;
-  --wall-bright: 0.85;
+  --wall-hue: -180deg;
+  --wall-sat: 0.9;
+  --wall-bright: 1.1;
 }
 :root[data-theme="menthe"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b4fefb' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
-:root[data-theme="crepuscule"] {
-  --c-00d2ff: 255, 0, 95;
-  --c-00f0ff: 255, 0, 125;
-  --c-120a24: 28, 10, 36;
-  --c-140828: 32, 8, 40;
-  --c-140c2a: 32, 12, 42;
-  --c-1a1030: 38, 16, 48;
-  --c-1b1233: 40, 18, 51;
-  --c-241a3d: 49, 26, 61;
-  --c-2a1f45: 57, 31, 69;
-  --c-67e8f9: 249, 103, 166;
-  --c-7b2cbf: 179, 44, 191;
-  --c-9b51e0: 210, 81, 224;
-  --c-b57bff: 232, 123, 255;
-  --c-c4b5fd: 224, 181, 253;
-  --c-d8b4fe: 244, 180, 254;
-  --c-f3edff: 250, 237, 255;
-  --c-ff007f: 255, 73, 0;
-  --c-ff3d9a: 255, 120, 61;
-  --c-ff4fa3: 255, 133, 79;
-  --c-ff5cad: 255, 139, 92;
-  --c-ff7ab8: 255, 164, 122;
-  --c-ff8cc4: 255, 174, 140;
-  --wall-hue: 25deg;
-  --wall-sat: 1;
-  --wall-bright: 1;
+:root[data-theme="carbone"] {
+  --c-00d2ff: 163, 144, 143;
+  --c-00f0ff: 163, 143, 144;
+  --c-120a24: 24, 22, 22;
+  --c-140828: 25, 23, 23;
+  --c-140c2a: 28, 26, 26;
+  --c-1a1030: 33, 31, 31;
+  --c-1b1233: 35, 34, 34;
+  --c-241a3d: 45, 42, 43;
+  --c-2a1f45: 51, 49, 49;
+  --c-67e8f9: 206, 197, 197;
+  --c-7b2cbf: 122, 115, 113;
+  --c-9b51e0: 157, 150, 148;
+  --c-b57bff: 193, 186, 185;
+  --c-c4b5fd: 219, 215, 216;
+  --c-d8b4fe: 219, 215, 215;
+  --c-f3edff: 247, 245, 245;
+  --c-ff007f: 255, 0, 21;
+  --c-ff3d9a: 255, 61, 73;
+  --c-ff4fa3: 255, 79, 90;
+  --c-ff5cad: 255, 92, 105;
+  --c-ff7ab8: 255, 122, 129;
+  --c-ff8cc4: 255, 140, 148;
+  --wall-hue: 0deg;
+  --wall-sat: 0.08;
+  --wall-bright: 0.9;
 }
-:root[data-theme="crepuscule"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4b4fe' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
-:root[data-theme="aurore"] {
-  --c-00d2ff: 0, 255, 100;
-  --c-00f0ff: 0, 255, 70;
-  --c-120a24: 10, 31, 36;
-  --c-140828: 8, 31, 40;
-  --c-140c2a: 12, 37, 42;
-  --c-1a1030: 16, 41, 48;
-  --c-1b1233: 18, 45, 51;
-  --c-241a3d: 26, 54, 61;
-  --c-2a1f45: 31, 62, 69;
-  --c-67e8f9: 103, 249, 152;
-  --c-7b2cbf: 44, 127, 191;
-  --c-9b51e0: 81, 164, 224;
-  --c-b57bff: 123, 210, 255;
-  --c-c4b5fd: 181, 245, 253;
-  --c-d8b4fe: 180, 225, 254;
-  --c-f3edff: 237, 251, 255;
-  --c-ff007f: 234, 0, 255;
-  --c-ff3d9a: 243, 61, 255;
-  --c-ff4fa3: 244, 79, 255;
-  --c-ff5cad: 242, 92, 255;
-  --c-ff7ab8: 248, 122, 255;
-  --c-ff8cc4: 247, 140, 255;
-  --wall-hue: -130deg;
-  --wall-sat: 1;
-  --wall-bright: 0.92;
+:root[data-theme="carbone"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23dbd7d7' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
+:root[data-theme="olive"] {
+  --c-00d2ff: 255, 134, 0;
+  --c-00f0ff: 255, 104, 0;
+  --c-120a24: 28, 33, 13;
+  --c-140828: 29, 36, 12;
+  --c-140c2a: 34, 39, 15;
+  --c-1a1030: 38, 44, 20;
+  --c-1b1233: 42, 47, 22;
+  --c-241a3d: 51, 57, 30;
+  --c-2a1f45: 58, 65, 35;
+  --c-67e8f9: 249, 171, 103;
+  --c-7b2cbf: 121, 175, 60;
+  --c-9b51e0: 158, 208, 97;
+  --c-b57bff: 202, 240, 138;
+  --c-c4b5fd: 237, 245, 189;
+  --c-d8b4fe: 222, 246, 188;
+  --c-f3edff: 249, 253, 239;
+  --c-ff007f: 175, 0, 255;
+  --c-ff3d9a: 198, 61, 255;
+  --c-ff4fa3: 203, 79, 255;
+  --c-ff5cad: 204, 92, 255;
+  --c-ff7ab8: 217, 122, 255;
+  --c-ff8cc4: 220, 140, 255;
+  --wall-hue: 92deg;
+  --wall-sat: 0.9;
+  --wall-bright: 1.15;
 }
-:root[data-theme="aurore"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b4e1fe' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
+:root[data-theme="olive"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23def6bc' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
+:root[data-theme="pasteque"] {
+  --c-00d2ff: 255, 236, 0;
+  --c-00f0ff: 255, 206, 0;
+  --c-120a24: 35, 11, 21;
+  --c-140828: 39, 9, 20;
+  --c-140c2a: 41, 13, 26;
+  --c-1a1030: 47, 17, 30;
+  --c-1b1233: 50, 19, 33;
+  --c-241a3d: 60, 27, 42;
+  --c-2a1f45: 68, 32, 48;
+  --c-67e8f9: 249, 230, 103;
+  --c-7b2cbf: 187, 48, 75;
+  --c-9b51e0: 220, 85, 114;
+  --c-b57bff: 252, 126, 163;
+  --c-c4b5fd: 251, 183, 219;
+  --c-d8b4fe: 252, 182, 199;
+  --c-f3edff: 255, 237, 244;
+  --c-ff007f: 0, 255, 30;
+  --c-ff3d9a: 61, 255, 88;
+  --c-ff4fa3: 79, 255, 104;
+  --c-ff5cad: 92, 255, 112;
+  --c-ff7ab8: 122, 255, 142;
+  --c-ff8cc4: 140, 255, 155;
+  --wall-hue: -38deg;
+  --wall-sat: 1;
+  --wall-bright: 0.95;
+}
+:root[data-theme="pasteque"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fcb6c7' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
+:root[data-theme="sable"] {
+  --c-00d2ff: 25, 183, 230;
+  --c-00f0ff: 25, 207, 230;
+  --c-120a24: 29, 23, 16;
+  --c-140828: 32, 25, 16;
+  --c-140c2a: 34, 26, 20;
+  --c-1a1030: 40, 32, 24;
+  --c-1b1233: 43, 34, 26;
+  --c-241a3d: 52, 43, 35;
+  --c-2a1f45: 59, 50, 41;
+  --c-67e8f9: 118, 215, 234;
+  --c-7b2cbf: 154, 135, 81;
+  --c-9b51e0: 188, 168, 117;
+  --c-b57bff: 222, 198, 156;
+  --c-c4b5fd: 235, 214, 199;
+  --c-d8b4fe: 236, 224, 199;
+  --c-f3edff: 251, 246, 242;
+  --c-ff007f: 71, 141, 255;
+  --c-ff3d9a: 132, 177, 255;
+  --c-ff4fa3: 150, 188, 255;
+  --c-ff5cad: 163, 198, 255;
+  --c-ff7ab8: 193, 215, 255;
+  --c-ff8cc4: 211, 228, 255;
+  --wall-hue: 75deg;
+  --wall-sat: 0.4;
+  --wall-bright: 1.05;
+}
+:root[data-theme="sable"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ece0c7' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
+:root[data-theme="neon"] {
+  --c-00d2ff: 255, 0, 146;
+  --c-00f0ff: 255, 0, 176;
+  --c-120a24: 21, 20, 26;
+  --c-140828: 22, 20, 28;
+  --c-140c2a: 24, 24, 30;
+  --c-1a1030: 29, 28, 36;
+  --c-1b1233: 31, 31, 38;
+  --c-241a3d: 40, 40, 47;
+  --c-2a1f45: 47, 46, 54;
+  --c-67e8f9: 249, 103, 195;
+  --c-7b2cbf: 112, 101, 134;
+  --c-9b51e0: 147, 137, 168;
+  --c-b57bff: 181, 174, 204;
+  --c-c4b5fd: 209, 209, 225;
+  --c-d8b4fe: 214, 209, 225;
+  --c-f3edff: 245, 244, 248;
+  --c-ff007f: 255, 234, 0;
+  --c-ff3d9a: 255, 243, 61;
+  --c-ff4fa3: 255, 244, 79;
+  --c-ff5cad: 255, 242, 92;
+  --c-ff7ab8: 255, 248, 122;
+  --c-ff8cc4: 255, 247, 140;
+  --wall-hue: -60deg;
+  --wall-sat: 0.8;
+  --wall-bright: 0.4;
+}
+:root[data-theme="neon"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d6d1e1' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
