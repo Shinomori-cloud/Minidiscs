@@ -943,6 +943,7 @@ function pageHash(page) {
     case 'track': return `#md-${page.mdIndex}-album-${page.albumIndex}`;
     case 'create': return '#create';
     case 'planner': return '#planner';
+    case 'settings': return '#settings';
     case 'discover-results': return '#discover' + q;
     case 'discover-disco': return '#discover';
     case 'discover-detail': return '#discover';
@@ -1027,6 +1028,7 @@ function renderForPage(page) {
     case 'track': openAlbum(page.mdIndex, page.albumIndex, false); break;
     case 'create': renderCreateHub(); break;
     case 'planner': renderCompilPlanner(false); break;
+    case 'settings': renderSettings(); break;
     case 'discover-results': renderDiscover(page.params || new URLSearchParams()); break;
     case 'discover-disco':
       // Le cadre de la page Découverte doit exister avant d'y afficher le chargement de la discographie
@@ -1043,6 +1045,7 @@ function renderForPage(page) {
 function goToDashboard() { navigateTo({ key: 'dashboard' }); }
 function goToCreateHub() { navigateTo({ key: 'create' }); }
 function goToPlanner() { navigateTo({ key: 'planner' }); }
+function goToSettings() { navigateTo({ key: 'settings' }); }
 function goToMD(mdIndex) { navigateTo({ key: 'md', mdIndex }); }
 function goToAlbum(mdIndex, albumIndex) { navigateTo({ key: 'track', mdIndex, albumIndex }); }
 
@@ -1493,9 +1496,14 @@ function renderDashboard(pushState = true) {
         <button class="action-btn-wide action-btn-create" onclick="goToCreateHub()">
           Créer une compilation
         </button>
-        <button class="action-btn-wide action-btn-add" onclick="openAdminModal()">
-          ＋ Ajouter un MD
-        </button>
+        <div class="action-col">
+          <button class="action-btn-wide action-btn-add" onclick="openAdminModal()">
+            ＋ Ajouter un MD
+          </button>
+          <button class="action-btn-wide action-btn-settings" onclick="goToSettings()">
+            Paramètres
+          </button>
+        </div>
       </div>
     </div>
   `;
@@ -4428,6 +4436,273 @@ function renderCreateHub() {
       </button>
     </div>
   `;
+}
+
+/* ==========================================
+   PAGE « PARAMÈTRES »
+   ========================================== */
+function renderSettings() {
+  prepareSubPage('PARAMÈTRES');
+  app.innerHTML = `
+    <div id="settings-page" class="settings-page">
+      ${discoverSeparatorHTML('Images')}
+      <section class="settings-card list-item">
+        <p class="settings-help">Retrouve, dans le dossier « images » de GitHub, les images qui ne servent plus : jaquettes de MiniDiscs ou d'idées supprimés, images remplacées, fichiers oubliés. Rien n'est supprimé sans ta confirmation.</p>
+        <button type="button" id="imgc-scan-btn" class="settings-btn" onclick="imgCleanScan()">Rechercher les images inutilisées</button>
+        <div id="imgc-status" class="settings-status"></div>
+        <div id="imgc-result"></div>
+      </section>
+    </div>`;
+}
+
+/* ---------- Nettoyage des images inutilisées ----------
+   Une image est « utilisée » si son nom apparaît quelque part : dans data.json, dans les fichiers du site (pages,
+   styles, scripts…) ou dans les données de cet appareil pas encore synchronisées. Toutes les autres sont proposées
+   à la suppression. Si UN SEUL fichier du site ne peut pas être lu, on n'en propose aucune (jamais de risque). */
+const IMGC = { items: [], selected: new Set(), branch: '', busy: false };
+const IMGC_API = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}`;
+const IMGC_IMAGE_EXT = /\.(jpe?g|png|gif|webp|avif|bmp|svg|ico)$/i;
+const IMGC_TEXT_EXT = /\.(html?|css|m?js|json|webmanifest|xml|svg|md|txt|ya?ml)$/i;
+const IMGC_APP_MADE = /^images\/img_\d+\.(jpe?g|png|gif|webp)$/i; // noms générés par l'appli à l'envoi d'une image
+const IMGC_PEEK_LIMIT = 400 * 1024; // au-delà, la vignette ne se charge que sur demande (pour ménager les données)
+
+async function imgcApi(token, path, options = {}) {
+  const res = await fetch(IMGC_API + path, {
+    ...options,
+    cache: 'no-store',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      ...(options.body ? { 'Content-Type': 'application/json' } : {})
+    }
+  });
+  if (!res.ok) { const err = new Error(`GitHub ${res.status}`); err.status = res.status; throw err; }
+  return res.json();
+}
+
+function imgcSizeLabel(bytes) {
+  if (bytes >= 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1).replace('.', ',') + ' Mo';
+  return Math.max(1, Math.round(bytes / 1024)) + ' Ko';
+}
+
+function imgcStatus(text) {
+  const e = document.getElementById('imgc-status');
+  if (e) e.textContent = text;
+}
+
+// Texte en minuscules, avec les écritures %C3%A9 et \u00e9 remises en caractères normaux
+function imgcNormalize(text) {
+  let t = String(text);
+  t = t.replace(/(?:%[0-9a-f]{2})+/gi, m => { try { return decodeURIComponent(m); } catch (e) { return m; } });
+  t = t.replace(/\\u([0-9a-f]{4})/gi, (m, h) => String.fromCharCode(parseInt(h, 16)));
+  return t.toLowerCase();
+}
+
+// Le nom doit apparaître tel quel (et non à la fin d'un autre nom de fichier)
+function imgcIsReferenced(corpus, fileName) {
+  const needle = fileName.toLowerCase();
+  let from = 0;
+  for (;;) {
+    const i = corpus.indexOf(needle, from);
+    if (i === -1) return false;
+    const prev = i === 0 ? '' : corpus[i - 1];
+    if (!/[a-z0-9_.\-]/.test(prev)) return true;
+    from = i + 1;
+  }
+}
+
+async function imgCleanScan() {
+  if (IMGC.busy) return;
+  const token = getGithubToken();
+  IMGC.items = []; IMGC.selected = new Set();
+  const box = document.getElementById('imgc-result');
+  if (box) box.innerHTML = '';
+  if (!token) return imgcStatus("Aucun jeton GitHub n'est enregistré sur cet appareil : impossible de lire le dépôt.");
+
+  IMGC.busy = true;
+  const scanBtn = document.getElementById('imgc-scan-btn');
+  if (scanBtn) scanBtn.disabled = true;
+  try {
+    imgcStatus('Lecture du dépôt…');
+    const repo = await imgcApi(token, '');
+    IMGC.branch = repo.default_branch;
+    const tree = await imgcApi(token, `/git/trees/${encodeURIComponent(IMGC.branch)}?recursive=1`);
+    if (tree.truncated) throw new Error('dépôt trop volumineux pour être analysé');
+
+    const blobs = tree.tree.filter(t => t.type === 'blob');
+    const images = blobs.filter(t => /^images\//i.test(t.path) && IMGC_IMAGE_EXT.test(t.path));
+    const texts = blobs.filter(t => IMGC_TEXT_EXT.test(t.path));
+    if (texts.some(t => t.size > 8 * 1024 * 1024)) throw new Error('un fichier du site est trop gros pour être analysé');
+
+    // Lecture de TOUS les fichiers texte du site : au moindre échec, on s'arrête (aucune suppression proposée)
+    imgcStatus(`Lecture de ${texts.length} fichier(s) du site…`);
+    const parts = [];
+    let next = 0;
+    const worker = async () => {
+      while (next < texts.length) {
+        const t = texts[next++];
+        const blob = await imgcApi(token, `/git/blobs/${t.sha}`);
+        parts.push(blob.encoding === 'base64' ? base64ToUtf8(blob.content) : String(blob.content));
+      }
+    };
+    await Promise.all(Array.from({ length: 4 }, worker));
+    parts.push(JSON.stringify(buildPayload())); // données de cet appareil, y compris les modifications pas encore synchronisées
+
+    imgcStatus('Analyse des images…');
+    const corpus = parts.map(imgcNormalize).join('\n');
+    const unused = images
+      .filter(img => !imgcIsReferenced(corpus, img.path.split('/').pop()))
+      .map(img => ({ path: img.path, name: img.path.replace(/^images\//i, ''), size: img.size || 0, appMade: IMGC_APP_MADE.test(img.path) }))
+      .sort((a, b) => (b.appMade - a.appMade) || a.name.localeCompare(b.name, 'fr', { numeric: true }));
+
+    IMGC.items = unused;
+    IMGC.selected = new Set(unused.filter(it => it.appMade).map(it => it.path));
+    const totalSize = unused.reduce((n, it) => n + it.size, 0);
+    imgcStatus(unused.length
+      ? `${images.length} images dans le dossier, ${images.length - unused.length} utilisées, ${unused.length} inutilisées (${imgcSizeLabel(totalSize)}).`
+      : `${images.length} images dans le dossier : toutes sont utilisées, il n'y a rien à nettoyer.`);
+    imgcRender();
+  } catch (err) {
+    console.error('Nettoyage des images :', err);
+    imgcStatus(err.status === 401 || err.status === 403
+      ? "GitHub refuse l'accès : le jeton enregistré n'a pas les droits nécessaires sur ce dépôt."
+      : `Analyse impossible (${err.message}). Aucune image n'a été touchée.`);
+  } finally {
+    IMGC.busy = false;
+    if (scanBtn) scanBtn.disabled = false;
+  }
+}
+
+function imgcSelectionInfo() {
+  const chosen = IMGC.items.filter(it => IMGC.selected.has(it.path));
+  return { count: chosen.length, size: chosen.reduce((n, it) => n + it.size, 0), paths: chosen.map(it => it.path) };
+}
+
+function imgcUpdateCount() {
+  const info = imgcSelectionInfo();
+  document.querySelectorAll('.imgc-del').forEach(b => {
+    b.disabled = !info.count;
+    b.textContent = info.count ? `Supprimer la sélection (${info.count}, ${imgcSizeLabel(info.size)})` : 'Aucune image cochée';
+  });
+}
+
+function imgcRender() {
+  const box = document.getElementById('imgc-result');
+  if (!box) return;
+  if (!IMGC.items.length) { box.innerHTML = ''; return; }
+  const bar = `
+    <div class="imgc-bar">
+      <button type="button" class="settings-btn imgc-del" onclick="imgCleanDelete()"></button>
+      <div class="imgc-links">
+        <button type="button" class="imgc-link" onclick="imgcSelectAll(true)">Tout cocher</button>
+        <button type="button" class="imgc-link" onclick="imgcSelectAll(false)">Tout décocher</button>
+      </div>
+    </div>`;
+  const tiles = IMGC.items.map((it, i) => {
+    const thumb = it.size <= IMGC_PEEK_LIMIT
+      ? `<img loading="lazy" decoding="async" src="${mbEscapeHTML(encodeURI(it.path))}" alt="" onerror="imgcThumbError(this, ${i})">`
+      : `<button type="button" class="imgc-peek" onclick="event.stopPropagation(); imgcPeek(this, ${i})">Aperçu</button>`;
+    return `
+      <div class="imgc-item ${IMGC.selected.has(it.path) ? 'selected' : ''}" onclick="imgcToggle(${i})">
+        <div class="imgc-thumb">${thumb}</div>
+        <span class="imgc-check" aria-hidden="true"></span>
+        <span class="imgc-meta"><span class="imgc-name">${mbEscapeHTML(it.name)}</span><span class="imgc-size">${imgcSizeLabel(it.size)}</span></span>
+      </div>`;
+  }).join('');
+  box.innerHTML = `
+    <p class="settings-help">Les images créées par l'appli (img_…) sont cochées d'office. Les autres ne le sont pas : vérifie-les à l'œil avant de les cocher. Touche une image pour la cocher ou la décocher.</p>
+    ${bar}
+    <div class="imgc-grid">${tiles}</div>
+    ${bar}`;
+  imgcUpdateCount();
+}
+
+function imgcToggle(i) {
+  const it = IMGC.items[i];
+  if (!it) return;
+  if (IMGC.selected.has(it.path)) IMGC.selected.delete(it.path); else IMGC.selected.add(it.path);
+  const el = document.querySelectorAll('.imgc-item')[i];
+  if (el) el.classList.toggle('selected', IMGC.selected.has(it.path));
+  imgcUpdateCount();
+}
+
+function imgcSelectAll(on) {
+  IMGC.selected = on ? new Set(IMGC.items.map(it => it.path)) : new Set();
+  document.querySelectorAll('.imgc-item').forEach(el => el.classList.toggle('selected', on));
+  imgcUpdateCount();
+}
+
+// Image pas (encore) publiée sur le site : on tente une fois la lecture directe sur GitHub
+function imgcThumbError(img, i) {
+  const it = IMGC.items[i];
+  if (!it || img.dataset.retry) { img.replaceWith(Object.assign(document.createElement('span'), { className: 'imgc-nothumb', textContent: '?' })); return; }
+  img.dataset.retry = '1';
+  img.src = rawGithubUrl(it.path);
+}
+
+function imgcPeek(btn, i) {
+  const it = IMGC.items[i];
+  if (!it) return;
+  const img = document.createElement('img');
+  img.alt = '';
+  img.decoding = 'async';
+  img.onerror = () => imgcThumbError(img, i);
+  img.src = encodeURI(it.path);
+  btn.replaceWith(img);
+}
+
+async function imgCleanDelete() {
+  if (IMGC.busy) return;
+  const info = imgcSelectionInfo();
+  if (!info.count) return;
+  if (!confirm(`Supprimer ${info.count} image(s) de GitHub (${imgcSizeLabel(info.size)}) ?\n\nElles disparaissent du site. Elles restent récupérables dans l'historique GitHub.`)) return;
+  const token = getGithubToken();
+  if (!token) return imgcStatus("Aucun jeton GitHub n'est enregistré sur cet appareil.");
+
+  IMGC.busy = true;
+  document.querySelectorAll('.imgc-del, #imgc-scan-btn').forEach(b => { b.disabled = true; });
+  imgcStatus('Suppression en cours…');
+  try {
+    // Un seul « commit » pour toutes les images (au lieu d'un par image). Si le dépôt a bougé entre-temps
+    // (synchro de data.json), on recommence à partir de sa dernière version.
+    let done = false;
+    for (let attempt = 0; attempt < 3 && !done; attempt++) {
+      const ref = await imgcApi(token, `/git/ref/heads/${encodeURI(IMGC.branch)}`);
+      const headSha = ref.object.sha;
+      const head = await imgcApi(token, `/git/commits/${headSha}`);
+      const newTree = await imgcApi(token, '/git/trees', {
+        method: 'POST',
+        body: JSON.stringify({ base_tree: head.tree.sha, tree: info.paths.map(path => ({ path, mode: '100644', type: 'blob', sha: null })) })
+      });
+      const commit = await imgcApi(token, '/git/commits', {
+        method: 'POST',
+        body: JSON.stringify({ message: `Nettoyage : suppression de ${info.count} image(s) inutilisée(s)`, tree: newTree.sha, parents: [headSha] })
+      });
+      try {
+        await imgcApi(token, `/git/refs/heads/${encodeURI(IMGC.branch)}`, { method: 'PATCH', body: JSON.stringify({ sha: commit.sha }) });
+        done = true;
+      } catch (err) {
+        if (err.status !== 422 && err.status !== 409) throw err;
+      }
+    }
+    if (!done) throw new Error('le dépôt a changé pendant la suppression, réessaie');
+
+    const gone = new Set(info.paths);
+    IMGC.items = IMGC.items.filter(it => !gone.has(it.path));
+    IMGC.selected = new Set([...IMGC.selected].filter(pth => !gone.has(pth)));
+    imgcRender();
+    imgcStatus(`${info.count} image(s) supprimée(s) (${imgcSizeLabel(info.size)}). Le site peut mettre quelques minutes à se mettre à jour.`);
+    showToast(`🗑️ ${info.count} image(s) supprimée(s)`);
+  } catch (err) {
+    console.error('Suppression des images :', err);
+    imgcStatus(err.status === 401 || err.status === 403
+      ? "GitHub refuse la suppression : le jeton enregistré n'a pas les droits d'écriture sur ce dépôt."
+      : `Suppression impossible (${err.message}). Aucune image n'a été supprimée.`);
+  } finally {
+    IMGC.busy = false;
+    document.querySelectorAll('#imgc-scan-btn').forEach(b => { b.disabled = false; });
+    imgcUpdateCount();
+  }
 }
 
 function saveLastfmKeyFromInput() {
