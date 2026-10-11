@@ -2860,7 +2860,7 @@ function injectPlannerHeaderBadge() {
   badge.style.cssText = `
     position: fixed; top: 150px; left: 50%; transform: translateX(-50%); z-index: 999;
     background: var(--card-sheen), var(--card-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
-    border: 2px solid #000000; border-radius: calc(16px * var(--radius-factor)); padding: 10px 16px;
+    border: 2px solid #000000; border-radius: 16px; padding: 10px 16px;
     box-shadow: 4px 4px 0px #000000, var(--card-rim); display: flex; flex-direction: column; gap: 8px;
     width: calc(100% - 32px); max-width: 568px; box-sizing: border-box;
   `;
@@ -3714,7 +3714,7 @@ async function searchItunes() {
         <div class="itunes-result-item" data-index="${i}">
           <img src="${coverUrl}" 
                onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'40\\' height=\\'40\\' viewBox=\\'0 0 24 24\\'><rect width=\\'24\\' height=\\'24\\' fill=\\'%23eee\\'/><text x=\\'50%\\' y=\\'50%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-size=\\'12\\'>💿</text></svg>';" 
-               style="width:40px; height:40px; border-radius:calc(4px * var(--radius-factor)); object-fit:cover; background:#eee;">
+               style="width:40px; height:40px; border-radius:4px; object-fit:cover; background:#eee;">
           <div style="flex:1; font-size:0.8rem;">
             <div style="font-weight:700;">${mbEscapeHTML(g.title)}</div>
             <div style="color:var(--text-sub);">${mbEscapeHTML(artist)}${details ? ' · ' + mbEscapeHTML(details) : ''}</div>
@@ -3787,7 +3787,7 @@ async function applyItunesResult(index) {
     preview.innerHTML = `
       <img src="${pendingItunesCoverUrl}" 
            onerror="this.onerror=null; if (this.parentElement) this.parentElement.innerHTML='<div style=\\'font-size:0.7rem; color:#888;\\'>Pas de pochette disponible sur Cover Art Archive</div>';" 
-           style="width:80px; height:80px; border-radius:calc(6px * var(--radius-factor)); object-fit:cover;">
+           style="width:80px; height:80px; border-radius:6px; object-fit:cover;">
       <div style="font-size:0.7rem; color:var(--text-sub);">Pochette récupérée (transférée à l'enregistrement)</div>
     `;
   }
@@ -4415,7 +4415,7 @@ async function discoverAddItemToIdeas(r) {
   pendingItunesCoverUrl = r.mbid ? `https://coverartarchive.org/release-group/${r.mbid}/front-500` : (r.image || null);
   const preview = document.getElementById('idea-cover-preview');
   if (preview && pendingItunesCoverUrl) {
-    preview.innerHTML = `<img src="${mbEscapeHTML(pendingItunesCoverUrl)}" style="width:80px; height:80px; border-radius:calc(6px * var(--radius-factor)); object-fit:cover;"
+    preview.innerHTML = `<img src="${mbEscapeHTML(pendingItunesCoverUrl)}" style="width:80px; height:80px; border-radius:6px; object-fit:cover;"
       onerror="this.onerror=null; if (this.parentElement) this.parentElement.innerHTML='<div style=\\'font-size:0.7rem; color:var(--text-sub);\\'>Pochette indisponible</div>';">`;
   }
 
