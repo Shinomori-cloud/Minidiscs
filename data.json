@@ -3231,7 +3231,21 @@
           "tags": [],
           "release_year": "",
           "duration": "",
-          "tracks": [],
+          "tracks": [
+            "Whistle Stop",
+            "Quel beau jour vraiment",
+            "La marche du prince Jean",
+            "Te Voilà",
+            "Le roi de mauvais aloi",
+            "A Nottingham",
+            "Not in Nottingham",
+            "Hier, Deux Enfants",
+            "Au tour des archers",
+            "Saisissez le Gros",
+            "Cervelle d'Oiseau",
+            "Abaissez le pont-levis",
+            "Tout est bien qui finit bien"
+          ],
           "toRecord": true
         }
       ],
