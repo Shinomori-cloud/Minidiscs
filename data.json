@@ -43,11 +43,14 @@
           "artist": "Divers",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Pop Rock"
+            "rock",
+            "britpop",
+            "indie",
+            "alternative",
+            "alternative rock"
           ],
           "release_year": "1999",
-          "duration": "Unknow",
+          "duration": "57:06",
           "tracks": [
             "Every You Every Me (Placebo)",
             "Praise You (Fatboy Slim)",
@@ -64,7 +67,8 @@
             "You Blew Me Off (Bare, Jr.)",
             "Bittersweet Symphony (The Verve)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Cruel Intentions est la bande originale de la compilation du film du même nom de 1999. La bande-son du film a culminé à la 60e place du Billboard 200. Il comprend des chansons populaires telles que \"Every You Every Me\" de Placebo, \"Colorblind\" de Counting Crows, \"Coffee & TV\" de Blur, \"Bitter Sweet Symphony\" de The Verve (jouée de manière appropriée pendant la fin révélatrice du film), \"Praise You\" de Fatboy Slim, \"Secretly\" de Skunk Anansie, \"You Could Make A Killing\" d'Aimee Mann, \"Addictive\" de Faithless et \"Trip On Love\" d'Abra Moore. Les chansons « Push It » de Garbage, « If You Tolerate This (Your Children Will Be Next) by ."
         }
       ],
       "title": "Me, Myself & Irene / Cruel Intentions"
