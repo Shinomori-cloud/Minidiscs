@@ -748,8 +748,10 @@
           "artist": "Red Hot Chili Peppers",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Pop Rock"
+            "rock",
+            "alternative rock",
+            "alternative",
+            "funk rock"
           ],
           "release_year": "1999",
           "duration": "Unknow",
