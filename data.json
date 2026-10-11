@@ -1860,8 +1860,10 @@
           "artist": "Marilyn Manson",
           "main_genre": "Metal & Hard Rock",
           "tags": [
-            "Alternative Rock",
-            "Metal"
+            "industrial metal",
+            "industrial",
+            "metal",
+            "rock"
           ],
           "release_year": "2000",
           "duration": "67:38",
@@ -1886,7 +1888,8 @@
             "King Kill 33°",
             "Count to Six and Die (The Vacuum of Infinite Space Encompassing)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Holy Wood (In the Shadow of the Valley of Death) (Dans l'Ombre de la Vallée de la Mort) est le 5e album du groupe Marilyn Manson. Il est sorti le 13 novembre 2000 sur le label Interscope Records. Lalbum se veut une réponse au massacre du lycée de Columbine qui eut lieu le 20 avril 1999. Ainsi, le sujet principal de l'album est la culture de la célébrité en Amérique, l’obsession pour les armes et la fascination pour la mort, le culte du martyr. Les paroles de Manson contiennent de nombreuses références notamment à John F. Kennedy, John Lennon et ."
         }
       ],
       "title": "Machina The Machines of God / Holy Wood"
