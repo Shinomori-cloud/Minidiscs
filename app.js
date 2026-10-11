@@ -1,3 +1,15 @@
+// Thèmes de couleurs (Paramètres > Apparence). « sw » = aperçu : fond sombre, violet, accent, secondaire. Les palettes sont dans style.css.
+const THEMES = [{"id": "default", "name": "Par défaut", "sw": ["#140c2a", "#7b2cbf", "#ff007f", "#00f0ff"]}, {"id": "ocean", "name": "Océan", "sw": ["#0c1d2a", "#2c58bf", "#00d8ff", "#00ffa4"]}, {"id": "foret", "name": "Forêt", "sw": ["#0c2a19", "#2cbf94", "#7bff00", "#ffbd00"]}, {"id": "braise", "name": "Braise", "sw": ["#2a0d0c", "#bf592c", "#ff6200", "#ffbd00"]}, {"id": "bonbon", "name": "Bonbon", "sw": ["#2a0c25", "#bf2c7f", "#ff006a", "#6800ff"]}, {"id": "ambre", "name": "Ambre", "sw": ["#2a190c", "#bf942c", "#ffaf00", "#ff3500"]}, {"id": "ardoise", "name": "Ardoise", "sw": ["#151b21", "#5a6891", "#4f8bb0", "#4f9fb0"]}, {"id": "minuit", "name": "Minuit", "sw": ["#0c132a", "#312cbf", "#ffc800", "#00b9ff"]}, {"id": "cerise", "name": "Cerise", "sw": ["#2a0c15", "#bf2c30", "#ff0019", "#ff5700"]}, {"id": "menthe", "name": "Menthe", "sw": ["#0c2a22", "#2cbebf", "#00ff84", "#00caff"]}, {"id": "crepuscule", "name": "Crépuscule", "sw": ["#200c2a", "#b32cbf", "#ff4900", "#ff007d"]}, {"id": "aurore", "name": "Aurore", "sw": ["#0c252a", "#2c7fbf", "#ea00ff", "#00ff46"]}];
+const THEME_STORAGE_KEY = 'minidisc_theme';
+
+// Appliqué dès le chargement du script, avant tout affichage, pour éviter un flash aux couleurs par défaut
+(function applySavedTheme() {
+  try {
+    const id = localStorage.getItem(THEME_STORAGE_KEY);
+    if (id && id !== 'default' && THEMES.some(t => t.id === id)) document.documentElement.setAttribute('data-theme', id);
+  } catch (e) { /* stockage indisponible : thème par défaut */ }
+})();
+
 /* ==========================================
    VARIABLES GLOBALES & ÉLÉMENTS DOM
    ========================================== */
@@ -4441,10 +4453,39 @@ function renderCreateHub() {
 /* ==========================================
    PAGE « PARAMÈTRES »
    ========================================== */
+function currentThemeId() {
+  const id = document.documentElement.getAttribute('data-theme');
+  return id && THEMES.some(t => t.id === id) ? id : 'default';
+}
+
+function themeTilesHTML() {
+  const cur = currentThemeId();
+  return THEMES.map(t => `
+    <button type="button" class="theme-tile ${t.id === cur ? 'selected' : ''}" data-theme-id="${t.id}" onclick="selectTheme('${t.id}')">
+      <span class="theme-sw" style="background:${t.sw[0]}"><i style="background:${t.sw[1]}"></i><i style="background:${t.sw[2]}"></i><i style="background:${t.sw[3]}"></i></span>
+      <span class="theme-name">${t.name}</span>
+    </button>`).join('');
+}
+
+function selectTheme(id) {
+  const theme = THEMES.find(t => t.id === id);
+  if (!theme) return;
+  if (id === 'default') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', id);
+  try { localStorage.setItem(THEME_STORAGE_KEY, id); } catch (e) { /* non enregistré : valable jusqu'à la fermeture de l'appli */ }
+  document.querySelectorAll('.theme-tile').forEach(b => b.classList.toggle('selected', b.dataset.themeId === id));
+  showToast(`Thème « ${theme.name} » appliqué`);
+}
+
 function renderSettings() {
   prepareSubPage('PARAMÈTRES');
   app.innerHTML = `
     <div id="settings-page" class="settings-page">
+      ${discoverSeparatorHTML('Apparence')}
+      <section class="settings-card list-item">
+        <p class="settings-help">Choisis les couleurs de l'appli. Les jaquettes et les couleurs des genres ne changent pas. Ce choix est propre à cet appareil.</p>
+        <div class="theme-grid">${themeTilesHTML()}</div>
+      </section>
       ${discoverSeparatorHTML('Images')}
       <section class="settings-card list-item">
         <p class="settings-help">Retrouve, dans le dossier « images » de GitHub, les images qui ne servent plus : jaquettes de MiniDiscs ou d'idées supprimés, images remplacées, fichiers oubliés. Rien n'est supprimé sans ta confirmation.</p>
