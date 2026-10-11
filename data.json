@@ -5279,6 +5279,39 @@
         "MX / Bong Hit / Damone"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791724743380",
+      "md_cover": "images/img_1791724741934.jpg",
+      "title": "Korn",
+      "artist": "Korn",
+      "main_genre": "Metal & Hard Rock",
+      "tags": [
+        "nu metal",
+        "alternative metal",
+        "heavy metal",
+        "metal",
+        "rock"
+      ],
+      "release_year": "1994",
+      "duration": "1:01:18",
+      "tracks": [
+        "Blind",
+        "Ball Tongue",
+        "Need To",
+        "Clown",
+        "Divine",
+        "Faget",
+        "Shoots And Ladders",
+        "Predictable",
+        "Fake",
+        "Lies",
+        "Helmet In The Bush",
+        "Daddy",
+        "Daddy",
+        "Michael & Geri"
+      ],
+      "toRecord": false
     }
   ]
 }
