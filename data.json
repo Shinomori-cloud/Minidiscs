@@ -2269,8 +2269,10 @@
       "artist": "Various Artists",
       "main_genre": "Rock & Blues",
       "tags": [
-        "Rock",
-        "Folk"
+        "classic rock",
+        "folk",
+        "folk rock",
+        "rock"
       ],
       "release_year": "1970",
       "duration": "2:11:40",
@@ -2302,7 +2304,8 @@
         "Jimi Hendrix – Star Spangled Banner",
         "Jimi Hendrix – Purple Haze & Instrumental Solo"
       ],
-      "toRecord": false
+      "toRecord": false,
+      "description": "La Woodstock Music & Art Fair (officieusement, Woodstock ou le Woodstock Festival) était un festival de musique, présenté comme « Une exposition du Verseau : 3 jours de paix et de musique ». Il s'est tenu à la ferme laitière de 600 acres de Max Yasgur dans les Catskills près du hameau de White Lake dans la ville de Bethel, New York, du 15 août au 18 août 1969. Bethel, dans le comté de Sullivan, est à 43 miles au sud-ouest de la ville de Woodstock, New York, dans le comté d'Ulster adjacent. Pendant le week-end parfois pluvieux, trente-deux numéros se sont produits à l'extérieur devant 500 000 spectateurs. Il est largement considéré comme un moment charnière."
     },
     {
       "id": "md-16",
