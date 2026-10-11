@@ -3946,7 +3946,6 @@
     {
       "id": "md-1791139574173",
       "md_cover": "images/img_1791139572098.jpg",
-      "title": "From the Muddy Bank of the Wishkah / A Part from Life / Greatest Hits... Live",
       "albums": [
         {
           "id": "md-1791139574173-alb-1",
@@ -3962,10 +3961,11 @@
             "american",
             "punk"
           ],
-          "release_year": "",
+          "release_year": "1996",
           "duration": "54:01",
           "tracks": [],
-          "toRecord": true
+          "toRecord": true,
+          "description": "Sorti en 1996 pour faire suite au calme feutré d'une précédente session acoustique trop polie, ce recueil live posthume remet les pendules à l'heure. C'est une déflagration de distorsion brute, de sueur et de larsens captée entre 1989 et 1994 dans le chaos des clubs et des festivals. Bref, du vrai rock de garage qui saigne, sans retouches ni compromis.\nOubliez le vernis des radios grand public et les arrangements lisses pour MTV. Ce disque, c'est l'essence même du trio de Seattle : une section rythmique qui cogne comme un marteau-piqueur, une basse lourde et grasse qui s'infiltre dans les tripes, et un mur de guitares saturées qui menace d'exploser à chaque accord. Le son est volontairement abrasif, capté à la volée dans l'urgence des concerts où les amplis fument et où le public s'effondre dans le moshpit. On est replongé directement dans la moiteur des petites salles européennes et des scènes américaines dévastées par la rage du groupe.\nLa force de cette compilation live, c'est la performance vocale de son leader, un hurlement primal qui passe de la mélancolie déchirante à des cris de pure démence punk. Les morceaux s'enchaînent avec une violence physique inouïe, accélérés par l'adrénaline et la fatigue, loin du perfectionnisme stérile des productions de l'industrie. C'est l'autopsie sonore d'un groupe qui préférait saborder ses propres morceaux plutôt que de jouer le jeu du showbiz. Trente ans plus tard, ce témoignage brut reste indispensable pour rappeler ce qu'était le grunge avant d'être récupéré par les défilés de mode : un cri de révolte viscéral, bruyant et désespéré."
         },
         {
           "id": "md-1791139574173-alb-2",
@@ -4007,7 +4007,8 @@
           "tracks": [],
           "toRecord": true
         }
-      ]
+      ],
+      "title": "From the Muddy Bank of the Wishkah / A Part from Life / Greatest Hits... Live"
     },
     {
       "id": "md-1791205192695",
