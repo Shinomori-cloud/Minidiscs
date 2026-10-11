@@ -1121,9 +1121,15 @@
           "artist": "Bob Marley",
           "main_genre": "Rap, Soul & Reggae",
           "tags": [
-            "Reggae"
+            "reggae",
+            "roots reggae",
+            "ska",
+            "rock",
+            "jamaican",
+            "jamaica",
+            "legend"
           ],
-          "release_year": "Unknow",
+          "release_year": "1984",
           "duration": "1:11:42",
           "tracks": [
             "So Much Trouble In The World",
