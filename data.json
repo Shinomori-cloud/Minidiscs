@@ -293,11 +293,12 @@
           "artist": "The Verve",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Pop Rock"
+            "britpop",
+            "rock",
+            "indie"
           ],
           "release_year": "1997",
-          "duration": "Unknow",
+          "duration": "69:28",
           "tracks": [
             "Bitter Sweet Symphony",
             "Sonnet",
@@ -314,7 +315,8 @@
             "Come On",
             "Deep Freeze (Hidden Track)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "Urban Hymns est le troisième album du groupe de rock anglais The Verve, sorti le 29 septembre 1997. Il a reçu des éloges presque unanimes de la part de la critique à sa sortie et est devenu la sortie la plus vendue du groupe et l'un des albums les plus vendus de l'année. L'album a reçu des éloges critiques presque unanimes lors de sa sortie, Melody Maker nommant Urban Hymns comme l'album numéro un de 1997 dans sa liste de fin d'année. L'album est présenté dans le livre « 1001 albums que vous devez entendre avant de mourir ». Dans les années qui ont suivi sa sortie, Urban Hymns a reçu de nombreux éloges. En 1998, il a gagné ."
         }
       ],
       "title": "OK Computer / Urban Hymns"
