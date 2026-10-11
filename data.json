@@ -2056,7 +2056,9 @@
           "artist": "The Beatles",
           "main_genre": "Rock & Blues",
           "tags": [
-            "Rock"
+            "classic rock",
+            "rock",
+            "british"
           ],
           "release_year": "1967",
           "duration": "63:04",
@@ -2088,7 +2090,8 @@
             "Eleanor Rigby",
             "Yellow Submarine"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "1962–1966, également connu sous le nom de Red Album, est une compilation de chansons à succès du groupe de rock anglais The Beatles, couvrant les années indiquées dans le titre. Sorti avec son homologue 1967–1970 (le « Blue Album ») en 1973, le double LP a culminé au numéro 3 au Royaume-Uni. Aux États-Unis, il a dominé le classement des albums Cash Box et a culminé à la troisième place du classement Billboard Top LPs & Tape, tandis que 1967–1970 a atteint la première place. L'album a été réédité en septembre 1993 sur disque compact, se classant numéro 3 au Royaume-Uni."
         },
         {
           "id": "alb-45-2",
