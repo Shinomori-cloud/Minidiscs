@@ -1085,10 +1085,13 @@
           "artist": "Fugees",
           "main_genre": "Rap, Soul & Reggae",
           "tags": [
-            "Rap"
+            "hip-hop",
+            "rap",
+            "hip hop",
+            "reggae"
           ],
           "release_year": "1996",
-          "duration": "Unknow",
+          "duration": "77:23",
           "tracks": [
             "Red Intro",
             "How Many Mics",
@@ -1108,7 +1111,8 @@
             "Mista Mista",
             "Fu-Gee-La (Refugee Camp global mix featuring John Forté)"
           ],
-          "toRecord": false
+          "toRecord": false,
+          "description": "The Score est le deuxième et dernier album studio du trio hip-hop Fugees, sorti dans le monde entier le 13 février 1996 sur Columbia Records. L'album présente un large éventail de samples et d'instrumentation, avec de nombreux aspects du hip hop alternatif qui domineront la scène musicale hip hop au milieu des années 1990. La production de la partition a été principalement gérée par les Fugees eux-mêmes et Jerry Duplessis, avec une production supplémentaire de Salaam Remi, John Forté, Shawn King et Diamond D. Les rappeurs invités de l'album sont les membres d'Outsidaz, Rah Digga, Young Zee et Pacewon, ainsi que Omega, John Forté."
         },
         {
           "id": "alb-09-2",
