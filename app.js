@@ -977,8 +977,9 @@ function parentOfPage(page) {
     case 'discover-disco': return page.direct ? (page.parent || { key: 'create' }) : { key: 'discover-results' };
     case 'discover-detail': return page.parent || { key: 'create' };
     case 'create': return { key: 'dashboard' };
+    case 'settings': return page.parent || { key: 'dashboard' };
     case 'settings-appearance':
-    case 'settings-images': return { key: 'settings' };
+    case 'settings-images': return { key: 'settings', parent: page.parent };
     default: return { key: 'dashboard' };
   }
 }
@@ -1064,9 +1065,17 @@ function renderForPage(page) {
 function goToDashboard() { navigateTo({ key: 'dashboard' }); }
 function goToCreateHub() { navigateTo({ key: 'create' }); }
 function goToPlanner() { navigateTo({ key: 'planner' }); }
-function goToSettings() { navigateTo({ key: 'settings' }); }
-function goToSettingsAppearance() { navigateTo({ key: 'settings-appearance' }); }
-function goToSettingsImages() { navigateTo({ key: 'settings-images' }); }
+function goToSettings(origin) { navigateTo({ key: 'settings', parent: origin }); }
+function goToSettingsAppearance() { navigateTo({ key: 'settings-appearance', parent: currentPage.parent }); }
+function goToSettingsImages() { navigateTo({ key: 'settings-images', parent: currentPage.parent }); }
+
+// Depuis le menu des boutons flottants : on referme le panneau, puis la flèche ← ramène à la page d'où l'on vient
+function openSettingsFromFab() {
+  document.querySelectorAll('.fab-menu').forEach(m => m.classList.add('hidden'));
+  document.querySelectorAll('.fab-main-btn').forEach(b => b.classList.remove('open'));
+  ['genres-submenu', 'status-submenu', 'planner-genre-submenu'].forEach(id => document.getElementById(id)?.classList.add('hidden'));
+  goToSettings(currentPage);
+}
 function goToMD(mdIndex) { navigateTo({ key: 'md', mdIndex }); }
 function goToAlbum(mdIndex, albumIndex) { navigateTo({ key: 'track', mdIndex, albumIndex }); }
 
@@ -1741,6 +1750,9 @@ const fabHTML = `
       </button>
       <button type="button" class="fab-item danger" onclick="deleteMD(${index});">
         🗑️ Supprimer
+      </button>
+      <button type="button" class="fab-item fab-settings" onclick="openSettingsFromFab();">
+        <span>Paramètres</span>
       </button>
     </div>
     

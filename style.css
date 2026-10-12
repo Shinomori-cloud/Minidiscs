@@ -1724,37 +1724,36 @@ body:has(.modal:not(.hidden)) .fab-container {
   mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 20h4L19.5 8.5a2.12 2.12 0 0 0-3-3L5 17v3z'/><line x1='14' y1='7' x2='17' y2='10'/></svg>");
 }
 
-/* Menu déroulant */
+/* Menu : panneau latéral semi-transparent qui glisse depuis le bord droit de l'écran, au-dessus du bouton ⋮ */
 .fab-menu {
-  position: absolute;
-  bottom: 56px;
+  position: fixed;
   right: 0;
+  bottom: 76px;
   display: flex !important;
   flex-direction: column !important;
-  gap: 8px;
+  gap: 6px;
   color-scheme: dark;
-  background: var(--glass-strong);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  padding: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: calc(18px * var(--radius-factor));
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  min-width: 244px;
-  max-width: min(300px, calc(100vw - 48px));
-  max-height: 70vh;
+  width: min(84vw, 310px);
+  max-height: calc(100vh - 110px);
+  padding: 18px 16px 12px;
+  background: linear-gradient(to left, rgba(var(--c-140828), 0.8), rgba(var(--c-140828), 0.64));
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  backdrop-filter: blur(18px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-right: none;
+  border-radius: calc(18px * var(--radius-factor)) 0 0 calc(18px * var(--radius-factor));
+  box-shadow: -14px 10px 40px rgba(0, 0, 0, 0.4), inset 1px 0 0 rgba(255, 255, 255, 0.08);
   overflow-y: auto;
-  transform-origin: bottom right;
-  animation: fabMenuPop 0.16s ease-out;
+  animation: fabDrawerIn 0.22s ease-out;
 }
 
-/* Les éléments gardent leur hauteur : c'est le menu qui défile quand il est trop long */
+/* Les éléments gardent leur hauteur : c'est le panneau qui défile quand il est trop long */
 .fab-menu > * {
   flex-shrink: 0;
 }
 
-@keyframes fabMenuPop {
-  from { opacity: 0; transform: scale(0.94) translateY(6px); }
+@keyframes fabDrawerIn {
+  from { opacity: 0; transform: translateX(34px); }
   to   { opacity: 1; transform: none; }
 }
 
@@ -1762,24 +1761,34 @@ body:has(.modal:not(.hidden)) .fab-container {
   display: none !important;
 }
 
-/* Titres de section */
+/* Titres de section : même style que les titres des formulaires (traits qui s'affinent de chaque côté) */
 .fab-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 2px;
   font-family: 'Righteous', cursive;
-  font-size: 0.76rem;
+  font-size: 0.92rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--accent-light);
-  margin: 4px 0 0 2px;
+  color: var(--text-main);
 }
 
+.fab-section-title::before,
+.fab-section-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(var(--c-c4b5fd), 0), rgba(var(--c-c4b5fd), 0.7));
+}
+
+.fab-section-title::after {
+  background: linear-gradient(to left, rgba(var(--c-c4b5fd), 0), rgba(var(--c-c4b5fd), 0.7));
+}
+
+/* Les titres suffisent à séparer les sections */
 .fab-divider {
-  border: 0;
-  border-top: 2px dashed rgba(255, 255, 255, 0.2);
-  margin: 6px 0 2px;
-}
-
-.fab-divider + .fab-section-title {
-  margin-top: 4px;
+  display: none;
 }
 
 /* Actions du menu : mêmes boutons "carte" que le reste de l'appli */
@@ -1789,38 +1798,47 @@ body:has(.modal:not(.hidden)) .fab-container {
   justify-content: flex-start;
   gap: 10px;
   width: 100%;
-  height: 46px;
-  padding: 0 14px;
-  background: rgba(255, 255, 255, 0.07);
+  height: 44px;
+  padding: 0 4px;
+  background: transparent;
   color: var(--text-main);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 12px;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 0;
   box-shadow: none;
-  font-size: 0.92rem;
-  font-weight: 800;
+  font-size: 0.95rem;
+  font-weight: 600;
   text-align: left;
   white-space: nowrap;
   cursor: pointer;
   touch-action: manipulation;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition: background 0.12s ease;
 }
 
 .fab-item:active:not(:disabled) {
-  transform: scale(0.98);
-  box-shadow: none;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .fab-item:disabled {
   opacity: 0.4;
-  box-shadow: none;
   cursor: not-allowed;
 }
 
 /* Variantes */
+.fab-item.accent,
+.fab-item.success {
+  justify-content: center;
+  margin-top: 4px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  font-weight: 800;
+}
+
 .fab-item.accent {
   background: linear-gradient(135deg, rgb(var(--c-ff007f)) 0%, rgb(var(--c-7b2cbf)) 100%);
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.25);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
 }
 
 .fab-item.danger {
@@ -1830,7 +1848,26 @@ body:has(.modal:not(.hidden)) .fab-container {
 .fab-item.success {
   background: var(--export-color);
   color: #000000;
-  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Accès aux paramètres : en bas du panneau */
+.fab-item.fab-settings {
+  margin-top: 8px;
+  border-bottom: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--accent-light);
+  font-weight: 700;
+}
+
+.fab-item.fab-settings::after {
+  content: "";
+  margin-left: auto;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg);
+  opacity: 0.7;
 }
 
 /* Sous-menus (genres, statut) */
@@ -1907,9 +1944,9 @@ body:has(.modal:not(.hidden)) .fab-container {
   width: 100%;
   height: 42px;
   padding: 0 12px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-main);
-  border: 2px solid rgba(var(--c-c4b5fd), 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 12px;
   /* 16px minimum : en dessous, iOS zoome sur le champ au focus et décale toute la page */
   font-size: 16px;
@@ -1950,6 +1987,10 @@ html.search-docked .fab-container .fab-menu {
   max-height: none;
   overflow: visible;
   padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  bottom: auto;
 }
 
 html.search-docked .fab-container .fab-menu > *:not(.fab-search-wrap) {
@@ -3451,6 +3492,294 @@ html[data-theme]:not([data-theme="default"]) body::before {
 
 
 /* ==========================================
+   BOUTONS FLOTTANTS : apparition / effacement discrets
+   ========================================== */
+.fab-container,
+.random-compil-btn {
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* Page défilée vers le bas : les boutons flottants se retirent (un menu ouvert reste affiché) */
+body.fab-scrolled .fab-container:not(:has(.fab-menu:not(.hidden))),
+body.fab-scrolled .random-compil-btn {
+  transform: translateY(90px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Boutons flottants de la sélection (planificateur) : « Réinitialiser » et « Convertir », au-dessus de la rangée dé / menu */
+.selection-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 78px;
+  transform: translateX(-50%);
+  z-index: 950;
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 999px;
+  background: rgba(var(--c-140c2a), 0.78);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: selectionBarIn 0.2s ease-out;
+}
+
+.selection-bar.hidden {
+  display: none;
+}
+
+.sel-btn {
+  height: 38px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.12s ease;
+}
+
+.sel-btn:active {
+  transform: scale(0.95);
+}
+
+.sel-reset {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
+.sel-convert {
+  background: linear-gradient(135deg, rgb(var(--c-ff007f)) 0%, rgb(var(--c-7b2cbf)) 100%);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
+
+.sel-btn:disabled {
+  opacity: 0.45;
+}
+
+body:has(.modal:not(.hidden)) .selection-bar {
+  display: none;
+}
+
+@keyframes selectionBarIn {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to   { opacity: 1; transform: translateX(-50%); }
+}
+
+/* ==========================================
+   MODALES ET FORMULAIRES : présentation épurée
+   Hiérarchie : titre de la modale > titres de section (plus grands) > libellés des champs (plus discrets).
+   Traits fins et ombres douces à la place des bordures noires épaisses et des ombres dures.
+   ========================================== */
+.modal {
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.modal .modal-content {
+  background-image: none;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Titre de la modale : même traits qui s'affinent que les titres de section, en plus grand */
+.modal .modal-header {
+  gap: 8px;
+  margin: 0 -16px 8px;
+  padding: 18px 12px 6px 16px;
+  background: none;
+  border-bottom: 0;
+}
+
+.modal .modal-header h2,
+.modal .modal-header h3 {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-family: 'Righteous', cursive;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  color: var(--text-main);
+  text-shadow: none;
+}
+
+.modal .modal-header h2::before,
+.modal .modal-header h3::before,
+.modal .modal-header h2::after,
+.modal .modal-header h3::after {
+  content: "";
+  flex: 1;
+  min-width: 12px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(var(--c-c4b5fd), 0), rgba(var(--c-c4b5fd), 0.7));
+}
+
+.modal .modal-header h2::after,
+.modal .modal-header h3::after {
+  background: linear-gradient(to left, rgba(var(--c-c4b5fd), 0), rgba(var(--c-c4b5fd), 0.7));
+}
+
+.modal .close-btn {
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  box-shadow: none;
+  font-size: 1.4rem;
+}
+
+.modal .close-btn:active {
+  transform: scale(0.92);
+  box-shadow: none;
+}
+
+/* Titres de section : plus grands que les libellés des champs */
+.modal .form-divider {
+  margin: 26px 0 14px;
+  font-family: 'Righteous', cursive;
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  color: var(--text-main);
+}
+
+.modal .form-divider-sm {
+  margin: 18px 0 12px;
+  font-size: 0.8rem;
+}
+
+/* Libellés des champs : plus petits et plus discrets que les titres de section */
+.modal .form-group label {
+  margin-bottom: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--text-sub);
+}
+
+.modal .form-group input,
+.modal .form-group textarea,
+.modal .form-group select {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.modal .form-group input:focus,
+.modal .form-group textarea:focus,
+.modal .form-group select:focus {
+  border-color: rgb(var(--c-ff007f));
+  box-shadow: 0 0 0 3px rgba(var(--c-ff007f), 0.22);
+}
+
+.modal .form-group input[type="file"] {
+  background-color: rgba(var(--c-ff007f), 0.08);
+  border: 1px dashed rgba(var(--c-ff4fa3), 0.7);
+}
+
+.modal .form-group input[type="file"]::file-selector-button {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: none;
+}
+
+.modal .form-group label:has(input[type="checkbox"]):not(.dc-check) {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+  color: var(--text-main);
+}
+
+.modal .form-group label:has(input[type="checkbox"]:checked):not(.dc-check) {
+  background: rgba(var(--c-ff007f), 0.18);
+  border-color: rgb(var(--c-ff007f));
+  box-shadow: none;
+}
+
+.modal .radio-group label {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: none;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.modal .radio-group label:has(input:checked) {
+  background: rgba(var(--c-ff007f), 0.22);
+  border-color: rgb(var(--c-ff007f));
+  color: #ffffff;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Boutons des formulaires */
+.modal .btn-primary {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.modal .btn-primary:active,
+.modal .btn-secondary:active,
+.modal .btn-danger:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+.modal .btn-secondary {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+}
+
+.modal .btn-danger {
+  border: 1px solid rgba(255, 107, 129, 0.6);
+}
+
+.modal .btn-sub {
+  border: 1px dashed rgba(var(--c-d8b4fe), 0.6);
+}
+
+.modal .form-actions {
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.modal .album-block {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-left: 3px solid rgb(var(--c-ff007f));
+  box-shadow: none;
+}
+
+.modal .album-block h4 {
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+/* Bouton « Créer une cover » (dans le formulaire) et « Utiliser » (studio) : trait fin, sans ombre dure */
+.cs-open-btn {
+  background: rgba(var(--c-ff007f), 0.16);
+  border: 1px solid rgba(var(--c-ff007f), 0.8);
+  box-shadow: none;
+  font-weight: 700;
+}
+
+.cs-use {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: none;
+}
+
+/* ==========================================
    THÈMES (choisis dans Paramètres > Apparence)
    ------------------------------------------
    Chaque thème décale la teinte des trois familles de couleurs (principale, accent, secondaire) en gardant
@@ -3766,84 +4095,3 @@ html[data-theme]:not([data-theme="default"]) body::before {
   --wall-bright: 0.9;
 }
 :root[data-theme="pop"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f9b8de' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
-
-
-/* ==========================================
-   BOUTONS FLOTTANTS : apparition / effacement discrets
-   ========================================== */
-.fab-container,
-.random-compil-btn {
-  transition: transform 0.25s ease, opacity 0.25s ease;
-}
-
-/* Page défilée vers le bas : les boutons flottants se retirent (un menu ouvert reste affiché) */
-body.fab-scrolled .fab-container:not(:has(.fab-menu:not(.hidden))),
-body.fab-scrolled .random-compil-btn {
-  transform: translateY(90px);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Boutons flottants de la sélection (planificateur) : « Réinitialiser » et « Convertir », au-dessus de la rangée dé / menu */
-.selection-bar {
-  position: fixed;
-  left: 50%;
-  bottom: 78px;
-  transform: translateX(-50%);
-  z-index: 950;
-  display: flex;
-  gap: 6px;
-  padding: 5px;
-  border-radius: 999px;
-  background: rgba(var(--c-140c2a), 0.78);
-  -webkit-backdrop-filter: blur(14px) saturate(1.3);
-  backdrop-filter: blur(14px) saturate(1.3);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  animation: selectionBarIn 0.2s ease-out;
-}
-
-.selection-bar.hidden {
-  display: none;
-}
-
-.sel-btn {
-  height: 38px;
-  padding: 0 16px;
-  border: none;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  font-weight: 800;
-  white-space: nowrap;
-  cursor: pointer;
-  touch-action: manipulation;
-  transition: transform 0.12s ease;
-}
-
-.sel-btn:active {
-  transform: scale(0.95);
-}
-
-.sel-reset {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-main);
-}
-
-.sel-convert {
-  background: linear-gradient(135deg, rgb(var(--c-ff007f)) 0%, rgb(var(--c-7b2cbf)) 100%);
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
-}
-
-.sel-btn:disabled {
-  opacity: 0.45;
-}
-
-body:has(.modal:not(.hidden)) .selection-bar {
-  display: none;
-}
-
-@keyframes selectionBarIn {
-  from { opacity: 0; transform: translate(-50%, 12px); }
-  to   { opacity: 1; transform: translateX(-50%); }
-}
