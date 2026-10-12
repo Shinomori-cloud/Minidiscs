@@ -5474,6 +5474,35 @@
         "Aqueous Transmission"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791840006163",
+      "md_cover": "images/img_1791840003497.jpg",
+      "title": "Silver Side Up",
+      "artist": "Nickelback",
+      "main_genre": "Rock & Blues",
+      "tags": [
+        "alt rock",
+        "rock",
+        "post-grunge",
+        "post grunge",
+        "alternative rock"
+      ],
+      "release_year": "2001",
+      "duration": "39:13",
+      "tracks": [
+        "Never Again",
+        "How You Remind Me",
+        "Woke Up This Morning",
+        "Too Bad",
+        "Just For",
+        "Hollywood",
+        "Money Bought",
+        "Where Do I Hide",
+        "Hangnail",
+        "Good Times Gone"
+      ],
+      "toRecord": false
     }
   ]
 }
