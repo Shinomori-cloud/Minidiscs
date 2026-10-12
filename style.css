@@ -1649,8 +1649,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 /* Conteneur fixe en bas à droite */
 .fab-container {
   position: fixed !important;
-  bottom: 24px !important;
-  right: 24px !important;
+  bottom: 22px !important;
+  right: 20px !important;
   z-index: 9999 !important;
   display: flex !important;
   flex-direction: column !important;
@@ -1669,8 +1669,8 @@ body:has(.modal:not(.hidden)) .fab-container {
 
 /* Bouton qui ouvre le menu : petit rond en verre dépoli, bordure fine, icône fine aux couleurs du thème */
 .fab-main-btn {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border-radius: 50%;
   background: rgba(var(--c-140c2a), 0.72);
@@ -1697,7 +1697,7 @@ body:has(.modal:not(.hidden)) .fab-container {
   border-color: rgba(var(--c-ff007f), 0.75);
 }
 
-/* Icône dessinée en CSS (traits fins) : curseurs de table de mixage, qui deviennent une croix quand le menu est ouvert */
+/* Icône dessinée en CSS : trois points verticaux (« ⋮ »), qui deviennent une croix quand le menu est ouvert */
 .fab-main-btn .fab-icon {
   display: block;
   width: 22px;
@@ -1709,8 +1709,8 @@ body:has(.modal:not(.hidden)) .fab-container {
   mask-position: center;
   -webkit-mask-size: contain;
   mask-size: contain;
-  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><line x1='3' y1='6' x2='21' y2='6'/><line x1='3' y1='12' x2='21' y2='12'/><line x1='3' y1='18' x2='21' y2='18'/><circle cx='8' cy='6' r='2.4' fill='black'/><circle cx='16' cy='12' r='2.4' fill='black'/><circle cx='9' cy='18' r='2.4' fill='black'/></svg>");
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><line x1='3' y1='6' x2='21' y2='6'/><line x1='3' y1='12' x2='21' y2='12'/><line x1='3' y1='18' x2='21' y2='18'/><circle cx='8' cy='6' r='2.4' fill='black'/><circle cx='16' cy='12' r='2.4' fill='black'/><circle cx='9' cy='18' r='2.4' fill='black'/></svg>");
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><circle cx='12' cy='5' r='2.1'/><circle cx='12' cy='12' r='2.1'/><circle cx='12' cy='19' r='2.1'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><circle cx='12' cy='5' r='2.1'/><circle cx='12' cy='12' r='2.1'/><circle cx='12' cy='19' r='2.1'/></svg>");
 }
 
 .fab-main-btn.open .fab-icon {
@@ -1727,7 +1727,7 @@ body:has(.modal:not(.hidden)) .fab-container {
 /* Menu déroulant */
 .fab-menu {
   position: absolute;
-  bottom: 62px;
+  bottom: 56px;
   right: 0;
   display: flex !important;
   flex-direction: column !important;
@@ -2618,7 +2618,7 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
 
 /* Si les boutons touchent le bouton flottant de droite (page d'une compilation), ils passent au-dessus */
 .titles-actions.above-fab {
-  bottom: 90px;
+  bottom: 84px;
 }
 
 .similar-fab {
@@ -3082,26 +3082,29 @@ main#app:has(.titles-actions) {
 /* Création aléatoire (planificateur) : bouton centré en bas */
 .random-compil-btn {
   position: fixed;
-  left: 50%;
-  bottom: 36px;
-  transform: translateX(-50%);
+  left: 20px;
+  bottom: 22px;
   z-index: 900;
-  padding: 10px 18px;
-  color: #ffffff;
-  background: linear-gradient(135deg, rgb(var(--c-ff007f)) 0%, rgb(var(--c-7b2cbf)) 100%);
-  border: 2px solid #000000;
-  border-radius: 999px;
-  box-shadow: 3px 3px 0 #000000, 0 6px 14px rgba(0, 0, 0, 0.3);
-  font-size: 0.8rem;
-  font-weight: 800;
-  white-space: nowrap;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.55rem;
+  line-height: 1;
+  background: rgba(var(--c-140c2a), 0.72);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   cursor: pointer;
   touch-action: manipulation;
 }
 
 .random-compil-btn:active {
-  transform: translate(calc(-50% + 2px), 2px);
-  box-shadow: 1px 1px 0 #000000, 0 3px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(0.92);
 }
 
 body:has(.modal:not(.hidden)) .random-compil-btn {
@@ -3763,3 +3766,84 @@ html[data-theme]:not([data-theme="default"]) body::before {
   --wall-bright: 0.9;
 }
 :root[data-theme="pop"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f9b8de' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
+
+
+/* ==========================================
+   BOUTONS FLOTTANTS : apparition / effacement discrets
+   ========================================== */
+.fab-container,
+.random-compil-btn {
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* Page défilée vers le bas : les boutons flottants se retirent (un menu ouvert reste affiché) */
+body.fab-scrolled .fab-container:not(:has(.fab-menu:not(.hidden))),
+body.fab-scrolled .random-compil-btn {
+  transform: translateY(90px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Boutons flottants de la sélection (planificateur) : « Réinitialiser » et « Convertir », au-dessus de la rangée dé / menu */
+.selection-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 78px;
+  transform: translateX(-50%);
+  z-index: 950;
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 999px;
+  background: rgba(var(--c-140c2a), 0.78);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: selectionBarIn 0.2s ease-out;
+}
+
+.selection-bar.hidden {
+  display: none;
+}
+
+.sel-btn {
+  height: 38px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.12s ease;
+}
+
+.sel-btn:active {
+  transform: scale(0.95);
+}
+
+.sel-reset {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
+.sel-convert {
+  background: linear-gradient(135deg, rgb(var(--c-ff007f)) 0%, rgb(var(--c-7b2cbf)) 100%);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
+
+.sel-btn:disabled {
+  opacity: 0.45;
+}
+
+body:has(.modal:not(.hidden)) .selection-bar {
+  display: none;
+}
+
+@keyframes selectionBarIn {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to   { opacity: 1; transform: translateX(-50%); }
+}

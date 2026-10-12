@@ -2821,11 +2821,14 @@ function updatePlannerHeader() {
     durationTextEl.textContent = `${formatSecondsToDisplay(totalSeconds)} / 2h 28m`;
   }
 
+  // Boutons flottants « Réinitialiser » / « Convertir » : visibles seulement quand au moins un album est sélectionné
+  const selectedCount = selectedIdeaIndices.size;
   const convertBtn = document.getElementById('planner-btn-convert');
   if (convertBtn) {
-    convertBtn.disabled = selectedIdeaIndices.size === 0;
-    convertBtn.textContent = `💾 Convertir (${selectedIdeaIndices.size})`;
+    convertBtn.disabled = selectedCount === 0;
+    convertBtn.textContent = `Convertir (${selectedCount})`;
   }
+  document.getElementById('planner-selection-bar')?.classList.toggle('hidden', selectedCount === 0);
 
   const remainingSeconds = maxSeconds - totalSeconds;
   document.querySelectorAll('.idea-card').forEach(card => {
@@ -2961,12 +2964,12 @@ function renderCompilPlanner(pushState = true) {
     const appContainer = document.getElementById('app') || document.body;
 
     appContainer.innerHTML = `
-      <div style="padding-bottom: 110px; padding-top: 215px; max-width: 800px; margin: 0 auto;">
+      <div style="padding-bottom: 170px; padding-top: 215px; max-width: 800px; margin: 0 auto;">
         <div class="ideas-grid" id="ideas-grid-container">
           ${cardsHTML}
         </div>
 
-        <button type="button" class="random-compil-btn" onclick="createRandomCompilation()">🎲 Création Aléatoire</button>
+        <button type="button" class="random-compil-btn" onclick="createRandomCompilation()" title="Création aléatoire" aria-label="Création aléatoire">🎲</button>
       </div>
     `;
 
@@ -3008,6 +3011,7 @@ function renderCompilPlanner(pushState = true) {
 // resterait sinon ouvert à notre retour sur la page)
 function hidePlannerFab() {
   document.getElementById('planner-floating-actions')?.classList.add('hidden');
+  document.getElementById('planner-selection-bar')?.classList.add('hidden');
   document.getElementById('planner-fab-menu')?.classList.add('hidden');
   document.getElementById('planner-genre-submenu')?.classList.add('hidden');
   document.getElementById('planner-fab-main-btn')?.classList.remove('open');
@@ -7051,4 +7055,23 @@ async function useCoverStudioResult() {
     grp.insertAdjacentHTML('beforeend', '<button type="button" class="cs-open-btn" onclick="openCoverStudio()">🎨 Créer une cover</button>');
   };
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', add) : add();
+})();
+
+
+/* Boutons flottants (menu ⋮, crayon, dé) : ils s'effacent quand on fait défiler la page vers le bas et reviennent
+   dès qu'on remonte, ou en bas de page. Un menu ouvert reste toujours visible. */
+(function fabAutoHide() {
+  let lastY = window.scrollY, ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY, dy = y - lastY;
+      const nearBottom = window.innerHeight + y >= document.documentElement.scrollHeight - 24;
+      if (Math.abs(dy) > 6) document.body.classList.toggle('fab-scrolled', dy > 0 && y > 120 && !nearBottom);
+      if (y < 60 || nearBottom) document.body.classList.remove('fab-scrolled');
+      lastY = y;
+      ticking = false;
+    });
+  }, { passive: true });
 })();

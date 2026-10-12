@@ -350,17 +350,17 @@
       <button type="button" class="fab-item accent" onclick="openIdeaModal(); togglePlannerFabMenu();">
         <span>💽 Ajouter</span>
       </button>
-      <button type="button" id="planner-btn-convert" class="fab-item success" onclick="convertSelectedToMD();">
-        💾 Convertir (0)
-      </button>
-      <button type="button" id="planner-btn-reset" class="fab-item danger" onclick="clearIdeaSelection();">
-        🔄 Réinitialiser
-      </button>
     </div>
 
     <button type="button" id="planner-fab-main-btn" class="fab-main-btn" onclick="togglePlannerFabMenu();" title="Menu planificateur">
       <span class="fab-icon" aria-hidden="true"></span>
     </button>
+  </div>
+
+  <!-- BOUTONS FLOTTANTS DE LA SÉLECTION (planificateur) : n'apparaissent que lorsqu'au moins un album est sélectionné -->
+  <div id="planner-selection-bar" class="selection-bar hidden">
+    <button type="button" id="planner-btn-reset" class="sel-btn sel-reset" onclick="clearIdeaSelection();">Réinitialiser</button>
+    <button type="button" id="planner-btn-convert" class="sel-btn sel-convert" onclick="convertSelectedToMD();">Convertir (0)</button>
   </div>
 
   <!-- Zone invisible cliquable pour retour arrière -->
