@@ -6358,8 +6358,7 @@ function discoverPageHTML() {
       ${keyCard}
 
       <div id="dc-form" class="dc-card ${s.formOpen ? '' : 'hidden'}">
-        <div class="dc-card-title">🔎 Mes critères</div>
-
+        <div class="form-divider"><span>Artiste</span></div>
         <div class="form-group">
           <label>Discographie et artistes similaires</label>
           <div class="dc-autocomplete">
@@ -6370,6 +6369,7 @@ function discoverPageHTML() {
         </div>
         ${chips}
 
+        <div class="form-divider"><span>Spécifications</span></div>
         <div class="dc-row">
           <div class="form-group">
             <label>Genre</label>
@@ -6392,19 +6392,14 @@ function discoverPageHTML() {
           </div>
         </div>
 
-        <div class="dc-row">
-          <div class="form-group">
-            <label>Trier par</label>
-            <select id="dc-sort" onchange="discoverViewChanged()">
-              <option value="recommended" ${sel('recommended', c.sort)}>Recommandés</option>
-              <option value="popularity" ${sel('popularity', c.sort)}>Popularité ↓</option>
-              <option value="similarity" ${sel('similarity', c.sort)}>Similarité ↓</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>&nbsp;</label>
-            <button type="button" class="btn-secondary dc-disco-btn" onclick="discoverShowDiscographyFromForm()">📀 Voir la discographie</button>
-          </div>
+        <div class="form-divider"><span>Tri</span></div>
+        <div class="form-group">
+          <label>Trier par</label>
+          <select id="dc-sort" onchange="discoverViewChanged()">
+            <option value="recommended" ${sel('recommended', c.sort)}>Recommandés</option>
+            <option value="popularity" ${sel('popularity', c.sort)}>Popularité ↓</option>
+            <option value="similarity" ${sel('similarity', c.sort)}>Similarité ↓</option>
+          </select>
         </div>
 
         <div class="form-group">

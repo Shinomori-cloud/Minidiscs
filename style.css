@@ -1727,22 +1727,22 @@ body:has(.modal:not(.hidden)) .fab-container {
 /* Menu : panneau latéral semi-transparent qui glisse depuis le bord droit de l'écran, au-dessus du bouton ⋮ */
 .fab-menu {
   position: fixed;
+  top: 0;
   right: 0;
-  bottom: 76px;
+  bottom: 0;
   display: flex !important;
   flex-direction: column !important;
   gap: 6px;
   color-scheme: dark;
-  width: min(84vw, 310px);
-  max-height: calc(100vh - 110px);
-  padding: 18px 16px 12px;
-  background: linear-gradient(to left, rgba(var(--c-140828), 0.8), rgba(var(--c-140828), 0.64));
-  -webkit-backdrop-filter: blur(18px) saturate(1.3);
-  backdrop-filter: blur(18px) saturate(1.3);
+  width: min(66vw, 236px);
+  padding: 26px 16px 86px;
+  background: linear-gradient(to left, rgba(var(--c-140828), 0.7), rgba(var(--c-140828), 0.48));
+  -webkit-backdrop-filter: blur(10px) saturate(1.25);
+  backdrop-filter: blur(10px) saturate(1.25);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-right: none;
-  border-radius: calc(18px * var(--radius-factor)) 0 0 calc(18px * var(--radius-factor));
-  box-shadow: -14px 10px 40px rgba(0, 0, 0, 0.4), inset 1px 0 0 rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3), inset 1px 0 0 rgba(255, 255, 255, 0.08);
   overflow-y: auto;
   animation: fabDrawerIn 0.22s ease-out;
 }
@@ -1768,7 +1768,7 @@ body:has(.modal:not(.hidden)) .fab-container {
   gap: 10px;
   margin: 4px 0 2px;
   font-family: 'Righteous', cursive;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--text-main);
@@ -1798,15 +1798,15 @@ body:has(.modal:not(.hidden)) .fab-container {
   justify-content: flex-start;
   gap: 10px;
   width: 100%;
-  height: 44px;
-  padding: 0 4px;
+  height: 42px;
+  padding: 0 2px;
   background: transparent;
   color: var(--text-main);
   border: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 0;
   box-shadow: none;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 600;
   text-align: left;
   white-space: nowrap;
@@ -1828,17 +1828,17 @@ body:has(.modal:not(.hidden)) .fab-container {
 .fab-item.accent,
 .fab-item.success {
   justify-content: center;
-  margin-top: 4px;
+  margin-top: 6px;
   padding: 0 14px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 10px;
   font-weight: 800;
 }
 
 .fab-item.accent {
   background: linear-gradient(135deg, rgb(var(--c-ff007f)) 0%, rgb(var(--c-7b2cbf)) 100%);
   color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .fab-item.danger {
@@ -1852,7 +1852,7 @@ body:has(.modal:not(.hidden)) .fab-container {
 
 /* Accès aux paramètres : en bas du panneau */
 .fab-item.fab-settings {
-  margin-top: 8px;
+  margin-top: auto;
   border-bottom: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.16);
   color: var(--accent-light);
@@ -1874,10 +1874,10 @@ body:has(.modal:not(.hidden)) .fab-container {
 .fab-submenu {
   display: flex !important;
   flex-direction: column !important;
-  gap: 6px;
-  margin: 0 0 4px 8px;
+  gap: 0;
+  margin: 0 0 4px 4px;
   padding-left: 10px;
-  border-left: 3px solid rgb(var(--c-ff007f));
+  border-left: 2px solid rgba(var(--c-ff007f), 0.8);
 }
 
 .fab-submenu.hidden {
@@ -1887,7 +1887,7 @@ body:has(.modal:not(.hidden)) .fab-container {
 .fab-item.sub-item {
   font-size: 0.85rem;
   height: 36px;
-  padding: 0 10px;
+  padding: 0 4px;
 }
 
 .fab-scrollable-submenu {
@@ -1908,8 +1908,8 @@ body:has(.modal:not(.hidden)) .fab-container {
 .fab-genre-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 2px;
+  gap: 0;
+  margin-top: 0;
 }
 
 .fab-genre-item {
@@ -1917,13 +1917,14 @@ body:has(.modal:not(.hidden)) .fab-container {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 9px 12px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-main);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 10px;
-  font-size: 0.82rem;
-  font-weight: 800;
+  padding: 10px 2px;
+  background: transparent;
+  color: var(--text-sub);
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  font-size: 0.84rem;
+  font-weight: 600;
   line-height: 1.2;
   cursor: pointer;
   user-select: none;
@@ -1931,12 +1932,17 @@ body:has(.modal:not(.hidden)) .fab-container {
 }
 
 .fab-genre-item:active {
-  transform: translate(1px, 1px);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .fab-genre-item.active {
-  background-color: rgb(var(--c-ff007f)) !important;
+  background: transparent !important;
   color: #ffffff !important;
+  font-weight: 800;
+}
+
+.fab-genre-item.active::after {
+  color: rgb(var(--c-ff5cad));
 }
 
 /* Champ de recherche intégré au menu */
@@ -1991,6 +1997,7 @@ html.search-docked .fab-container .fab-menu {
   border-radius: 14px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
   bottom: auto;
+  background: rgba(var(--c-140828), 0.82);
 }
 
 html.search-docked .fab-container .fab-menu > *:not(.fab-search-wrap) {
@@ -3645,7 +3652,8 @@ body:has(.modal:not(.hidden)) .selection-bar {
 }
 
 /* Titres de section : plus grands que les libellés des champs */
-.modal .form-divider {
+.modal .form-divider,
+#dc-form .form-divider {
   margin: 26px 0 14px;
   font-family: 'Righteous', cursive;
   font-size: 0.95rem;
@@ -3654,13 +3662,15 @@ body:has(.modal:not(.hidden)) .selection-bar {
   color: var(--text-main);
 }
 
-.modal .form-divider-sm {
+.modal .form-divider-sm,
+#dc-form .form-divider-sm {
   margin: 18px 0 12px;
   font-size: 0.8rem;
 }
 
 /* Libellés des champs : plus petits et plus discrets que les titres de section */
-.modal .form-group label {
+.modal .form-group label,
+#dc-form .form-group label {
   margin-bottom: 6px;
   font-size: 0.76rem;
   font-weight: 600;
@@ -3671,42 +3681,53 @@ body:has(.modal:not(.hidden)) .selection-bar {
 
 .modal .form-group input,
 .modal .form-group textarea,
-.modal .form-group select {
+.modal .form-group select,
+#dc-form .form-group input,
+#dc-form .form-group textarea,
+#dc-form .form-group select {
   background-color: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .modal .form-group input:focus,
 .modal .form-group textarea:focus,
-.modal .form-group select:focus {
+.modal .form-group select:focus,
+#dc-form .form-group input:focus,
+#dc-form .form-group textarea:focus,
+#dc-form .form-group select:focus {
   border-color: rgb(var(--c-ff007f));
   box-shadow: 0 0 0 3px rgba(var(--c-ff007f), 0.22);
 }
 
-.modal .form-group input[type="file"] {
+.modal .form-group input[type="file"],
+#dc-form .form-group input[type="file"] {
   background-color: rgba(var(--c-ff007f), 0.08);
   border: 1px dashed rgba(var(--c-ff4fa3), 0.7);
 }
 
-.modal .form-group input[type="file"]::file-selector-button {
+.modal .form-group input[type="file"]::file-selector-button,
+#dc-form .form-group input[type="file"]::file-selector-button {
   border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: none;
 }
 
-.modal .form-group label:has(input[type="checkbox"]):not(.dc-check) {
+.modal .form-group label:has(input[type="checkbox"]):not(.dc-check),
+#dc-form .form-group label:has(input[type="checkbox"]):not(.dc-check) {
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.06);
   box-shadow: none;
   color: var(--text-main);
 }
 
-.modal .form-group label:has(input[type="checkbox"]:checked):not(.dc-check) {
+.modal .form-group label:has(input[type="checkbox"]:checked):not(.dc-check),
+#dc-form .form-group label:has(input[type="checkbox"]:checked):not(.dc-check) {
   background: rgba(var(--c-ff007f), 0.18);
   border-color: rgb(var(--c-ff007f));
   box-shadow: none;
 }
 
-.modal .radio-group label {
+.modal .radio-group label,
+#dc-form .radio-group label {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: none;
@@ -3714,7 +3735,8 @@ body:has(.modal:not(.hidden)) .selection-bar {
   color: var(--text-main);
 }
 
-.modal .radio-group label:has(input:checked) {
+.modal .radio-group label:has(input:checked),
+#dc-form .radio-group label:has(input:checked) {
   background: rgba(var(--c-ff007f), 0.22);
   border-color: rgb(var(--c-ff007f));
   color: #ffffff;
@@ -3723,7 +3745,8 @@ body:has(.modal:not(.hidden)) .selection-bar {
 }
 
 /* Boutons des formulaires */
-.modal .btn-primary {
+.modal .btn-primary,
+#dc-form .btn-primary {
   border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow: none;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -3731,22 +3754,28 @@ body:has(.modal:not(.hidden)) .selection-bar {
 
 .modal .btn-primary:active,
 .modal .btn-secondary:active,
-.modal .btn-danger:active {
+.modal .btn-danger:active,
+#dc-form .btn-primary:active,
+#dc-form .btn-secondary:active,
+#dc-form .btn-danger:active {
   transform: scale(0.98);
   box-shadow: none;
 }
 
-.modal .btn-secondary {
+.modal .btn-secondary,
+#dc-form .btn-secondary {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: none;
 }
 
-.modal .btn-danger {
+.modal .btn-danger,
+#dc-form .btn-danger {
   border: 1px solid rgba(255, 107, 129, 0.6);
 }
 
-.modal .btn-sub {
+.modal .btn-sub,
+#dc-form .btn-sub {
   border: 1px dashed rgba(var(--c-d8b4fe), 0.6);
 }
 
@@ -3777,6 +3806,17 @@ body:has(.modal:not(.hidden)) .selection-bar {
 .cs-use {
   border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: none;
+}
+
+/* Carte « critères » de la page Découverte : traits fins, comme les modales */
+#dc-form {
+  background-image: none;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+#dc-form .form-divider:first-child {
+  margin-top: 4px;
 }
 
 /* ==========================================
