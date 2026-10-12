@@ -5410,6 +5410,38 @@
         "Temporary Peace"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791830144100",
+      "md_cover": "images/img_1791830142239.jpg",
+      "title": "Morning View",
+      "artist": "Incubus",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [
+        "alternative rock",
+        "rock",
+        "alternative metal",
+        "funk metal",
+        "alternative"
+      ],
+      "release_year": "2001",
+      "duration": "58:30",
+      "tracks": [
+        "Nice to Know You",
+        "Circles",
+        "Wish You Were Here",
+        "Just a Phase",
+        "11am",
+        "Blood on the Ground",
+        "Mexico",
+        "Warning",
+        "Echo",
+        "Have You Ever",
+        "Are You In?",
+        "Under My Umbrella",
+        "Aqueous Transmission"
+      ],
+      "toRecord": false
     }
   ]
 }
