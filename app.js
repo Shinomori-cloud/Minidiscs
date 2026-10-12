@@ -1,6 +1,6 @@
 // Thèmes de couleurs (Paramètres > Apparence). « sw » = aperçu : fond sombre, violet, accent, secondaire. « g » = palette des genres :
 // rotation de teinte (r, en degrés : le même décalage que l'accent du thème) et facteur de saturation (s). Les palettes de l'interface sont dans style.css.
-const THEMES = [{"id": "default", "name": "Par défaut", "sw": ["#140c2a", "#7b2cbf", "#ff007f", "#00f0ff"]}, {"id": "ocean", "name": "Océan", "sw": ["#0c1d2a", "#2c58bf", "#00d8ff", "#00ffa4"], "g": {"r": -141, "s": 1}}, {"id": "foret", "name": "Forêt", "sw": ["#0c2a19", "#2cbf94", "#7bff00", "#ffbd00"], "g": {"r": 121, "s": 1}}, {"id": "braise", "name": "Braise", "sw": ["#2a0d0c", "#bf592c", "#ff6200", "#ffbd00"], "g": {"r": 53, "s": 1}}, {"id": "ardoise", "name": "Ardoise", "sw": ["#151b21", "#5a6891", "#4f8bb0", "#4f9fb0"], "g": {"r": -127, "s": 0.72}}, {"id": "minuit", "name": "Minuit", "sw": ["#0c132a", "#312cbf", "#ffc800", "#00b9ff"], "g": {"r": 77, "s": 1}}, {"id": "menthe", "name": "Menthe", "sw": ["#0c2a22", "#2cbebf", "#00ff84", "#00caff"], "g": {"r": -179, "s": 1}}, {"id": "carbone", "name": "Carbone", "sw": ["#1c1a1a", "#7a7371", "#ff0015", "#a38f90"], "g": {"r": 25, "s": 0.65}}, {"id": "olive", "name": "Olive", "sw": ["#22270f", "#79af3c", "#af00ff", "#ff6800"], "g": {"r": -49, "s": 1}}, {"id": "pasteque", "name": "Pastèque", "sw": ["#290d1a", "#bb304b", "#00ff1e", "#ffce00"], "g": {"r": 157, "s": 1}}, {"id": "sable", "name": "Sable", "sw": ["#221a14", "#9a8751", "#478dff", "#19cfe6"], "g": {"r": -113, "s": 0.78}}, {"id": "neon", "name": "Néon", "sw": ["#18181e", "#706586", "#ffea00", "#ff00b0"], "g": {"r": 85, "s": 1}}];
+const THEMES = [{"id": "default", "name": "Par défaut", "sw": ["#140c2a", "#7b2cbf", "#ff007f", "#00f0ff"]}, {"id": "ocean", "name": "Océan", "sw": ["#0c1d2a", "#2c58bf", "#00d8ff", "#00ffa4"], "g": {"r": -141, "s": 1}}, {"id": "braise", "name": "Braise", "sw": ["#2a0d0c", "#bf592c", "#ff6200", "#ffbd00"], "g": {"r": 52, "s": 1}}, {"id": "ardoise", "name": "Ardoise", "sw": ["#151b21", "#5a6891", "#4f8bb0", "#4f9fb0"], "g": {"r": -128, "s": 0.72}}, {"id": "menthe", "name": "Menthe", "sw": ["#0c2a22", "#2cbebf", "#00ff84", "#00caff"], "g": {"r": -179, "s": 1}}, {"id": "rubis", "name": "Rubis", "sw": ["#0b0e2d", "#be1558", "#e52165", "#fbcbc9"], "g": {"r": 8, "s": 1}}, {"id": "bordeaux", "name": "Bordeaux", "sw": ["#2e0d1e", "#7a2048", "#408ec6", "#79a7d3"], "g": {"r": -125, "s": 1}}, {"id": "onyx", "name": "Onyx", "sw": ["#090909", "#a8870f", "#f3ca20", "#f6ead4"], "g": {"r": 77, "s": 1}}, {"id": "mousse", "name": "Mousse", "sw": ["#0c2516", "#4c9a5f", "#e1dd72", "#a8c66c"], "g": {"r": 86, "s": 1}}, {"id": "corail", "name": "Corail", "sw": ["#142b36", "#3d7a94", "#f57e7e", "#efb5a3"], "g": {"r": 29, "s": 1}}, {"id": "pervenche", "name": "Pervenche", "sw": ["#17193a", "#4d5198", "#81b7d2", "#ffcce7"], "g": {"r": -131, "s": 1}}, {"id": "pop", "name": "Pop", "sw": ["#240d22", "#d13ca4", "#ffea04", "#fe3a9e"], "g": {"r": 83, "s": 1}}];
 const THEME_STORAGE_KEY = 'minidisc_theme';
 
 // Appliqué dès le chargement du script, avant tout affichage, pour éviter un flash aux couleurs par défaut
@@ -1922,7 +1922,7 @@ function titlesPageHTML({ color, coverHTML, coverPath, title, artist, year, dura
 // Bouton rond « Modifier » en bas à droite (même emplacement que les FAB), pour les albums d'une série
 function titlesEditFabHTML(mdIndex, albumIndex) {
   return `<div id="md-detail-floating-actions" class="fab-container">
-    <button type="button" class="fab-main-btn" onclick="editFromTitles(${mdIndex}, ${albumIndex})" title="Modifier cet album"><span class="fab-emoji" aria-hidden="true">✏️</span></button>
+    <button type="button" class="fab-main-btn" onclick="editFromTitles(${mdIndex}, ${albumIndex})" title="Modifier cet album"><span class="fab-icon fab-icon-edit" aria-hidden="true"></span></button>
   </div>`;
 }
 
@@ -2860,7 +2860,7 @@ function injectPlannerHeaderBadge() {
   badge.style.cssText = `
     position: fixed; top: 150px; left: 50%; transform: translateX(-50%); z-index: 999;
     background: var(--card-sheen), var(--card-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
-    border: 2px solid #000000; border-radius: 16px; padding: 10px 16px;
+    border: 2px solid #000000; border-radius: calc(16px * var(--radius-factor)); padding: 10px 16px;
     box-shadow: 4px 4px 0px #000000, var(--card-rim); display: flex; flex-direction: column; gap: 8px;
     width: calc(100% - 32px); max-width: 568px; box-sizing: border-box;
   `;
@@ -3714,7 +3714,7 @@ async function searchItunes() {
         <div class="itunes-result-item" data-index="${i}">
           <img src="${coverUrl}" 
                onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'40\\' height=\\'40\\' viewBox=\\'0 0 24 24\\'><rect width=\\'24\\' height=\\'24\\' fill=\\'%23eee\\'/><text x=\\'50%\\' y=\\'50%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-size=\\'12\\'>💿</text></svg>';" 
-               style="width:40px; height:40px; border-radius:4px; object-fit:cover; background:#eee;">
+               style="width:40px; height:40px; border-radius:calc(4px * var(--radius-factor)); object-fit:cover; background:#eee;">
           <div style="flex:1; font-size:0.8rem;">
             <div style="font-weight:700;">${mbEscapeHTML(g.title)}</div>
             <div style="color:var(--text-sub);">${mbEscapeHTML(artist)}${details ? ' · ' + mbEscapeHTML(details) : ''}</div>
@@ -3787,7 +3787,7 @@ async function applyItunesResult(index) {
     preview.innerHTML = `
       <img src="${pendingItunesCoverUrl}" 
            onerror="this.onerror=null; if (this.parentElement) this.parentElement.innerHTML='<div style=\\'font-size:0.7rem; color:#888;\\'>Pas de pochette disponible sur Cover Art Archive</div>';" 
-           style="width:80px; height:80px; border-radius:6px; object-fit:cover;">
+           style="width:80px; height:80px; border-radius:calc(6px * var(--radius-factor)); object-fit:cover;">
       <div style="font-size:0.7rem; color:var(--text-sub);">Pochette récupérée (transférée à l'enregistrement)</div>
     `;
   }
@@ -4415,7 +4415,7 @@ async function discoverAddItemToIdeas(r) {
   pendingItunesCoverUrl = r.mbid ? `https://coverartarchive.org/release-group/${r.mbid}/front-500` : (r.image || null);
   const preview = document.getElementById('idea-cover-preview');
   if (preview && pendingItunesCoverUrl) {
-    preview.innerHTML = `<img src="${mbEscapeHTML(pendingItunesCoverUrl)}" style="width:80px; height:80px; border-radius:6px; object-fit:cover;"
+    preview.innerHTML = `<img src="${mbEscapeHTML(pendingItunesCoverUrl)}" style="width:80px; height:80px; border-radius:calc(6px * var(--radius-factor)); object-fit:cover;"
       onerror="this.onerror=null; if (this.parentElement) this.parentElement.innerHTML='<div style=\\'font-size:0.7rem; color:var(--text-sub);\\'>Pochette indisponible</div>';">`;
   }
 
