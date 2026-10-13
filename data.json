@@ -5472,6 +5472,36 @@
         "Life is For Living"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791922208575",
+      "md_cover": "images/img_1791922206613.jpg",
+      "title": "A Rush of Blood to the Head",
+      "artist": "Coldplay",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [
+        "alternative rock",
+        "pop rock",
+        "rock",
+        "alt rock",
+        "post-britpop"
+      ],
+      "release_year": "2002",
+      "duration": "54:12",
+      "tracks": [
+        "Politik",
+        "In My Place",
+        "God Put a Smile Upon Your Face",
+        "The Scientist",
+        "Clocks",
+        "Daylight",
+        "Green Eyes",
+        "Warning Sign",
+        "A Whisper",
+        "A Rush of Blood to the Head",
+        "Amsterdam"
+      ],
+      "toRecord": false
     }
   ]
 }
