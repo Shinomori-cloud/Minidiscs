@@ -1735,7 +1735,7 @@ body:has(.modal:not(.hidden)) .fab-container {
   gap: 6px;
   color-scheme: dark;
   width: min(66vw, 236px);
-  padding: 26px 16px 86px;
+  padding: 0 16px 86px;
   background: linear-gradient(to left, rgba(var(--c-140828), 0.7), rgba(var(--c-140828), 0.48));
   -webkit-backdrop-filter: blur(10px) saturate(1.25);
   backdrop-filter: blur(10px) saturate(1.25);
@@ -1755,6 +1755,15 @@ body:has(.modal:not(.hidden)) .fab-container {
 @keyframes fabDrawerIn {
   from { opacity: 0; transform: translateX(34px); }
   to   { opacity: 1; transform: none; }
+}
+
+/* Espace en haut de la bande, fermé par un trait fin : les options démarrent plus bas, sous le header */
+.fab-menu::before {
+  content: "";
+  display: block;
+  flex: 0 0 76px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .fab-menu.hidden {
@@ -1998,6 +2007,10 @@ html.search-docked .fab-container .fab-menu {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
   bottom: auto;
   background: rgba(var(--c-140828), 0.82);
+}
+
+html.search-docked .fab-container .fab-menu::before {
+  display: none;
 }
 
 html.search-docked .fab-container .fab-menu > *:not(.fab-search-wrap) {

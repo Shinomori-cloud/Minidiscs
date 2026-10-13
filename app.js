@@ -1029,6 +1029,7 @@ window.addEventListener('popstate', () => {
 
 // Affiche la page demandée en appelant la fonction de rendu existante correspondante
 function renderForPage(page) {
+  document.getElementById('md-detail-floating-actions')?.remove(); // boutons flottants de la page précédente (posés dans <body>)
   switch (page.key) {
     case 'list': {
       const params = page.params || new URLSearchParams();
@@ -1713,6 +1714,15 @@ if (genre && genre !== 'ALL') {
 }
 
 /* 3. VUE D'UN MINIDISC */
+// Les boutons flottants d'une page (menu ⋮ d'un MiniDisc, crayon d'un album) sont posés directement dans <body> : placés dans #app,
+// qui a son propre niveau d'empilement, leur panneau passerait sous le header et ses premières options seraient cachées.
+function mountPageFab(html) {
+  document.getElementById('md-detail-floating-actions')?.remove();
+  const holder = document.createElement('div');
+  holder.innerHTML = String(html).trim();
+  if (holder.firstElementChild) document.body.appendChild(holder.firstElementChild);
+}
+
 function openMD(index, pushState = true) {
   const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
   if (fa) fa.style.display = 'none';
@@ -1798,7 +1808,8 @@ if (!md.albums || md.albums.length === 0) {
     withLastfm: !!md.title,
     coverPath: md.md_cover,
     mdIndex: index, albumIndex: null
-  }) + fabHTML;
+  });
+  mountPageFab(fabHTML);
   titlesLoadExtras({
     withLastfm: !!md.title,
     artist: md.artist, title: md.title, mdIndex: index, albumIndex: null, trackOffset: 0,
@@ -1838,8 +1849,9 @@ md.albums.forEach((album, aIndex) => {
     </div>
   `;
 });
-html += `${fabHTML}</div>`;
+html += `</div>`;
 app.innerHTML = html;
+mountPageFab(fabHTML);
 window.scrollTo(0, 0);
 }
 
@@ -2297,7 +2309,8 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     withLastfm: !!album.title,
     coverPath: album.md_cover,
     mdIndex, albumIndex: Number(albumIndex)
-  }) + titlesEditFabHTML(mdIndex, albumIndex);
+  });
+  mountPageFab(titlesEditFabHTML(mdIndex, albumIndex));
   titlesLoadExtras({
     withLastfm: !!album.title,
     artist: album.artist, title: album.title, mdIndex, albumIndex: Number(albumIndex), trackOffset,
