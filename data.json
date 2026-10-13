@@ -5442,6 +5442,36 @@
         "Aqueous Transmission"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1791922194740",
+      "md_cover": "images/img_1791922193093.jpg",
+      "title": "Parachutes",
+      "artist": "Coldplay",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [
+        "alternative rock",
+        "rock",
+        "pop rock",
+        "alternative",
+        "post-britpop"
+      ],
+      "release_year": "2000",
+      "duration": "41:32",
+      "tracks": [
+        "Don't Panic",
+        "Shiver",
+        "Spies",
+        "Sparks",
+        "Yellow",
+        "Trouble",
+        "Parachutes",
+        "High Speed",
+        "We Never Change",
+        "Everything's Not Lost",
+        "Life is For Living"
+      ],
+      "toRecord": false
     }
   ]
 }
