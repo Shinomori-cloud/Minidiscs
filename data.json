@@ -4559,6 +4559,100 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1791954672958",
+      "md_cover": "images/img_1791954668899.jpg",
+      "title": "Last Fair Deal Gone Down / A Fine Day to Exit / Parachutes",
+      "albums": [
+        {
+          "id": "md-1791954672958-alb-1",
+          "md_cover": "images/img_1791755180371.jpg",
+          "title": "Last Fair Deal Gone Down",
+          "artist": "Katatonia",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "rock",
+            "alternative metal",
+            "alternative rock",
+            "gothic rock"
+          ],
+          "release_year": "2001",
+          "duration": "50:45",
+          "tracks": [
+            "Dispossession",
+            "Chrome",
+            "We Must Bury You",
+            "Teargas",
+            "I Transpire",
+            "Tonight’s Music",
+            "Clean Today",
+            "The Future of Speech",
+            "Passing Bird",
+            "Sweet Nurse",
+            "Don’t Tell a Soul"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791954672958-alb-2",
+          "md_cover": "images/img_1791755228888.jpg",
+          "title": "A Fine Day to Exit",
+          "artist": "Anathema",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "alternative rock",
+            "heavy metal",
+            "progressive metal",
+            "progressive rock",
+            "rock"
+          ],
+          "release_year": "2001",
+          "duration": "49:54",
+          "tracks": [
+            "Pressure",
+            "Release",
+            "Looking Outside Inside",
+            "Leave No Trace",
+            "Underworld",
+            "Barriers",
+            "Panic",
+            "A Fine Day to Exit",
+            "Temporary Peace"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1791954672958-alb-3",
+          "md_cover": "images/img_1791922193093.jpg",
+          "title": "Parachutes",
+          "artist": "Coldplay",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "alternative rock",
+            "rock",
+            "pop rock",
+            "alternative",
+            "post-britpop"
+          ],
+          "release_year": "2000",
+          "duration": "41:32",
+          "tracks": [
+            "Don't Panic",
+            "Shiver",
+            "Spies",
+            "Sparks",
+            "Yellow",
+            "Trouble",
+            "Parachutes",
+            "High Speed",
+            "We Never Change",
+            "Everything's Not Lost",
+            "Life is For Living"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -5355,63 +5449,6 @@
       "toRecord": false
     },
     {
-      "id": "idea-1791755182393",
-      "md_cover": "images/img_1791755180371.jpg",
-      "title": "Last Fair Deal Gone Down",
-      "artist": "Katatonia",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "rock",
-        "alternative metal",
-        "alternative rock",
-        "gothic rock"
-      ],
-      "release_year": "2001",
-      "duration": "50:45",
-      "tracks": [
-        "Dispossession",
-        "Chrome",
-        "We Must Bury You",
-        "Teargas",
-        "I Transpire",
-        "Tonight’s Music",
-        "Clean Today",
-        "The Future of Speech",
-        "Passing Bird",
-        "Sweet Nurse",
-        "Don’t Tell a Soul"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1791755230833",
-      "md_cover": "images/img_1791755228888.jpg",
-      "title": "A Fine Day to Exit",
-      "artist": "Anathema",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "alternative rock",
-        "heavy metal",
-        "progressive metal",
-        "progressive rock",
-        "rock"
-      ],
-      "release_year": "2001",
-      "duration": "49:54",
-      "tracks": [
-        "Pressure",
-        "Release",
-        "Looking Outside Inside",
-        "Leave No Trace",
-        "Underworld",
-        "Barriers",
-        "Panic",
-        "A Fine Day to Exit",
-        "Temporary Peace"
-      ],
-      "toRecord": false
-    },
-    {
       "id": "idea-1791830170297",
       "md_cover": "https://coverartarchive.org/release-group/21387993-64d6-3d59-bd7f-d93cbdcb0f48/front-500",
       "title": "Morning View",
@@ -5440,36 +5477,6 @@
         "Are You In?",
         "Under My Umbrella",
         "Aqueous Transmission"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1791922194740",
-      "md_cover": "images/img_1791922193093.jpg",
-      "title": "Parachutes",
-      "artist": "Coldplay",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "alternative rock",
-        "rock",
-        "pop rock",
-        "alternative",
-        "post-britpop"
-      ],
-      "release_year": "2000",
-      "duration": "41:32",
-      "tracks": [
-        "Don't Panic",
-        "Shiver",
-        "Spies",
-        "Sparks",
-        "Yellow",
-        "Trouble",
-        "Parachutes",
-        "High Speed",
-        "We Never Change",
-        "Everything's Not Lost",
-        "Life is For Living"
       ],
       "toRecord": false
     },
