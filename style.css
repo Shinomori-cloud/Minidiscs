@@ -4148,3 +4148,12 @@ body:has(.modal:not(.hidden)) .selection-bar {
   --wall-bright: 0.9;
 }
 :root[data-theme="pop"] .form-group select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f9b8de' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
+
+
+/* Planificateur : capacité du MiniDisc (74 / 80 min), discrète à droite de la durée */
+.planner-capacity { display: inline-flex; align-items: center; gap: 2px; font-size: 0.68rem; font-weight: 600; color: var(--text-sub); opacity: 0.8; white-space: nowrap; }
+.planner-capacity-btn { padding: 0 2px; margin: 0; border: none; background: none; box-shadow: none; font-size: 0.8rem; line-height: 1; cursor: pointer; opacity: 0.85; }
+.planner-capacity-btn:active { transform: rotate(180deg); }
+
+/* Paramètres > Apparence : case « thème du jour » sous la liste des thèmes */
+.settings-card .theme-daily { margin: 2px 0 0; }

@@ -2,11 +2,40 @@
 // rotation de teinte (r, en degrés : le même décalage que l'accent du thème) et facteur de saturation (s). Les palettes de l'interface sont dans style.css.
 const THEMES = [{"id": "default", "name": "Par défaut", "sw": ["#140c2a", "#7b2cbf", "#ff007f", "#00f0ff"]}, {"id": "ocean", "name": "Océan", "sw": ["#0c1d2a", "#2c58bf", "#00d8ff", "#00ffa4"], "g": {"r": -141, "s": 1}}, {"id": "braise", "name": "Braise", "sw": ["#2a0d0c", "#bf592c", "#ff6200", "#ffbd00"], "g": {"r": 52, "s": 1}}, {"id": "ardoise", "name": "Ardoise", "sw": ["#151b21", "#5a6891", "#4f8bb0", "#4f9fb0"], "g": {"r": -128, "s": 0.72}}, {"id": "menthe", "name": "Menthe", "sw": ["#0c2a22", "#2cbebf", "#00ff84", "#00caff"], "g": {"r": -179, "s": 1}}, {"id": "rubis", "name": "Rubis", "sw": ["#0b0e2d", "#be1558", "#e52165", "#fbcbc9"], "g": {"r": 8, "s": 1}}, {"id": "bordeaux", "name": "Bordeaux", "sw": ["#2e0d1e", "#7a2048", "#408ec6", "#79a7d3"], "g": {"r": -125, "s": 1}}, {"id": "onyx", "name": "Onyx", "sw": ["#090909", "#a8870f", "#f3ca20", "#f6ead4"], "g": {"r": 77, "s": 1}}, {"id": "mousse", "name": "Mousse", "sw": ["#0c2516", "#4c9a5f", "#e1dd72", "#a8c66c"], "g": {"r": 86, "s": 1}}, {"id": "corail", "name": "Corail", "sw": ["#142b36", "#3d7a94", "#f57e7e", "#efb5a3"], "g": {"r": 29, "s": 1}}, {"id": "pervenche", "name": "Pervenche", "sw": ["#17193a", "#4d5198", "#81b7d2", "#ffcce7"], "g": {"r": -131, "s": 1}}, {"id": "pop", "name": "Pop", "sw": ["#240d22", "#d13ca4", "#ffea04", "#fe3a9e"], "g": {"r": 83, "s": 1}}];
 const THEME_STORAGE_KEY = 'minidisc_theme';
+const THEME_DAILY_KEY = 'minidisc_theme_daily';   // '1' : un thème différent chaque jour
+
+// Thème du jour : les thèmes sont tirés au sort par « cycles » (tous les thèmes passent une fois avant de se répéter),
+// donc deux jours de suite n'ont jamais le même thème. Le résultat ne dépend que de la date : stable toute la journée.
+function themeOrderForCycle(cycle) {
+  const ids = THEMES.map(t => t.id);
+  let h = cyrb53('minidisc-theme-cycle-' + cycle) % 233280;
+  const rnd = () => { h = (h * 9301 + 49297) % 233280; return h / 233280; };
+  for (let i = ids.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+  }
+  return ids;
+}
+function dailyThemeId(date) {
+  const d = date || new Date();
+  const n = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+  const N = THEMES.length;
+  const cycle = Math.floor(n / N), pos = n % N;
+  const order = themeOrderForCycle(cycle);
+  if (N > 2) { // début de cycle : jamais le même thème que la veille (la correction vaut pour tout le cycle)
+    const prevLast = themeOrderForCycle(cycle - 1)[N - 1];
+    if (order[0] === prevLast) [order[0], order[1]] = [order[1], order[0]];
+  }
+  return order[pos];
+}
+function isDailyThemeOn() {
+  try { return localStorage.getItem(THEME_DAILY_KEY) === '1'; } catch (e) { return false; }
+}
 
 // Appliqué dès le chargement du script, avant tout affichage, pour éviter un flash aux couleurs par défaut
 (function applySavedTheme() {
   try {
-    const id = localStorage.getItem(THEME_STORAGE_KEY);
+    const id = isDailyThemeOn() ? dailyThemeId() : localStorage.getItem(THEME_STORAGE_KEY);
     if (id && id !== 'default' && THEMES.some(t => t.id === id)) document.documentElement.setAttribute('data-theme', id);
   } catch (e) { /* stockage indisponible : thème par défaut */ }
 })();
@@ -1792,7 +1821,7 @@ if (!md.albums || md.albums.length === 0) {
 
   const coverHTML = createLoadingCoverHTML(md.md_cover, 'ad-cover-fill');
   const isKnownValue = (v) => v && String(v).trim() && String(v).trim().toLowerCase() !== 'unknow' && String(v).trim().toLowerCase() !== 'unknown';
-  const metaLine = [md.release_year, md.duration].filter(isKnownValue).join(' · ');
+  const metaLine = [md.release_year, formatDurationHMS(md.duration)].filter(isKnownValue).join(' · ');
 
   app.innerHTML = titlesPageHTML({
     color: borderColor,
@@ -1868,7 +1897,7 @@ function titlesKnown(v) {
 function titlesFactsHTML(year, duration) {
   const facts = [];
   if (titlesKnown(year)) facts.push(mbEscapeHTML(String(year)));
-  if (titlesKnown(duration)) facts.push(`⏱ ${mbEscapeHTML(String(duration))}`);
+  if (titlesKnown(duration)) facts.push(`⏱ ${mbEscapeHTML(formatDurationHMS(duration))}`);
   return facts.join(' · ');
 }
 
@@ -2014,7 +2043,7 @@ window.addEventListener('resize', () => {
 
 /* ---------- Compléments Last.fm / MusicBrainz ---------- */
 const TD = { token: 0, auto: null };
-const titlesSecondsToDuration = sec => `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, '0')}`;
+const titlesSecondsToDuration = sec => formatDurationFromSeconds(sec);
 
 // Albums « Divers » (souvent des OST) : on cherche l'album par son titre. On n'accepte un résultat que si le titre
 // correspond exactement et que le résultat est « Various Artists » ou le seul candidat (sinon : trop risqué).
@@ -2185,8 +2214,7 @@ async function titlesLoadExtras(ctx) {
     return note('td-desc', infoErr.code === 'nokey' ? 'Description indisponible (clé Last.fm manquante).' : lead(infoErr) + 'description indisponible.');
   }
   const wiki = info && info.wiki;
-  let text = adHtmlToText((wiki && (wiki.summary || wiki.content)) || '');
-  if (text.length > 1500) text = (text.slice(0, 1500).match(/^[\s\S]*[.!?](?=\s|$)/) || [text.slice(0, 1500)])[0];
+  const text = adWikiText(wiki);
   if (!text) return various ? hide('td-desc-sec') : note('td-desc', 'Aucune description disponible pour cet album.');
   const done = fr => {
     if (!alive()) return;
@@ -2293,7 +2321,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
 
   const coverHTML = createLoadingCoverHTML(album.md_cover, 'ad-cover-fill');
   const isKnownAlbumValue = (v) => v && String(v).trim() && String(v).trim().toLowerCase() !== 'unknow' && String(v).trim().toLowerCase() !== 'unknown';
-  const albumMetaLine = [album.release_year, album.duration].filter(isKnownAlbumValue).join(' · ');
+  const albumMetaLine = [album.release_year, formatDurationHMS(album.duration)].filter(isKnownAlbumValue).join(' · ');
 
   app.innerHTML = titlesPageHTML({
     color: albumColor,
@@ -2458,7 +2486,7 @@ function openAdminModal(indexToEdit = null) {
       if (document.getElementById('compil-genre')) document.getElementById('compil-genre').value = md.main_genre || '';
       if (document.getElementById('compil-tags')) document.getElementById('compil-tags').value = (md.tags || []).join(', ');
       if (document.getElementById('compil-year')) document.getElementById('compil-year').value = md.release_year || '';
-      if (document.getElementById('compil-duration')) document.getElementById('compil-duration').value = md.duration || '';
+      if (document.getElementById('compil-duration')) document.getElementById('compil-duration').value = formatDurationHMS(md.duration);
       document.getElementById('compil-tracks').value = md.tracks ? md.tracks.join('\n') : '';
       if (document.getElementById('compil-description')) document.getElementById('compil-description').value = md.description || '';
       if (document.getElementById('compil-to-record')) {
@@ -2473,7 +2501,7 @@ function openAdminModal(indexToEdit = null) {
         block.querySelector('.album-genre').value = album.main_genre || '';
         block.querySelector('.album-tags').value = (album.tags || []).join(', ');
         block.querySelector('.album-year').value = album.release_year || '';
-        if (block.querySelector('.album-duration')) block.querySelector('.album-duration').value = album.duration || '';
+        if (block.querySelector('.album-duration')) block.querySelector('.album-duration').value = formatDurationHMS(album.duration);
         block.querySelector('.album-tracks').value = album.tracks ? album.tracks.join('\n') : '';
         if (block.querySelector('.album-description')) block.querySelector('.album-description').value = album.description || '';
         if (block.querySelector('.album-to-record')) {
@@ -2659,7 +2687,7 @@ async function submitNewMD(e) {
     targetMD.main_genre = mainGenre;
     targetMD.tags = parseTagsInput(document.getElementById('compil-tags') ? document.getElementById('compil-tags').value : '');
     targetMD.release_year = document.getElementById('compil-year') ? document.getElementById('compil-year').value.trim() : '';
-    targetMD.duration = document.getElementById('compil-duration') ? document.getElementById('compil-duration').value.trim() : '';
+    targetMD.duration = document.getElementById('compil-duration') ? formatDurationHMS(document.getElementById('compil-duration').value) : '';
 
     const rawTracks = document.getElementById('compil-tracks').value.split('\n');
     targetMD.tracks = rawTracks.map(t => t.trim()).filter(t => t !== '');
@@ -2720,7 +2748,7 @@ async function submitNewMD(e) {
         main_genre: albumMainGenre,
         tags: albumTags,
         release_year: block.querySelector('.album-year').value.trim(),
-        duration: block.querySelector('.album-duration') ? block.querySelector('.album-duration').value.trim() : '',
+        duration: block.querySelector('.album-duration') ? formatDurationHMS(block.querySelector('.album-duration').value) : '',
         tracks: formattedTracks,
         toRecord: block.querySelector('.album-to-record') ? block.querySelector('.album-to-record').checked : false
       };
@@ -2772,6 +2800,23 @@ async function submitNewMD(e) {
    PLANIFICATEUR DE COMPILATION & IDÉES
    ========================================== */
 
+// Capacité du MiniDisc : 74 min (2h 28m en stéréo, 2 faces) ou 80 min (2h 40m). Réglage mémorisé sur l'appareil.
+const PLANNER_CAPACITY_KEY = 'minidisc_planner_capacity';
+let plannerCapacityMin = (() => {
+  try { return localStorage.getItem(PLANNER_CAPACITY_KEY) === '80' ? 80 : 74; } catch (e) { return 74; }
+})();
+function plannerMaxSeconds() { return plannerCapacityMin * 2 * 60; }
+function plannerMaxLabel() {
+  const min = plannerCapacityMin * 2;
+  return `${Math.floor(min / 60)}h ${String(min % 60).padStart(2, '0')}m`;
+}
+function togglePlannerCapacity() {
+  plannerCapacityMin = plannerCapacityMin === 74 ? 80 : 74;
+  try { localStorage.setItem(PLANNER_CAPACITY_KEY, String(plannerCapacityMin)); } catch (e) { /* valable jusqu'à la fermeture de l'appli */ }
+  updatePlannerHeader();
+  showToast(`MiniDisc ${plannerCapacityMin} min : ${plannerMaxLabel()} maximum`);
+}
+
 function getIdeaList() {
   if (!catalogData) return [];
   if (!window.ideaAlbums) window.ideaAlbums = [];
@@ -2779,8 +2824,12 @@ function getIdeaList() {
 }
 
 function parseTimeToSeconds(timeStr) {
-  if (!timeStr) return 0;
-  const parts = timeStr.toString().trim().split(':').map(Number);
+  if (timeStr == null || timeStr === '') return 0;
+  const s = timeStr.toString().trim().toLowerCase();
+  // « 2h25 », « 2h 27m », « 1h », « 1h05m30s »
+  const hm = s.match(/^(\d+)\s*h\s*(\d{1,2})?\s*(?:m(?:in)?)?\s*(?:(\d{1,2})\s*s?)?$/);
+  if (hm) return (+hm[1]) * 3600 + (+(hm[2] || 0)) * 60 + (+(hm[3] || 0));
+  const parts = s.split(':').map(Number);
   if (parts.some(isNaN)) return 0;
 
   if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
@@ -2789,15 +2838,28 @@ function parseTimeToSeconds(timeStr) {
   return 0;
 }
 
+// Format d'affichage unique des durées dans toute l'appli : « 1:16:32 » à partir d'une heure, « 36:25 » en dessous
+function formatDurationFromSeconds(totalSec) {
+  const total = Math.max(0, Math.round(Number(totalSec) || 0));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const pad = n => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
+
+// Normalise une durée saisie ou stockée (« 76:32 », « 2h25 », « 1:16:32 »...). Valeur non reconnue (« Unknow », vide) : renvoyée telle quelle.
+function formatDurationHMS(value) {
+  const raw = String(value == null ? '' : value).trim();
+  if (!raw) return '';
+  const sec = parseTimeToSeconds(raw);
+  return sec > 0 ? formatDurationFromSeconds(sec) : raw;
+}
+
 // Durée d'un album dans le planificateur : "1:03:29" à partir d'une heure, "36:25" en dessous
 // (ex: "63:29" -> "1:03:29", "36:25" -> "36:25")
 function formatPlannerDuration(timeStr) {
-  const total = parseTimeToSeconds(timeStr);
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const sec = total % 60;
-  const pad = n => String(n).padStart(2, '0');
-  return h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${m}:${pad(sec)}`;
+  return formatDurationFromSeconds(parseTimeToSeconds(timeStr));
 }
 
 function formatSecondsToDisplay(totalSec) {
@@ -2816,7 +2878,7 @@ function updatePlannerHeader() {
   const selectedListEl = document.getElementById('planner-selected-list');
   
   const ideas = getIdeaList();
-  const maxSeconds = 148 * 60; // 2h 28m
+  const maxSeconds = plannerMaxSeconds();
   let totalSeconds = 0;
 
   if (typeof selectedIdeaIndices === 'undefined') window.selectedIdeaIndices = new Set();
@@ -2843,7 +2905,9 @@ function updatePlannerHeader() {
 
   if (durationTextEl) {
     durationTextEl.style.color = totalSeconds > maxSeconds ? '#e63946' : '#06d6a0';
-    durationTextEl.textContent = `${formatSecondsToDisplay(totalSeconds)} / 2h 28m`;
+    durationTextEl.textContent = `${formatSecondsToDisplay(totalSeconds)} / ${plannerMaxLabel()}`;
+    const capEl = document.getElementById('planner-capacity-label');
+    if (capEl) capEl.textContent = `${plannerCapacityMin}min`;
   }
 
   // Boutons flottants « Réinitialiser » / « Convertir » : visibles seulement quand au moins un album est sélectionné
@@ -2894,9 +2958,15 @@ function injectPlannerHeaderBadge() {
   `;
   
   badge.innerHTML = `
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px;">
       <span style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Durée sélectionnée :</span>
-      <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / 2h 28m</strong>
+      <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+        <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / ${plannerMaxLabel()}</strong>
+        <span class="planner-capacity" title="Capacité du MiniDisc (touche pour passer de 74 à 80 min)">
+          <span id="planner-capacity-label">${plannerCapacityMin}min</span>
+          <button type="button" class="planner-capacity-btn" onclick="togglePlannerCapacity()" aria-label="Changer la capacité du MiniDisc (74 ou 80 min)">🔄</button>
+        </span>
+      </div>
     </div>
     <div id="planner-selected-list" style="display: none; border-top: 1.5px dashed rgba(255, 255, 255, 0.25); padding-top: 6px; max-height: 100px; overflow-y: auto; font-size: 0.78rem;"></div>
   `;
@@ -3237,7 +3307,6 @@ function deleteIdeaFromSettings() {
    atteignables entre ce plancher et le meilleur remplissage possible du genre (et non parmi les seules
    combinaisons les plus optimisées).
    ========================================== */
-const PLANNER_MAX_SECONDS = 148 * 60;   // capacité d'un MiniDisc
 const RANDOM_COMPIL_MIN_FILL = 0.77;    // durée minimale d'une proposition : 77 % d'un MiniDisc
 let lastRandomCompil = { genre: '', key: '' };
 
@@ -3270,7 +3339,7 @@ function createRandomCompilation() {
   const ideas = getIdeaList();
   const items = ideas
     .map((item, index) => ({ index, sec: parseTimeToSeconds(item.duration), genres: getItemGenresList(item) }))
-    .filter(x => x.sec > 0 && x.sec <= PLANNER_MAX_SECONDS && x.genres.length > 0);
+    .filter(x => x.sec > 0 && x.sec <= plannerMaxSeconds() && x.genres.length > 0);
 
   if (items.length === 0) {
     showToast("⚠️ Aucune idée avec une durée renseignée");
@@ -3285,9 +3354,9 @@ function createRandomCompilation() {
   }));
 
   // Genres capables de bien remplir un MiniDisc (au moins 77 % ; sinon les meilleurs disponibles)
-  const scored = Array.from(byGenre.entries()).map(([genre, pool]) => ({ genre, pool, best: plannerSubsetSums(pool, PLANNER_MAX_SECONDS).best }));
+  const scored = Array.from(byGenre.entries()).map(([genre, pool]) => ({ genre, pool, best: plannerSubsetSums(pool, plannerMaxSeconds()).best }));
   const overall = Math.max(...scored.map(g => g.best));
-  const good = scored.filter(g => g.best >= RANDOM_COMPIL_MIN_FILL * PLANNER_MAX_SECONDS);
+  const good = scored.filter(g => g.best >= RANDOM_COMPIL_MIN_FILL * plannerMaxSeconds());
   let choices = good.length > 0 ? good : scored.filter(g => g.best >= 0.9 * overall);
   const others = choices.filter(g => g.genre !== lastRandomCompil.genre); // variété d'un appui à l'autre
   if (others.length > 0) choices = others;
@@ -3298,9 +3367,9 @@ function createRandomCompilation() {
   let chosen = [];
   let total = 0;
   let key = '';
-  const floorSeconds = Math.round(RANDOM_COMPIL_MIN_FILL * PLANNER_MAX_SECONDS);
+  const floorSeconds = Math.round(RANDOM_COMPIL_MIN_FILL * plannerMaxSeconds());
   for (let attempt = 0; attempt < 8; attempt++) {
-    const { order, parent, best } = plannerSubsetSums(picked.pool, PLANNER_MAX_SECONDS);
+    const { order, parent, best } = plannerSubsetSums(picked.pool, plannerMaxSeconds());
     const targets = [];
     for (let sum = Math.max(1, Math.min(floorSeconds, best)); sum <= best; sum++) {
       if (parent[sum] !== -2) targets.push(sum);
@@ -3317,7 +3386,7 @@ function createRandomCompilation() {
   currentPlannerGenreFilters.clear();
   currentPlannerGenreFilters.add(picked.genre); // on n'affiche que les idées du genre tiré
   renderCompilPlanner(false);
-  showToast(`🎲 ${picked.genre} · ${formatSecondsToDisplay(total)} / 2h 28m · ${chosen.length} album${chosen.length > 1 ? 's' : ''}`, 4500);
+  showToast(`🎲 ${picked.genre} · ${formatSecondsToDisplay(total)} / ${plannerMaxLabel()} · ${chosen.length} album${chosen.length > 1 ? 's' : ''}`, 4500);
 }
 
 function clearIdeaSelection() {
@@ -3403,13 +3472,15 @@ function closeIdeaModal() {
 
 async function saveIdeaAlbum(e) {
   if (e) e.preventDefault();
+  if (ideaDescPending) { try { await ideaDescPending; } catch (err) { /* sans description */ } }
   const title = document.getElementById('idea-title').value.trim();
   const artist = document.getElementById('idea-artist').value.trim();
   const main_genre = document.getElementById('idea-genre').value;
   const tags = (document.getElementById('idea-tags').value || '').split(',').map(t => t.trim()).filter(Boolean);
   const release_year = document.getElementById('idea-year').value.trim();
-  const duration = document.getElementById('idea-duration').value.trim();
+  const duration = formatDurationHMS(document.getElementById('idea-duration').value);
   const tracks = (document.getElementById('idea-tracks').value || '').split('\n').map(t => t.trim()).filter(Boolean);
+  const description = ((document.getElementById('idea-description') || {}).value || '').trim();
   const coverInput = document.getElementById('idea-cover');
 
   if (!main_genre) {
@@ -3441,6 +3512,7 @@ async function saveIdeaAlbum(e) {
     tracks,
     toRecord: false,
   };
+  if (description) newIdea.description = description;
 
   if (!window.ideaAlbums) window.ideaAlbums = [];
   window.ideaAlbums.push(newIdea);
@@ -3478,6 +3550,7 @@ function createMDFromIdeas(indices, coverPath) {
       release_year: a.release_year || '',
       duration: a.duration || '',
       tracks: a.tracks || [],
+      ...(a.description ? { description: a.description } : {}),
       toRecord: true, // un MiniDisc créé depuis des idées reste à enregistrer
     };
   });
@@ -3488,7 +3561,8 @@ function createMDFromIdeas(indices, coverPath) {
     const alb = albums[0];
     newMD = {
       id: mdId, md_cover: coverPath, title: alb.title, artist: alb.artist, main_genre: alb.main_genre,
-      tags: alb.tags, release_year: alb.release_year, duration: alb.duration, tracks: alb.tracks, toRecord: alb.toRecord
+      tags: alb.tags, release_year: alb.release_year, duration: alb.duration, tracks: alb.tracks, toRecord: alb.toRecord,
+      ...(alb.description ? { description: alb.description } : {})
     };
   } else {
     newMD = { id: mdId, md_cover: coverPath, title: albums.map(a => a.title).filter(Boolean).join(' / '), albums };
@@ -3830,36 +3904,36 @@ async function applyItunesResult(index) {
     // Édition d'origine en premier : c'est sa liste de pistes et sa durée qu'on veut
     const releases = (relData.releases || []).slice().sort(mbCompareReleases);
 
+    // BUG corrigé : on ne lisait que le 1er disque (ex. Mellon Collie : 56 min au lieu de 2h14).
+    // On rassemble maintenant les pistes de TOUS les disques de l'édition, et on préfère une édition dont
+    // chaque piste a une durée connue (sinon la somme serait fausse).
+    const trackMs = t => t.length || (t.recording ? t.recording.length : 0) || 0;
     let tracks = [];
-    
+    let fallbackTracks = [];
     for (const rel of releases) {
-      if (rel.media && rel.media.length > 0) {
-        for (const m of rel.media) {
-          if (m.tracks && m.tracks.length > 0) {
-            tracks = m.tracks;
-            break;
-          }
-        }
-      }
-      if (tracks.length > 0) break;
+      const relTracks = (rel.media || []).flatMap(m => m.tracks || []);
+      if (!relTracks.length) continue;
+      if (relTracks.every(t => trackMs(t) > 0)) { tracks = relTracks; break; }
+      if (!fallbackTracks.length) fallbackTracks = relTracks;
     }
+    const durationComplete = tracks.length > 0;
+    if (!durationComplete) tracks = fallbackTracks;
 
     if (tracks.length > 0) {
       document.getElementById('idea-tracks').value = tracks
         .map(t => t.title)
         .join('\n');
 
-      const totalMs = tracks.reduce((sum, t) => {
-        const length = t.length || (t.recording ? t.recording.length : 0) || 0;
-        return sum + length;
-      }, 0);
+      const totalMs = tracks.reduce((sum, t) => sum + trackMs(t), 0);
 
-      if (totalMs > 0) {
+      if (durationComplete && totalMs > 0) {
         document.getElementById('idea-duration').value = formatMillisToDuration(totalMs);
+        showToast("✅ Infos et pistes récupérées !");
       } else {
+        // Durées de pistes incomplètes : mieux vaut un champ vide qu'une durée fausse
         document.getElementById('idea-duration').value = '';
+        showToast("⚠️ Pistes récupérées, mais durée incomplète : à renseigner à la main.");
       }
-      showToast("✅ Infos et pistes récupérées !");
     } else {
       showToast("⚠️ Album trouvé, mais aucune liste de pistes renseignée.");
     }
@@ -3873,12 +3947,7 @@ async function applyItunesResult(index) {
 }
 
 function formatMillisToDuration(ms) {
-  const totalSeconds = Math.round(ms / 1000);
-  const h = Math.floor(totalSeconds / 3600);
-  const m = Math.floor((totalSeconds % 3600) / 60);
-  const s = totalSeconds % 60;
-  const pad = (n) => String(n).padStart(2, '0');
-  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+  return formatDurationFromSeconds(Math.round(ms / 1000));
 }
 
 // Tente de transférer une image distante (URL iTunes) vers le dossier images/ du dépôt GitHub,
@@ -4426,8 +4495,11 @@ function adAddToIdeas() {
   if (AD.current) discoverAddItemToIdeas(AD.current);
 }
 
+let ideaDescPending = null;   // promesse de la description en cours de récupération (l'enregistrement l'attend)
+
 async function discoverAddItemToIdeas(r) {
   openIdeaModal();
+  ideaDescPending = null;
   const set = (id, value) => {
     const el = document.getElementById(id);
     if (el) el.value = value;
@@ -4448,6 +4520,18 @@ async function discoverAddItemToIdeas(r) {
       onerror="this.onerror=null; if (this.parentElement) this.parentElement.innerHTML='<div style=\\'font-size:0.7rem; color:var(--text-sub);\\'>Pochette indisponible</div>';">`;
   }
 
+  // Description COMPLÈTE : reprise de la fiche Détails si on en vient, sinon récupérée ici (Last.fm, traduite)
+  const fromDetail = !!(AD.detail && AD.detail.item === r);
+  const detailSnapshot = fromDetail ? AD.detail : null;
+  const descSource = fromDetail
+    ? (detailSnapshot.descPromise || Promise.resolve(detailSnapshot.description || ''))
+    : adAlbumInfo(r).then(adFrenchDescription);
+  const descTask = Promise.resolve(descSource).then(txt => {
+    const el = document.getElementById('idea-description');
+    if (el && txt && !el.value.trim()) el.value = txt;
+  }).catch(err => console.warn('Description indisponible', err));
+  ideaDescPending = descTask;
+
   // Pistes et durée : depuis MusicBrainz (on retrouve l'album si besoin)
   showToast("⏳ Récupération des pistes et de la durée...");
   let group = r.mbGroup || null;
@@ -4467,6 +4551,13 @@ async function discoverAddItemToIdeas(r) {
     if (genre && !document.getElementById('idea-genre').value) set('idea-genre', genre);
   } else {
     showToast("⚠️ Album introuvable sur MusicBrainz : complète la durée et les pistes à la main.");
+  }
+
+  // Durée identique à celle affichée sur la fiche Détails (même source, même somme de TOUTES les pistes)
+  if (detailSnapshot && detailSnapshot.total > 0) {
+    set('idea-duration', formatDurationFromSeconds(detailSnapshot.total));
+    const tracksEl = document.getElementById('idea-tracks');
+    if (tracksEl && !tracksEl.value.trim() && detailSnapshot.tracks.length) tracksEl.value = detailSnapshot.tracks.map(t => t.name).join('\n');
   }
 }
 
@@ -4529,16 +4620,51 @@ function themeTilesHTML() {
     </button>`).join('');
 }
 
-function selectTheme(id) {
+// Applique un thème à l'écran (sans rien enregistrer)
+function applyTheme(id) {
   const theme = THEMES.find(t => t.id === id);
-  if (!theme) return;
+  if (!theme) return null;
   if (id === 'default') document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme', id);
-  try { localStorage.setItem(THEME_STORAGE_KEY, id); } catch (e) { /* non enregistré : valable jusqu'à la fermeture de l'appli */ }
   themedGenreCache.clear();
   document.querySelectorAll('.theme-tile').forEach(b => b.classList.toggle('selected', b.dataset.themeId === id));
-  showToast(`Thème « ${theme.name} » appliqué`);
+  return theme;
 }
+
+// Choix manuel d'un thème : il remplace le mode « thème du jour »
+function selectTheme(id) {
+  const theme = applyTheme(id);
+  if (!theme) return;
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, id);
+    localStorage.setItem(THEME_DAILY_KEY, '0');
+  } catch (e) { /* non enregistré : valable jusqu'à la fermeture de l'appli */ }
+  const box = document.getElementById('theme-daily-toggle');
+  const wasDaily = box && box.checked;
+  if (box) box.checked = false;
+  showToast(wasDaily ? `Thème « ${theme.name} » appliqué (thème du jour désactivé)` : `Thème « ${theme.name} » appliqué`);
+}
+
+// Case « Un thème différent chaque jour »
+function toggleDailyTheme(on) {
+  try { localStorage.setItem(THEME_DAILY_KEY, on ? '1' : '0'); } catch (e) { /* valable jusqu'à la fermeture de l'appli */ }
+  if (on) {
+    const theme = applyTheme(dailyThemeId());
+    if (theme) showToast(`🎲 Thème du jour : « ${theme.name} »`);
+  } else {
+    let saved = 'default';
+    try { saved = localStorage.getItem(THEME_STORAGE_KEY) || 'default'; } catch (e) { /* thème par défaut */ }
+    const theme = applyTheme(THEMES.some(t => t.id === saved) ? saved : 'default');
+    if (theme) showToast(`Thème « ${theme.name} » rétabli`);
+  }
+}
+
+// Si l'appli reste ouverte au-delà de minuit, le thème change au retour sur la page
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden || !isDailyThemeOn()) return;
+  const id = dailyThemeId();
+  if (id !== currentThemeId()) applyTheme(id);
+});
 
 // Entrée du menu : titre à gauche, flèche à droite, une phrase de description dessous
 function settingsEntryHTML(title, description, onclick) {
@@ -4572,6 +4698,9 @@ function renderSettingsAppearance() {
       <section class="settings-card list-item">
         <p class="settings-help">Choisis le thème de l'appli : les fonds, les accents et les couleurs des genres s'adaptent au thème. Les jaquettes ne changent pas. Ce choix est propre à cet appareil.</p>
         <div class="theme-grid">${themeTilesHTML()}</div>
+        <div class="form-group theme-daily">
+          <label class="dc-check"><input type="checkbox" id="theme-daily-toggle" ${isDailyThemeOn() ? 'checked' : ''} onchange="toggleDailyTheme(this.checked)"><span>🎲 Un thème différent chaque jour (tiré au sort)</span></label>
+        </div>
       </section>
     </div>`;
 }
@@ -5496,7 +5625,7 @@ function discoverAlbumHTML(r) {
    Jaquette, titre, artiste, puis date, durée, description (traduite en français si besoin), tags, tracklist et
    3 albums similaires. Données : Last.fm (album.getInfo, artist.getSimilar), MusicBrainz en complément.
    ========================================== */
-const AD = { token: 0, similar: [], current: null };
+const AD = { token: 0, similar: [], current: null, detail: null };
 
 function discoverOpenAlbum(event, idx) {
   if (event.target.closest('button, a')) return; // « Ajouter aux idées », ▶ : ils gardent leur rôle
@@ -5524,13 +5653,11 @@ function adFormatDate(date, year) {
 }
 
 function adFormatTotal(sec) {
-  if (!sec) return '';
-  const min = Math.round(sec / 60);
-  return min >= 60 ? `${Math.floor(min / 60)} h ${String(min % 60).padStart(2, '0')} min` : `${min} min`;
+  return sec ? formatDurationFromSeconds(sec) : '';
 }
 
 function adFormatTrack(sec) {
-  return sec > 0 ? `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, '0')}` : '';
+  return sec > 0 ? formatDurationFromSeconds(sec) : '';
 }
 
 function adHtmlToText(html) {
@@ -5577,6 +5704,21 @@ async function adToFrench(text) {
   return result;
 }
 
+// Texte de la description Last.fm : on prend le texte COMPLET (« content »). Le « summary » n'en est qu'un extrait
+// coupé par Last.fm ; il ne sert que si le texte complet est absent.
+function adWikiText(wiki) {
+  if (!wiki) return '';
+  return adHtmlToText(wiki.content || '') || adHtmlToText(wiki.summary || '');
+}
+
+// Description complète en français (traduite si besoin) ; texte d'origine si la traduction échoue
+async function adFrenchDescription(info) {
+  const text = adWikiText(info && info.wiki);
+  if (!text) return '';
+  if (adLooksFrench(text)) return text;
+  try { return await adToFrench(text); } catch (err) { return text; }
+}
+
 // Infos Last.fm de l'album. La description (« wiki ») n'existe pas toujours dans la langue demandée : on la cherche
 // en français puis en anglais, avec le titre exact puis le titre sans sa mention entre parenthèses.
 async function adAlbumInfo(r) {
@@ -5594,7 +5736,7 @@ async function adAlbumInfo(r) {
       const a = data && data.album;
       if (!a) continue;
       if (!base) base = a;
-      if (a.wiki && adHtmlToText(a.wiki.summary || a.wiki.content || '')) { wiki = a.wiki; break; }
+      if (a.wiki && adWikiText(a.wiki)) { wiki = a.wiki; break; }
     }
     if (wiki) break;
   }
@@ -5703,15 +5845,18 @@ async function loadAlbumDetail(r, token) {
 
   // Pistes et durée
   let tracks = asArray(info && info.tracks && info.tracks.track).map(t => ({ name: t.name, seconds: parseInt(t.duration, 10) || 0 }));
-  let total = tracks.reduce((n, t) => n + t.seconds, 0);
+  // La durée n'est fiable que si CHAQUE piste a une durée (sinon la somme serait trop courte)
+  const isComplete = list => list.length > 0 && list.every(t => t.seconds > 0);
+  let total = isComplete(tracks) ? tracks.reduce((n, t) => n + t.seconds, 0) : 0;
   if ((tracks.length === 0 || total === 0) && mbid) {
     try {
       const mbTracks = await adMbTracks(mbid);
       if (tracks.length === 0) tracks = mbTracks;
-      total = mbTracks.reduce((n, t) => n + t.seconds, 0) || total;
+      if (isComplete(mbTracks)) total = mbTracks.reduce((n, t) => n + t.seconds, 0);
     } catch (err) { /* pistes non disponibles */ }
     if (!alive()) return;
   }
+  AD.detail = { item: r, total, tracks, description: '', descPromise: null };
 
   const facts = [];
   const dateLabel = adFormatDate(date, r.year);
@@ -5734,16 +5879,22 @@ async function loadAlbumDetail(r, token) {
       <li><span class="ad-n">${i + 1}</span><span class="ad-t">${mbEscapeHTML(t.name)}</span><span class="ad-d">${adFormatTrack(t.seconds)}</span></li>`).join('')}</ol>`);
   } else note('ad-tracks', 'Tracklist non disponible.');
 
-  // Description : en français (Last.fm la fournit parfois déjà), sinon traduite
-  const wiki = info && info.wiki;
-  let text = adHtmlToText((wiki && (wiki.summary || wiki.content)) || '');
-  if (text.length > 1500) text = (text.slice(0, 1500).match(/^[\s\S]*[.!?](?=\s|$)/) || [text.slice(0, 1500)])[0]; // texte long : on s'arrête à une fin de phrase
-  if (!text) return note('ad-desc', 'Aucune description disponible pour cet album.');
-  if (adLooksFrench(text)) return set('ad-desc', mbEscapeHTML(text));
+  // Description : en français (Last.fm la fournit parfois déjà), sinon traduite. Texte COMPLET (aucune coupure).
+  const detail = AD.detail;
+  let resolveDesc;
+  if (detail && detail.item === r) detail.descPromise = new Promise(res => { resolveDesc = res; });
+  const finishDesc = txt => { if (detail && detail.item === r) detail.description = txt || ''; if (resolveDesc) resolveDesc(txt || ''); };
+
+  const text = adWikiText(info && info.wiki);
+  if (!text) { finishDesc(''); return note('ad-desc', 'Aucune description disponible pour cet album.'); }
+  if (adLooksFrench(text)) { finishDesc(text); return set('ad-desc', mbEscapeHTML(text)); }
   note('ad-desc', '⏳ Traduction en cours…');
   try {
-    set('ad-desc', mbEscapeHTML(await adToFrench(text)));
+    const fr = await adToFrench(text);
+    finishDesc(fr);
+    set('ad-desc', mbEscapeHTML(fr));
   } catch (err) {
+    finishDesc(text);
     set('ad-desc', `${mbEscapeHTML(text)}<div class="ad-note">(Traduction indisponible : texte original en anglais.)</div>`);
   }
 }
