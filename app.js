@@ -1582,7 +1582,7 @@ function renderDashboard(pushState = true) {
         </button>
         <div class="action-col">
           <button class="action-btn-wide action-btn-add" onclick="openAdminModal()">
-            ＋ Ajouter un MD
+            Ajouter un MD
           </button>
           <button class="action-btn-wide action-btn-settings" onclick="goToSettings()">
             Paramètres
@@ -2960,7 +2960,7 @@ function injectPlannerHeaderBadge() {
   badge.innerHTML = `
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px;">
       <span style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Durée sélectionnée :</span>
-      <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+      <div style="display: flex; align-items: baseline; gap: 8px; margin-left: auto;">
         <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / ${plannerMaxLabel()}</strong>
         <span class="planner-capacity" title="Capacité du MiniDisc (touche pour passer de 74 à 80 min)">
           <span id="planner-capacity-label">${plannerCapacityMin}min</span>
@@ -3043,6 +3043,7 @@ function renderCompilPlanner(pushState = true) {
         return `
           <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
             ${coverHTML}
+            <span class="idea-cd" aria-hidden="true"></span>
             <div class="idea-info">
               <div class="idea-title">${item.title || 'Sans titre'}</div>
               <div class="idea-meta">
@@ -4248,7 +4249,8 @@ const DISCOVER_GENRE_TAGS = {
 
 const VARIOUS_ARTISTS_REGEX = /^(divers|various|various artists|artistes? divers|va|compilation)$/i;
 
-const DISCOVER_DEFAULTS = { artist: '', genre: '', tag: '', yearFrom: '', yearTo: '', sort: 'recommended', hideOwned: true };
+const DISCOVER_DEFAULTS = { kind: 'artist', artist: '', album: '', genre: '', tag: '', yearFrom: '', yearTo: '', sort: 'recommended', hideOwned: false };
+const DISCOVER_OTHER_ALBUMS = 5;           // « Autres albums de l'artiste » : nombre d'albums affichés (recherche par album)
 
 const discoverState = {
   criteria: { ...DISCOVER_DEFAULTS },
@@ -4267,6 +4269,10 @@ const discoverState = {
   pendingDisco: '',     // artiste dont la discographie s'ouvrira dès que la clé Last.fm sera enregistrée
   startArtist: '',
   searchedArtist: null, // l'artiste recherché lui-même, affiché avant ses artistes similaires
+  kindRun: 'artist',    // type de la recherche affichée : 'artist' | 'album'
+  searchedAlbum: null,  // recherche par album : l'album retrouvé { artist, title, image }
+  otherAlbums: null,    // recherche par album : autres albums de l'artiste (null = en cours de chargement)
+  albumItems: [],       // recherche par album : albums affichés (cible des boutons « Détails » / « Ajouter aux idées »)
   formOpen: true,       // le formulaire se replie une fois la recherche lancée
   view: 'results',      // 'results' | 'disco' (discographie complète d'un artiste)
   disco: null,          // { artist, mbid, items, open, loading, status }
@@ -4483,9 +4489,14 @@ function discoverCoverError(img) {
   img.style.display = 'none';
 }
 
+// 'd' = discographie complète d'un artiste ; 'a' = albums de la recherche par album
+function discoverListByName(listName) {
+  if (listName === 'a') return discoverState.albumItems || [];
+  return discoverState.disco ? discoverState.disco.items : [];
+}
+
 async function discoverAddToIdeas(listName, idx) {
-  const list = listName === 'd' ? (discoverState.disco ? discoverState.disco.items : []) : discoverState.results;
-  const r = list[idx];
+  const r = discoverListByName(listName)[idx];
   if (!r) return;
   return discoverAddItemToIdeas(r);
 }
@@ -5085,9 +5096,9 @@ function discoverArtistNames() {
 }
 
 /* ---------- Suggestions d'artistes (liste maison, placée SOUS le champ) ---------- */
-function discoverSuggest() {
-  const input = document.getElementById('dc-artist');
-  const box = document.getElementById('dc-suggest');
+function discoverSuggest(inputId = 'dc-artist', boxId = 'dc-suggest') {
+  const input = document.getElementById(inputId);
+  const box = document.getElementById(boxId);
   if (!input || !box) return;
 
   const query = mbNormalize(input.value);
@@ -5100,21 +5111,21 @@ function discoverSuggest() {
     return;
   }
   box.innerHTML = names.map(n =>
-    `<button type="button" class="dc-suggest-item" data-name="${mbEscapeHTML(n)}" onpointerdown="event.preventDefault(); discoverPickSuggestion(this.dataset.name)">${mbEscapeHTML(n)}</button>`
+    `<button type="button" class="dc-suggest-item" data-name="${mbEscapeHTML(n)}" data-input="${inputId}" data-box="${boxId}" onpointerdown="event.preventDefault(); discoverPickSuggestion(this.dataset.name, this.dataset.input, this.dataset.box)">${mbEscapeHTML(n)}</button>`
   ).join('');
   box.classList.remove('hidden');
 }
 
-function discoverHideSuggestSoon() {
+function discoverHideSuggestSoon(boxId = 'dc-suggest') {
   setTimeout(() => {
-    const box = document.getElementById('dc-suggest');
+    const box = document.getElementById(boxId);
     if (box) box.classList.add('hidden');
   }, 150);
 }
 
-function discoverPickSuggestion(name) {
-  const input = document.getElementById('dc-artist');
-  const box = document.getElementById('dc-suggest');
+function discoverPickSuggestion(name, inputId = 'dc-artist', boxId = 'dc-suggest') {
+  const input = document.getElementById(inputId);
+  const box = document.getElementById(boxId);
   if (input) input.value = name;
   if (box) box.classList.add('hidden');
 }
@@ -5130,11 +5141,18 @@ function readDiscoverCriteria() {
     return el ? el.value : '';
   };
   const c = discoverState.criteria;
-  c.artist = val('dc-artist').trim();
-  c.genre = val('dc-genre');
-  c.tag = val('dc-tag').trim();
-  c.yearFrom = val('dc-year-from').trim();
-  c.yearTo = val('dc-year-to').trim();
+  if (c.kind === 'album') {
+    c.album = val('dc-album').trim();
+    c.artist = val('dc-album-artist').trim();
+  } else {
+    c.album = '';
+    c.artist = val('dc-artist').trim();
+  }
+  // Les « spécifications » (genre, tag, période) ne sont plus proposées dans le formulaire
+  c.genre = '';
+  c.tag = '';
+  c.yearFrom = '';
+  c.yearTo = '';
   readDiscoverViewOptions();
 }
 
@@ -5156,6 +5174,9 @@ function discoverResetResults() {
   s.view = 'results';
   s.disco = null;
   s.searchedArtist = null;
+  s.searchedAlbum = null;
+  s.otherAlbums = null;
+  s.albumItems = [];
 }
 
 async function startDiscoverSearch() {
@@ -5171,8 +5192,9 @@ async function startDiscoverSearch() {
     refreshDiscoverPage();
     return;
   }
-  if (!c.artist && !c.genre && !c.tag.trim()) {
-    showToast("⚠️ Indique un artiste, un genre ou un tag");
+  const isAlbum = c.kind === 'album';
+  if (isAlbum ? !c.album : !c.artist) {
+    showToast(isAlbum ? "⚠️ Indique le titre d'un album" : "⚠️ Indique un artiste");
     return;
   }
 
@@ -5184,12 +5206,24 @@ async function startDiscoverSearch() {
   s.running = true;
   s.pendingAuto = false;
   s.formOpen = false; // le formulaire se replie : il ne reste que le bandeau « Nouvelle recherche »
-  s.mode = c.artist ? 'similar' : 'tag';
+  s.mode = 'similar';
+  s.kindRun = isAlbum ? 'album' : 'artist';
   refreshDiscoverPage();
   window.scrollTo({ top: 0 });
 
   try {
-    const pool = s.mode === 'similar' ? await discoverPoolSimilar() : await discoverPoolTag();
+    if (isAlbum) {
+      // Album retrouvé sur Last.fm (titre et artiste exacts), puis ses artistes similaires comme pour une recherche d'artiste
+      const found = await discoverResolveAlbum(c.album, c.artist);
+      if (!discoverAlive(runId)) return;
+      c.artist = found.artist;
+      c.album = found.title;
+      s.searchedAlbum = found;
+      const nameEl = document.querySelector('#dc-banner .dc-banner-name');
+      if (nameEl) nameEl.textContent = found.title;
+      discoverFetchAlbumContext(runId); // autres albums de l'artiste, en parallèle
+    }
+    const pool = await discoverPoolSimilar();
     if (!discoverAlive(runId)) return;
     if (pool.length > 0) {
       await discoverEvaluatePool(pool, runId);
@@ -5207,6 +5241,64 @@ async function startDiscoverSearch() {
       renderDiscoverResults();
     }
   }
+}
+
+// Recherche par album : retrouve l'album sur Last.fm (titre et artiste exacts, même avec une faute ou sans artiste)
+async function discoverResolveAlbum(album, artist) {
+  const notFound = () => Object.assign(new Error('Album introuvable'), { code: 'noalbum' });
+  let found = null;
+  if (artist) {
+    try {
+      const data = await lastfmCall('album.getInfo', { artist, album });
+      const a = data && data.album;
+      if (a && a.name) found = { artist: a.artist || artist, title: a.name, image: lfmImage(a.image) };
+    } catch (err) {
+      if (isFatalDiscoverError(err)) throw err; // « album introuvable » : on tente la recherche libre
+    }
+  }
+  if (!found) {
+    const data = await lastfmCall('album.search', { album: artist ? `${album} ${artist}` : album, limit: 10 });
+    const list = asArray(data && data.results && data.results.albummatches && data.results.albummatches.album)
+      .filter(a => a && a.name && a.artist && !MB_PARASITE_REGEX.test(a.name));
+    const wanted = mbNormalize(artist);
+    const pick = (wanted && list.find(a => mbNormalize(a.artist) === wanted)) || list.find(a => isRealArtist(a.artist)) || list[0];
+    if (!pick) throw notFound();
+    found = { artist: pick.artist, title: pick.name, image: lfmImage(pick.image) };
+  }
+  if (!isRealArtist(found.artist)) throw Object.assign(new Error('Album de compilation'), { code: 'novarious' });
+  return found;
+}
+
+// Recherche par album : les autres albums (studio) de l'artiste, du plus écouté au moins écouté
+async function discoverFetchAlbumContext(runId) {
+  const s = discoverState;
+  const artistName = s.criteria.artist;
+  try {
+    const [top, info] = await Promise.all([
+      lastfmCall('artist.getTopAlbums', { artist: artistName, limit: 40 }),
+      lastfmCall('artist.getInfo', { artist: artistName }).catch(() => null),
+    ]);
+    if (!discoverAlive(runId)) return;
+    const tags = asArray(info && info.artist && info.artist.tags && info.artist.tags.tag).map(t => String(t.name).toLowerCase());
+    const mainGenre = discoverGuessGenre(tags) || '';
+    const skip = mbBaseTitle(s.criteria.album);
+    const seen = new Set([skip]);
+    const list = [];
+    asArray(top && top.topalbums && top.topalbums.album).forEach(al => {
+      const title = al.name;
+      if (!title || title === '(null)' || MB_PARASITE_REGEX.test(title)) return;
+      if (discoverSectionOfTitle(title)[0] !== 'albums') return; // ni live, ni compilation, ni EP
+      const key = mbBaseTitle(title);
+      if (!key || seen.has(key) || (skip.length >= 5 && key.startsWith(skip + ' '))) return;
+      seen.add(key);
+      list.push({ artist: artistName, title, image: lfmImage(al.image), playcount: parseInt(al.playcount, 10) || 0, mainGenre });
+    });
+    s.otherAlbums = list.slice(0, DISCOVER_OTHER_ALBUMS);
+  } catch (err) {
+    console.warn('Autres albums indisponibles :', err);
+    s.otherAlbums = [];
+  }
+  if (discoverAlive(runId) && !s.running) renderDiscoverResults();
 }
 
 // « Voir plus » : révèle la page suivante de la liste (déjà classée en entier au moment de la recherche)
@@ -5238,6 +5330,12 @@ function discoverHandleError(err) {
     message = '🔑 Clé API Last.fm absente, invalide ou refusée. Vérifie-la ci-dessus.';
   } else if (err.code === 29 || err.rateLimited) {
     message = '⏳ Le service limite le nombre de requêtes : réessaie dans une minute.';
+  } else if (err.code === 'noalbum') {
+    s.formOpen = true;
+    message = `Album « ${mbEscapeHTML(s.criteria.album)} » introuvable sur Last.fm : vérifie l'orthographe (et indique l'artiste si possible).`;
+  } else if (err.code === 'novarious') {
+    s.formOpen = true;
+    message = "Cet album est une compilation « Divers » : il n'a pas d'artiste dont chercher les similaires.";
   } else if (err.code === 6) {
     s.formOpen = true;
     message = `Artiste « ${mbEscapeHTML(s.criteria.artist)} » introuvable sur Last.fm : vérifie l'orthographe.`;
@@ -5289,7 +5387,7 @@ async function discoverPoolSimilar() {
   s.startArtist = (block['@attr'] && block['@attr'].artist) || s.criteria.artist;
   const startNorm = mbNormalize(s.startArtist);
 
-  discoverFetchSearchedArtist(s.startArtist); // en parallèle, sans bloquer la liste des artistes similaires
+  if (s.kindRun !== 'album') discoverFetchSearchedArtist(s.startArtist); // en parallèle, sans bloquer la liste des artistes similaires
 
   return asArray(block.artist)
     .filter(a => mbNormalize(a.name) !== startNorm)
@@ -5485,13 +5583,15 @@ function discoverComputeOrder() {
 
 // Couverture = pochette de l'album le plus écouté de l'artiste (Last.fm)
 async function discoverFillTopAlbums(items) {
+  const studioFirst = discoverState.kindRun === 'album'; // recherche par album : on veut un vrai album, pas un live ni une compilation
   const todo = items.filter(a => !a.topLoaded);
   await Promise.all(todo.map(async a => {
     try {
       const data = await lastfmCall('artist.getTopAlbums', { artist: a.artist, limit: 4 });
       const albums = asArray(data.topalbums && data.topalbums.album)
         .filter(x => x.name && x.name !== '(null)' && !MB_PARASITE_REGEX.test(x.name));
-      const best = albums.find(x => lfmImage(x.image)) || albums[0];
+      const studio = studioFirst ? albums.filter(x => discoverSectionOfTitle(x.name)[0] === 'albums') : [];
+      const best = studio.find(x => lfmImage(x.image)) || studio[0] || albums.find(x => lfmImage(x.image)) || albums[0];
       if (best) a.topAlbum = { title: best.name, image: lfmImage(best.image) };
     } catch (err) {
       if (isFatalDiscoverError(err)) throw err;
@@ -5587,7 +5687,7 @@ function discoverArtistHTML(a, featured = false) { // featured : tuile de l'arti
     </div>`;
 }
 
-function discoverAlbumHTML(r) {
+function discoverAlbumHTML(r, listName = 'd') {
   const color = getSingleGenreColor(r.mainGenre ? r.mainGenre.toUpperCase() : 'AUTRE');
   const caa = r.mbid ? `https://coverartarchive.org/release-group/${r.mbid}/front-250` : '';
 
@@ -5595,19 +5695,19 @@ function discoverAlbumHTML(r) {
   if (r.year) labels.push(r.year);
   if (r.primary === 'EP') labels.push('EP');
   r.secondary.forEach(t => labels.push(t));
-  const popularityLabel = r.playcount > 0 ? `🔥 ${fmtCount(r.playcount)} écoutes` : '';
+  const popularityLabel = r.playcount > 0 ? `🔥 ${fmtCount(r.playcount)} écoutes` : (r.note || '');
 
   let action;
   if (r.isOwned) action = `<span class="dc-owned">✔ Dans ma collection</span>`;
   else if (r.isIdea) action = `<span class="dc-owned">💡 Déjà dans mes idées</span>`;
-  else action = `<button type="button" class="dc-add" onclick="discoverAddToIdeas('d', ${r.idx})">＋ Ajouter aux idées</button>`;
+  else action = `<button type="button" class="dc-add" onclick="discoverAddToIdeas('${listName}', ${r.idx})">＋ Ajouter aux idées</button>`;
 
   const cover = (r.image || caa)
     ? `<div class="dc-cover"><span class="dc-cover-ph">💿</span><img src="${mbEscapeHTML(r.image || caa)}" data-fallback="${mbEscapeHTML(r.image ? caa : '')}" alt="" loading="lazy" onerror="discoverCoverError(this)"></div>`
     : `<div class="dc-cover"><span class="dc-cover-ph">💿</span></div>`;
 
   return `
-    <div class="list-item dc-item dc-open" style="border-color:${color}; --glow:${color}; border-left-width:6px;" onclick="discoverOpenAlbum(event, ${r.idx})">
+    <div class="list-item dc-item dc-open" style="border-color:${color}; --glow:${color}; border-left-width:6px;" onclick="discoverOpenAlbum(event, ${r.idx}, '${listName}')">
       ${discoverPlayButton('album', r.artist, r.title, 'dc-play-side dc-play-up')}
       ${cover}
       <div class="dc-info">
@@ -5627,9 +5727,9 @@ function discoverAlbumHTML(r) {
    ========================================== */
 const AD = { token: 0, similar: [], current: null, detail: null };
 
-function discoverOpenAlbum(event, idx) {
+function discoverOpenAlbum(event, idx, listName = 'd') {
   if (event.target.closest('button, a')) return; // « Ajouter aux idées », ▶ : ils gardent leur rôle
-  const r = discoverState.disco && discoverState.disco.items[idx];
+  const r = discoverListByName(listName)[idx];
   if (r) navigateTo({ key: 'discover-detail', item: r, parent: currentPage });
 }
 
@@ -5972,33 +6072,64 @@ function renderDiscoverResults() {
     return;
   }
 
-  // ----- Liste d'artistes -----
+  // ----- Liste d'artistes (ou, pour une recherche par album, liste d'albums) -----
   const order = discoverComputeOrder();
   const visible = order.list.slice(0, s.shown);
+  const albumMode = s.kindRun === 'album';
 
   let html = '';
-  if (s.mode === 'similar' && s.searchedArtist) {
-    html += discoverSeparatorHTML('Discographie', 'dc-sep-main');
-    html += discoverArtistHTML(s.searchedArtist, true);
-    html += discoverSeparatorHTML('Artistes similaires');
+  if (albumMode) {
+    // Les mêmes artistes, classés par les mêmes règles que pour une recherche d'artiste, mais présentés par leur album le plus écouté
+    const { owned, ideas } = discoverOwnedAlbumKeys();
+    const mark = r => ({ ...r, isOwned: owned.has(r.key), isIdea: ideas.has(r.key) });
+    s.albumItems = [];
+    const addItem = r => { r.idx = s.albumItems.length; s.albumItems.push(r); return mark(r); };
+
+    const others = s.otherAlbums || [];
+    if (others.length > 0) {
+      html += discoverSeparatorHTML(`Autres albums de ${s.criteria.artist}`, 'dc-sep-main');
+      others.forEach(o => {
+        html += discoverAlbumHTML(addItem({
+          key: `${mbNormalize(o.artist)}|${mbBaseTitle(o.title)}`, artist: o.artist, title: o.title, year: null, date: '',
+          mbGroup: null, mbid: '', primary: '', secondary: [], playcount: o.playcount, image: o.image, tags: [], mainGenre: o.mainGenre,
+        }), 'a');
+      });
+      html += `<button type="button" class="btn-secondary dc-others-toggle" data-artist="${mbEscapeHTML(s.criteria.artist)}" onclick="goToArtistDiscographyFromResults(this.dataset.artist, '')">Toute la discographie de ${mbEscapeHTML(s.criteria.artist)}</button>`;
+    }
+
+    let similarTitleDone = false;
+    let previousLow = false;
+    visible.forEach(a => {
+      if (!a.topAlbum || !a.topAlbum.title) return; // artiste sans album connu : rien à montrer
+      if (!similarTitleDone) { html += discoverSeparatorHTML('Albums similaires'); similarTitleDone = true; }
+      if (a.lowTier && !previousLow) html += discoverSeparatorHTML('Moins proches ou moins connus');
+      previousLow = a.lowTier;
+      html += discoverAlbumHTML(addItem({
+        key: `${mbNormalize(a.artist)}|${mbBaseTitle(a.topAlbum.title)}`, artist: a.artist, title: a.topAlbum.title, year: null, date: '',
+        mbGroup: null, mbid: '', primary: '', secondary: [], playcount: 0, image: a.topAlbum.image, tags: [], mainGenre: a.mainGenre,
+        note: a.match != null ? `≈ ${Math.round(a.match * 100)} % similaire` : '',
+      }), 'a');
+    });
+  } else {
+    if (s.mode === 'similar' && s.searchedArtist) {
+      html += discoverSeparatorHTML('Discographie', 'dc-sep-main');
+      html += discoverArtistHTML(s.searchedArtist, true);
+      html += discoverSeparatorHTML('Artistes similaires');
+    }
+    let previousLow = false;
+    visible.forEach(a => {
+      if (a.lowTier && !previousLow) html += discoverSeparatorHTML('Moins proches ou moins connus');
+      previousLow = a.lowTier;
+      html += discoverArtistHTML(a);
+    });
   }
-  let previousLow = false;
-  visible.forEach(a => {
-    if (a.lowTier && !previousLow) html += discoverSeparatorHTML('Moins proches ou moins connus');
-    previousLow = a.lowTier;
-    html += discoverArtistHTML(a);
-  });
   box.innerHTML = html;
   discoverLoadArtistPhotos(); // photos des groupes, chargées après l'affichage
 
+  // Plus de tuile « X sur Y artistes » : seuls les messages importants (erreur, tout masqué) restent affichés
   let status = s.status || '';
-  if (s.started && visible.length > 0) {
-    const parts = [`<strong>${visible.length}</strong> sur ${order.list.length} artiste${order.list.length > 1 ? 's' : ''}`];
-    if (order.hiddenOwned > 0) parts.push(`<span class="dc-muted">(${order.hiddenOwned} déjà dans ta collection ou tes idées, masqué${order.hiddenOwned > 1 ? 's' : ''})</span>`);
-    if (s.lifespanNote) parts.push(`<span class="dc-muted">${mbEscapeHTML(s.lifespanNote)}</span>`);
-    status = parts.join(' ') + (status ? `<br>${status}` : '');
-  } else if (s.started && s.candidates.length > 0 && visible.length === 0 && !status) {
-    status = 'Tous les artistes trouvés sont déjà dans ta collection ou tes idées : décoche « Masquer » pour les voir.';
+  if (s.started && s.candidates.length > 0 && visible.length === 0 && !status) {
+    status = `Tous les artistes trouvés sont déjà dans ta collection ou tes idées : décoche « Masquer » pour les voir.`;
   }
   statusEl.innerHTML = status;
   statusEl.classList.toggle('hidden', !status);
@@ -6006,7 +6137,7 @@ function renderDiscoverResults() {
   const remaining = order.list.length - visible.length;
   let moreLabel = '';
   if (s.started && remaining > 0) moreLabel = `Voir plus (${remaining} restant${remaining > 1 ? 's' : ''})`;
-  else if (s.started && !s.extraShown && order.extra.length > 0) moreLabel = `Afficher des artistes moins proches ou moins connus (${order.extra.length})`;
+  else if (s.started && !s.extraShown && order.extra.length > 0) moreLabel = `Afficher des ${albumMode ? 'albums' : 'artistes'} moins proches ou moins connus (${order.extra.length})`;
   moreEl.classList.toggle('hidden', !moreLabel);
   if (moreLabel) moreEl.textContent = moreLabel;
 
@@ -6478,14 +6609,12 @@ async function discoverTogglePreview(btn) {
 }));
 
 /* ---------- Pages : « Découverte » ---------- */
-function discoverSummaryText() {
-  const c = discoverState.criteria;
-  const parts = [];
-  if (c.artist) parts.push(`Similaire à ${c.artist}`);
-  if (c.genre) parts.push(c.genre);
-  if (c.tag) parts.push(`#${c.tag}`);
-  if (c.yearFrom || c.yearTo) parts.push(`${c.yearFrom || '…'}–${c.yearTo || '…'}`);
-  return parts.join(' · ') || 'Aucun critère';
+// Nom affiché dans le bandeau de recherche : l'artiste ou l'album recherché
+function discoverBannerName() {
+  const s = discoverState, c = s.criteria;
+  const own = c.kind === 'album' ? c.album : c.artist;
+  if (own) return own;
+  return (s.view === 'disco' && s.disco && s.disco.artist) || c.artist || '';
 }
 
 function discoverPageHTML() {
@@ -6515,6 +6644,7 @@ function discoverPageHTML() {
       ${s.chips.map(n => `<button type="button" class="dc-chip-btn ${n === c.artist ? 'active' : ''}" onclick="discoverPickArtist(this.dataset.name)" data-name="${mbEscapeHTML(n)}">${mbEscapeHTML(n)}</button>`).join('')}
     </div>` : '';
 
+  const isAlbumKind = c.kind === 'album';
   const enter = `onkeydown="if(event.key==='Enter'){event.preventDefault(); startDiscoverSearch();}"`;
 
   return `
@@ -6522,37 +6652,36 @@ function discoverPageHTML() {
       ${keyCard}
 
       <div id="dc-form" class="dc-card ${s.formOpen ? '' : 'hidden'}">
-        <div class="form-divider"><span>Artiste</span></div>
-        <div class="form-group">
-          <label>Discographie et artistes similaires</label>
-          <div class="dc-autocomplete">
-            <input type="text" id="dc-artist" placeholder="ex: Radiohead" value="${mbEscapeHTML(c.artist)}" autocomplete="off"
-              oninput="discoverSuggest()" onfocus="discoverSuggest()" onblur="discoverHideSuggestSoon()" ${enter}>
-            <div id="dc-suggest" class="dc-suggest hidden"></div>
-          </div>
-        </div>
-        ${chips}
-
-        <div class="form-divider"><span>Spécifications</span></div>
-        <div class="dc-row">
-          <div class="form-group">
-            <label>Genre</label>
-            <select id="dc-genre">${genreOptions}</select>
-          </div>
-          <div class="form-group">
-            <label>Tag libre</label>
-            <input type="text" id="dc-tag" placeholder="ex: shoegaze" value="${mbEscapeHTML(c.tag)}" autocomplete="off" ${enter}>
-          </div>
+        <div class="form-divider"><span>Recherche</span></div>
+        <div class="dc-kind" role="group" aria-label="Type de recherche">
+          <button type="button" id="dc-kind-artist" class="dc-kind-btn ${isAlbumKind ? '' : 'active'}" onclick="discoverSetKind('artist')">Artiste</button>
+          <button type="button" id="dc-kind-album" class="dc-kind-btn ${isAlbumKind ? 'active' : ''}" onclick="discoverSetKind('album')">Album</button>
         </div>
 
-        <div class="dc-row">
+        <div id="dc-pane-artist" class="${isAlbumKind ? 'hidden' : ''}">
           <div class="form-group">
-            <label>Actif à partir de</label>
-            <input type="number" id="dc-year-from" inputmode="numeric" min="1900" max="2100" placeholder="1990" value="${mbEscapeHTML(c.yearFrom)}" ${enter}>
+            <label>Discographie et artistes similaires</label>
+            <div class="dc-autocomplete">
+              <input type="text" id="dc-artist" placeholder="ex: Radiohead" value="${mbEscapeHTML(isAlbumKind ? '' : c.artist)}" autocomplete="off"
+                oninput="discoverSuggest()" onfocus="discoverSuggest()" onblur="discoverHideSuggestSoon()" ${enter}>
+              <div id="dc-suggest" class="dc-suggest hidden"></div>
+            </div>
+          </div>
+          ${chips}
+        </div>
+
+        <div id="dc-pane-album" class="${isAlbumKind ? '' : 'hidden'}">
+          <div class="form-group">
+            <label>Autres albums de l'artiste et albums similaires</label>
+            <input type="text" id="dc-album" placeholder="Titre de l'album, ex: OK Computer" value="${mbEscapeHTML(c.album || '')}" autocomplete="off" ${enter}>
           </div>
           <div class="form-group">
-            <label>Jusqu'à</label>
-            <input type="number" id="dc-year-to" inputmode="numeric" min="1900" max="2100" placeholder="1999" value="${mbEscapeHTML(c.yearTo)}" ${enter}>
+            <label>Artiste (recommandé)</label>
+            <div class="dc-autocomplete">
+              <input type="text" id="dc-album-artist" placeholder="ex: Radiohead" value="${mbEscapeHTML(isAlbumKind ? c.artist : '')}" autocomplete="off"
+                oninput="discoverSuggest('dc-album-artist', 'dc-suggest-album')" onfocus="discoverSuggest('dc-album-artist', 'dc-suggest-album')" onblur="discoverHideSuggestSoon('dc-suggest-album')" ${enter}>
+              <div id="dc-suggest-album" class="dc-suggest hidden"></div>
+            </div>
           </div>
         </div>
 
@@ -6578,10 +6707,10 @@ function discoverPageHTML() {
 
       <!-- Ces deux tuiles restent affichées en haut de l'écran pendant qu'on fait défiler les résultats -->
       <div id="dc-sticky" class="dc-sticky">
-        <button type="button" id="dc-banner" class="dc-banner ${s.formOpen ? 'hidden' : ''}" onclick="discoverToggleForm(true)">
-          <span class="dc-banner-title">🔎 Nouvelle recherche</span>
-          <span class="dc-banner-sub">${mbEscapeHTML(discoverSummaryText())}</span>
-        </button>
+        <div id="dc-banner" class="dc-banner ${s.formOpen ? 'hidden' : ''}">
+          <span class="dc-banner-title">Recherche : <span class="dc-banner-name">${mbEscapeHTML(discoverBannerName())}</span></span>
+          <button type="button" class="dc-banner-reset" onclick="discoverNewSearch()" title="Nouvelle recherche" aria-label="Nouvelle recherche">♻️</button>
+        </div>
         <div id="dc-status" class="dc-status hidden"></div>
         <div id="dc-disco-bar" class="dc-disco-head hidden"></div>
       </div>
@@ -6623,15 +6752,10 @@ function renderDiscover(params) {
 
   let autoStart = false;
   if (params && ['artist', 'genre', 'year', 'artists'].some(k => params.get(k))) {
-    const year = parseInt(params.get('year'), 10);
-    const nowYear = new Date().getFullYear();
     s.runId++; // annule une éventuelle recherche précédente
     s.criteria = {
       ...DISCOVER_DEFAULTS,
       artist: params.get('artist') || '',
-      genre: matchMainGenre(params.get('genre')),
-      yearFrom: year ? String(year - 5) : '',
-      yearTo: year ? String(Math.min(year + 5, nowYear)) : '',
     };
     s.chips = (params.get('artists') || '').split('|').filter(Boolean);
     discoverResetResults();
@@ -6656,7 +6780,38 @@ function discoverViewChanged() {
   renderDiscoverResults();
 }
 
+// Bascule du formulaire entre « Artiste » et « Album » (les champs déjà saisis sont conservés)
+function discoverSetKind(kind) {
+  const s = discoverState;
+  s.criteria.kind = kind === 'album' ? 'album' : 'artist';
+  const isAlbum = s.criteria.kind === 'album';
+  document.getElementById('dc-kind-artist')?.classList.toggle('active', !isAlbum);
+  document.getElementById('dc-kind-album')?.classList.toggle('active', isAlbum);
+  document.getElementById('dc-pane-artist')?.classList.toggle('hidden', isAlbum);
+  document.getElementById('dc-pane-album')?.classList.toggle('hidden', !isAlbum);
+  // Un nom d'artiste déjà saisi suit d'un onglet à l'autre
+  const a = document.getElementById('dc-artist'), b = document.getElementById('dc-album-artist');
+  if (a && b) { if (isAlbum && !b.value && a.value) b.value = a.value; if (!isAlbum && !a.value && b.value) a.value = b.value; }
+}
+
+// ♻️ du bandeau : rouvre le formulaire avec des champs vides (le type Artiste / Album choisi est conservé)
+function discoverNewSearch() {
+  const s = discoverState;
+  const kind = s.criteria.kind;
+  discoverStopPreview();
+  s.runId++;
+  s.criteria = { ...DISCOVER_DEFAULTS, kind };
+  s.chips = [];
+  discoverResetResults();
+  s.started = false;
+  s.running = false;
+  s.formOpen = true;
+  refreshDiscoverPage();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function discoverPickArtist(name) {
+  discoverSetKind('artist');
   const input = document.getElementById('dc-artist');
   if (input) input.value = name;
   startDiscoverSearch();
