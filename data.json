@@ -4059,7 +4059,7 @@
         {
           "id": "md-1791139574173-alb-3",
           "md_cover": "images/img_1791137888006.jpg",
-          "title": "Greatest Hits... Live",
+          "title": "Live over the World",
           "artist": "The Smashing Pumpkins",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
@@ -4072,13 +4072,24 @@
             "indie rock"
           ],
           "release_year": "1996",
-          "duration": "40:43",
-          "tracks": [],
+          "duration": "50:43",
+          "tracks": [
+            "Fuck You / A Ode to No One",
+            "Bullet with Butterfly Wings",
+            "Tonight, Tonight",
+            "Disarm",
+            "Geek U.S.A.",
+            "Zero",
+            "Mayonnaise",
+            "1979",
+            "Tear",
+            "I Am One"
+          ],
           "toRecord": true,
           "description": "Rassembler sur un même support les captations publiques les plus sauvages et habitées de cette formation emblématique de Chicago tenait du pari fou. Cette sélection sur mesure relève le défi haut la main, s'imposant comme la cartographie définitive d'un groupe majeur, tiraillé entre des fureurs électriques industrielles et des hymnes pop d'une mélancolie lumineuse.\nCe qui frappe immédiatement à l'écoute de cette sélection, c'est l'intelligence de son séquençage. Le voyage s'ouvre sur les brûlots les plus abrasifs et nihilistes de leur discographie. Sur ces pistes, les murs de guitares saturées et les sections rythmiques lourdes pèsent comme un orage d'été, poussant le leader du groupe à des hurlements primaux d'une intensité rare. La tension culmine sur des morceaux de pure noise-rock, de longs tunnels électriques hypnotiques où les instruments semblent au bord de l'implosion sous les yeux d'une foule en transe. C’est le visage le plus sombre, le plus crade et le plus viscéral de la formation qui s'exprime ici.\nMais la force de cette compilation réside dans sa capacité à capturer la dualité du groupe. Sans transition, le set bascule vers leurs plus grandes envolées mélodiques et générationnelles. Les guitares lourdes laissent alors place à des textures acoustiques feutrées, des envolées de cordes dramatiques et des refrains solaires nés au milieu des années quatre-vingt-dix, faits pour être repris en chœur par des stades entiers. La voix du frontman, si singulière, y retrouve son velouté et sa fragilité, naviguant sur le fil du rasoir avec une justesse bouleversante. Un recueil live idéal, qui évite le piège de la compilation marketing pour offrir le portrait le plus honnête, le plus contrasté et le plus puissant d'un titan du rock en liberté."
         }
       ],
-      "title": "From the Muddy Bank of the Wishkah / A Part from Life / Greatest Hits... Live"
+      "title": "From the Muddy Bank of the Wishkah / A Part from Life / Live over the World"
     },
     {
       "id": "md-1791205192695",
