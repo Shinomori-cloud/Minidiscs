@@ -1581,8 +1581,8 @@ function renderDashboard(pushState = true) {
           Créer une compilation
         </button>
         <div class="action-col">
-          <button class="action-btn-wide action-btn-add" onclick="openAdminModal()">
-            Ajouter un MD
+          <button class="action-btn-wide action-btn-discover" onclick="goToDiscoverResults()">
+            Découverte
           </button>
           <button class="action-btn-wide action-btn-settings" onclick="goToSettings()">
             Paramètres
@@ -4250,7 +4250,13 @@ const DISCOVER_GENRE_TAGS = {
 const VARIOUS_ARTISTS_REGEX = /^(divers|various|various artists|artistes? divers|va|compilation)$/i;
 
 const DISCOVER_DEFAULTS = { kind: 'artist', artist: '', album: '', genre: '', tag: '', yearFrom: '', yearTo: '', sort: 'recommended', hideOwned: false };
-const DISCOVER_OTHER_ALBUMS = 5;           // « Autres albums de l'artiste » : nombre d'albums affichés (recherche par album)
+const DISCOVER_OTHER_ALBUMS = 5;
+// Discographie : pertinence alignée sur la recherche par album (voir discoverRefineSections)
+const DISCOVER_PROMOTE_RANK = 6;           // un live / une compilation « sans mot-clé » parmi les 6 albums les plus écoutés passe dans « Albums » (la recherche par album en montre 5 autres que celui recherché)
+const DISCOVER_PROMOTE_MIN_RATIO = 0.01;   // ... à condition d'atteindre 1 % des écoutes du premier album
+const DISCOVER_DEMOTE_RATIO = 0.02;        // un « album » MusicBrainz sous 2 % des écoutes du premier album quitte « Albums »
+const DISCOVER_DEMOTE_MIN_ALBUMS = 6;      // ... seulement si Last.fm connaît assez d'albums de l'artiste pour comparer
+const DISCOVER_TITLE_NOT_STUDIO = /\b(b-?sides?|rarities|demos?|singles?|remix(?:es)?|bootleg|instrumentals?|mixtape|dvd|sessions?)\b/i;           // « Autres albums de l'artiste » : nombre d'albums affichés (recherche par album)
 
 const discoverState = {
   criteria: { ...DISCOVER_DEFAULTS },
@@ -4273,11 +4279,14 @@ const discoverState = {
   searchedAlbum: null,  // recherche par album : l'album retrouvé { artist, title, image }
   otherAlbums: null,    // recherche par album : autres albums de l'artiste (null = en cours de chargement)
   albumItems: [],       // recherche par album : albums affichés (cible des boutons « Détails » / « Ajouter aux idées »)
+  yearsBusy: false,     // recherche par album : recherche des années en cours
+  otherYearsPromise: null,
   formOpen: true,       // le formulaire se replie une fois la recherche lancée
   view: 'results',      // 'results' | 'disco' (discographie complète d'un artiste)
   disco: null,          // { artist, mbid, items, open, loading, status }
 };
 const discoverCache = new Map();
+const discoverAlbumYears = new Map();   // recherche par album : clé de l'album -> année ('' = introuvable)
 
 /* ---------- Utilitaires ---------- */
 const asArray = v => (v == null ? [] : (Array.isArray(v) ? v : [v]));
@@ -4592,15 +4601,15 @@ function renderCreateHub() {
   prepareSubPage('CRÉER');
   app.innerHTML = `
     <div id="create-page" class="create-page">
-      <button type="button" class="create-tile create-tile-find" onclick="goToDiscoverResults()">
+      <button type="button" class="create-tile create-tile-add" onclick="openAdminModal()">
         <span class="create-tile-text">
-          <span class="create-tile-title">Trouver de nouvelles idées</span>
-          <span class="create-tile-desc">Artistes et albums similaires, par genre, période ou popularité.</span>
+          <span class="create-tile-title">Ajouter un MD manuellement</span>
+          <span class="create-tile-desc">Créer un minidisc en renseignant manuellement son contenu.</span>
         </span>
       </button>
       <button type="button" class="create-tile create-tile-new" onclick="goToPlanner()">
         <span class="create-tile-text">
-          <span class="create-tile-title">Créer un nouveau minidisc</span>
+          <span class="create-tile-title">Créer une nouvelle compilation</span>
           <span class="create-tile-desc">Composer un MiniDisc à partir de tes idées d'albums.</span>
         </span>
       </button>
@@ -5177,6 +5186,7 @@ function discoverResetResults() {
   s.searchedAlbum = null;
   s.otherAlbums = null;
   s.albumItems = [];
+  s.otherYearsPromise = null;
 }
 
 async function startDiscoverSearch() {
@@ -5294,11 +5304,67 @@ async function discoverFetchAlbumContext(runId) {
       list.push({ artist: artistName, title, image: lfmImage(al.image), playcount: parseInt(al.playcount, 10) || 0, mainGenre });
     });
     s.otherAlbums = list.slice(0, DISCOVER_OTHER_ALBUMS);
+    // Années : une seule requête MusicBrainz (la discographie de l'artiste) pour tous ces albums
+    const artistMbid = (info && info.artist && info.artist.mbid) || '';
+    s.otherYearsPromise = discoverFillOtherYears(artistName, artistMbid, s.otherAlbums, runId);
   } catch (err) {
     console.warn('Autres albums indisponibles :', err);
     s.otherAlbums = [];
   }
   if (discoverAlive(runId) && !s.running) renderDiscoverResults();
+}
+
+async function discoverFillOtherYears(artistName, mbid, albums, runId) {
+  try {
+    const mb = await discoverMbArtistGroups({ name: artistName, mbid }, 2);
+    if (!mb.ok) return;
+    const byTitle = new Map();
+    mb.groups.forEach(g => {
+      const y = discoverYearOf(g);
+      const k = mbBaseTitle(g.title || '');
+      if (y && k && (!byTitle.has(k) || y < byTitle.get(k))) byTitle.set(k, y);
+    });
+    albums.forEach(o => {
+      const y = byTitle.get(mbBaseTitle(o.title));
+      if (y) discoverAlbumYears.set(`${mbNormalize(o.artist)}|${mbBaseTitle(o.title)}`, y);
+    });
+    if (discoverAlive(runId)) discoverApplyYears();
+  } catch (err) { /* les années manquantes seront cherchées une à une */ }
+}
+
+// Écrit dans la page les années déjà connues
+function discoverApplyYears() {
+  document.querySelectorAll('.dc-year[data-year-key]').forEach(el => {
+    const y = discoverAlbumYears.get(el.dataset.yearKey);
+    el.textContent = y ? ` · ${y}` : '';
+  });
+}
+
+// Années des albums affichés : une recherche MusicBrainz par album (1 par seconde environ), le texte se complète au fur et à mesure
+async function discoverLoadAlbumYears() {
+  const s = discoverState;
+  if (s.yearsBusy) return;
+  s.yearsBusy = true;
+  try {
+    if (s.otherYearsPromise) await s.otherYearsPromise;
+    for (;;) {
+      if (!document.getElementById('discover-page') || s.kindRun !== 'album' || s.view !== 'results') break;
+      const next = (s.albumItems || []).find(r => !discoverAlbumYears.has(r.key));
+      if (!next) break;
+      let year = '';
+      try {
+        const tokens = mbQueryTokens(`${next.artist} ${next.title}`);
+        const group = mbFilterAndRank(await mbSearchReleaseGroups(tokens, 'and'), tokens, 1)[0];
+        year = discoverYearOf(group) || '';
+      } catch (err) {
+        if (err.rateLimited) break; // on réessaiera plus tard
+      }
+      discoverAlbumYears.set(next.key, year);
+      discoverApplyYears();
+    }
+  } finally {
+    s.yearsBusy = false;
+  }
 }
 
 // « Voir plus » : révèle la page suivante de la liste (déjà classée en entier au moment de la recherche)
@@ -5695,6 +5761,10 @@ function discoverAlbumHTML(r, listName = 'd') {
   if (r.year) labels.push(r.year);
   if (r.primary === 'EP') labels.push('EP');
   r.secondary.forEach(t => labels.push(t));
+  // Recherche par album : « Artiste · année » sous le titre (l'année arrive après coup, voir discoverLoadAlbumYears)
+  const albumSub = listName === 'a'
+    ? `<div class="dc-meta">${mbEscapeHTML(r.artist)}<span class="dc-year" data-year-key="${mbEscapeHTML(r.key)}">${r.year ? ` · ${r.year}` : ''}</span></div>`
+    : '';
   const popularityLabel = r.playcount > 0 ? `🔥 ${fmtCount(r.playcount)} écoutes` : (r.note || '');
 
   let action;
@@ -5712,7 +5782,7 @@ function discoverAlbumHTML(r, listName = 'd') {
       ${cover}
       <div class="dc-info">
         <div class="dc-title">${mbEscapeHTML(r.title)}</div>
-        ${labels.length ? `<div class="dc-meta">${labels.map(mbEscapeHTML).join(' · ')}</div>` : ''}
+        ${listName === 'a' ? albumSub : (labels.length ? `<div class="dc-meta">${labels.map(mbEscapeHTML).join(' · ')}</div>` : '')}
         ${popularityLabel ? `<div class="dc-facts">${popularityLabel}</div>` : ''}
         ${discoverNowPlaying(discoverPreviewKey('album', r.artist, r.title))}
         <div class="dc-actions">${action}</div>
@@ -6003,7 +6073,7 @@ function discoverSeparatorHTML(label, extraClass = '') {
   return `<div class="dc-separator ${extraClass}"><span>${mbEscapeHTML(label)}</span></div>`;
 }
 
-function renderDiscoverResults() {
+function renderDiscoverResultsInner() {
   const s = discoverState;
   const box = document.getElementById('dc-results');
   const statusEl = document.getElementById('dc-status');
@@ -6083,11 +6153,11 @@ function renderDiscoverResults() {
     const { owned, ideas } = discoverOwnedAlbumKeys();
     const mark = r => ({ ...r, isOwned: owned.has(r.key), isIdea: ideas.has(r.key) });
     s.albumItems = [];
-    const addItem = r => { r.idx = s.albumItems.length; s.albumItems.push(r); return mark(r); };
+    const addItem = r => { r.idx = s.albumItems.length; r.year = discoverAlbumYears.get(r.key) || r.year || null; s.albumItems.push(r); return mark(r); };
 
     const others = s.otherAlbums || [];
     if (others.length > 0) {
-      html += discoverSeparatorHTML(`Autres albums de ${s.criteria.artist}`, 'dc-sep-main');
+      html += discoverSeparatorHTML(`Autres albums de ${s.criteria.artist}`, 'dc-sep-main dc-sep-fit');
       others.forEach(o => {
         html += discoverAlbumHTML(addItem({
           key: `${mbNormalize(o.artist)}|${mbBaseTitle(o.title)}`, artist: o.artist, title: o.title, year: null, date: '',
@@ -6125,6 +6195,7 @@ function renderDiscoverResults() {
   }
   box.innerHTML = html;
   discoverLoadArtistPhotos(); // photos des groupes, chargées après l'affichage
+  if (albumMode) { discoverApplyYears(); discoverLoadAlbumYears(); }
 
   // Plus de tuile « X sur Y artistes » : seuls les messages importants (erreur, tout masqué) restent affichés
   let status = s.status || '';
@@ -6150,7 +6221,39 @@ function renderDiscoverResults() {
   }
 }
 
+// Même pertinence que la recherche par album : seuls les albums réellement « officiels » ouvrent la discographie.
+//  - un live ou une compilation dont le titre n'a rien d'un live / d'une compilation (ex. « Incesticide ») et qui compte
+//    parmi les albums les plus écoutés est un album à part entière : il remonte dans « Albums » ;
+//  - un « album » MusicBrainz dont le titre dit B-sides, démos, singles... ou qui est très peu écouté (face aux autres
+//    albums de l'artiste) redescend dans « EP et B-sides » / « Autres sorties ».
+function discoverRefineSections(items) {
+  const setSections = (r, sections) => { r.sections = sections; r.section = sections[0]; r.official = sections.includes('albums'); };
+  const ranked = items
+    .filter(r => r.playcount > 0 && r.primary === 'Album' && discoverSectionOfTitle(r.title)[0] === 'albums')
+    .sort((a, b) => b.playcount - a.playcount);
+  if (ranked.length === 0) return;
+  const ref = ranked[0].playcount;
+  const topSet = new Set(ranked.slice(0, DISCOVER_PROMOTE_RANK).filter(r => r.playcount >= ref * DISCOVER_PROMOTE_MIN_RATIO));
+
+  items.forEach(r => {
+    if (!r.sections.includes('albums')) {
+      if (topSet.has(r) && r.sections.every(t => t === 'live' || t === 'compil')) setSections(r, ['albums']);
+      return;
+    }
+    if (r.sections.length !== 1) return;
+    if (DISCOVER_TITLE_NOT_STUDIO.test(r.title)) { setSections(r, discoverSectionOfTitle(r.title)); return; }
+    if (ranked.length >= DISCOVER_DEMOTE_MIN_ALBUMS && r.playcount > 0 && r.playcount < ref * DISCOVER_DEMOTE_RATIO) setSections(r, ['other']);
+  });
+}
+
 /* ---------- Discographie complète d'un artiste (Last.fm d'abord, MusicBrainz pour les dates) ---------- */
+function renderDiscoverResults() {
+  renderDiscoverResultsInner();
+  discoverFitSeparators();
+  discoverPinSticky();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { discoverFitSeparators(); discoverPinSticky(); });
+}
+
 function discoverScrollToResults() {
   const target = document.getElementById('dc-banner') || document.getElementById('dc-results');
   if (target) window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - 175), behavior: 'smooth' });
@@ -6343,6 +6446,7 @@ async function discoverShowDiscography(name, mbid, options = {}) {
         seenUnmatched.add(a.key);
         items.push(make(a.title, null, a, [discoverSectionOfTitle(a.title)[0] === 'ep' ? 'ep' : 'other']));
       });
+      discoverRefineSections(items);
       const byYear = (a, b) => (a.year || 9999) - (b.year || 9999) || b.playcount - a.playcount;
       const rank = { albums: 0, ep: 1, live: 2, compil: 3, other: 4 };
       const byPop = (a, b) => b.playcount - a.playcount || byYear(a, b); // live, compilations, autres : les plus écoutés d'abord
@@ -6707,9 +6811,9 @@ function discoverPageHTML() {
 
       <!-- Ces deux tuiles restent affichées en haut de l'écran pendant qu'on fait défiler les résultats -->
       <div id="dc-sticky" class="dc-sticky">
-        <div id="dc-banner" class="dc-banner ${s.formOpen ? 'hidden' : ''}">
+        <div id="dc-banner" class="dc-banner ${s.formOpen ? 'hidden' : ''}" role="button" tabindex="0" title="Modifier la recherche" onclick="discoverToggleForm(true)">
           <span class="dc-banner-title">Recherche : <span class="dc-banner-name">${mbEscapeHTML(discoverBannerName())}</span></span>
-          <button type="button" class="dc-banner-reset" onclick="discoverNewSearch()" title="Nouvelle recherche" aria-label="Nouvelle recherche">♻️</button>
+          <button type="button" class="dc-banner-reset" onclick="event.stopPropagation(); discoverNewSearch()" title="Nouvelle recherche (champs vidés)" aria-label="Nouvelle recherche">♻️</button>
         </div>
         <div id="dc-status" class="dc-status hidden"></div>
         <div id="dc-disco-bar" class="dc-disco-head hidden"></div>
@@ -6741,7 +6845,56 @@ function discoverToggleForm(open) {
   if (form) form.classList.toggle('hidden', !open);
   if (banner) banner.classList.toggle('hidden', open);
   if (open) window.scrollTo({ top: 0, behavior: 'smooth' });
+  discoverPinSticky();
 }
+
+// Les tuiles du haut restent exactement là où elles s'affichent au départ (elles ne remontent plus sous le header), et le
+// masque de l'appli (celui qui cache le contenu sous le header) est prolongé jusqu'en bas de ces tuiles :
+// les résultats disparaissent en arrivant à leur niveau au lieu de défiler derrière.
+function discoverPinSticky() {
+  const el = document.getElementById('dc-sticky');
+  if (!el) return;
+  const body = document.body;
+  if (!el._ro && 'ResizeObserver' in window) {
+    el._ro = new ResizeObserver(() => discoverPinSticky());
+    el._ro.observe(el);
+  }
+  if (discoverState.formOpen || el.offsetHeight === 0) { // formulaire ouvert : comportement d'origine
+    el.style.top = '';
+    body.style.removeProperty('--dc-mask');
+    return;
+  }
+  const keep = el.style.position;
+  el.style.position = 'relative';          // position naturelle, sans l'effet « sticky »
+  el.style.top = 'auto';
+  const natural = el.getBoundingClientRect().top + window.scrollY;
+  el.style.position = keep;
+  el.style.top = `${Math.round(natural)}px`;
+  body.style.setProperty('--dc-mask', `${Math.round(natural + el.offsetHeight + 4)}px`);
+}
+
+// Titres de section dont le texte doit toujours tenir à l'écran : la taille de police s'adapte à la largeur disponible
+function discoverFitSeparators() {
+  document.querySelectorAll('.dc-separator.dc-sep-fit').forEach(sep => {
+    const span = sep.querySelector('span');
+    if (!span) return;
+    sep.style.fontSize = '';
+    sep.style.letterSpacing = '';
+    const reserve = 2 * (18 + 10);        // deux traits de pinceau minimum + espacements
+    const avail = sep.clientWidth - reserve;
+    let size = parseFloat(getComputedStyle(sep).fontSize);
+    while (span.getBoundingClientRect().width > avail && size > 9) {
+      size -= 0.5;
+      sep.style.fontSize = `${size}px`;
+      if (size < 15) sep.style.letterSpacing = '1px';
+    }
+  });
+}
+window.addEventListener('resize', () => {
+  if (!document.getElementById('discover-page')) return;
+  discoverFitSeparators();
+  discoverPinSticky();
+});
 
 // Point d'entrée de la page (params : critères pré-remplis quand on arrive depuis un album)
 function renderDiscover(params) {
