@@ -1577,12 +1577,12 @@ function renderDashboard(pushState = true) {
       </div>
 
       <div class="dashboard-actions-row">
-        <button class="action-btn-wide action-btn-create" onclick="goToCreateHub()">
-          Créer une compilation
+        <button class="action-btn-wide action-btn-discover" onclick="goToDiscoverResults()">
+          Découvrir de nouveaux artistes
         </button>
         <div class="action-col">
-          <button class="action-btn-wide action-btn-discover" onclick="goToDiscoverResults()">
-            Découverte
+          <button class="action-btn-wide action-btn-create" onclick="goToCreateHub()">
+            Créer une compilation
           </button>
           <button class="action-btn-wide action-btn-settings" onclick="goToSettings()">
             Paramètres
@@ -4256,6 +4256,7 @@ const DISCOVER_PROMOTE_RANK = 6;           // un live / une compilation « sans 
 const DISCOVER_PROMOTE_MIN_RATIO = 0.01;   // ... à condition d'atteindre 1 % des écoutes du premier album
 const DISCOVER_DEMOTE_RATIO = 0.02;        // un « album » MusicBrainz sous 2 % des écoutes du premier album quitte « Albums »
 const DISCOVER_DEMOTE_MIN_ALBUMS = 6;      // ... seulement si Last.fm connaît assez d'albums de l'artiste pour comparer
+const DISCOVER_NO_PLAYS_MIN_ALBUMS = 3;      // albums sans aucune écoute écartés si Last.fm en connaît au moins 3 pour l'artiste
 const DISCOVER_TITLE_NOT_STUDIO = /\b(b-?sides?|rarities|demos?|singles?|remix(?:es)?|bootleg|instrumentals?|mixtape|dvd|sessions?)\b/i;           // « Autres albums de l'artiste » : nombre d'albums affichés (recherche par album)
 
 const discoverState = {
@@ -6242,6 +6243,9 @@ function discoverRefineSections(items) {
     }
     if (r.sections.length !== 1) return;
     if (DISCOVER_TITLE_NOT_STUDIO.test(r.title)) { setSections(r, discoverSectionOfTitle(r.title)); return; }
+    // Aucune écoute connue sur Last.fm = très probablement un faux positif (sortie annexe, homonyme...) : hors de la discographie officielle,
+    // à condition que Last.fm connaisse assez d'albums de l'artiste pour que l'absence veuille dire quelque chose
+    if (ranked.length >= DISCOVER_NO_PLAYS_MIN_ALBUMS && !(r.playcount > 0)) { setSections(r, ['other']); return; }
     if (ranked.length >= DISCOVER_DEMOTE_MIN_ALBUMS && r.playcount > 0 && r.playcount < ref * DISCOVER_DEMOTE_RATIO) setSections(r, ['other']);
   });
 }
@@ -6818,6 +6822,7 @@ function discoverPageHTML() {
         <div id="dc-status" class="dc-status hidden"></div>
         <div id="dc-disco-bar" class="dc-disco-head hidden"></div>
       </div>
+      <button type="button" id="dc-compil-btn" class="action-btn-wide action-btn-create dc-compil-btn ${s.formOpen ? 'hidden' : ''}" onclick="goToPlanner()">Créer une compilation</button>
       <div id="dc-results" class="dc-results"></div>
       <button type="button" id="dc-more" class="btn-secondary dc-more hidden" onclick="discoverLoadMore()">Voir plus</button>
 
@@ -6844,6 +6849,7 @@ function discoverToggleForm(open) {
   const banner = document.getElementById('dc-banner');
   if (form) form.classList.toggle('hidden', !open);
   if (banner) banner.classList.toggle('hidden', open);
+  document.getElementById('dc-compil-btn')?.classList.toggle('hidden', open);
   if (open) window.scrollTo({ top: 0, behavior: 'smooth' });
   discoverPinSticky();
 }

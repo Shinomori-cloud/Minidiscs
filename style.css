@@ -364,7 +364,7 @@ body:has(.dashboard-container) .title-90s {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
-/* Boutons "Créer une compilation" / "Découverte" : même largeur que le bandeau des genres (moitié chacun) */
+/* Boutons "Découvrir de nouveaux artistes" / "Créer une compilation" : même largeur que le bandeau des genres (moitié chacun) */
 .dashboard-actions-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -413,7 +413,7 @@ body:has(.dashboard-container) .title-90s {
     url('images/Similaire.jpg');
 }
 
-/* Colonne droite de l'accueil : « Découverte » (3/4) au-dessus de « Paramètres » (1/4), même hauteur totale qu'avant */
+/* Colonne droite de l'accueil : « Créer une compilation » (3/4) au-dessus de « Paramètres » (1/4), même hauteur totale qu'avant */
 .action-col {
   display: grid;
   grid-template-rows: 3fr 1fr;
@@ -4263,3 +4263,18 @@ body:has(#dc-sticky)::before {
   mask-image: linear-gradient(to bottom, black 0px, black var(--dc-mask, 135px), transparent calc(var(--dc-mask, 135px) + 25px)) !important;
 }
 .dc-year { white-space: nowrap; }
+
+/* Le conteneur principal crée son propre empilement (z-index: 1) : le bandeau fixe passait donc SOUS le masque du header.
+   Sur la page Découverte il n'en crée plus, et le bandeau (950) se place au-dessus du masque (800) et sous le header (1000) */
+main#app:has(#dc-sticky) { z-index: auto; }
+
+/* Bouton « Créer une compilation » sous le bandeau de recherche */
+.action-btn-wide.dc-compil-btn {
+  height: 46px;
+  margin: 12px 0 2px;
+  font-family: 'Righteous', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  background-position: center, center 40%;
+}
+.dc-compil-btn.hidden { display: none; }
