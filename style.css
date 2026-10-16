@@ -408,9 +408,26 @@ body:has(.dashboard-container) .title-90s {
 }
 
 .action-btn-discover {
-  background-image:
-    radial-gradient(ellipse 40% 24% at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.28) 50%, rgba(0, 0, 0, 0) 100%),
-    url('images/Similaire.jpg');
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-image: none;
+}
+/* L'image est sur un calque à part pour être plus saturée sans toucher au texte */
+.action-btn-discover::before,
+.action-btn-discover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.action-btn-discover::before {
+  background: url('images/Similaire.jpg') center / cover no-repeat;
+  filter: saturate(1.5);
+}
+.action-btn-discover::after {
+  background: radial-gradient(ellipse 40% 24% at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.28) 50%, rgba(0, 0, 0, 0) 100%);
 }
 
 /* Colonne droite de l'accueil : « Créer une compilation » (3/4) au-dessus de « Paramètres » (1/4), même hauteur totale qu'avant */
@@ -428,6 +445,7 @@ body:has(.dashboard-container) .title-90s {
 }
 
 .action-btn-settings {
+  border-radius: calc(7px * var(--radius-factor));   /* tuile fine : un arrondi moindre */
   padding: 2px 8px;
   font-size: 0.88rem;
   letter-spacing: 1px;
@@ -4270,11 +4288,15 @@ main#app:has(#dc-sticky) { z-index: auto; }
 
 /* Bouton « Créer une compilation » sous le bandeau de recherche */
 .action-btn-wide.dc-compil-btn {
-  height: 46px;
-  margin: 12px 0 2px;
+  width: 50%;
+  height: 38px;
+  margin: 12px auto 2px;
+  padding: 4px 10px;
   font-family: 'Righteous', cursive;
-  font-size: 1rem;
-  letter-spacing: 1px;
-  background-position: center, center 40%;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  box-shadow: 3px 3px 0px #000;
+  background-image: var(--card-sheen);
+  background-color: var(--card-bg);
 }
 .dc-compil-btn.hidden { display: none; }
