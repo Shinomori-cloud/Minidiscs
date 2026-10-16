@@ -4664,6 +4664,109 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1792129271933",
+      "md_cover": "images/img_1792129268514.jpg",
+      "title": "Adrenaline / System of a Down / Korn",
+      "albums": [
+        {
+          "id": "md-1792129271933-alb-1",
+          "md_cover": "images/img_1790368027442.jpg",
+          "title": "Adrenaline",
+          "artist": "Deftones",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "alternative metal",
+            "nu metal",
+            "post-grunge",
+            "post-hardcore",
+            "rock"
+          ],
+          "release_year": "1995",
+          "duration": "47:08",
+          "tracks": [
+            "Bored",
+            "Minus Blindfold",
+            "One Weak",
+            "Nosebleed",
+            "Lifter",
+            "Root",
+            "7 Words",
+            "Birthmark",
+            "Engine No. 9",
+            "Fireal",
+            "Fist"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1792129271933-alb-2",
+          "md_cover": "images/img_1791957429445.jpg",
+          "title": "System of a Down",
+          "artist": "System of a Down",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "alternative metal",
+            "nu metal",
+            "metal",
+            "angry",
+            "avant-garde metal"
+          ],
+          "release_year": "1998",
+          "duration": "40:42",
+          "tracks": [
+            "Suite‐Pee",
+            "Know",
+            "Sugar",
+            "Suggestions",
+            "Spiders",
+            "DDevil",
+            "Soil",
+            "War?",
+            "Mind",
+            "Peephole",
+            "CUBErt",
+            "Darts",
+            "P.L.U.C.K."
+          ],
+          "description": "System of a Down est le premier album studio du groupe de heavy metal américain System of a Down, sorti le 30 juin 1998 par American Recordings et Columbia Records. L'album a été certifié disque d'or par la Recording Industry Association of America en février 2000. Après le succès de l'album suivant du groupe, Toxicity (2001), System of a Down a été certifié disque de platine et est depuis devenu double disque de platine. L'album est généralement considéré comme du nu metal et du métal alternatif, qui deviendraient tous deux des incontournables pour le groupe. Les thèmes lyriques tout au long de l'album varient, de nombreuses chansons suivant le thème de l'anti-guerre, mais abordent également des sujets de génocide, de religion et de lavage de cerveau. « Suite-Pee » est une critique de la pédophilie au sein de l'Église et de l'extrémisme religieux. « Soil » est, selon le guitariste Daron Malakian lors d'un spectacle des Lowlands, « à propos de la mort, et des amis qui meurent, et de la vie qui meurt ». « Mind » parle du contrôle mental du gouvernement, mentionnant spécifiquement le lavage de cerveau de la CIA dans les notes de pochette de l'album. « P.L.U.C.K. » est une chanson dédiée aux victimes du génocide arménien, et se veut une critique et une dénonciation du gouvernement turc. La pochette provient d'une affiche antifasciste de 1928 conçue par l'artiste visuel John Heartfield pour le Parti communiste allemand. Le texte sur l'affiche originale est : « Une main a 5 doigts ! Avec ces 5, attrapez l'ennemi ! « Ce slogan a inspiré une partie du texte contenu au dos de l'album : « La main a cinq doigts, capables et puissants, avec la capacité de détruire aussi bien que de créer ». Plus tard, il est écrit en caractères gras : « Ouvrez les yeux, ouvrez la bouche, fermez les mains et faites un poing » (utilisé plus tard par Serj Tankian dans la chanson « Uneducated Democracy »).",
+          "toRecord": true
+        },
+        {
+          "id": "md-1792129271933-alb-3",
+          "md_cover": "images/img_1791724741934.jpg",
+          "title": "Korn",
+          "artist": "Korn",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "nu metal",
+            "alternative metal",
+            "heavy metal",
+            "metal",
+            "rock"
+          ],
+          "release_year": "1994",
+          "duration": "1:01:18",
+          "tracks": [
+            "Blind",
+            "Ball Tongue",
+            "Need To",
+            "Clown",
+            "Divine",
+            "Faget",
+            "Shoots And Ladders",
+            "Predictable",
+            "Fake",
+            "Lies",
+            "Helmet In The Bush",
+            "Daddy",
+            "Daddy",
+            "Michael & Geri"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -4988,36 +5091,6 @@
         "Wish You Could Be Me",
         "Counting",
         "Dirty"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790368028934",
-      "md_cover": "images/img_1790368027442.jpg",
-      "title": "Adrenaline",
-      "artist": "Deftones",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "alternative metal",
-        "nu metal",
-        "post-grunge",
-        "post-hardcore",
-        "rock"
-      ],
-      "release_year": "1995",
-      "duration": "47:08",
-      "tracks": [
-        "Bored",
-        "Minus Blindfold",
-        "One Weak",
-        "Nosebleed",
-        "Lifter",
-        "Root",
-        "7 Words",
-        "Birthmark",
-        "Engine No. 9",
-        "Fireal",
-        "Fist"
       ],
       "toRecord": false
     },
@@ -5427,39 +5500,6 @@
       "toRecord": false
     },
     {
-      "id": "idea-1791724743380",
-      "md_cover": "images/img_1791724741934.jpg",
-      "title": "Korn",
-      "artist": "Korn",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "nu metal",
-        "alternative metal",
-        "heavy metal",
-        "metal",
-        "rock"
-      ],
-      "release_year": "1994",
-      "duration": "1:01:18",
-      "tracks": [
-        "Blind",
-        "Ball Tongue",
-        "Need To",
-        "Clown",
-        "Divine",
-        "Faget",
-        "Shoots And Ladders",
-        "Predictable",
-        "Fake",
-        "Lies",
-        "Helmet In The Bush",
-        "Daddy",
-        "Daddy",
-        "Michael & Geri"
-      ],
-      "toRecord": false
-    },
-    {
       "id": "idea-1791830170297",
       "md_cover": "https://coverartarchive.org/release-group/21387993-64d6-3d59-bd7f-d93cbdcb0f48/front-500",
       "title": "Morning View",
@@ -5520,39 +5560,6 @@
         "Amsterdam"
       ],
       "toRecord": false
-    },
-    {
-      "id": "idea-1791957431613",
-      "md_cover": "images/img_1791957429445.jpg",
-      "title": "System of a Down",
-      "artist": "System of a Down",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "alternative metal",
-        "nu metal",
-        "metal",
-        "angry",
-        "avant-garde metal"
-      ],
-      "release_year": "1998",
-      "duration": "40:42",
-      "tracks": [
-        "Suite‐Pee",
-        "Know",
-        "Sugar",
-        "Suggestions",
-        "Spiders",
-        "DDevil",
-        "Soil",
-        "War?",
-        "Mind",
-        "Peephole",
-        "CUBErt",
-        "Darts",
-        "P.L.U.C.K."
-      ],
-      "toRecord": false,
-      "description": "System of a Down est le premier album studio du groupe de heavy metal américain System of a Down, sorti le 30 juin 1998 par American Recordings et Columbia Records. L'album a été certifié disque d'or par la Recording Industry Association of America en février 2000. Après le succès de l'album suivant du groupe, Toxicity (2001), System of a Down a été certifié disque de platine et est depuis devenu double disque de platine. L'album est généralement considéré comme du nu metal et du métal alternatif, qui deviendraient tous deux des incontournables pour le groupe. Les thèmes lyriques tout au long de l'album varient, de nombreuses chansons suivant le thème de l'anti-guerre, mais abordent également des sujets de génocide, de religion et de lavage de cerveau. « Suite-Pee » est une critique de la pédophilie au sein de l'Église et de l'extrémisme religieux. « Soil » est, selon le guitariste Daron Malakian lors d'un spectacle des Lowlands, « à propos de la mort, et des amis qui meurent, et de la vie qui meurt ». « Mind » parle du contrôle mental du gouvernement, mentionnant spécifiquement le lavage de cerveau de la CIA dans les notes de pochette de l'album. « P.L.U.C.K. » est une chanson dédiée aux victimes du génocide arménien, et se veut une critique et une dénonciation du gouvernement turc. La pochette provient d'une affiche antifasciste de 1928 conçue par l'artiste visuel John Heartfield pour le Parti communiste allemand. Le texte sur l'affiche originale est : « Une main a 5 doigts ! Avec ces 5, attrapez l'ennemi ! « Ce slogan a inspiré une partie du texte contenu au dos de l'album : « La main a cinq doigts, capables et puissants, avec la capacité de détruire aussi bien que de créer ». Plus tard, il est écrit en caractères gras : « Ouvrez les yeux, ouvrez la bouche, fermez les mains et faites un poing » (utilisé plus tard par Serj Tankian dans la chanson « Uneducated Democracy »)."
     },
     {
       "id": "idea-1792093026052",
