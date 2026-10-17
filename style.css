@@ -172,7 +172,7 @@ body:has(.dashboard-container) .header-title-container { display: none !importan
    elle garde son bord bas, donc tout ce qui est en dessous ne bouge pas */
 body:has(.dashboard-container) .dashboard-container > .dashboard-card:first-child {
   margin-top: 14px;
-  height: 54px;
+  min-height: 54px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -2320,7 +2320,7 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
 }
 
 .carousel-genre-name {
-  font-size: 0.72rem;
+  font-size: 0.66rem;   /* même taille à l'écran qu'avant l'agrandissement du texte */
   font-weight: 800;
   text-transform: uppercase;
   line-height: 1.15;
@@ -4344,3 +4344,57 @@ main#app:has(#dc-sticky) { z-index: auto; }
 button, input, select, textarea { font-family: inherit; }
 .stat-label, .featured-title, .form-group label, .fab-section-title, .form-divider, .ad-sec h3,
 body:has(.dashboard-container) .header-subtitle { text-transform: none; letter-spacing: 0.3px; }
+
+
+/* ==========================================
+   Texte un peu plus grand (la police ronde paraissait plus petite) : tout ce qui est en rem grandit d'environ 1,5 point
+   ========================================== */
+html { font-size: 17.5px; }
+
+/* ==========================================
+   Accueil : deux grandes tuiles côte à côte ; les réglages passent par le ⋮ en bas à droite
+   ========================================== */
+.dashboard-actions-row .action-btn-discover {
+  align-items: flex-end;                 /* titre dans le tiers du bas */
+  padding-bottom: calc(var(--action-btn-h) / 6 - 0.65em);
+  background-image:
+    radial-gradient(ellipse 62% 24% at 50% 84%, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0) 100%),
+    url('images/Similaire.jpg');
+}
+.dashboard-actions-row .action-btn-create {
+  justify-content: flex-end;             /* titre calé à droite, un mot par ligne */
+  align-items: flex-start;               /* en haut : le ⋮ du bas à droite reste dégagé */
+  padding: 10px 14px 8px 8px;
+  font-size: 0.95rem;
+  text-align: right;
+  background-image:
+    radial-gradient(ellipse 36% 46% at 80% 50%, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0) 100%),
+    url('images/Creer.jpg');
+}
+.tile-words { width: min-content; text-align: right; line-height: 1.15; }
+
+/* Bouton ⋮ de l'accueil (même place que sur les autres pages) : ouvre directement les Paramètres */
+#home-fab { display: none !important; }
+body:has(.dashboard-container) #home-fab { display: flex !important; }
+body:has(.modal:not(.hidden)) #home-fab { display: none !important; }
+
+/* Les trois points : plus de fond rond, juste les points, un peu plus grands, avec une ombre pour rester lisibles sur tous les fonds */
+.fab-main-btn:not(:has(.fab-icon-edit)),
+.fab-main-btn.open:not(:has(.fab-icon-edit)) {
+  width: 48px;
+  height: 48px;
+  background: none;
+  border: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.fab-main-btn:not(:has(.fab-icon-edit)) .fab-icon {
+  width: 32px;
+  height: 32px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 5px rgba(0, 0, 0, 0.55));
+}
+.fab-main-btn:not(.open):not(:has(.fab-icon-edit)) .fab-icon {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><circle cx='12' cy='4.5' r='2.8'/><circle cx='12' cy='12' r='2.8'/><circle cx='12' cy='19.5' r='2.8'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><circle cx='12' cy='4.5' r='2.8'/><circle cx='12' cy='12' r='2.8'/><circle cx='12' cy='19.5' r='2.8'/></svg>");
+}

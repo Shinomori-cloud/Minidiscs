@@ -2,7 +2,7 @@
    Langue de l'appli : français (par défaut) ou anglais.
    - t("texte français") renvoie la traduction anglaise quand la langue est « en », sinon le texte tel quel.
    - Les espaces avant/après un texte sont conservés (utile pour les morceaux de phrases).
-   - Le choix est mémorisé sur l'appareil ; l'appli se recharge pour l'appliquer.
+   - Le choix est mémorisé sur l'appareil. L'appli se met à jour tout de suite, puis se recharge complètement.
    ========================================== */
 (function () {
   var LANG_KEY = 'minidisc_lang';
@@ -109,6 +109,7 @@
 "Création": "Creation",
 "Création aléatoire": "Random creation",
 "Créer": "Create",
+"Créer un minidisc": "Create a MiniDisc",
 "Créer un minidisc en renseignant manuellement son contenu.": "Create a MiniDisc by entering its content manually.",
 "Créer une compilation": "Create a compilation",
 "Créer une nouvelle compilation": "Create a new compilation",
@@ -136,6 +137,7 @@
 "Erreur réseau MusicBrainz (": "MusicBrainz network error (",
 "Filtres": "Filters",
 "Flou du fond": "Background blur",
+"Français ou anglais.": "French or English.",
 "GitHub refuse l'accès : le jeton enregistré n'a pas les droits nécessaires sur ce dépôt.": "GitHub denied access: the saved token doesn't have the required permissions on this repository.",
 "GitHub refuse la suppression : le jeton enregistré n'a pas les droits d'écriture sur ce dépôt.": "GitHub denied the deletion: the saved token doesn't have write permission on this repository.",
 "Grain": "Grain",
@@ -251,6 +253,7 @@
 "Texte": "Text",
 "Texte sur 2 lignes (ou coupe-le toi-même avec « | »)": "Text on 2 lines (or split it yourself with “|”)",
 "Thème «": "Theme “",
+"Thèmes": "Themes",
 "Titre": "Title",
 "Titre de l'album": "Album title",
 "Titre de l'album, ex: OK Computer": "Album title, e.g. OK Computer",
@@ -437,8 +440,12 @@
 "🗑️ Supprimer l'album": "🗑️ Delete album"
 };
 
-  window.APP_LANG = lang;
-  window.APP_LOCALE = lang === 'en' ? 'en-GB' : 'fr-FR';
+  function publish() {
+    window.APP_LANG = lang;
+    window.APP_LOCALE = lang === 'en' ? 'en-GB' : 'fr-FR';
+    document.documentElement.setAttribute('lang', lang);
+  }
+  publish();
   window.isEN = function () { return lang === 'en'; };
 
   window.t = function (s) {
@@ -451,32 +458,51 @@
     return s.slice(0, i) + v + s.slice(i + k.length);
   };
 
-  window.setLanguage = function (l) {
-    try { localStorage.setItem(LANG_KEY, l === 'en' ? 'en' : 'fr'); } catch (e) { /* non enregistré */ }
-    location.reload();
-  };
-
-  if (lang !== 'en') return;
-  document.documentElement.setAttribute('lang', 'en');
-
-  // Textes déjà présents dans index.html (le reste est traduit au moment où l'appli les fabrique)
-  function translateStatic() {
+  // Textes déjà présents dans index.html : on retient le texte français d'origine pour pouvoir passer d'une langue à l'autre
+  var staticTexts = [];   // { node, orig }
+  var staticAttrs = [];   // { el, attr, orig }
+  function recordStatic() {
     var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
       acceptNode: function (n) {
         var p = n.parentNode && n.parentNode.nodeName;
         return (p === 'SCRIPT' || p === 'STYLE') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
       }
     });
-    var nodes = [];
-    while (walker.nextNode()) nodes.push(walker.currentNode);
-    nodes.forEach(function (n) { var v = window.t(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; });
+    while (walker.nextNode()) {
+      var n = walker.currentNode, k = n.nodeValue.trim();
+      if (k && DICT[k] !== undefined) staticTexts.push({ node: n, orig: n.nodeValue });
+    }
     document.querySelectorAll('[placeholder],[title],[aria-label],[alt]').forEach(function (el) {
       ['placeholder', 'title', 'aria-label', 'alt'].forEach(function (a) {
         var cur = el.getAttribute(a);
-        if (cur) { var v = window.t(cur); if (v !== cur) el.setAttribute(a, v); }
+        if (cur && DICT[cur.trim()] !== undefined) staticAttrs.push({ el: el, attr: a, orig: cur });
       });
     });
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', translateStatic);
-  else translateStatic();
+  function applyStatic() {
+    staticTexts.forEach(function (r) { r.node.nodeValue = window.t(r.orig); });
+    staticAttrs.forEach(function (r) { r.el.setAttribute(r.attr, window.t(r.orig)); });
+  }
+  function initStatic() { recordStatic(); applyStatic(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initStatic);
+  else initStatic();
+
+  // Changement de langue : mise à jour immédiate de la page affichée, puis rechargement complet (menus, thèmes...).
+  // Le rechargement passe par une nouvelle adresse (paramètre « l ») : plus fiable que location.reload() dans certains navigateurs d'appli.
+  window.setLanguage = function (l) {
+    l = l === 'en' ? 'en' : 'fr';
+    if (l === lang) return;
+    try { localStorage.setItem(LANG_KEY, l); } catch (e) { /* non enregistré */ }
+    lang = l;
+    publish();
+    applyStatic();
+    try { if (typeof refreshCurrentPage === 'function') refreshCurrentPage(); } catch (e) { /* le rechargement suivra */ }
+    setTimeout(function () {
+      try {
+        var u = new URL(window.location.href);
+        u.searchParams.set('l', String(Date.now()));
+        window.location.replace(u.toString());
+      } catch (e) { window.location.reload(); }
+    }, 300);
+  };
 })();

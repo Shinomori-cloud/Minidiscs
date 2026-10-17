@@ -987,6 +987,7 @@ function pageHash(page) {
     case 'planner': return '#planner';
     case 'settings': return '#settings';
     case 'settings-appearance': return '#settings-appearance';
+    case 'settings-language': return '#settings-language';
     case 'settings-images': return '#settings-images';
     case 'discover-results': return '#discover' + q;
     case 'discover-disco': return '#discover';
@@ -1008,6 +1009,7 @@ function parentOfPage(page) {
     case 'create': return { key: 'dashboard' };
     case 'settings': return page.parent || { key: 'dashboard' };
     case 'settings-appearance':
+    case 'settings-language':
     case 'settings-images': return { key: 'settings', parent: page.parent };
     default: return { key: 'dashboard' };
   }
@@ -1078,6 +1080,7 @@ function renderForPage(page) {
     case 'planner': renderCompilPlanner(false); break;
     case 'settings': renderSettings(); break;
     case 'settings-appearance': renderSettingsAppearance(); break;
+    case 'settings-language': renderSettingsLanguage(); break;
     case 'settings-images': renderSettingsImages(); break;
     case 'discover-results': renderDiscover(page.params || new URLSearchParams()); break;
     case 'discover-disco':
@@ -1097,6 +1100,7 @@ function goToCreateHub() { navigateTo({ key: 'create' }); }
 function goToPlanner() { navigateTo({ key: 'planner' }); }
 function goToSettings(origin) { navigateTo({ key: 'settings', parent: origin }); }
 function goToSettingsAppearance() { navigateTo({ key: 'settings-appearance', parent: currentPage.parent }); }
+function goToSettingsLanguage() { navigateTo({ key: 'settings-language', parent: currentPage.parent }); }
 function goToSettingsImages() { navigateTo({ key: 'settings-images', parent: currentPage.parent }); }
 
 // Depuis le menu des boutons flottants : on referme le panneau, puis la flèche ← ramène à la page d'où l'on vient
@@ -1145,6 +1149,10 @@ function parsePageFromHash(hash) {
     return { key: 'track', mdIndex: +albumMatch[1], albumIndex: +albumMatch[2] };
   }
   if (rawHash.startsWith('#planner')) return { key: 'planner' };
+  if (rawHash.startsWith('#settings-appearance')) return { key: 'settings-appearance', parent: { key: 'dashboard' } };
+  if (rawHash.startsWith('#settings-language')) return { key: 'settings-language', parent: { key: 'dashboard' } };
+  if (rawHash.startsWith('#settings-images')) return { key: 'settings-images', parent: { key: 'dashboard' } };
+  if (rawHash.startsWith('#settings')) return { key: 'settings' };
   if (rawHash.startsWith('#minidiscs')) return { key: 'list', params };
   if (rawHash.startsWith('#md-')) {
     const mdIndex = parseInt(rawHash.replace('#md-', ''), 10);
@@ -1580,14 +1588,9 @@ function renderDashboard(pushState = true) {
         <button class="action-btn-wide action-btn-discover" onclick="goToDiscoverResults()">
           ${t("Découverte")}
         </button>
-        <div class="action-col">
-          <button class="action-btn-wide action-btn-create" onclick="goToCreateHub()">
-            ${t("Création")}
-          </button>
-          <button class="action-btn-wide action-btn-settings" onclick="goToSettings()">
-            ${t("Paramètres")}
-          </button>
-        </div>
+        <button class="action-btn-wide action-btn-create" onclick="goToCreateHub()">
+          <span class="tile-words">${t("Créer un minidisc")}</span>
+        </button>
       </div>
     </div>
   `;
@@ -2089,7 +2092,14 @@ async function titlesLoadExtras(ctx) {
   const hasStoredDesc = titlesKnown(ctx.description);
 
   // Description déjà dans le catalogue : on l'affiche telle quelle, sans rien chercher
-  if (hasStoredDesc) titlesSetDesc(String(ctx.description).trim());
+  if (hasStoredDesc) {
+    const stored = String(ctx.description).trim();
+    titlesSetDesc(stored);
+    // Description rédigée dans l'autre langue que celle de l'appli : on affiche sa traduction (mise en cache sur l'appareil)
+    if (!adLooksFrench(stored)) {
+      adToFrench(stored).then(tr => { if (alive() && tr) titlesSetDesc(tr); }).catch(() => { /* on garde le texte d'origine */ });
+    }
+  }
 
   // 0) Artiste « Divers » : on tente de retrouver l'album (OST...) par son titre
   const various = !isRealArtist(ctx.artist);
@@ -2959,9 +2969,9 @@ function injectPlannerHeaderBadge() {
   
   badge.innerHTML = `
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px;">
-      <span style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">${t("Durée sélectionnée :")}</span>
+      <span style="font-size: 0.76rem; font-weight: bold; color: var(--text-main);">${t("Durée sélectionnée :")}</span>
       <div style="display: flex; align-items: baseline; gap: 8px; margin-left: auto;">
-        <strong id="planner-duration-text" style="font-family: var(--font-ui); font-weight: 700; font-size: 1.05rem; color: #06d6a0;">0m 00s / ${plannerMaxLabel()}</strong>
+        <strong id="planner-duration-text" style="font-family: var(--font-ui); font-weight: 700; font-size: 0.95rem; color: #06d6a0;">0m 00s / ${plannerMaxLabel()}</strong>
         <span class="planner-capacity" title="${t("Capacité du MiniDisc (touche pour passer de 74 à 80 min)")}">
           <span id="planner-capacity-label">${plannerCapacityMin}min</span>
           <button type="button" class="planner-capacity-btn" onclick="togglePlannerCapacity()" aria-label="${t("Changer la capacité du MiniDisc (74 ou 80 min)")}">🔄</button>
@@ -4702,18 +4712,9 @@ function renderSettings() {
   app.innerHTML = `
     <div id="settings-page" class="settings-page settings-menu">
       <div class="settings-group">
-        ${discoverSeparatorHTML(t("Langue"), 'dc-left')}
-        <section class="settings-card list-item">
-          <p class="settings-help">${t("Choisis la langue de l'appli.")}</p>
-          <div class="dc-kind" role="group" aria-label="Language">
-            <button type="button" class="dc-kind-btn ${isEN() ? '' : 'active'}" onclick="setLanguage('fr')">Français</button>
-            <button type="button" class="dc-kind-btn ${isEN() ? 'active' : ''}" onclick="setLanguage('en')">English</button>
-          </div>
-        </section>
-      </div>
-      <div class="settings-group">
         ${discoverSeparatorHTML(t("Personnalisation"), 'dc-left')}
-        ${settingsEntryHTML(t("Apparence"), t("Choisis les couleurs de l'appli."), 'goToSettingsAppearance()')}
+        ${settingsEntryHTML(t("Thèmes"), t("Choisis les couleurs de l'appli."), 'goToSettingsAppearance()')}
+        ${settingsEntryHTML(t("Langue"), t("Français ou anglais."), 'goToSettingsLanguage()')}
       </div>
       <div class="settings-group">
         ${discoverSeparatorHTML(t("Maintenance"), 'dc-left')}
@@ -4722,8 +4723,23 @@ function renderSettings() {
     </div>`;
 }
 
+// Page « Langue » : choix du français ou de l'anglais (appliqué tout de suite)
+function renderSettingsLanguage() {
+  prepareSubPage(t("Langue"));
+  app.innerHTML = `
+    <div id="settings-page" class="settings-page">
+      <section class="settings-card list-item">
+        <p class="settings-help">${t("Choisis la langue de l'appli.")}</p>
+        <div class="dc-kind" role="group" aria-label="Language">
+          <button type="button" class="dc-kind-btn ${isEN() ? '' : 'active'}" onclick="setLanguage('fr')">Français</button>
+          <button type="button" class="dc-kind-btn ${isEN() ? 'active' : ''}" onclick="setLanguage('en')">English</button>
+        </div>
+      </section>
+    </div>`;
+}
+
 function renderSettingsAppearance() {
-  prepareSubPage(t("Apparence"));
+  prepareSubPage(t("Thèmes"));
   app.innerHTML = `
     <div id="settings-page" class="settings-page">
       <section class="settings-card list-item">
@@ -5869,9 +5885,24 @@ async function adTranslateChunk(q) {
   return d[0].map(x => x[0]).join('');
 }
 
+// Traductions mémorisées sur l'appareil (clé : langue + empreinte du texte) pour ne pas retraduire à chaque visite
+function adTrStoreKey(text) { return `minidisc_tr_${isEN() ? 'en' : 'fr'}_${cyrb53(text)}`; }
+function adTrStoreGet(text) { try { return localStorage.getItem(adTrStoreKey(text)); } catch (e) { return null; } }
+function adTrStoreSet(text, value) {
+  try { localStorage.setItem(adTrStoreKey(text), value); }
+  catch (e) { // stockage plein : on libère les anciennes traductions puis on réessaie une fois
+    try {
+      Object.keys(localStorage).filter(k => k.startsWith('minidisc_tr_')).slice(0, 30).forEach(k => localStorage.removeItem(k));
+      localStorage.setItem(adTrStoreKey(text), value);
+    } catch (e2) { /* sans cache */ }
+  }
+}
+
 async function adToFrench(text) {
-  const key = 'tr:' + text;
+  const key = 'tr:' + (isEN() ? 'en:' : 'fr:') + text;
   if (discoverCache.has(key)) return discoverCache.get(key);
+  const stored = adTrStoreGet(text);
+  if (stored) { discoverCache.set(key, stored); return stored; }
   const parts = [];
   let cur = '';
   (text.match(/[^.!?]+[.!?]*\s*/g) || [text]).forEach(sentence => { // morceaux de ~400 caractères, coupés entre deux phrases
@@ -5884,6 +5915,7 @@ async function adToFrench(text) {
   const result = out.join(' ').trim();
   if (!result) throw new Error('traduction vide');
   discoverCache.set(key, result);
+  adTrStoreSet(text, result);
   return result;
 }
 

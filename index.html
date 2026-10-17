@@ -281,6 +281,13 @@
   <!-- POP-UP TOAST -->
   <div id="toast" class="toast hidden"></div>
 
+  <!-- ⋮ de l'accueil : accès direct aux Paramètres (visible uniquement sur l'accueil, voir style.css) -->
+  <div id="home-fab" class="fab-container">
+    <button type="button" class="fab-main-btn" onclick="goToSettings(currentPage)" title="Paramètres" aria-label="Paramètres">
+      <span class="fab-icon" aria-hidden="true"></span>
+    </button>
+  </div>
+
   <!-- BOUTON FLOTTANT UNIQUE ET SON MENU -->
   <div id="floating-actions" class="fab-container hidden">
     <!-- Menu déroulant avec toutes les actions -->
