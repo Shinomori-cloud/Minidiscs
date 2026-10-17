@@ -4923,6 +4923,61 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1792272538932",
+      "md_cover": "images/img_1792272536862.jpg",
+      "title": "Sah Hill / Opéra Puccino",
+      "albums": [
+        {
+          "id": "md-1792272538932-alb-1",
+          "md_cover": "images/sadhill.jpg",
+          "title": "Sah Hill",
+          "artist": "Kheops",
+          "main_genre": "Rap, Soul & Reggae",
+          "tags": [
+            "Rap"
+          ],
+          "release_year": "",
+          "duration": "1:18:31",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1792272538932-alb-2",
+          "md_cover": "images/img_1792270944046.jpg",
+          "title": "Opéra Puccino",
+          "artist": "Oxmo Puccino",
+          "main_genre": "Rap, Soul & Reggae",
+          "tags": [
+            "hip hop",
+            "hip-hop"
+          ],
+          "release_year": "1998",
+          "duration": "1:08:11",
+          "tracks": [
+            "Visions de vie",
+            "Black Mafioso (interlude)",
+            "Hitman",
+            "Qui peut le nier !",
+            "Peur noire",
+            "L’Enfant seul",
+            "Alias Jon Smoke",
+            "Peu de gens le savent (interlude)",
+            "Amour & Jalousie",
+            "24 heures à vivre",
+            "Sacré Samedi soir",
+            "Le jour où tu partiras",
+            "Sortilège",
+            "Black Cyrano de Bergerac (interlude)",
+            "Mensongeur",
+            "La Lettre (Tant de choses à dire)",
+            "La Loi du point final",
+            "Mourir 1000 fois"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -4991,16 +5046,6 @@
       ],
       "duration": "44:51",
       "md_cover": "images/manau.jpg"
-    },
-    {
-      "title": "Sah Hill",
-      "artist": "Kheops",
-      "main_genre": "Rap, Soul & Reggae",
-      "tags": [
-        "Rap"
-      ],
-      "duration": "1:18:31",
-      "md_cover": "images/sadhill.jpg"
     },
     {
       "title": "666.667 Club",
@@ -5772,40 +5817,6 @@
       ],
       "toRecord": false,
       "description": "Era is the eponymous debut album by Eric Lévi's new-age project Era, first released in 1996 and re-released in 1998. Some editions include bonus track \"After Time\". ."
-    },
-    {
-      "id": "idea-1792270945465",
-      "md_cover": "images/img_1792270944046.jpg",
-      "title": "Opéra Puccino",
-      "artist": "Oxmo Puccino",
-      "main_genre": "Rap, Soul & Reggae",
-      "tags": [
-        "hip hop",
-        "hip-hop"
-      ],
-      "release_year": "1998",
-      "duration": "1:08:11",
-      "tracks": [
-        "Visions de vie",
-        "Black Mafioso (interlude)",
-        "Hitman",
-        "Qui peut le nier !",
-        "Peur noire",
-        "L’Enfant seul",
-        "Alias Jon Smoke",
-        "Peu de gens le savent (interlude)",
-        "Amour & Jalousie",
-        "24 heures à vivre",
-        "Sacré Samedi soir",
-        "Le jour où tu partiras",
-        "Sortilège",
-        "Black Cyrano de Bergerac (interlude)",
-        "Mensongeur",
-        "La Lettre (Tant de choses à dire)",
-        "La Loi du point final",
-        "Mourir 1000 fois"
-      ],
-      "toRecord": false
     }
   ]
 }
