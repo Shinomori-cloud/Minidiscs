@@ -4663,11 +4663,10 @@
           "artist": "Coldplay",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "alternative rock",
             "rock",
-            "pop rock",
             "alternative",
-            "post-britpop"
+            "britpop",
+            "alternative rock"
           ],
           "release_year": "2000",
           "duration": "41:32",
@@ -4684,7 +4683,8 @@
             "Everything's Not Lost",
             "Life is For Living"
           ],
-          "toRecord": true
+          "toRecord": true,
+          "description": "Parachutes is the debut studio album by the British rock band Coldplay. It was released on 10 July 2000 by Parlophone in the United Kingdom. The album was produced by the band and British record producer Ken Nelson, except for one track, \"High Speed\", which was produced by Chris Allison. Parachutes spawned the singles \"Shiver\", \"Yellow\", \"Trouble\" and \"Don't Panic\", with the latter being a limited release in Europe. \"Sparks\" gained notability during the 2020s after going viral on video platform TikTok as well. The album was also supported by the Parachutes Tour, which saw the band performing 131 shows in their first world tour. ."
         }
       ],
       "title": "Last Fair Deal Gone Down / A Fine Day to Exit / Parachutes"
