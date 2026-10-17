@@ -1470,7 +1470,7 @@ function renderDashboard(pushState = true) {
   currentGenreFilters.clear(); // Réinitialise les filtres multiples à l'arrivée sur le dashboard
   currentTypeFilter = null;
   if (backBtn) backBtn.classList.add('hidden');
-  if (headerTitle) headerTitle.textContent = "MINIDISCS";
+  if (headerTitle) headerTitle.textContent = "Unloop";
   setHeaderGenreInfo([]);
 
   if (typeof updateSearchVisibility === 'function') {
@@ -1654,7 +1654,7 @@ function renderMDList(filters = {}, pushState = true) {
   if (backBtn) backBtn.classList.remove('hidden');
 
   updateSearchVisibility(true);
-  if (headerTitle) headerTitle.textContent = "MINIDISCS";
+  if (headerTitle) headerTitle.textContent = "MiniDiscs";
   setHeaderGenreInfo(genre && genre !== 'ALL' ? [genre] : []);
   if (featuredContainer) featuredContainer.classList.add('hidden');
 
@@ -1803,7 +1803,7 @@ const fabHTML = `
 
 // CAS 1 : MINIDISC SIMPLE / COMPILATION (SANS ALBUMS)
 if (!md.albums || md.albums.length === 0) {
-  if (headerTitle) headerTitle.textContent = "TITRES";
+  if (headerTitle) headerTitle.textContent = "Titres";
 
   let tracksHTML = '';
   if (md.tracks && md.tracks.length > 0) {
@@ -1850,7 +1850,7 @@ if (!md.albums || md.albums.length === 0) {
 }
 
 // CAS 2 : SÉRIE D'ALBUMS
-if (headerTitle) headerTitle.textContent = "ALBUMS";
+if (headerTitle) headerTitle.textContent = "Albums";
 
 let html = `<div class="list-container" style="padding-bottom: 90px;">`;
 md.albums.forEach((album, aIndex) => {
@@ -2296,7 +2296,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   const albumGenres = getAlbumGenres(album, md);
   const albumColor = getBorderColor(albumGenres);
 
-  if (headerTitle) headerTitle.textContent = "TITRES";
+  if (headerTitle) headerTitle.textContent = "Titres";
   if (pushState) history.pushState({ view: 'tracklist', mdIndex, albumIndex }, '', `#md-${mdIndex}-album-${albumIndex}`);
 
   // La numérotation continue d'un album à l'autre, comme sur le MiniDisc physique :
@@ -3001,7 +3001,7 @@ function renderCompilPlanner(pushState = true) {
     document.getElementById('back-btn')?.classList.remove('hidden');
     
     const headerTitle = document.getElementById('header-title') || document.querySelector('.header-title');
-    if (headerTitle) headerTitle.textContent = "COMPILATIONS";
+    if (headerTitle) headerTitle.textContent = "Compilations";
     setHeaderGenreInfo(Array.from(currentPlannerGenreFilters));
 
     document.getElementById('featured-container')?.classList.add('hidden');
@@ -4599,7 +4599,7 @@ function prepareSubPage(title) {
 }
 
 function renderCreateHub() {
-  prepareSubPage('CRÉER');
+  prepareSubPage('Créer');
   app.innerHTML = `
     <div id="create-page" class="create-page">
       <button type="button" class="create-tile create-tile-add" onclick="openAdminModal()">
@@ -4698,7 +4698,7 @@ function settingsEntryHTML(title, description, onclick) {
 
 // Page « Paramètres » : uniquement le menu. Chaque réglage est sur sa propre page.
 function renderSettings() {
-  prepareSubPage('PARAMÈTRES');
+  prepareSubPage('Paramètres');
   app.innerHTML = `
     <div id="settings-page" class="settings-page settings-menu">
       <div class="settings-group">
@@ -4713,7 +4713,7 @@ function renderSettings() {
 }
 
 function renderSettingsAppearance() {
-  prepareSubPage('APPARENCE');
+  prepareSubPage('Apparence');
   app.innerHTML = `
     <div id="settings-page" class="settings-page">
       <section class="settings-card list-item">
@@ -4727,7 +4727,7 @@ function renderSettingsAppearance() {
 }
 
 function renderSettingsImages() {
-  prepareSubPage('IMAGES');
+  prepareSubPage('Images');
   app.innerHTML = `
     <div id="settings-page" class="settings-page">
       <section class="settings-card list-item">
@@ -5952,7 +5952,7 @@ function adActionHTML(r) {
 }
 
 function renderAlbumDetail(r) {
-  prepareSubPage('DÉTAILS');
+  prepareSubPage('Détails');
   const token = ++AD.token;
   AD.similar = [];
   AD.current = r;
@@ -6905,7 +6905,7 @@ window.addEventListener('resize', () => {
 // Point d'entrée de la page (params : critères pré-remplis quand on arrive depuis un album)
 function renderDiscover(params) {
   const s = discoverState;
-  prepareSubPage('DÉCOUVERTE');
+  prepareSubPage('Découverte');
   s.view = 'results';
   s.disco = null;
 
