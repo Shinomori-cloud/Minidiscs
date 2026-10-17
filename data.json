@@ -5741,6 +5741,37 @@
         "Ne te prends pas pour le seigneur"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1792270772101",
+      "md_cover": "images/img_1792270770619.jpg",
+      "title": "Era",
+      "artist": "Era",
+      "main_genre": "Rock & Blues",
+      "tags": [
+        "gothic",
+        "new age",
+        "rock",
+        "meditative",
+        "celtic"
+      ],
+      "release_year": "1996",
+      "duration": "41:31",
+      "tracks": [
+        "Era",
+        "Ameno (remix)",
+        "Cathar Rhythm",
+        "Mother",
+        "Avemano",
+        "Enae Volare mezzo",
+        "Mirror",
+        "Ameno",
+        "Sempire d’Amor",
+        "After Time",
+        "Impera"
+      ],
+      "toRecord": false,
+      "description": "Era is the eponymous debut album by Eric Lévi's new-age project Era, first released in 1996 and re-released in 1998. Some editions include bonus track \"After Time\". ."
     }
   ]
 }
