@@ -6,7 +6,7 @@
   <title>Unloop</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Quicksand:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -25,7 +25,7 @@
   <header>
     <button id="back-btn" class="back-btn hidden">&larr;</button>
     <div class="header-title-container">
-      <div class="header-subtitle">COLLECTION</div>
+      <div class="header-subtitle">Collection</div>
       <div id="header-title" class="title-90s">Unloop</div>
       <!-- Genre(s) filtré(s) : affiché sous le titre uniquement quand un filtre par genre est actif -->
       <div id="header-genre-info" class="header-genre-info hidden">
@@ -37,7 +37,7 @@
   <!-- SELECTION DU MOMENT (ACCUEIL) -->
   <div id="featured-container" class="featured-container">
     <div class="featured-header">
-      <span class="featured-title">SÉLECTION DU MOMENT</span>
+      <span class="featured-title">Sélection du moment</span>
     </div>
     <div id="featured-grid" class="featured-grid"></div>
   </div>
@@ -378,6 +378,7 @@
   <button id="global-right-back-btn" aria-label="Retour" onclick="if (typeof goBack === 'function') goBack(); else window.history.back();"></button>
 
   <!-- CHARGEMENT DU SCRIPT À LA FIN POUR ACCÉDER À TOUS LES ÉLÉMENTS DU DOM -->
+  <script src="i18n.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

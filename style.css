@@ -18,6 +18,7 @@
   --c-7b2cbf: 123, 44, 191;
   --c-9b51e0: 155, 81, 224;
   --c-b57bff: 181, 123, 255;
+  --font-ui: 'Quicksand', 'Nunito', 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --c-c4b5fd: 196, 181, 253;
   --c-d8b4fe: 216, 180, 254;
   --c-f3edff: 243, 237, 255;
@@ -61,7 +62,8 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-ui);
+  font-weight: 500;
   color: var(--text-main);
   padding: 16px;
   max-width: 600px;
@@ -200,7 +202,8 @@ body:has(.dashboard-container) .dashboard-container > .dashboard-card:first-chil
 
 body:has(.dashboard-container) .header-subtitle {
   display: block !important;
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 2px;
   color: var(--text-sub);
@@ -211,7 +214,7 @@ body:has(.dashboard-container) .header-subtitle {
 
 .title-90s {
   /* Même esprit que le logo Unloop : texte blanc, police ronde, halo lilas */
-  font-family: 'Quicksand', 'Nunito', 'Montserrat', system-ui, sans-serif;
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: 2rem;
   text-transform: none;
@@ -313,7 +316,8 @@ body:has(.dashboard-container) .title-90s {
 }
 
 .stat-number {
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 2rem;
   line-height: 1;
   color: var(--text-cyan);
@@ -328,7 +332,8 @@ body:has(.dashboard-container) .title-90s {
 }
 
 .dashboard-section-title {
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 0.65rem;
   letter-spacing: 1.5px;
   color: var(--text-sub);
@@ -435,30 +440,14 @@ body:has(.dashboard-container) .title-90s {
 .action-btn-create {
   background-image:
     radial-gradient(ellipse 40% 24% at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.28) 50%, rgba(0, 0, 0, 0) 100%),
-    url('images/Créer.jpg');
+    url('images/Creer.jpg');
 }
 
+/* Image « Similaire » : sa saturation est déjà renforcée dans le fichier */
 .action-btn-discover {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  background-image: none;
-}
-/* L'image est sur un calque à part pour être plus saturée sans toucher au texte */
-.action-btn-discover::before,
-.action-btn-discover::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-}
-.action-btn-discover::before {
-  background: url('images/Similaire.jpg') center / cover no-repeat;
-  filter: saturate(1.5);
-}
-.action-btn-discover::after {
-  background: radial-gradient(ellipse 40% 24% at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.28) 50%, rgba(0, 0, 0, 0) 100%);
+  background-image:
+    radial-gradient(ellipse 40% 24% at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.28) 50%, rgba(0, 0, 0, 0) 100%),
+    url('images/Similaire.jpg');
 }
 
 /* Colonne droite de l'accueil : « Créer une compilation » (3/4) au-dessus de « Paramètres » (1/4), même hauteur totale qu'avant */
@@ -595,7 +584,8 @@ body:has(.dashboard-container) .featured-container {
 }
 
 .featured-title {
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: 1.5px;
@@ -993,7 +983,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 }
 
 .compil-time-display {
-  font-family: 'Righteous', cursive, sans-serif;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 1.3rem;
   font-weight: 800;
   color: #000000;
@@ -1360,7 +1351,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .modal-header h2, .modal-header h3 {
   margin: 0;
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 1.15rem;
   line-height: 1.2;
   letter-spacing: 0.5px;
@@ -1566,7 +1558,8 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
   margin: 0;
   font-size: 1rem;
   color: rgb(var(--c-ff4fa3));
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
 }
 
 .btn-remove-album {
@@ -1825,7 +1818,8 @@ body:has(.modal:not(.hidden)) .fab-container {
   align-items: center;
   gap: 10px;
   margin: 4px 0 2px;
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 0.88rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -2392,7 +2386,8 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
 
 .create-tile-title {
   display: block;
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 1.25rem;
   line-height: 1.2;
   text-shadow: 0 0 6px rgba(0, 0, 0, 0.85), 0 1px 3px rgba(0, 0, 0, 0.9);
@@ -2428,7 +2423,8 @@ body:has(.header-genre-info:not(.hidden)) #header-planner-badge {
 }
 
 .dc-card-title {
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 1rem;
   letter-spacing: 1px;
   color: var(--text-main);
@@ -2789,7 +2785,8 @@ main#app:has(.titles-actions) {
 }
 
 .dc-disco-title {
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 1rem;
   line-height: 1.25;
   color: var(--text-main);
@@ -2880,7 +2877,8 @@ main#app:has(.titles-actions) {
 .dc-banner-title {
   flex: 1;
   min-width: 0;
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 0.95rem;
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -2967,7 +2965,8 @@ main#app:has(.titles-actions) {
   justify-content: center;
   gap: 10px;
   margin: 20px 0 10px;
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 0.95rem;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -3024,7 +3023,8 @@ main#app:has(.titles-actions) {
 }
 
 .dc-item.dc-featured .dc-title {
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 1.3rem;
   line-height: 1.15;
   text-shadow: 0 0 14px rgba(var(--c-ff4fa3), 0.6);
@@ -3457,7 +3457,8 @@ body:has(.modal:not(.hidden)) .random-compil-btn {
   -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
 #td-page .td-hero-bg-img { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, var(--ad), transparent 70%) center / cover no-repeat; background-size: cover; background-position: center; filter: blur(20px) saturate(1.5) brightness(.9); transform: scale(1.2); }
 /* artiste en capitales espacées (même police que les titres de section) */
-#td-page .ad-artist { font-family: 'Righteous', cursive; font-size: 1.3rem; line-height: 1.2; letter-spacing: 2px; text-transform: uppercase; }
+#td-page .ad-artist { font-family: var(--font-ui);
+  font-weight: 700; font-size: 1.3rem; line-height: 1.2; letter-spacing: 2px; text-transform: uppercase; }
 #td-page .ad-cover { width: min(66vw, 270px); border-radius: calc(14px * var(--radius-factor)); box-shadow: 4px 4px 0 #000, 0 0 30px -4px var(--ad), 0 12px 30px rgba(0, 0, 0, .55); }
 #td-page .ad-title { margin-top: 8px; }
 #td-page .ad-facts { margin-top: 6px; padding: 3px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .22); background: rgba(var(--c-120a24), .55); font-size: .8rem; letter-spacing: .3px; }
@@ -3698,7 +3699,8 @@ body:has(.modal:not(.hidden)) .selection-bar {
   align-items: center;
   gap: 12px;
   margin: 0;
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 1.25rem;
   line-height: 1.2;
   letter-spacing: 0.5px;
@@ -3742,7 +3744,8 @@ body:has(.modal:not(.hidden)) .selection-bar {
 .modal .form-divider,
 #dc-form .form-divider {
   margin: 26px 0 14px;
-  font-family: 'Righteous', cursive;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 0.95rem;
   font-weight: 400;
   letter-spacing: 1.5px;
@@ -4319,11 +4322,14 @@ main#app:has(#dc-sticky) { z-index: auto; }
 
 /* Bouton « Créer une compilation » sous le bandeau de recherche */
 .action-btn-wide.dc-compil-btn {
-  width: 50%;
+  width: auto;
+  min-width: 50%;
+  white-space: nowrap;
   height: 38px;
   margin: 12px auto 2px;
-  padding: 4px 10px;
-  font-family: 'Righteous', cursive;
+  padding: 4px 18px;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 0.85rem;
   letter-spacing: 0.5px;
   box-shadow: 3px 3px 0px #000;
@@ -4331,3 +4337,10 @@ main#app:has(#dc-sticky) { z-index: auto; }
   background-color: var(--card-bg);
 }
 .dc-compil-btn.hidden { display: none; }
+
+
+/* Texte harmonisé avec les titres : police ronde (Quicksand), sans capitales forcées.
+   Les noms de genres (catégories) restent en capitales. */
+button, input, select, textarea { font-family: inherit; }
+.stat-label, .featured-title, .form-group label, .fab-section-title, .form-divider, .ad-sec h3,
+body:has(.dashboard-container) .header-subtitle { text-transform: none; letter-spacing: 0.3px; }

@@ -1,6 +1,6 @@
 // Thèmes de couleurs (Paramètres > Apparence). « sw » = aperçu : fond sombre, violet, accent, secondaire. « g » = palette des genres :
 // rotation de teinte (r, en degrés : le même décalage que l'accent du thème) et facteur de saturation (s). Les palettes de l'interface sont dans style.css.
-const THEMES = [{"id": "default", "name": "Par défaut", "sw": ["#140c2a", "#7b2cbf", "#ff007f", "#00f0ff"]}, {"id": "ocean", "name": "Océan", "sw": ["#0c1d2a", "#2c58bf", "#00d8ff", "#00ffa4"], "g": {"r": -141, "s": 1}}, {"id": "braise", "name": "Braise", "sw": ["#2a0d0c", "#bf592c", "#ff6200", "#ffbd00"], "g": {"r": 52, "s": 1}}, {"id": "ardoise", "name": "Ardoise", "sw": ["#151b21", "#5a6891", "#4f8bb0", "#4f9fb0"], "g": {"r": -128, "s": 0.72}}, {"id": "menthe", "name": "Menthe", "sw": ["#0c2a22", "#2cbebf", "#00ff84", "#00caff"], "g": {"r": -179, "s": 1}}, {"id": "rubis", "name": "Rubis", "sw": ["#0b0e2d", "#be1558", "#e52165", "#fbcbc9"], "g": {"r": 8, "s": 1}}, {"id": "bordeaux", "name": "Bordeaux", "sw": ["#2e0d1e", "#7a2048", "#408ec6", "#79a7d3"], "g": {"r": -125, "s": 1}}, {"id": "onyx", "name": "Onyx", "sw": ["#090909", "#a8870f", "#f3ca20", "#f6ead4"], "g": {"r": 77, "s": 1}}, {"id": "mousse", "name": "Mousse", "sw": ["#0c2516", "#4c9a5f", "#e1dd72", "#a8c66c"], "g": {"r": 86, "s": 1}}, {"id": "corail", "name": "Corail", "sw": ["#142b36", "#3d7a94", "#f57e7e", "#efb5a3"], "g": {"r": 29, "s": 1}}, {"id": "pervenche", "name": "Pervenche", "sw": ["#17193a", "#4d5198", "#81b7d2", "#ffcce7"], "g": {"r": -131, "s": 1}}, {"id": "pop", "name": "Pop", "sw": ["#240d22", "#d13ca4", "#ffea04", "#fe3a9e"], "g": {"r": 83, "s": 1}}];
+const THEMES = [{"id": "default", "name": t("Par défaut"), "sw": ["#140c2a", "#7b2cbf", "#ff007f", "#00f0ff"]}, {"id": "ocean", "name": t("Océan"), "sw": ["#0c1d2a", "#2c58bf", "#00d8ff", "#00ffa4"], "g": {"r": -141, "s": 1}}, {"id": "braise", "name": t("Braise"), "sw": ["#2a0d0c", "#bf592c", "#ff6200", "#ffbd00"], "g": {"r": 52, "s": 1}}, {"id": "ardoise", "name": t("Ardoise"), "sw": ["#151b21", "#5a6891", "#4f8bb0", "#4f9fb0"], "g": {"r": -128, "s": 0.72}}, {"id": "menthe", "name": t("Menthe"), "sw": ["#0c2a22", "#2cbebf", "#00ff84", "#00caff"], "g": {"r": -179, "s": 1}}, {"id": "rubis", "name": t("Rubis"), "sw": ["#0b0e2d", "#be1558", "#e52165", "#fbcbc9"], "g": {"r": 8, "s": 1}}, {"id": "bordeaux", "name": t("Bordeaux"), "sw": ["#2e0d1e", "#7a2048", "#408ec6", "#79a7d3"], "g": {"r": -125, "s": 1}}, {"id": "onyx", "name": t("Onyx"), "sw": ["#090909", "#a8870f", "#f3ca20", "#f6ead4"], "g": {"r": 77, "s": 1}}, {"id": "mousse", "name": t("Mousse"), "sw": ["#0c2516", "#4c9a5f", "#e1dd72", "#a8c66c"], "g": {"r": 86, "s": 1}}, {"id": "corail", "name": t("Corail"), "sw": ["#142b36", "#3d7a94", "#f57e7e", "#efb5a3"], "g": {"r": 29, "s": 1}}, {"id": "pervenche", "name": t("Pervenche"), "sw": ["#17193a", "#4d5198", "#81b7d2", "#ffcce7"], "g": {"r": -131, "s": 1}}, {"id": "pop", "name": "Pop", "sw": ["#240d22", "#d13ca4", "#ffea04", "#fe3a9e"], "g": {"r": 83, "s": 1}}];
 const THEME_STORAGE_KEY = 'minidisc_theme';
 const THEME_DAILY_KEY = 'minidisc_theme_daily';   // '1' : un thème différent chaque jour
 
@@ -186,9 +186,9 @@ async function syncCollectionToGithub() {
   }
 
   if (success) {
-    showToast("☁️ Synchronisé avec GitHub", 2000);
+    showToast(t("☁️ Synchronisé avec GitHub"), 2000);
   } else {
-    showToast("⚠️ Synchro GitHub impossible : modifications gardées sur cet appareil", 4500);
+    showToast(t("⚠️ Synchro GitHub impossible : modifications gardées sur cet appareil"), 4500);
   }
   return success;
 }
@@ -224,7 +224,7 @@ async function pushCollectionToGithub(token) {
         method: 'PUT',
         headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: 'Mise à jour automatique de la collection MiniDisc',
+          message: t("Mise à jour automatique de la collection MiniDisc"),
           content: base64Content,
           ...(sha ? { sha } : {})
         })
@@ -402,7 +402,7 @@ async function initData() {
   window.ideaAlbums = [];
   app.innerHTML = `
     <div style="text-align:center; padding: 40px; color: var(--text-sub);">
-      <p style="color: #e63946; font-weight: bold; font-size: 1.1rem;">⚠️ Erreur de chargement de data.json</p>
+      <p style="color: #e63946; font-weight: bold; font-size: 1.1rem;">${t("⚠️ Erreur de chargement de data.json")}</p>
     </div>
   `;
 }
@@ -705,7 +705,7 @@ function populateFabGenreMenu() {
   container.innerHTML = '';
 
   if (allGenres.size === 0) {
-    container.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-sub); padding: 6px 12px;">Aucun genre</span>`;
+    container.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-sub); padding: 6px 12px;">${t("Aucun genre")}</span>`;
     return;
   }
 
@@ -1483,7 +1483,7 @@ function renderDashboard(pushState = true) {
     : (Array.isArray(catalogData) ? catalogData : (Array.isArray(window.mdData) ? window.mdData : []));
 
   if (!sourceData || sourceData.length === 0) {
-    app.innerHTML = `<p style="text-align:center; padding: 40px; color: var(--text-sub, #aaa);">Chargement de la collection...</p>`;
+    app.innerHTML = `<p style="text-align:center; padding: 40px; color: var(--text-sub, #aaa);">${t("Chargement de la collection...")}</p>`;
     return;
   }
 
@@ -1499,9 +1499,9 @@ function renderDashboard(pushState = true) {
 
   let recordSummaryHTML;
   if (toRecordCount === 0) {
-    recordSummaryHTML = 'Tous les minidiscs sont enregistrés';
+    recordSummaryHTML = t("Tous les minidiscs sont enregistrés");
   } else {
-    recordSummaryHTML = `Il reste <strong>${toRecordCount}</strong> minidisc${toRecordCount > 1 ? 's' : ''} à enregistrer`;
+    recordSummaryHTML = `${t("Il reste")} <strong>${toRecordCount}</strong> ${t("minidisc")}${toRecordCount > 1 ? 's' : ''} ${t("à enregistrer")}`;
   }
 
 
@@ -1547,7 +1547,7 @@ function renderDashboard(pushState = true) {
       
       <div class="dashboard-card" style="margin-bottom: 32px;">
         <div class="dashboard-stat-main" style="padding: 4px 0 8px 0;">
-         <span class="stat-label" style="font-size: 0.75rem;">Collections de</span>
+         <span class="stat-label" style="font-size: 0.75rem;">${t("Collections de")}</span>
          <span class="stat-number" style="font-size: 1.2rem; line-height: 1;">${totalMD}</span>
          <span class="stat-label" style="font-size: 0.75rem;">MiniDiscs</span>
         </div>
@@ -1556,17 +1556,17 @@ function renderDashboard(pushState = true) {
 
       <div class="featured-container-inline">
         <div class="featured-header">
-          <div class="featured-title">SÉLECTION DU JOUR</div>
+          <div class="featured-title">${t("Sélection du jour")}</div>
         </div>
         <div class="featured-grid" id="featured-grid-inline"></div>
       </div>
 
       <button class="btn-primary btn-view-all" onclick="goToAllMinidiscs()">
-        VOIR TOUS LES MINIDISCS &rarr;
+        ${t("Voir tous les MiniDiscs &rarr;")}
       </button>
 
       <div class="dashboard-card genres-banner">
-        <div class="dashboard-section-title">MINIDISCS PAR GENRES</div>
+        <div class="dashboard-section-title">${t("MiniDiscs par genres")}</div>
         <div class="genre-carousel-wrap">
           <span class="carousel-arrow carousel-arrow-left" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="15 4 7 12 15 20"/></svg></span>
           <div class="genre-carousel-container">
@@ -1578,14 +1578,14 @@ function renderDashboard(pushState = true) {
 
       <div class="dashboard-actions-row">
         <button class="action-btn-wide action-btn-discover" onclick="goToDiscoverResults()">
-          Découvrir de nouveaux artistes
+          ${t("Découverte")}
         </button>
         <div class="action-col">
           <button class="action-btn-wide action-btn-create" onclick="goToCreateHub()">
-            Créer une compilation
+            ${t("Création")}
           </button>
           <button class="action-btn-wide action-btn-settings" onclick="goToSettings()">
-            Paramètres
+            ${t("Paramètres")}
           </button>
         </div>
       </div>
@@ -1694,7 +1694,7 @@ if (genre && genre !== 'ALL') {
   let html = '<div class="list-container" style="padding-bottom: 90px;">';
   
   if (shuffledCatalog.length === 0) {
-    html += `<p style="text-align:center; padding: 40px; color: var(--text-sub);">Aucun MiniDisc trouvé.</p>`;
+    html += `<p style="text-align:center; padding: 40px; color: var(--text-sub);">${t("Aucun MiniDisc trouvé.")}</p>`;
   } else {
     shuffledCatalog.forEach(({ md, originalIndex }) => {
       const allGenres = getMDAllGenres(md);
@@ -1711,7 +1711,7 @@ if (genre && genre !== 'ALL') {
       } else {
         albumsContent = `
           <div class="md-album-item">
-            <div class="md-album-title">${md.title || 'MiniDisc sans titre'}</div>
+            <div class="md-album-title">${md.title || t("MiniDisc sans titre")}</div>
             <div class="md-album-artist">${md.artist || ''}</div>
           </div>
         `;
@@ -1719,7 +1719,7 @@ if (genre && genre !== 'ALL') {
 
       const isToRecord = md.toRecord || (md.albums && md.albums.some(a => a.toRecord));
       const recordBadgeHTML = isToRecord 
-        ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
+        ? `<span class="badge-to-record badge-record-corner">${t("💽 À enregistrer")}</span>` 
         : '';
 
       const listCover = md.md_cover || (md.albums && md.albums[0] ? md.albums[0].md_cover : '') || '';
@@ -1783,19 +1783,19 @@ const fabHTML = `
   <div id="md-detail-floating-actions" class="fab-container">
     <div id="md-detail-fab-menu" class="fab-menu hidden">
       <!-- Section Options -->
-      <div class="fab-section-title">Options</div>
+      <div class="fab-section-title">${t("Options")}</div>
       <button type="button" class="fab-item accent" onclick="editFromTitles(${index}, null);">
-        ✏️ Modifier
+        ${t("✏️ Modifier")}
       </button>
       <button type="button" class="fab-item danger" onclick="deleteMD(${index});">
-        🗑️ Supprimer
+        ${t("🗑️ Supprimer")}
       </button>
       <button type="button" class="fab-item fab-settings" onclick="openSettingsFromFab();">
-        <span>Paramètres</span>
+        <span>${t("Paramètres")}</span>
       </button>
     </div>
     
-    <button type="button" id="md-detail-fab-main-btn" class="fab-main-btn" onclick="toggleMdDetailFabMenu();" title="Actions MiniDisc">
+    <button type="button" id="md-detail-fab-main-btn" class="fab-main-btn" onclick="toggleMdDetailFabMenu();" title="${t("Actions MiniDisc")}">
       <span class="fab-icon" aria-hidden="true"></span>
     </button>
   </div>
@@ -1803,7 +1803,7 @@ const fabHTML = `
 
 // CAS 1 : MINIDISC SIMPLE / COMPILATION (SANS ALBUMS)
 if (!md.albums || md.albums.length === 0) {
-  if (headerTitle) headerTitle.textContent = "Titres";
+  if (headerTitle) headerTitle.textContent = t("Titres");
 
   let tracksHTML = '';
   if (md.tracks && md.tracks.length > 0) {
@@ -1812,11 +1812,11 @@ if (!md.albums || md.albums.length === 0) {
       tracksHTML += `<li><span class="ad-n">${num}</span><span class="ad-t">${track}</span></li>`;
     });
   } else {
-    tracksHTML = `<li><span class="ad-t ad-note">Aucune piste disponible.</span></li>`;
+    tracksHTML = `<li><span class="ad-t ad-note">${t("Aucune piste disponible.")}</span></li>`;
   }
 
   const badgeCompilHTML = md.toRecord 
-    ? `<div class="badge-to-record-header">💽 À enregistrer</div>` 
+    ? `<div class="badge-to-record-header">${t("💽 À enregistrer")}</div>` 
     : '';
 
   const coverHTML = createLoadingCoverHTML(md.md_cover, 'ad-cover-fill');
@@ -1827,7 +1827,7 @@ if (!md.albums || md.albums.length === 0) {
     color: borderColor,
     coverHTML,
     title: md.title || 'Compilation',
-    artist: md.artist || 'Artistes divers',
+    artist: md.artist || t("Artistes divers"),
     year: md.release_year,
     duration: md.duration,
     genres: allMdGenres,
@@ -1858,7 +1858,7 @@ md.albums.forEach((album, aIndex) => {
   const albumColor = getBorderColor(albumGenres);
   
   const badgeAlbumHTML = album.toRecord 
-    ? `<span class="badge-to-record badge-record-corner">💽 À enregistrer</span>` 
+    ? `<span class="badge-to-record badge-record-corner">${t("💽 À enregistrer")}</span>` 
     : '';
 
   const coverHTML = createLoadingCoverHTML(album.md_cover, 'album-thumb', '🎵');
@@ -1870,8 +1870,8 @@ md.albums.forEach((album, aIndex) => {
       </div>
       <div class="item-details">
         <div class="item-tag" style="color: ${albumColor};">${albumGenres.join(' / ')}</div>
-        <div class="item-title" style="font-weight: 700;">${album.title || 'Album sans titre'}</div>
-        <div class="item-sub">${album.artist || 'Artiste inconnu'}</div>
+        <div class="item-title" style="font-weight: 700;">${album.title || t("Album sans titre")}</div>
+        <div class="item-sub">${album.artist || t("Artiste inconnu")}</div>
         ${album.release_year ? `<div class="item-sub" style="font-size:0.78rem;">${album.release_year}</div>` : ''}
       </div>
       ${badgeAlbumHTML}
@@ -1965,17 +1965,17 @@ function titlesPageHTML({ color, coverHTML, coverPath, title, artist, year, dura
       </div>
       ${badgeHTML || ''}
       <div id="td-auto" class="td-auto hidden"></div>
-      ${withLastfm ? `<div id="td-desc-sec" class="td-sec">${discoverSeparatorHTML('Description')}<div id="td-desc" class="td-desc ad-note">⏳ Chargement…</div></div>` : ''}
-      <div class="td-sec">${discoverSeparatorHTML('Tracklist')}<div class="ad-sec list-item"><ol id="td-tracks" class="ad-tracks">${tracksHTML}</ol></div></div>
-      ${withLastfm ? `<div id="td-similar-sec" class="td-sec">${discoverSeparatorHTML('Albums similaires')}<div id="td-similar" class="ad-note">⏳ Chargement…</div></div>` : ''}
-      <button type="button" class="td-disco" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">🔎 Discographie et Artistes similaires</button>
+      ${withLastfm ? `<div id="td-desc-sec" class="td-sec">${discoverSeparatorHTML(t("Description"))}<div id="td-desc" class="td-desc ad-note">${t("⏳ Chargement…")}</div></div>` : ''}
+      <div class="td-sec">${discoverSeparatorHTML(t("Tracklist"))}<div class="ad-sec list-item"><ol id="td-tracks" class="ad-tracks">${tracksHTML}</ol></div></div>
+      ${withLastfm ? `<div id="td-similar-sec" class="td-sec">${discoverSeparatorHTML(t("Albums similaires"))}<div id="td-similar" class="ad-note">${t("⏳ Chargement…")}</div></div>` : ''}
+      <button type="button" class="td-disco" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">${t("🔎 Discographie et Artistes similaires")}</button>
     </div>`;
 }
 
 // Bouton rond « Modifier » en bas à droite (même emplacement que les FAB), pour les albums d'une série
 function titlesEditFabHTML(mdIndex, albumIndex) {
   return `<div id="md-detail-floating-actions" class="fab-container">
-    <button type="button" class="fab-main-btn" onclick="editFromTitles(${mdIndex}, ${albumIndex})" title="Modifier cet album"><span class="fab-icon fab-icon-edit" aria-hidden="true"></span></button>
+    <button type="button" class="fab-main-btn" onclick="editFromTitles(${mdIndex}, ${albumIndex})" title="${t("Modifier cet album")}"><span class="fab-icon fab-icon-edit" aria-hidden="true"></span></button>
   </div>`;
 }
 
@@ -2006,7 +2006,7 @@ function titlesFitDesc() {
   const full = d.dataset.full;
   const btn = label => `<button type="button" class="td-more" onclick="titlesToggleDesc()">${label}</button>`;
   d.classList.remove('ad-note');
-  if (d.dataset.open === '1') { d.innerHTML = `${titlesDescHTML(full)} ${btn('voir moins')}`; return; }
+  if (d.dataset.open === '1') { d.innerHTML = `${titlesDescHTML(full)} ${btn(t("voir moins"))}`; return; }
   const lh = parseFloat(getComputedStyle(d).lineHeight) || 20;
   const max = lh * 4 + 2;
   d.innerHTML = titlesDescHTML(full);
@@ -2014,12 +2014,12 @@ function titlesFitDesc() {
   let lo = 0, hi = full.length;
   while (hi - lo > 1) {
     const mid = (lo + hi) >> 1;
-    d.innerHTML = `${titlesDescHTML(full.slice(0, mid).trimEnd())}… ${btn('voir plus')}`;
+    d.innerHTML = `${titlesDescHTML(full.slice(0, mid).trimEnd())}… ${btn(t("voir plus"))}`;
     if (d.offsetHeight <= max) lo = mid; else hi = mid;
   }
   let cut = full.slice(0, lo).trimEnd();
   if (/\s/.test(cut)) cut = cut.replace(/\s+\S*$/, ''); // pas de mot coupé en deux
-  d.innerHTML = `${titlesDescHTML(cut)}… ${btn('voir plus')}`;
+  d.innerHTML = `${titlesDescHTML(cut)}… ${btn(t("voir plus"))}`;
 }
 
 function titlesToggleDesc() {
@@ -2069,11 +2069,11 @@ function titlesRenderAuto() {
   const a = TD.auto;
   const box = document.getElementById('td-auto');
   if (!box) return;
-  const what = a ? [a.tracks && 'pistes', a.durationStr && 'durée', a.year && 'année', a.description && 'description',
-    a.tags && 'tags (ils remplaceront les actuels)'].filter(Boolean) : [];
+  const what = a ? [a.tracks && t("pistes"), a.durationStr && t("durée"), a.year && t("année"), a.description && t("description"),
+    a.tags && t("tags (ils remplaceront les actuels)")].filter(Boolean) : [];
   if (!what.length) { box.classList.add('hidden'); return; }
   const src = a.source ? ` (« ${mbEscapeHTML(a.source)} »)` : '';
-  box.innerHTML = `<span>ℹ️ Trouvé via Last.fm / MusicBrainz${src} : ${what.join(', ')}.</span><button type="button" class="td-save" onclick="titlesSaveAuto()">💾 Enregistrer dans la fiche</button>`;
+  box.innerHTML = `<span>${t("ℹ️ Trouvé via Last.fm / MusicBrainz")}${src} : ${what.join(', ')}.</span><button type="button" class="td-save" onclick="titlesSaveAuto()">${t("💾 Enregistrer dans la fiche")}</button>`;
   box.classList.remove('hidden');
 }
 
@@ -2085,7 +2085,7 @@ async function titlesLoadExtras(ctx) {
   const el = id => (alive() ? document.getElementById(id) : null);
   const note = (id, text) => { const e = el(id); if (e) { e.classList.add('ad-note'); e.textContent = text; } };
   const hide = id => { const e = el(id); if (e) e.classList.add('hidden'); };
-  const lead = err => (isNetworkError(err) ? 'Hors ligne : ' : '');
+  const lead = err => (isNetworkError(err) ? t("Hors ligne : ") : '');
   const hasStoredDesc = titlesKnown(ctx.description);
 
   // Description déjà dans le catalogue : on l'affiche telle quelle, sans rien chercher
@@ -2107,7 +2107,7 @@ async function titlesLoadExtras(ctx) {
     adSimilarAlbums({ artist: ctx.artist }).then(list => {
       if (!alive()) return;
       AD.similar = list;
-      if (!list.length) return note('td-similar', 'Aucun album similaire trouvé.');
+      if (!list.length) return note('td-similar', t("Aucun album similaire trouvé."));
       const e = el('td-similar');
       e.classList.remove('ad-note');
       e.innerHTML = `<div class="ad-sim">${list.map((s2, i) => `
@@ -2116,7 +2116,7 @@ async function titlesLoadExtras(ctx) {
           <div class="ad-sim-title">${mbEscapeHTML(s2.title)}</div>
           <div class="ad-sim-artist">${mbEscapeHTML(s2.artist)}</div>
         </div>`).join('')}</div>`;
-    }).catch(err => note('td-similar', lead(err) + 'albums similaires indisponibles.'));
+    }).catch(err => note('td-similar', lead(err) + t("albums similaires indisponibles.")));
   }
 
   // 2) Infos Last.fm de l'album
@@ -2211,11 +2211,11 @@ async function titlesLoadExtras(ctx) {
   if (hasStoredDesc) return;
   if (infoErr) {
     if (various) return hide('td-desc-sec');
-    return note('td-desc', infoErr.code === 'nokey' ? 'Description indisponible (clé Last.fm manquante).' : lead(infoErr) + 'description indisponible.');
+    return note('td-desc', infoErr.code === 'nokey' ? t("Description indisponible (clé Last.fm manquante).") : lead(infoErr) + t("description indisponible."));
   }
   const wiki = info && info.wiki;
   const text = adWikiText(wiki);
-  if (!text) return various ? hide('td-desc-sec') : note('td-desc', 'Aucune description disponible pour cet album.');
+  if (!text) return various ? hide('td-desc-sec') : note('td-desc', t("Aucune description disponible pour cet album."));
   const done = fr => {
     if (!alive()) return;
     titlesSetDesc(fr);
@@ -2223,7 +2223,7 @@ async function titlesLoadExtras(ctx) {
     titlesRenderAuto();
   };
   if (adLooksFrench(text)) return done(text);
-  note('td-desc', '⏳ Traduction en cours…');
+  note('td-desc', t("⏳ Traduction en cours…"));
   try {
     done(await adToFrench(text));
   } catch (err) {
@@ -2245,9 +2245,9 @@ function titlesSaveAuto() {
   if (a.description && !titlesKnown(target.description)) target.description = a.description;
   if (a.tags && a.tags.length) target.tags = a.tags.slice();
   saveLocalBackup();
-  showToast('✅ Fiche mise à jour');
+  showToast(t("✅ Fiche mise à jour"));
   const box = document.getElementById('td-auto');
-  if (box) box.innerHTML = '<span>✔ Infos enregistrées dans la fiche.</span>';
+  if (box) box.innerHTML = t("<span>✔ Infos enregistrées dans la fiche.</span>");
   TD.auto = { mdIndex: a.mdIndex, albumIndex: a.albumIndex, source: '' };
 }
 
@@ -2296,7 +2296,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   const albumGenres = getAlbumGenres(album, md);
   const albumColor = getBorderColor(albumGenres);
 
-  if (headerTitle) headerTitle.textContent = "Titres";
+  if (headerTitle) headerTitle.textContent = t("Titres");
   if (pushState) history.pushState({ view: 'tracklist', mdIndex, albumIndex }, '', `#md-${mdIndex}-album-${albumIndex}`);
 
   // La numérotation continue d'un album à l'autre, comme sur le MiniDisc physique :
@@ -2312,11 +2312,11 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
       tracksHTML += `<li><span class="ad-n">${num}</span><span class="ad-t">${track}</span></li>`;
     });
   } else {
-    tracksHTML = `<li><span class="ad-t ad-note">Aucune piste disponible.</span></li>`;
+    tracksHTML = `<li><span class="ad-t ad-note">${t("Aucune piste disponible.")}</span></li>`;
   }
 
   const badgeAlbumHTML = album.toRecord 
-    ? `<div class="badge-to-record-header">💽 À enregistrer</div>` 
+    ? `<div class="badge-to-record-header">${t("💽 À enregistrer")}</div>` 
     : '';
 
   const coverHTML = createLoadingCoverHTML(album.md_cover, 'ad-cover-fill');
@@ -2326,8 +2326,8 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
   app.innerHTML = titlesPageHTML({
     color: albumColor,
     coverHTML,
-    title: album.title || 'Album sans titre',
-    artist: album.artist || 'Artiste inconnu',
+    title: album.title || t("Album sans titre"),
+    artist: album.artist || t("Artiste inconnu"),
     year: album.release_year,
     duration: album.duration,
     genres: albumGenres,
@@ -2354,12 +2354,12 @@ function deleteMD(index) {
   if (!catalogData || !catalogData[index]) return;
   
   const md = catalogData[index];
-  const title = md.title || (md.albums ? md.albums.map(a => a.title).join(' / ') : 'ce MiniDisc');
+  const title = md.title || (md.albums ? md.albums.map(a => a.title).join(' / ') : t("ce MiniDisc"));
   
-  if (confirm(`Voulez-vous vraiment supprimer définitivement "${title}" ?`)) {
+  if (confirm(`${t("Voulez-vous vraiment supprimer définitivement \"")}${title}" ?`)) {
     catalogData.splice(index, 1);
     saveLocalBackup();
-    showToast("🗑️ MiniDisc supprimé !");
+    showToast(t("🗑️ MiniDisc supprimé !"));
     
     // Reste sur la vue catalogue au lieu d'aller à l'accueil
     if (typeof renderMDList === 'function') {
@@ -2444,7 +2444,7 @@ const MAIN_GENRES = [
 ];
 
 function mainGenreOptionsHTML(selected = '') {
-  let html = `<option value="">-- Choisir un genre --</option>`;
+  let html = `<option value="">${t("-- Choisir un genre --")}</option>`;
   MAIN_GENRES.forEach(g => {
     html += `<option value="${g}" ${g === selected ? 'selected' : ''}>${g}</option>`;
   });
@@ -2468,7 +2468,7 @@ function openAdminModal(indexToEdit = null) {
     // MODE ÉDITION
     // ==========================================
     const md = catalogData[editingMDIndex];
-    if (modalTitle) modalTitle.textContent = "✏️ Modifier le MiniDisc";
+    if (modalTitle) modalTitle.textContent = t("✏️ Modifier le MiniDisc");
 
     const isCompil = !md.albums || md.albums.length === 0;
 
@@ -2514,7 +2514,7 @@ function openAdminModal(indexToEdit = null) {
     // ==========================================
     // MODE AJOUT (RÉINITIALISATION COMPLÈTE)
     // ==========================================
-    if (modalTitle) modalTitle.textContent = "＋ Ajouter un MiniDisc";
+    if (modalTitle) modalTitle.textContent = t("＋ Ajouter un MiniDisc");
     
     // Remise à zéro du formulaire HTML (admin-form)
     const form = document.getElementById('admin-form');
@@ -2579,36 +2579,36 @@ function addAdminAlbumBlock() {
   div.innerHTML = `
     <div class="album-block-header">
       <h4>Album</h4>
-      <button type="button" class="btn-remove-album" onclick="removeAdminAlbumBlock(this)">🗑️ Supprimer l'album</button>
+      <button type="button" class="btn-remove-album" onclick="removeAdminAlbumBlock(this)">${t("🗑️ Supprimer l'album")}</button>
     </div>
-    <div class="form-group"><input type="text" class="album-title" placeholder="Titre de l'album"></div>
-    <div class="form-group"><input type="text" class="album-artist" placeholder="Artiste"></div>
+    <div class="form-group"><input type="text" class="album-title" placeholder="${t("Titre de l'album")}"></div>
+    <div class="form-group"><input type="text" class="album-artist" placeholder="${t("Artiste")}"></div>
 
-    <div class="form-divider form-divider-sm"><span>Classement</span></div>
+    <div class="form-divider form-divider-sm"><span>${t("Classement")}</span></div>
     <div class="form-group">
       <label>Genre</label>
       <select class="album-genre">${mainGenreOptionsHTML()}</select>
     </div>
-    <div class="form-group"><input type="text" class="album-tags" placeholder="Tags (optionnel, ex: Acoustic, Punk Rock)"></div>
+    <div class="form-group"><input type="text" class="album-tags" placeholder="${t("Tags (optionnel, ex: Acoustic, Punk Rock)")}"></div>
     <div class="form-row-2">
-      <div class="form-group"><input type="text" class="album-year" placeholder="Année (ex: 1998)"></div>
-      <div class="form-group"><input type="text" class="album-duration" placeholder="Durée (ex: 45:30)"></div>
+      <div class="form-group"><input type="text" class="album-year" placeholder="${t("Année (ex: 1998)")}"></div>
+      <div class="form-group"><input type="text" class="album-duration" placeholder="${t("Durée (ex: 45:30)")}"></div>
     </div>
 
-    <div class="form-divider form-divider-sm"><span>Pistes et pochette</span></div>
-    <div class="form-group"><textarea class="album-tracks" placeholder="Pistes de cet album (une par ligne, sans numéro)"></textarea></div>
+    <div class="form-divider form-divider-sm"><span>${t("Pistes et pochette")}</span></div>
+    <div class="form-group"><textarea class="album-tracks" placeholder="${t("Pistes de cet album (une par ligne, sans numéro)")}"></textarea></div>
     <div class="form-group">
-      <label>Description (optionnelle)</label>
-      <textarea class="album-description" placeholder="Quelques lignes sur l'album"></textarea>
+      <label>${t("Description (optionnelle)")}</label>
+      <textarea class="album-description" placeholder="${t("Quelques lignes sur l'album")}"></textarea>
     </div>
     <div class="form-group">
-      <label>Pochette Album</label>
+      <label>${t("Pochette Album")}</label>
       <input type="file" class="album-cover" accept="image/*">
     </div>
     <div class="form-group" style="margin-top: 8px;">
       <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">
         <input type="checkbox" class="album-to-record" style="width: 16px; height: 16px;">
-        🎙️ À enregistrer
+        ${t("🎙️ À enregistrer")}
       </label>
     </div>
   `;
@@ -2658,7 +2658,7 @@ async function submitNewMD(e) {
     id: (existingMD && existingMD.id) ? existingMD.id : ('md-' + Date.now()),
   };
 
-  showToast("⏳ Traitement et envoi de l'image...");
+  showToast(t("⏳ Traitement et envoi de l'image..."));
 
   // Upload de la pochette du MiniDisc lui-même (s'applique aux compilations ET aux séries)
   let mdCoverPath = 'images/default.jpg';
@@ -2674,14 +2674,14 @@ async function submitNewMD(e) {
     const compilGenreSelect = document.getElementById('compil-genre');
     const mainGenre = compilGenreSelect ? compilGenreSelect.value : '';
     if (!mainGenre) {
-      showToast("⚠️ Veuillez choisir un genre");
+      showToast(t("⚠️ Veuillez choisir un genre"));
       return;
     }
 
     targetMD.title = document.getElementById('compil-title').value.trim();
     targetMD.artist = document.getElementById('compil-artist').value.trim();
     if (!targetMD.title) {
-      showToast("⚠️ Veuillez renseigner un titre");
+      showToast(t("⚠️ Veuillez renseigner un titre"));
       return;
     }
     targetMD.main_genre = mainGenre;
@@ -2702,7 +2702,7 @@ async function submitNewMD(e) {
     const albumBlocks = document.querySelectorAll('.album-block');
     
     if (albumBlocks.length === 0) {
-      showToast("⚠️ Veuillez ajouter au moins un album.");
+      showToast(t("⚠️ Veuillez ajouter au moins un album."));
       return;
     }
 
@@ -2717,11 +2717,11 @@ async function submitNewMD(e) {
       const albumMainGenre = block.querySelector('.album-genre').value;
       const albumTags = parseTagsInput(block.querySelector('.album-tags') ? block.querySelector('.album-tags').value : '');
       if (!albumTitle || !albumArtist) {
-        showToast("⚠️ Veuillez renseigner un titre et un artiste pour chaque album.");
+        showToast(t("⚠️ Veuillez renseigner un titre et un artiste pour chaque album."));
         return;
       }
       if (!albumMainGenre) {
-        showToast("⚠️ Veuillez choisir un genre pour chaque album.");
+        showToast(t("⚠️ Veuillez choisir un genre pour chaque album."));
         return;
       }
 
@@ -2772,10 +2772,10 @@ async function submitNewMD(e) {
   if (editingMDIndex !== null) {
     catalogData[editingMDIndex] = targetMD;
     editingMDIndex = null;
-    showToast("✅ MiniDisc modifié !");
+    showToast(t("✅ MiniDisc modifié !"));
   } else {
     catalogData.push(targetMD);
-    showToast("✅ MiniDisc ajouté !");
+    showToast(t("✅ MiniDisc ajouté !"));
   }
 
   const backToTitles = adminReturnTo;
@@ -2814,7 +2814,7 @@ function togglePlannerCapacity() {
   plannerCapacityMin = plannerCapacityMin === 74 ? 80 : 74;
   try { localStorage.setItem(PLANNER_CAPACITY_KEY, String(plannerCapacityMin)); } catch (e) { /* valable jusqu'à la fermeture de l'appli */ }
   updatePlannerHeader();
-  showToast(`MiniDisc ${plannerCapacityMin} min : ${plannerMaxLabel()} maximum`);
+  showToast(`MiniDisc ${plannerCapacityMin} ${t("min :")} ${plannerMaxLabel()} ${t("maximum")}`);
 }
 
 function getIdeaList() {
@@ -2891,7 +2891,7 @@ function updatePlannerHeader() {
       return `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 8px;">
           <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); font-weight: 600;">
-            🎵 <span style="color: var(--text-sub);">${item.artist || 'Artiste'}</span> - ${item.title || 'Titre'}
+            🎵 <span style="color: var(--text-sub);">${item.artist || t("Artiste")}</span> - ${item.title || t("Titre")}
           </div>
           <div style="font-weight: 700; color: var(--text-cyan); white-space: nowrap;">⏱️ ${formatPlannerDuration(item.duration)}</div>
         </div>`;
@@ -2915,7 +2915,7 @@ function updatePlannerHeader() {
   const convertBtn = document.getElementById('planner-btn-convert');
   if (convertBtn) {
     convertBtn.disabled = selectedCount === 0;
-    convertBtn.textContent = `Convertir (${selectedCount})`;
+    convertBtn.textContent = `${t("Convertir (")}${selectedCount})`;
   }
   document.getElementById('planner-selection-bar')?.classList.toggle('hidden', selectedCount === 0);
 
@@ -2959,12 +2959,12 @@ function injectPlannerHeaderBadge() {
   
   badge.innerHTML = `
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px;">
-      <span style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Durée sélectionnée :</span>
+      <span style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">${t("Durée sélectionnée :")}</span>
       <div style="display: flex; align-items: baseline; gap: 8px; margin-left: auto;">
-        <strong id="planner-duration-text" style="font-family: 'Righteous', cursive; font-size: 1.05rem; color: #06d6a0;">0m 00s / ${plannerMaxLabel()}</strong>
-        <span class="planner-capacity" title="Capacité du MiniDisc (touche pour passer de 74 à 80 min)">
+        <strong id="planner-duration-text" style="font-family: var(--font-ui); font-weight: 700; font-size: 1.05rem; color: #06d6a0;">0m 00s / ${plannerMaxLabel()}</strong>
+        <span class="planner-capacity" title="${t("Capacité du MiniDisc (touche pour passer de 74 à 80 min)")}">
           <span id="planner-capacity-label">${plannerCapacityMin}min</span>
-          <button type="button" class="planner-capacity-btn" onclick="togglePlannerCapacity()" aria-label="Changer la capacité du MiniDisc (74 ou 80 min)">🔄</button>
+          <button type="button" class="planner-capacity-btn" onclick="togglePlannerCapacity()" aria-label="${t("Changer la capacité du MiniDisc (74 ou 80 min)")}">🔄</button>
         </span>
       </div>
     </div>
@@ -3027,9 +3027,9 @@ function renderCompilPlanner(pushState = true) {
 
     let cardsHTML = '';
     if (rawIdeas.length === 0) {
-      cardsHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 30px; color: #fff;">Aucun album dans votre liste d'idées.</p>`;
+      cardsHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 30px; color: #fff;">${t("Aucun album dans votre liste d'idées.")}</p>`;
     } else if (ideas.length === 0) {
-      cardsHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 30px; color: #fff;">Aucun album ne correspond aux filtres.</p>`;
+      cardsHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 30px; color: #fff;">${t("Aucun album ne correspond aux filtres.")}</p>`;
     } else {
       cardsHTML = ideas.map(item => {
         const index = item.originalIndex;
@@ -3038,20 +3038,20 @@ function renderCompilPlanner(pushState = true) {
 
         const coverHTML = coverSrc 
           ? createLoadingCoverHTML(coverSrc, 'idea-cover', '💡') 
-          : `<div class="idea-cover" style="background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;">Pas d'image</div>`;
+          : `<div class="idea-cover" style="background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.8rem;">${t("Pas d'image")}</div>`;
 
         return `
           <div class="idea-card ${isSelected ? 'selected' : ''}" data-index="${index}">
             ${coverHTML}
             <span class="idea-cd" aria-hidden="true"></span>
             <div class="idea-info">
-              <div class="idea-title">${item.title || 'Sans titre'}</div>
+              <div class="idea-title">${item.title || t("Sans titre")}</div>
               <div class="idea-meta">
-                <span class="idea-artist">${item.artist || 'Artiste inconnu'}</span>
+                <span class="idea-artist">${item.artist || t("Artiste inconnu")}</span>
                 <span class="idea-duration">⏱️ ${formatPlannerDuration(item.duration)}</span>
               </div>
             </div>
-            <button type="button" class="idea-delete-btn" data-settings="${index}" aria-label="Paramètres de l'idée">⚙️</button>
+            <button type="button" class="idea-delete-btn" data-settings="${index}" aria-label="${t("Paramètres de l'idée")}">⚙️</button>
           </div>
         `;
       }).join('');
@@ -3065,7 +3065,7 @@ function renderCompilPlanner(pushState = true) {
           ${cardsHTML}
         </div>
 
-        <button type="button" class="random-compil-btn" onclick="createRandomCompilation()" title="Création aléatoire" aria-label="Création aléatoire">🎲</button>
+        <button type="button" class="random-compil-btn" onclick="createRandomCompilation()" title="${t("Création aléatoire")}" aria-label="${t("Création aléatoire")}">🎲</button>
       </div>
     `;
 
@@ -3226,7 +3226,7 @@ function deleteIdeaAlbum(index) {
   const ideas = getIdeaList();
   if (!ideas[index]) return;
 
-  if (confirm(`Supprimer "${ideas[index].title}" de vos idées ?`)) {
+  if (confirm(`${t("Supprimer \"")}${ideas[index].title}${t("\" de vos idées ?")}`)) {
     ideas.splice(index, 1);
     
     if (typeof selectedIdeaIndices !== 'undefined') {
@@ -3239,7 +3239,7 @@ function deleteIdeaAlbum(index) {
     }
 
     if (typeof saveLocalBackup === 'function') saveLocalBackup();
-    if (typeof showToast === 'function') showToast("🗑️ Album supprimé des idées");
+    if (typeof showToast === 'function') showToast(t("🗑️ Album supprimé des idées"));
     renderCompilPlanner(false);
   }
 }
@@ -3259,14 +3259,14 @@ function openIdeaSettingsModal(index) {
   if (!idea) return;
   ideaSettingsIndex = index;
 
-  document.getElementById('idea-settings-title').textContent = idea.title || 'Sans titre';
-  document.getElementById('idea-settings-artist').textContent = idea.artist || 'Artiste inconnu';
+  document.getElementById('idea-settings-title').textContent = idea.title || t("Sans titre");
+  document.getElementById('idea-settings-artist').textContent = idea.artist || t("Artiste inconnu");
   document.getElementById('idea-settings-genre').innerHTML = mainGenreOptionsHTML(idea.main_genre || '');
 
   const tracks = idea.tracks || [];
   document.getElementById('idea-settings-tracks').innerHTML = tracks.length > 0
     ? tracks.map(t => `<li>${mbEscapeHTML(t)}</li>`).join('')
-    : `<li class="idea-settings-notrack">Aucune piste renseignée</li>`;
+    : `<li class="idea-settings-notrack">${t("Aucune piste renseignée")}</li>`;
 
   document.getElementById('idea-settings-modal').classList.remove('hidden');
 }
@@ -3283,13 +3283,13 @@ function saveIdeaSettingsGenre() {
 
   const genre = document.getElementById('idea-settings-genre').value;
   if (!genre) {
-    showToast("⚠️ Choisis un genre");
+    showToast(t("⚠️ Choisis un genre"));
     return;
   }
 
   idea.main_genre = genre;
   if (typeof saveLocalBackup === 'function') saveLocalBackup();
-  showToast("✓ Genre mis à jour");
+  showToast(t("✓ Genre mis à jour"));
   closeIdeaSettingsModal();
   renderCompilPlanner(false);
 }
@@ -3343,7 +3343,7 @@ function createRandomCompilation() {
     .filter(x => x.sec > 0 && x.sec <= plannerMaxSeconds() && x.genres.length > 0);
 
   if (items.length === 0) {
-    showToast("⚠️ Aucune idée avec une durée renseignée");
+    showToast(t("⚠️ Aucune idée avec une durée renseignée"));
     return;
   }
 
@@ -3485,11 +3485,11 @@ async function saveIdeaAlbum(e) {
   const coverInput = document.getElementById('idea-cover');
 
   if (!main_genre) {
-    showToast("⚠️ Veuillez choisir un genre");
+    showToast(t("⚠️ Veuillez choisir un genre"));
     return;
   }
 
-  showToast("⏳ Traitement et envoi de l'image...");
+  showToast(t("⏳ Traitement et envoi de l'image..."));
 
   // Priorité : fichier choisi manuellement > pochette récupérée via MusicBrainz > pochette par défaut
   let coverPath = 'images/default.jpg';
@@ -3520,7 +3520,7 @@ async function saveIdeaAlbum(e) {
 
   if (typeof saveLocalBackup === 'function') saveLocalBackup();
   closeIdeaModal();
-  if (typeof showToast === 'function') showToast("💡 Album ajouté aux idées !");
+  if (typeof showToast === 'function') showToast(t("💡 Album ajouté aux idées !"));
   if (document.getElementById('discover-page')) {
     renderDiscoverResults(); // on reste sur la page Découverte
   } else if (typeof renderCompilPlanner === 'function') {
@@ -3577,7 +3577,7 @@ function createMDFromIdeas(indices, coverPath) {
 
   clearPlannerHeaderInfo();
   if (typeof saveLocalBackup === 'function') saveLocalBackup();
-  if (typeof showToast === 'function') showToast("🎉 MiniDisc créé avec sa cover !");
+  if (typeof showToast === 'function') showToast(t("🎉 MiniDisc créé avec sa cover !"));
   if (typeof renderDashboard === 'function') renderDashboard(true);
 }
 
@@ -3622,11 +3622,11 @@ async function mbFetchJson(url) {
         await new Promise(resolve => setTimeout(resolve, 2500 * (attempt + 1)));
         continue;
       }
-      const err = new Error("MusicBrainz limite le nombre de requêtes");
+      const err = new Error(t("MusicBrainz limite le nombre de requêtes"));
       err.rateLimited = true;
       throw err;
     }
-    if (!response.ok) throw new Error(`Erreur réseau MusicBrainz (${response.status})`);
+    if (!response.ok) throw new Error(`${t("Erreur réseau MusicBrainz (")}${response.status})`);
     return response.json();
   }
 }
@@ -3778,18 +3778,18 @@ async function searchItunes() {
   const rawTerm = input.value.trim();
   const tokens = mbQueryTokens(rawTerm);
   if (!rawTerm || tokens.length === 0) {
-    showToast("⚠️ Tape un artiste et/ou un album à rechercher");
+    showToast(t("⚠️ Tape un artiste et/ou un album à rechercher"));
     return;
   }
 
-  resultsBox.innerHTML = `<p style="font-size:0.8rem; color:var(--text-sub);">Recherche sur MusicBrainz...</p>`;
+  resultsBox.innerHTML = `<p style="font-size:0.8rem; color:var(--text-sub);">${t("Recherche sur MusicBrainz...")}</p>`;
 
   try {
     // Du plus strict au plus souple : on ne passe au niveau suivant que s'il n'y a aucun résultat
     const attempts = [
       { mode: 'and', minRatio: 1, label: '' },
-      { mode: 'fuzzy', minRatio: 1, label: 'Recherche élargie (fautes de frappe)...' },
-      { mode: 'or', minRatio: 0.5, label: 'Recherche élargie (mots en moins)...' }
+      { mode: 'fuzzy', minRatio: 1, label: t("Recherche élargie (fautes de frappe)...") },
+      { mode: 'or', minRatio: 0.5, label: t("Recherche élargie (mots en moins)...") }
     ];
 
     let groups = [];
@@ -3801,14 +3801,14 @@ async function searchItunes() {
     }
 
     if (groups.length === 0) {
-      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:var(--text-sub);">Aucun résultat correspondant trouvé. Essaie avec moins de mots (ex : juste l'artiste).</p>`;
+      resultsBox.innerHTML = `<p style="font-size:0.8rem; color:var(--text-sub);">${t("Aucun résultat correspondant trouvé. Essaie avec moins de mots (ex : juste l'artiste).")}</p>`;
       return;
     }
 
     window.__itunesResults = groups;
 
     resultsBox.innerHTML = groups.map((g, i) => {
-      const artist = mbArtistName(g, ', ') || 'Artiste inconnu';
+      const artist = mbArtistName(g, ', ') || t("Artiste inconnu");
       const year = g['first-release-date'] ? g['first-release-date'].slice(0, 4) : '';
       const secondary = (g['secondary-types'] || []).join(', ');
       const coverUrl = `https://coverartarchive.org/release-group/${g.id}/front-250`;
@@ -3833,8 +3833,8 @@ async function searchItunes() {
   } catch (err) {
     console.error(err);
     resultsBox.innerHTML = err.rateLimited
-      ? `<p style="font-size:0.8rem; color:#e63946;">MusicBrainz limite le nombre de requêtes : réessaie dans quelques secondes.</p>`
-      : `<p style="font-size:0.8rem; color:#e63946;">Erreur pendant la recherche MusicBrainz.</p>`;
+      ? `<p style="font-size:0.8rem; color:#e63946;">${t("MusicBrainz limite le nombre de requêtes : réessaie dans quelques secondes.")}</p>`
+      : `<p style="font-size:0.8rem; color:#e63946;">${t("Erreur pendant la recherche MusicBrainz.")}</p>`;
   }
 }
 
@@ -3890,13 +3890,13 @@ async function applyItunesResult(index) {
   if (preview) {
     preview.innerHTML = `
       <img src="${pendingItunesCoverUrl}" 
-           onerror="this.onerror=null; if (this.parentElement) this.parentElement.innerHTML='<div style=\\'font-size:0.7rem; color:#888;\\'>Pas de pochette disponible sur Cover Art Archive</div>';" 
+           onerror="this.onerror=null; if (this.parentElement) this.parentElement.innerHTML='<div style=\\'font-size:0.7rem; color:#888;\\'>${t("Pas de pochette disponible sur Cover Art Archive")}</div>';" 
            style="width:80px; height:80px; border-radius:calc(6px * var(--radius-factor)); object-fit:cover;">
-      <div style="font-size:0.7rem; color:var(--text-sub);">Pochette récupérée (transférée à l'enregistrement)</div>
+      <div style="font-size:0.7rem; color:var(--text-sub);">${t("Pochette récupérée (transférée à l'enregistrement)")}</div>
     `;
   }
 
-  showToast("⏳ Récupération des pistes et de la durée...");
+  showToast(t("⏳ Récupération des pistes et de la durée..."));
 
   // --- RECHERCHE DES PISTES ET DURÉES ---
   try {
@@ -3929,21 +3929,21 @@ async function applyItunesResult(index) {
 
       if (durationComplete && totalMs > 0) {
         document.getElementById('idea-duration').value = formatMillisToDuration(totalMs);
-        showToast("✅ Infos et pistes récupérées !");
+        showToast(t("✅ Infos et pistes récupérées !"));
       } else {
         // Durées de pistes incomplètes : mieux vaut un champ vide qu'une durée fausse
         document.getElementById('idea-duration').value = '';
-        showToast("⚠️ Pistes récupérées, mais durée incomplète : à renseigner à la main.");
+        showToast(t("⚠️ Pistes récupérées, mais durée incomplète : à renseigner à la main."));
       }
     } else {
-      showToast("⚠️ Album trouvé, mais aucune liste de pistes renseignée.");
+      showToast(t("⚠️ Album trouvé, mais aucune liste de pistes renseignée."));
     }
 
   } catch (err) {
     console.error(err);
     showToast(err.rateLimited
-      ? "⚠️ MusicBrainz est saturé : rouvre l'album dans quelques secondes."
-      : "⚠️ Erreur lors de la récupération des pistes.");
+      ? t("⚠️ MusicBrainz est saturé : rouvre l'album dans quelques secondes.")
+      : t("⚠️ Erreur lors de la récupération des pistes."));
   }
 }
 
@@ -3963,7 +3963,7 @@ async function handleRemoteImageUpload(imageUrl) {
 
   try {
     const imgResponse = await fetch(imageUrl);
-    if (!imgResponse.ok) throw new Error("Téléchargement de l'image distante impossible.");
+    if (!imgResponse.ok) throw new Error(t("Téléchargement de l'image distante impossible."));
     const blob = await imgResponse.blob();
 
     const base64Data = await new Promise((resolve, reject) => {
@@ -3987,7 +3987,7 @@ async function handleRemoteImageUpload(imageUrl) {
         'Accept': 'application/vnd.github.v3+json'
       },
       body: JSON.stringify({
-        message: `Ajout automatique de la pochette ${fileName} (iTunes)`,
+        message: `${t("Ajout automatique de la pochette")} ${fileName} (iTunes)`,
         content: base64Data
       })
     });
@@ -4056,7 +4056,7 @@ function populateFormDatalists() {
 // Sauvegarder le token sur le téléphone
 function saveGithubToken(token) {
   localStorage.setItem('github_token', token.trim());
-  alert('Token GitHub enregistré avec succès !');
+  alert(t("Token GitHub enregistré avec succès !"));
 }
 
 // Récupérer le token stocké
@@ -4080,7 +4080,7 @@ function initGithubTokenForm() {
       saveGithubToken(val);
     } else {
       localStorage.removeItem('github_token');
-      alert('Token supprimé.');
+      alert(t("Token supprimé."));
     }
   });
 }
@@ -4129,7 +4129,7 @@ async function handleImageUpload(fileInput) {
         'Accept': 'application/vnd.github.v3+json'
       },
       body: JSON.stringify({
-        message: `Ajout automatique de l'image ${fileName}`,
+        message: `${t("Ajout automatique de l'image")} ${fileName}`,
         content: base64Data
       })
     });
@@ -4185,7 +4185,7 @@ function createLoadingCoverHTML(srcPath, cssClass = '') {
   if (!srcPath || srcPath.trim() === '' || srcPath === 'images/' || srcPath === 'images/default.jpg') {
     return `
       <div class="cover-wrapper ${cssClass}" style="position: relative; background: #111; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #333;">
-        <span style="color: #666; font-family: monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; padding: 4px;">PAS D'IMAGE</span>
+        <span style="color: #666; font-family: monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; padding: 4px;">${t("PAS D'IMAGE")}</span>
       </div>
     `;
   }
@@ -4295,7 +4295,7 @@ const discoverWait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function fmtCount(n) {
   try {
-    return new Intl.NumberFormat('fr-FR', { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+    return new Intl.NumberFormat(APP_LOCALE, { notation: 'compact', maximumFractionDigits: 1 }).format(n);
   } catch (err) {
     return String(n);
   }
@@ -4326,7 +4326,7 @@ function lfmSlot() {
 async function lastfmCall(method, params = {}) {
   const key = getLastfmKey();
   if (!key) {
-    const err = new Error('Clé Last.fm manquante');
+    const err = new Error(t("Clé Last.fm manquante"));
     err.code = 'nokey';
     throw err;
   }
@@ -4341,7 +4341,7 @@ async function lastfmCall(method, params = {}) {
   try { data = await response.json(); } catch (err) { /* réponse non JSON */ }
 
   if (data && data.error) {
-    const err = new Error(data.message || 'Erreur Last.fm');
+    const err = new Error(data.message || t("Erreur Last.fm"));
     err.code = data.error;
     throw err;
   }
@@ -4538,7 +4538,7 @@ async function discoverAddItemToIdeas(r) {
   const preview = document.getElementById('idea-cover-preview');
   if (preview && pendingItunesCoverUrl) {
     preview.innerHTML = `<img src="${mbEscapeHTML(pendingItunesCoverUrl)}" style="width:80px; height:80px; border-radius:calc(6px * var(--radius-factor)); object-fit:cover;"
-      onerror="this.onerror=null; if (this.parentElement) this.parentElement.innerHTML='<div style=\\'font-size:0.7rem; color:var(--text-sub);\\'>Pochette indisponible</div>';">`;
+      onerror="this.onerror=null; if (this.parentElement) this.parentElement.innerHTML='<div style=\\'font-size:0.7rem; color:var(--text-sub);\\'>${t("Pochette indisponible")}</div>';">`;
   }
 
   // Description COMPLÈTE : reprise de la fiche Détails si on en vient, sinon récupérée ici (Last.fm, traduite)
@@ -4554,7 +4554,7 @@ async function discoverAddItemToIdeas(r) {
   ideaDescPending = descTask;
 
   // Pistes et durée : depuis MusicBrainz (on retrouve l'album si besoin)
-  showToast("⏳ Récupération des pistes et de la durée...");
+  showToast(t("⏳ Récupération des pistes et de la durée..."));
   let group = r.mbGroup || null;
   try {
     if (!group) {
@@ -4571,7 +4571,7 @@ async function discoverAddItemToIdeas(r) {
     await applyItunesResult(0);
     if (genre && !document.getElementById('idea-genre').value) set('idea-genre', genre);
   } else {
-    showToast("⚠️ Album introuvable sur MusicBrainz : complète la durée et les pistes à la main.");
+    showToast(t("⚠️ Album introuvable sur MusicBrainz : complète la durée et les pistes à la main."));
   }
 
   // Durée identique à celle affichée sur la fiche Détails (même source, même somme de TOUTES les pistes)
@@ -4599,25 +4599,25 @@ function prepareSubPage(title) {
 }
 
 function renderCreateHub() {
-  prepareSubPage('Créer');
+  prepareSubPage(t("Créer"));
   app.innerHTML = `
     <div id="create-page" class="create-page">
       <button type="button" class="create-tile create-tile-add" onclick="openAdminModal()">
         <span class="create-tile-text">
-          <span class="create-tile-title">Ajouter un MD manuellement</span>
-          <span class="create-tile-desc">Créer un minidisc en renseignant manuellement son contenu.</span>
+          <span class="create-tile-title">${t("Ajouter un MD manuellement")}</span>
+          <span class="create-tile-desc">${t("Créer un minidisc en renseignant manuellement son contenu.")}</span>
         </span>
       </button>
       <button type="button" class="create-tile create-tile-new" onclick="goToPlanner()">
         <span class="create-tile-text">
-          <span class="create-tile-title">Créer une nouvelle compilation</span>
-          <span class="create-tile-desc">Composer un MiniDisc à partir de tes idées d'albums.</span>
+          <span class="create-tile-title">${t("Créer une nouvelle compilation")}</span>
+          <span class="create-tile-desc">${t("Composer un MiniDisc à partir de tes idées d'albums.")}</span>
         </span>
       </button>
       <button type="button" class="create-tile create-tile-cover" onclick="openCoverStudio({ standalone: true })">
         <span class="create-tile-text">
-          <span class="create-tile-title">Concevoir une cover</span>
-          <span class="create-tile-desc">Élaborer des images pour illustrer les minidiscs</span>
+          <span class="create-tile-title">${t("Concevoir une cover")}</span>
+          <span class="create-tile-desc">${t("Élaborer des images pour illustrer les minidiscs")}</span>
         </span>
       </button>
     </div>
@@ -4663,7 +4663,7 @@ function selectTheme(id) {
   const box = document.getElementById('theme-daily-toggle');
   const wasDaily = box && box.checked;
   if (box) box.checked = false;
-  showToast(wasDaily ? `Thème « ${theme.name} » appliqué (thème du jour désactivé)` : `Thème « ${theme.name} » appliqué`);
+  showToast(wasDaily ? `${t("Thème «")} ${theme.name} ${t("» appliqué (thème du jour désactivé)")}` : `${t("Thème «")} ${theme.name} ${t("» appliqué")}`);
 }
 
 // Case « Un thème différent chaque jour »
@@ -4671,12 +4671,12 @@ function toggleDailyTheme(on) {
   try { localStorage.setItem(THEME_DAILY_KEY, on ? '1' : '0'); } catch (e) { /* valable jusqu'à la fermeture de l'appli */ }
   if (on) {
     const theme = applyTheme(dailyThemeId());
-    if (theme) showToast(`🎲 Thème du jour : « ${theme.name} »`);
+    if (theme) showToast(`${t("🎲 Thème du jour : «")} ${theme.name} »`);
   } else {
     let saved = 'default';
     try { saved = localStorage.getItem(THEME_STORAGE_KEY) || 'default'; } catch (e) { /* thème par défaut */ }
     const theme = applyTheme(THEMES.some(t => t.id === saved) ? saved : 'default');
-    if (theme) showToast(`Thème « ${theme.name} » rétabli`);
+    if (theme) showToast(`${t("Thème «")} ${theme.name} ${t("» rétabli")}`);
   }
 }
 
@@ -4698,29 +4698,39 @@ function settingsEntryHTML(title, description, onclick) {
 
 // Page « Paramètres » : uniquement le menu. Chaque réglage est sur sa propre page.
 function renderSettings() {
-  prepareSubPage('Paramètres');
+  prepareSubPage(t("Paramètres"));
   app.innerHTML = `
     <div id="settings-page" class="settings-page settings-menu">
       <div class="settings-group">
-        ${discoverSeparatorHTML('Personnalisation', 'dc-left')}
-        ${settingsEntryHTML('Apparence', "Choisis les couleurs de l'appli.", 'goToSettingsAppearance()')}
+        ${discoverSeparatorHTML(t("Langue"), 'dc-left')}
+        <section class="settings-card list-item">
+          <p class="settings-help">${t("Choisis la langue de l'appli.")}</p>
+          <div class="dc-kind" role="group" aria-label="Language">
+            <button type="button" class="dc-kind-btn ${isEN() ? '' : 'active'}" onclick="setLanguage('fr')">Français</button>
+            <button type="button" class="dc-kind-btn ${isEN() ? 'active' : ''}" onclick="setLanguage('en')">English</button>
+          </div>
+        </section>
       </div>
       <div class="settings-group">
-        ${discoverSeparatorHTML('Maintenance', 'dc-left')}
-        ${settingsEntryHTML('Images inutilisées', 'Retrouve et supprime les images devenues inutiles sur GitHub.', 'goToSettingsImages()')}
+        ${discoverSeparatorHTML(t("Personnalisation"), 'dc-left')}
+        ${settingsEntryHTML(t("Apparence"), t("Choisis les couleurs de l'appli."), 'goToSettingsAppearance()')}
+      </div>
+      <div class="settings-group">
+        ${discoverSeparatorHTML(t("Maintenance"), 'dc-left')}
+        ${settingsEntryHTML(t("Images inutilisées"), t("Retrouve et supprime les images devenues inutiles sur GitHub."), 'goToSettingsImages()')}
       </div>
     </div>`;
 }
 
 function renderSettingsAppearance() {
-  prepareSubPage('Apparence');
+  prepareSubPage(t("Apparence"));
   app.innerHTML = `
     <div id="settings-page" class="settings-page">
       <section class="settings-card list-item">
-        <p class="settings-help">Choisis le thème de l'appli : les fonds, les accents et les couleurs des genres s'adaptent au thème. Les jaquettes ne changent pas. Ce choix est propre à cet appareil.</p>
+        <p class="settings-help">${t("Choisis le thème de l'appli : les fonds, les accents et les couleurs des genres s'adaptent au thème. Les jaquettes ne changent pas. Ce choix est propre à cet appareil.")}</p>
         <div class="theme-grid">${themeTilesHTML()}</div>
         <div class="form-group theme-daily">
-          <label class="dc-check"><input type="checkbox" id="theme-daily-toggle" ${isDailyThemeOn() ? 'checked' : ''} onchange="toggleDailyTheme(this.checked)"><span>🎲 Un thème différent chaque jour (tiré au sort)</span></label>
+          <label class="dc-check"><input type="checkbox" id="theme-daily-toggle" ${isDailyThemeOn() ? 'checked' : ''} onchange="toggleDailyTheme(this.checked)"><span>${t("🎲 Un thème différent chaque jour (tiré au sort)")}</span></label>
         </div>
       </section>
     </div>`;
@@ -4731,8 +4741,8 @@ function renderSettingsImages() {
   app.innerHTML = `
     <div id="settings-page" class="settings-page">
       <section class="settings-card list-item">
-        <p class="settings-help">Retrouve, dans le dossier « images » de GitHub, les images qui ne servent plus : jaquettes de MiniDiscs ou d'idées supprimés, images remplacées, fichiers oubliés. Rien n'est supprimé sans ta confirmation.</p>
-        <button type="button" id="imgc-scan-btn" class="settings-btn" onclick="imgCleanScan()">Rechercher les images inutilisées</button>
+        <p class="settings-help">${t("Retrouve, dans le dossier « images » de GitHub, les images qui ne servent plus : jaquettes de MiniDiscs ou d'idées supprimés, images remplacées, fichiers oubliés. Rien n'est supprimé sans ta confirmation.")}</p>
+        <button type="button" id="imgc-scan-btn" class="settings-btn" onclick="imgCleanScan()">${t("Rechercher les images inutilisées")}</button>
         <div id="imgc-status" class="settings-status"></div>
         <div id="imgc-result"></div>
       </section>
@@ -4765,8 +4775,8 @@ async function imgcApi(token, path, options = {}) {
 }
 
 function imgcSizeLabel(bytes) {
-  if (bytes >= 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1).replace('.', ',') + ' Mo';
-  return Math.max(1, Math.round(bytes / 1024)) + ' Ko';
+  if (bytes >= 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1).replace('.', isEN() ? '.' : ',') + t(" Mo");
+  return Math.max(1, Math.round(bytes / 1024)) + t(" Ko");
 }
 
 function imgcStatus(text) {
@@ -4801,25 +4811,25 @@ async function imgCleanScan() {
   IMGC.items = []; IMGC.selected = new Set();
   const box = document.getElementById('imgc-result');
   if (box) box.innerHTML = '';
-  if (!token) return imgcStatus("Aucun jeton GitHub n'est enregistré sur cet appareil : impossible de lire le dépôt.");
+  if (!token) return imgcStatus(t("Aucun jeton GitHub n'est enregistré sur cet appareil : impossible de lire le dépôt."));
 
   IMGC.busy = true;
   const scanBtn = document.getElementById('imgc-scan-btn');
   if (scanBtn) scanBtn.disabled = true;
   try {
-    imgcStatus('Lecture du dépôt…');
+    imgcStatus(t("Lecture du dépôt…"));
     const repo = await imgcApi(token, '');
     IMGC.branch = repo.default_branch;
     const tree = await imgcApi(token, `/git/trees/${encodeURIComponent(IMGC.branch)}?recursive=1`);
-    if (tree.truncated) throw new Error('dépôt trop volumineux pour être analysé');
+    if (tree.truncated) throw new Error(t("dépôt trop volumineux pour être analysé"));
 
     const blobs = tree.tree.filter(t => t.type === 'blob');
     const images = blobs.filter(t => /^images\//i.test(t.path) && IMGC_IMAGE_EXT.test(t.path));
     const texts = blobs.filter(t => IMGC_TEXT_EXT.test(t.path));
-    if (texts.some(t => t.size > 8 * 1024 * 1024)) throw new Error('un fichier du site est trop gros pour être analysé');
+    if (texts.some(t => t.size > 8 * 1024 * 1024)) throw new Error(t("un fichier du site est trop gros pour être analysé"));
 
     // Lecture de TOUS les fichiers texte du site : au moindre échec, on s'arrête (aucune suppression proposée)
-    imgcStatus(`Lecture de ${texts.length} fichier(s) du site…`);
+    imgcStatus(`${t("Lecture de")} ${texts.length} ${t("fichier(s) du site…")}`);
     const parts = [];
     let next = 0;
     const worker = async () => {
@@ -4832,7 +4842,7 @@ async function imgCleanScan() {
     await Promise.all(Array.from({ length: 4 }, worker));
     parts.push(JSON.stringify(buildPayload())); // données de cet appareil, y compris les modifications pas encore synchronisées
 
-    imgcStatus('Analyse des images…');
+    imgcStatus(t("Analyse des images…"));
     const corpus = parts.map(imgcNormalize).join('\n');
     const unused = images
       .filter(img => !imgcIsReferenced(corpus, img.path.split('/').pop()))
@@ -4843,14 +4853,14 @@ async function imgCleanScan() {
     IMGC.selected = new Set(unused.filter(it => it.appMade).map(it => it.path));
     const totalSize = unused.reduce((n, it) => n + it.size, 0);
     imgcStatus(unused.length
-      ? `${images.length} images dans le dossier, ${images.length - unused.length} utilisées, ${unused.length} inutilisées (${imgcSizeLabel(totalSize)}).`
-      : `${images.length} images dans le dossier : toutes sont utilisées, il n'y a rien à nettoyer.`);
+      ? `${images.length} ${t("images dans le dossier,")} ${images.length - unused.length} ${t("utilisées,")} ${unused.length} ${t("inutilisées (")}${imgcSizeLabel(totalSize)}).`
+      : `${images.length} ${t("images dans le dossier : toutes sont utilisées, il n'y a rien à nettoyer.")}`);
     imgcRender();
   } catch (err) {
     console.error('Nettoyage des images :', err);
     imgcStatus(err.status === 401 || err.status === 403
-      ? "GitHub refuse l'accès : le jeton enregistré n'a pas les droits nécessaires sur ce dépôt."
-      : `Analyse impossible (${err.message}). Aucune image n'a été touchée.`);
+      ? t("GitHub refuse l'accès : le jeton enregistré n'a pas les droits nécessaires sur ce dépôt.")
+      : `${t("Analyse impossible (")}${err.message}${t("). Aucune image n'a été touchée.")}`);
   } finally {
     IMGC.busy = false;
     if (scanBtn) scanBtn.disabled = false;
@@ -4866,7 +4876,7 @@ function imgcUpdateCount() {
   const info = imgcSelectionInfo();
   document.querySelectorAll('.imgc-del').forEach(b => {
     b.disabled = !info.count;
-    b.textContent = info.count ? `Supprimer la sélection (${info.count}, ${imgcSizeLabel(info.size)})` : 'Aucune image cochée';
+    b.textContent = info.count ? `${t("Supprimer la sélection (")}${info.count}, ${imgcSizeLabel(info.size)})` : t("Aucune image cochée");
   });
 }
 
@@ -4878,14 +4888,14 @@ function imgcRender() {
     <div class="imgc-bar">
       <button type="button" class="settings-btn imgc-del" onclick="imgCleanDelete()"></button>
       <div class="imgc-links">
-        <button type="button" class="imgc-link" onclick="imgcSelectAll(true)">Tout cocher</button>
-        <button type="button" class="imgc-link" onclick="imgcSelectAll(false)">Tout décocher</button>
+        <button type="button" class="imgc-link" onclick="imgcSelectAll(true)">${t("Tout cocher")}</button>
+        <button type="button" class="imgc-link" onclick="imgcSelectAll(false)">${t("Tout décocher")}</button>
       </div>
     </div>`;
   const tiles = IMGC.items.map((it, i) => {
     const thumb = it.size <= IMGC_PEEK_LIMIT
       ? `<img loading="lazy" decoding="async" src="${mbEscapeHTML(encodeURI(it.path))}" alt="" onerror="imgcThumbError(this, ${i})">`
-      : `<button type="button" class="imgc-peek" onclick="event.stopPropagation(); imgcPeek(this, ${i})">Aperçu</button>`;
+      : `<button type="button" class="imgc-peek" onclick="event.stopPropagation(); imgcPeek(this, ${i})">${t("Aperçu")}</button>`;
     return `
       <div class="imgc-item ${IMGC.selected.has(it.path) ? 'selected' : ''}" onclick="imgcToggle(${i})">
         <div class="imgc-thumb">${thumb}</div>
@@ -4894,7 +4904,7 @@ function imgcRender() {
       </div>`;
   }).join('');
   box.innerHTML = `
-    <p class="settings-help">Les images créées par l'appli (img_…) sont cochées d'office. Les autres ne le sont pas : vérifie-les à l'œil avant de les cocher. Touche une image pour la cocher ou la décocher.</p>
+    <p class="settings-help">${t("Les images créées par l'appli (img_…) sont cochées d'office. Les autres ne le sont pas : vérifie-les à l'œil avant de les cocher. Touche une image pour la cocher ou la décocher.")}</p>
     ${bar}
     <div class="imgc-grid">${tiles}</div>
     ${bar}`;
@@ -4939,13 +4949,13 @@ async function imgCleanDelete() {
   if (IMGC.busy) return;
   const info = imgcSelectionInfo();
   if (!info.count) return;
-  if (!confirm(`Supprimer ${info.count} image(s) de GitHub (${imgcSizeLabel(info.size)}) ?\n\nElles disparaissent du site. Elles restent récupérables dans l'historique GitHub.`)) return;
+  if (!confirm(`${t("Supprimer")} ${info.count} ${t("image(s) de GitHub (")}${imgcSizeLabel(info.size)}${t(") ?\n\nElles disparaissent du site. Elles restent récupérables dans l'historique GitHub.")}`)) return;
   const token = getGithubToken();
-  if (!token) return imgcStatus("Aucun jeton GitHub n'est enregistré sur cet appareil.");
+  if (!token) return imgcStatus(t("Aucun jeton GitHub n'est enregistré sur cet appareil."));
 
   IMGC.busy = true;
   document.querySelectorAll('.imgc-del, #imgc-scan-btn').forEach(b => { b.disabled = true; });
-  imgcStatus('Suppression en cours…');
+  imgcStatus(t("Suppression en cours…"));
   try {
     // Un seul « commit » pour toutes les images (au lieu d'un par image). Si le dépôt a bougé entre-temps
     // (synchro de data.json), on recommence à partir de sa dernière version.
@@ -4960,7 +4970,7 @@ async function imgCleanDelete() {
       });
       const commit = await imgcApi(token, '/git/commits', {
         method: 'POST',
-        body: JSON.stringify({ message: `Nettoyage : suppression de ${info.count} image(s) inutilisée(s)`, tree: newTree.sha, parents: [headSha] })
+        body: JSON.stringify({ message: `${t("Nettoyage : suppression de")} ${info.count} ${t("image(s) inutilisée(s)")}`, tree: newTree.sha, parents: [headSha] })
       });
       try {
         await imgcApi(token, `/git/refs/heads/${encodeURI(IMGC.branch)}`, { method: 'PATCH', body: JSON.stringify({ sha: commit.sha }) });
@@ -4969,19 +4979,19 @@ async function imgCleanDelete() {
         if (err.status !== 422 && err.status !== 409) throw err;
       }
     }
-    if (!done) throw new Error('le dépôt a changé pendant la suppression, réessaie');
+    if (!done) throw new Error(t("le dépôt a changé pendant la suppression, réessaie"));
 
     const gone = new Set(info.paths);
     IMGC.items = IMGC.items.filter(it => !gone.has(it.path));
     IMGC.selected = new Set([...IMGC.selected].filter(pth => !gone.has(pth)));
     imgcRender();
-    imgcStatus(`${info.count} image(s) supprimée(s) (${imgcSizeLabel(info.size)}). Le site peut mettre quelques minutes à se mettre à jour.`);
-    showToast(`🗑️ ${info.count} image(s) supprimée(s)`);
+    imgcStatus(`${info.count} ${t("image(s) supprimée(s) (")}${imgcSizeLabel(info.size)}${t("). Le site peut mettre quelques minutes à se mettre à jour.")}`);
+    showToast(`🗑️ ${info.count} ${t("image(s) supprimée(s)")}`);
   } catch (err) {
     console.error('Suppression des images :', err);
     imgcStatus(err.status === 401 || err.status === 403
-      ? "GitHub refuse la suppression : le jeton enregistré n'a pas les droits d'écriture sur ce dépôt."
-      : `Suppression impossible (${err.message}). Aucune image n'a été supprimée.`);
+      ? t("GitHub refuse la suppression : le jeton enregistré n'a pas les droits d'écriture sur ce dépôt.")
+      : `${t("Suppression impossible (")}${err.message}${t("). Aucune image n'a été supprimée.")}`);
   } finally {
     IMGC.busy = false;
     document.querySelectorAll('#imgc-scan-btn').forEach(b => { b.disabled = false; });
@@ -4993,7 +5003,7 @@ function saveLastfmKeyFromInput() {
   const input = document.getElementById('dc-key-input');
   const key = input ? input.value.trim() : '';
   if (!/^[0-9a-fA-F]{32}$/.test(key)) {
-    showToast("⚠️ Une clé Last.fm compte 32 caractères (chiffres et lettres a-f)");
+    showToast(t("⚠️ Une clé Last.fm compte 32 caractères (chiffres et lettres a-f)"));
     return;
   }
   localStorage.setItem(LASTFM_KEY_STORAGE, key);
@@ -5001,7 +5011,7 @@ function saveLastfmKeyFromInput() {
   const s = discoverState;
   s.showKeyCard = false;
   s.status = '';
-  showToast("🔑 Clé Last.fm enregistrée");
+  showToast(t("🔑 Clé Last.fm enregistrée"));
   refreshDiscoverPage();
   if (s.pendingAuto) startDiscoverSearch();
   else if (s.pendingDisco) {
@@ -5052,7 +5062,7 @@ function titlesArtist(mdIndex, albumIndex) {
 function titlesActionsHTML(mdIndex, albumIndex, hasFab) {
   const albumArg = albumIndex === null || albumIndex === undefined ? 'null' : albumIndex;
   requestAnimationFrame(() => requestAnimationFrame(fitTitlesActions)); // une fois la page affichée
-  return `<div class="titles-actions ${hasFab ? 'has-fab' : ''}"><button type="button" class="similar-fab" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">🔎 Discographie et<br>Artistes similaires</button></div>`;
+  return `<div class="titles-actions ${hasFab ? 'has-fab' : ''}"><button type="button" class="similar-fab" onclick="openSimilarSearch(${mdIndex}, ${albumArg})">${t("🔎 Discographie et")}<br>${t("Artistes similaires")}</button></div>`;
 }
 
 // Les boutons sont centrés en bas ; s'ils touchent le bouton flottant de droite (compilation), ils passent au-dessus
@@ -5198,14 +5208,14 @@ async function startDiscoverSearch() {
   if (!getLastfmKey()) {
     s.showKeyCard = true;
     s.formOpen = true;
-    s.status = '<span class="dc-warn">🔑 Ajoute d\'abord ta clé API Last.fm ci-dessus.</span>';
+    s.status = t("<span class=\"dc-warn\">🔑 Ajoute d'abord ta clé API Last.fm ci-dessus.</span>");
     s.pendingAuto = true;
     refreshDiscoverPage();
     return;
   }
   const isAlbum = c.kind === 'album';
   if (isAlbum ? !c.album : !c.artist) {
-    showToast(isAlbum ? "⚠️ Indique le titre d'un album" : "⚠️ Indique un artiste");
+    showToast(isAlbum ? t("⚠️ Indique le titre d'un album") : t("⚠️ Indique un artiste"));
     return;
   }
 
@@ -5394,22 +5404,22 @@ function discoverHandleError(err) {
   if (err.code === 'nokey' || err.code === 10 || err.code === 26) {
     s.showKeyCard = true;
     s.formOpen = true;
-    message = '🔑 Clé API Last.fm absente, invalide ou refusée. Vérifie-la ci-dessus.';
+    message = t("🔑 Clé API Last.fm absente, invalide ou refusée. Vérifie-la ci-dessus.");
   } else if (err.code === 29 || err.rateLimited) {
-    message = '⏳ Le service limite le nombre de requêtes : réessaie dans une minute.';
+    message = t("⏳ Le service limite le nombre de requêtes : réessaie dans une minute.");
   } else if (err.code === 'noalbum') {
     s.formOpen = true;
-    message = `Album « ${mbEscapeHTML(s.criteria.album)} » introuvable sur Last.fm : vérifie l'orthographe (et indique l'artiste si possible).`;
+    message = `${t("Album «")} ${mbEscapeHTML(s.criteria.album)} ${t("» introuvable sur Last.fm : vérifie l'orthographe (et indique l'artiste si possible).")}`;
   } else if (err.code === 'novarious') {
     s.formOpen = true;
-    message = "Cet album est une compilation « Divers » : il n'a pas d'artiste dont chercher les similaires.";
+    message = t("Cet album est une compilation « Divers » : il n'a pas d'artiste dont chercher les similaires.");
   } else if (err.code === 6) {
     s.formOpen = true;
-    message = `Artiste « ${mbEscapeHTML(s.criteria.artist)} » introuvable sur Last.fm : vérifie l'orthographe.`;
+    message = `${t("Artiste «")} ${mbEscapeHTML(s.criteria.artist)} ${t("» introuvable sur Last.fm : vérifie l'orthographe.")}`;
   } else if (isNetworkError(err)) {
-    message = '📡 Impossible de joindre Last.fm (connexion coupée ou requête bloquée par le navigateur).';
+    message = t("📡 Impossible de joindre Last.fm (connexion coupée ou requête bloquée par le navigateur).");
   } else {
-    message = `⚠️ Une erreur est survenue (${mbEscapeHTML(err.message || 'inconnue')}).`;
+    message = `${t("⚠️ Une erreur est survenue (")}${mbEscapeHTML(err.message || t("inconnue"))}).`;
   }
   s.status = `<span class="dc-warn">${message}</span>`;
   refreshDiscoverPage();
@@ -5422,8 +5432,8 @@ function discoverFinishStatus(noCandidates) {
   if (noCandidates) {
     const c = s.criteria;
     const relaxable = c.genre || c.tag || c.yearFrom || c.yearTo;
-    s.status = `<span class="dc-warn">Aucun résultat avec ces critères.</span>` +
-      (relaxable ? ` <button type="button" class="dc-link-btn" onclick="discoverRelax()">Relancer sans genre ni période</button>` : '');
+    s.status = `<span class="dc-warn">${t("Aucun résultat avec ces critères.")}</span>` +
+      (relaxable ? ` <button type="button" class="dc-link-btn" onclick="discoverRelax()">${t("Relancer sans genre ni période")}</button>` : '');
     s.formOpen = true;
     refreshDiscoverPage();
   } else {
@@ -5438,7 +5448,7 @@ function discoverRelax() {
   c.yearFrom = '';
   c.yearTo = '';
   if (!c.artist) {
-    showToast("⚠️ Indique un artiste pour élargir la recherche");
+    showToast(t("⚠️ Indique un artiste pour élargir la recherche"));
     refreshDiscoverPage();
     return;
   }
@@ -5580,7 +5590,7 @@ async function discoverApplyLifespan(runId) {
     const data = await mbFetchJson(`${MB_API}/artist/?query=${encodeURIComponent(query)}&fmt=json&limit=100`);
     asArray(data.artists).forEach(x => spans.set(x.id, x['life-span'] || {}));
   } catch (err) {
-    s.lifespanNote = "Période non vérifiée (MusicBrainz n'a pas répondu).";
+    s.lifespanNote = t("Période non vérifiée (MusicBrainz n'a pas répondu).");
     return;
   }
   if (!discoverAlive(runId)) return;
@@ -5738,8 +5748,8 @@ function discoverArtistHTML(a, featured = false) { // featured : tuile de l'arti
   const genreLabel = a.mainGenre ? `<div class="dc-genre" style="color:${color}">${mbEscapeHTML(a.mainGenre)}</div>` : '';
 
   const facts = [];
-  if (a.listeners > 0) facts.push(`👥 ${fmtCount(a.listeners)} auditeurs`);
-  if (a.match != null) facts.push(`≈ ${Math.round(a.match * 100)} % similaire`);
+  if (a.listeners > 0) facts.push(`👥 ${fmtCount(a.listeners)} ${t("auditeurs")}`);
+  if (a.match != null) facts.push(`≈ ${Math.round(a.match * 100)} ${t("% similaire")}`);
 
   return `
     <div class="list-item dc-item dc-open${featured ? ' dc-featured' : ''}" style="border-color:${color}; --glow:${color}; border-left-width:6px;" data-artist="${mbEscapeHTML(a.artist)}" data-mbid="${mbEscapeHTML(a.mbid || '')}" onclick="discoverOpenArtist(event, this)">
@@ -5766,12 +5776,12 @@ function discoverAlbumHTML(r, listName = 'd') {
   const albumSub = listName === 'a'
     ? `<div class="dc-meta">${mbEscapeHTML(r.artist)}<span class="dc-year" data-year-key="${mbEscapeHTML(r.key)}">${r.year ? ` · ${r.year}` : ''}</span></div>`
     : '';
-  const popularityLabel = r.playcount > 0 ? `🔥 ${fmtCount(r.playcount)} écoutes` : (r.note || '');
+  const popularityLabel = r.playcount > 0 ? `🔥 ${fmtCount(r.playcount)} ${t("écoutes")}` : (r.note || '');
 
   let action;
-  if (r.isOwned) action = `<span class="dc-owned">✔ Dans ma collection</span>`;
-  else if (r.isIdea) action = `<span class="dc-owned">💡 Déjà dans mes idées</span>`;
-  else action = `<button type="button" class="dc-add" onclick="discoverAddToIdeas('${listName}', ${r.idx})">＋ Ajouter aux idées</button>`;
+  if (r.isOwned) action = `<span class="dc-owned">${t("✔ Dans ma collection")}</span>`;
+  else if (r.isIdea) action = `<span class="dc-owned">${t("💡 Déjà dans mes idées")}</span>`;
+  else action = `<button type="button" class="dc-add" onclick="discoverAddToIdeas('${listName}', ${r.idx})">${t("＋ Ajouter aux idées")}</button>`;
 
   const cover = (r.image || caa)
     ? `<div class="dc-cover"><span class="dc-cover-ph">💿</span><img src="${mbEscapeHTML(r.image || caa)}" data-fallback="${mbEscapeHTML(r.image ? caa : '')}" alt="" loading="lazy" onerror="discoverCoverError(this)"></div>`
@@ -5817,8 +5827,8 @@ function adOpenSimilar(i) {
 function adFormatDate(date, year) {
   const m = String(date || '').match(/^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?/);
   if (!m) return year ? String(year) : '';
-  const months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-  if (m[3] && m[2]) return `${+m[3] === 1 ? '1er' : +m[3]} ${months[+m[2] - 1]} ${m[1]}`;
+  const months = [t("janvier"), t("février"), t("mars"), t("avril"), t("mai"), t("juin"), t("juillet"), t("août"), t("septembre"), t("octobre"), t("novembre"), t("décembre")];
+  if (m[3] && m[2]) return `${+m[3] === 1 ? t("1er") : +m[3]} ${months[+m[2] - 1]} ${m[1]}`;
   if (m[2]) return `${months[+m[2] - 1]} ${m[1]}`;
   return m[1];
 }
@@ -5842,17 +5852,19 @@ function adHtmlToText(html) {
 function adLooksFrench(text) {
   const fr = (text.match(/\b(le|la|les|des|du|est|une|et|dans|pour|sur|avec|qui|son|ses|au|aux)\b/gi) || []).length;
   const en = (text.match(/\b(the|of|and|is|was|in|to|by|with|for|from|that|his|their|which)\b/gi) || []).length;
-  return fr > en;
+  const isFr = fr > en;
+  // Nom historique : renvoie vrai quand le texte est DÉJÀ dans la langue de l'appli (aucune traduction à faire)
+  return isEN() ? !isFr : isFr;
 }
 
 async function adTranslateChunk(q) {
   try { // 1) MyMemory
-    const res = await fetch(`https://api.mymemory.translated.net/get?langpair=en|fr&q=${encodeURIComponent(q)}`);
+    const res = await fetch(`https://api.mymemory.translated.net/get?langpair=${isEN() ? 'fr|en' : 'en|fr'}&q=${encodeURIComponent(q)}`);
     const d = await res.json();
     const t = d && d.responseData && d.responseData.translatedText;
     if (Number(d.responseStatus) === 200 && t && !/MYMEMORY WARNING|INVALID|QUERY LENGTH/i.test(t)) return adHtmlToText(t);
   } catch (err) { /* on passe au service suivant */ }
-  const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=fr&dt=t&q=${encodeURIComponent(q)}`); // 2) repli
+  const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${isEN() ? 'fr' : 'en'}&tl=${isEN() ? 'en' : 'fr'}&dt=t&q=${encodeURIComponent(q)}`); // 2) repli
   const d = await res.json();
   return d[0].map(x => x[0]).join('');
 }
@@ -5896,7 +5908,7 @@ async function adAlbumInfo(r) {
   const titles = [r.title, r.title.replace(/\s*[\(\[][^\)\]]*[\)\]]\s*$/, '').trim()].filter((t, i, a) => t && a.indexOf(t) === i);
   let base = null, wiki = null;
   for (const album of titles) {
-    for (const lang of ['fr', 'en']) {
+    for (const lang of (isEN() ? ['en'] : ['fr', 'en'])) {
       let data;
       try {
         data = await lastfmCall('album.getInfo', { artist: r.artist, album, lang });
@@ -5946,13 +5958,13 @@ async function adSimilarAlbums(r) {
 function adActionHTML(r) {
   const { owned, ideas } = discoverOwnedAlbumKeys();
   const key = `${mbNormalize(r.artist)}|${mbBaseTitle(r.title)}`;
-  if (r.isOwned || owned.has(key)) return `<span class="dc-owned">✔ Dans ma collection</span>`;
-  if (r.isIdea || ideas.has(key)) return `<span class="dc-owned">💡 Déjà dans mes idées</span>`;
-  return `<button type="button" class="dc-add" onclick="adAddToIdeas()">＋ Ajouter aux idées</button>`;
+  if (r.isOwned || owned.has(key)) return `<span class="dc-owned">${t("✔ Dans ma collection")}</span>`;
+  if (r.isIdea || ideas.has(key)) return `<span class="dc-owned">${t("💡 Déjà dans mes idées")}</span>`;
+  return `<button type="button" class="dc-add" onclick="adAddToIdeas()">${t("＋ Ajouter aux idées")}</button>`;
 }
 
 function renderAlbumDetail(r) {
-  prepareSubPage('Détails');
+  prepareSubPage(t("Détails"));
   const token = ++AD.token;
   AD.similar = [];
   AD.current = r;
@@ -5969,10 +5981,10 @@ function renderAlbumDetail(r) {
       <div class="ad-artist">${mbEscapeHTML(r.artist)}</div>
       <div id="ad-facts" class="ad-facts"></div>
       <div class="ad-actions">${adActionHTML(r)}</div>
-      <section class="ad-sec list-item"><h3>Description</h3><div id="ad-desc" class="ad-text ad-note">⏳ Chargement…</div></section>
-      <section id="ad-tags-sec" class="ad-sec list-item"><h3>Tags</h3><div id="ad-tags" class="ad-tags ad-note">⏳ Chargement…</div></section>
-      <section class="ad-sec list-item"><h3>Tracklist</h3><div id="ad-tracks" class="ad-note">⏳ Chargement…</div></section>
-      <section class="ad-sec list-item"><h3>Albums similaires</h3><div id="ad-similar" class="ad-note">⏳ Chargement…</div></section>
+      <section class="ad-sec list-item"><h3>${t("Description")}</h3><div id="ad-desc" class="ad-text ad-note">${t("⏳ Chargement…")}</div></section>
+      <section id="ad-tags-sec" class="ad-sec list-item"><h3>Tags</h3><div id="ad-tags" class="ad-tags ad-note">${t("⏳ Chargement…")}</div></section>
+      <section class="ad-sec list-item"><h3>${t("Tracklist")}</h3><div id="ad-tracks" class="ad-note">${t("⏳ Chargement…")}</div></section>
+      <section class="ad-sec list-item"><h3>${t("Albums similaires")}</h3><div id="ad-similar" class="ad-note">${t("⏳ Chargement…")}</div></section>
     </div>`;
   loadAlbumDetail(r, token);
 }
@@ -5989,14 +6001,14 @@ async function loadAlbumDetail(r, token) {
   adSimilarAlbums(r).then(list => {
     if (!alive()) return;
     AD.similar = list;
-    if (!list.length) return note('ad-similar', 'Aucun album similaire trouvé.');
+    if (!list.length) return note('ad-similar', t("Aucun album similaire trouvé."));
     set('ad-similar', `<div class="ad-sim">${list.map((s, i) => `
       <div class="ad-sim-item" onclick="adOpenSimilar(${i})">
         <div class="ad-sim-cover"><span>💿</span>${s.image ? `<img src="${mbEscapeHTML(s.image)}" alt="" loading="lazy" onerror="discoverCoverError(this)">` : ''}</div>
         <div class="ad-sim-title">${mbEscapeHTML(s.title)}</div>
         <div class="ad-sim-artist">${mbEscapeHTML(s.artist)}</div>
       </div>`).join('')}</div>`);
-  }).catch(err => note('ad-similar', isNetworkError(err) ? 'Hors ligne : albums similaires indisponibles.' : 'Albums similaires indisponibles.'));
+  }).catch(err => note('ad-similar', isNetworkError(err) ? t("Hors ligne : albums similaires indisponibles.") : t("Albums similaires indisponibles.")));
 
   // Infos Last.fm
   let info = null;
@@ -6034,7 +6046,7 @@ async function loadAlbumDetail(r, token) {
   if (dateLabel) facts.push(`📅 ${mbEscapeHTML(dateLabel)}`);
   if (total) facts.push(`⏱ ${adFormatTotal(total)}`);
   const plays = parseInt(info && info.playcount, 10) || r.playcount || 0;
-  if (plays) facts.push(`🔥 ${fmtCount(plays)} écoutes`);
+  if (plays) facts.push(`🔥 ${fmtCount(plays)} ${t("écoutes")}`);
   set('ad-facts', facts.join(' · ') || '');
 
   // Tags
@@ -6048,7 +6060,7 @@ async function loadAlbumDetail(r, token) {
   if (tracks.length) {
     set('ad-tracks', `<ol class="ad-tracks">${tracks.map((t, i) => `
       <li><span class="ad-n">${i + 1}</span><span class="ad-t">${mbEscapeHTML(t.name)}</span><span class="ad-d">${adFormatTrack(t.seconds)}</span></li>`).join('')}</ol>`);
-  } else note('ad-tracks', 'Tracklist non disponible.');
+  } else note('ad-tracks', t("Tracklist non disponible."));
 
   // Description : en français (Last.fm la fournit parfois déjà), sinon traduite. Texte COMPLET (aucune coupure).
   const detail = AD.detail;
@@ -6057,16 +6069,16 @@ async function loadAlbumDetail(r, token) {
   const finishDesc = txt => { if (detail && detail.item === r) detail.description = txt || ''; if (resolveDesc) resolveDesc(txt || ''); };
 
   const text = adWikiText(info && info.wiki);
-  if (!text) { finishDesc(''); return note('ad-desc', 'Aucune description disponible pour cet album.'); }
+  if (!text) { finishDesc(''); return note('ad-desc', t("Aucune description disponible pour cet album.")); }
   if (adLooksFrench(text)) { finishDesc(text); return set('ad-desc', mbEscapeHTML(text)); }
-  note('ad-desc', '⏳ Traduction en cours…');
+  note('ad-desc', t("⏳ Traduction en cours…"));
   try {
     const fr = await adToFrench(text);
     finishDesc(fr);
     set('ad-desc', mbEscapeHTML(fr));
   } catch (err) {
     finishDesc(text);
-    set('ad-desc', `${mbEscapeHTML(text)}<div class="ad-note">(Traduction indisponible : texte original en anglais.)</div>`);
+    set('ad-desc', `${mbEscapeHTML(text)}<div class="ad-note">${t("(Traduction indisponible : texte original en anglais.)")}</div>`);
   }
 }
 
@@ -6090,25 +6102,25 @@ function renderDiscoverResultsInner() {
 
     // Barre fixe : bouton retour bien visible + titre
     discoBar.innerHTML = `
-      <button type="button" class="dc-back-results" onclick="goBack()">${d.direct ? '← Retour' : '← Retour aux résultats'}</button>
-      <div class="dc-disco-title">📀 Discographie de <span class="dc-disco-artist">${mbEscapeHTML(d.artist)}</span></div>`;
+      <button type="button" class="dc-back-results" onclick="goBack()">${d.direct ? t("← Retour") : t("← Retour aux résultats")}</button>
+      <div class="dc-disco-title">${t("📀 Discographie de")} <span class="dc-disco-artist">${mbEscapeHTML(d.artist)}</span></div>`;
     discoBar.classList.remove('hidden');
 
     // Albums (studio) affichés d'office ; live et compilations : les 3 premiers puis un bouton ; autres sorties : un bouton seul
     const studio = d.items.filter(r => r.sections.includes('albums'));
     let html = studio.length ? discoverSeparatorHTML('Albums') + studio.map(r => discoverAlbumHTML(mark(r))).join('') : '';
     [
-      { id: 'ep', title: 'EP et B-sides', preview: 3, more: 'autres EP et B-sides' },
-      { id: 'live', title: 'Albums live', preview: 3, more: 'autres albums live' },
-      { id: 'compil', title: 'Compilations', preview: 3, more: 'autres compilations' },
-      { id: 'other', title: 'Autres sorties', preview: 0, more: 'les autres sorties' },
+      { id: 'ep', title: t("EP et B-sides"), preview: 3, more: t("autres EP et B-sides") },
+      { id: 'live', title: t("Albums live"), preview: 3, more: t("autres albums live") },
+      { id: 'compil', title: 'Compilations', preview: 3, more: t("autres compilations") },
+      { id: 'other', title: t("Autres sorties"), preview: 0, more: t("les autres sorties") },
     ].forEach(sec => {
       const list = d.items.filter(r => r.sections.includes(sec.id));
       if (list.length === 0) return;
       const open = !!(d.open && d.open[sec.id]);
       const rest = list.length - sec.preview;
       const button = (sec.preview === 0 || rest > 0)
-        ? `<button type="button" class="btn-secondary dc-others-toggle" onclick="discoverToggleSection('${sec.id}')">${open ? 'Réduire' : 'Afficher'} ${open ? '' : (sec.preview ? rest + ' ' : '') + sec.more}${sec.preview === 0 && !open ? ` (${list.length})` : ''}</button>`.replace(/ <\/button>/, '</button>')
+        ? `<button type="button" class="btn-secondary dc-others-toggle" onclick="discoverToggleSection('${sec.id}')">${open ? t("Réduire") : t("Afficher")} ${open ? '' : (sec.preview ? rest + ' ' : '') + sec.more}${sec.preview === 0 && !open ? ` (${list.length})` : ''}</button>`.replace(/ <\/button>/, '</button>')
         : '';
       const cards = (open ? list : list.slice(0, sec.preview)).map(r => discoverAlbumHTML(mark(r))).join('');
       html += discoverSeparatorHTML(sec.title);
@@ -6132,11 +6144,11 @@ function renderDiscoverResultsInner() {
   if (s.running) {
     if (s.shown > 0) {
       // « Voir plus » : la liste reste figée et le bouton lui-même indique que ça travaille
-      moreEl.textContent = '⏳ Recherche en cours…';
+      moreEl.textContent = t("⏳ Recherche en cours…");
       moreEl.classList.remove('hidden');
       statusEl.classList.add('hidden');
     } else {
-      statusEl.textContent = '⏳ Recherche en cours…';
+      statusEl.textContent = t("⏳ Recherche en cours…");
       statusEl.classList.remove('hidden');
       moreEl.classList.add('hidden');
     }
@@ -6158,38 +6170,38 @@ function renderDiscoverResultsInner() {
 
     const others = s.otherAlbums || [];
     if (others.length > 0) {
-      html += discoverSeparatorHTML(`Autres albums de ${s.criteria.artist}`, 'dc-sep-main dc-sep-fit');
+      html += discoverSeparatorHTML(`${t("Autres albums de")} ${s.criteria.artist}`, 'dc-sep-main dc-sep-fit');
       others.forEach(o => {
         html += discoverAlbumHTML(addItem({
           key: `${mbNormalize(o.artist)}|${mbBaseTitle(o.title)}`, artist: o.artist, title: o.title, year: null, date: '',
           mbGroup: null, mbid: '', primary: '', secondary: [], playcount: o.playcount, image: o.image, tags: [], mainGenre: o.mainGenre,
         }), 'a');
       });
-      html += `<button type="button" class="btn-secondary dc-others-toggle" data-artist="${mbEscapeHTML(s.criteria.artist)}" onclick="goToArtistDiscographyFromResults(this.dataset.artist, '')">Toute la discographie de ${mbEscapeHTML(s.criteria.artist)}</button>`;
+      html += `<button type="button" class="btn-secondary dc-others-toggle" data-artist="${mbEscapeHTML(s.criteria.artist)}" onclick="goToArtistDiscographyFromResults(this.dataset.artist, '')">${t("Toute la discographie de")} ${mbEscapeHTML(s.criteria.artist)}</button>`;
     }
 
     let similarTitleDone = false;
     let previousLow = false;
     visible.forEach(a => {
       if (!a.topAlbum || !a.topAlbum.title) return; // artiste sans album connu : rien à montrer
-      if (!similarTitleDone) { html += discoverSeparatorHTML('Albums similaires'); similarTitleDone = true; }
-      if (a.lowTier && !previousLow) html += discoverSeparatorHTML('Moins proches ou moins connus');
+      if (!similarTitleDone) { html += discoverSeparatorHTML(t("Albums similaires")); similarTitleDone = true; }
+      if (a.lowTier && !previousLow) html += discoverSeparatorHTML(t("Moins proches ou moins connus"));
       previousLow = a.lowTier;
       html += discoverAlbumHTML(addItem({
         key: `${mbNormalize(a.artist)}|${mbBaseTitle(a.topAlbum.title)}`, artist: a.artist, title: a.topAlbum.title, year: null, date: '',
         mbGroup: null, mbid: '', primary: '', secondary: [], playcount: 0, image: a.topAlbum.image, tags: [], mainGenre: a.mainGenre,
-        note: a.match != null ? `≈ ${Math.round(a.match * 100)} % similaire` : '',
+        note: a.match != null ? `≈ ${Math.round(a.match * 100)} ${t("% similaire")}` : '',
       }), 'a');
     });
   } else {
     if (s.mode === 'similar' && s.searchedArtist) {
-      html += discoverSeparatorHTML('Discographie', 'dc-sep-main');
+      html += discoverSeparatorHTML(t("Discographie"), 'dc-sep-main');
       html += discoverArtistHTML(s.searchedArtist, true);
-      html += discoverSeparatorHTML('Artistes similaires');
+      html += discoverSeparatorHTML(t("Artistes similaires"));
     }
     let previousLow = false;
     visible.forEach(a => {
-      if (a.lowTier && !previousLow) html += discoverSeparatorHTML('Moins proches ou moins connus');
+      if (a.lowTier && !previousLow) html += discoverSeparatorHTML(t("Moins proches ou moins connus"));
       previousLow = a.lowTier;
       html += discoverArtistHTML(a);
     });
@@ -6201,15 +6213,15 @@ function renderDiscoverResultsInner() {
   // Plus de tuile « X sur Y artistes » : seuls les messages importants (erreur, tout masqué) restent affichés
   let status = s.status || '';
   if (s.started && s.candidates.length > 0 && visible.length === 0 && !status) {
-    status = `Tous les artistes trouvés sont déjà dans ta collection ou tes idées : décoche « Masquer » pour les voir.`;
+    status = `${t("Tous les artistes trouvés sont déjà dans ta collection ou tes idées : décoche « Masquer » pour les voir.")}`;
   }
   statusEl.innerHTML = status;
   statusEl.classList.toggle('hidden', !status);
 
   const remaining = order.list.length - visible.length;
   let moreLabel = '';
-  if (s.started && remaining > 0) moreLabel = `Voir plus (${remaining} restant${remaining > 1 ? 's' : ''})`;
-  else if (s.started && !s.extraShown && order.extra.length > 0) moreLabel = `Afficher des ${albumMode ? 'albums' : 'artistes'} moins proches ou moins connus (${order.extra.length})`;
+  if (s.started && remaining > 0) moreLabel = `${t("Voir plus (")}${remaining} ${t("restant")}${remaining > 1 && !isEN() ? 's' : ''})`;
+  else if (s.started && !s.extraShown && order.extra.length > 0) moreLabel = `${t("Afficher des")} ${albumMode ? t("albums") : t("artistes")} ${t("moins proches ou moins connus (")}${order.extra.length})`;
   moreEl.classList.toggle('hidden', !moreLabel);
   if (moreLabel) moreEl.textContent = moreLabel;
 
@@ -6276,7 +6288,7 @@ function discoverShowDiscographyFromForm() {
   readDiscoverCriteria();
   const name = discoverState.criteria.artist;
   if (!name) {
-    showToast("⚠️ Indique d'abord un artiste dans « Similaire à »");
+    showToast(t("⚠️ Indique d'abord un artiste dans « Similaire à »"));
     return;
   }
   goToArtistDiscographyFromResults(name, '');
@@ -6324,7 +6336,7 @@ async function discoverShowDiscography(name, mbid, options = {}) {
     s.showKeyCard = true;
     s.formOpen = true;
     if (direct) s.pendingDisco = name; // pour ouvrir directement cette discographie une fois la clé enregistrée
-    s.status = '<span class="dc-warn">🔑 Ajoute d\'abord ta clé API Last.fm ci-dessus.</span>';
+    s.status = t("<span class=\"dc-warn\">🔑 Ajoute d'abord ta clé API Last.fm ci-dessus.</span>");
     refreshDiscoverPage();
     return;
   }
@@ -6336,7 +6348,7 @@ async function discoverShowDiscography(name, mbid, options = {}) {
 
   s.formOpen = false;
   s.view = 'disco';
-  s.disco = { artist: name, mbid: mbid || '', items: [], open: {}, loading: true, direct, status: `Chargement de la discographie de <strong>${mbEscapeHTML(name)}</strong>…` };
+  s.disco = { artist: name, mbid: mbid || '', items: [], open: {}, loading: true, direct, status: `${t("Chargement de la discographie de")} <strong>${mbEscapeHTML(name)}</strong>…` };
   refreshDiscoverPage();
   discoverScrollToResults();
 
@@ -6405,7 +6417,7 @@ async function discoverShowDiscography(name, mbid, options = {}) {
       });
       byKey.forEach(pop => items.push(make(pop.title, null, pop, discoverSectionOfTitle(pop.title))));
       items.sort((a, b) => b.playcount - a.playcount);
-      s.disco.status = `<span class="dc-muted">${mb.ok ? "Artiste introuvable sur MusicBrainz" : "MusicBrainz n'a pas répondu"}  : dates indisponibles, sorties classées d'après leur titre.</span>`;
+      s.disco.status = `<span class="dc-muted">${mb.ok ? t("Artiste introuvable sur MusicBrainz") : t("MusicBrainz n'a pas répondu")}  ${t(": dates indisponibles, sorties classées d'après leur titre.")}</span>`;
     } else {
       const typesKnown = mb.groups.some(g => g['primary-type']); // sans types dans les résultats, on se rabat sur le titre
       const sectionOf = g => typesKnown ? discoverSectionOf(g) : discoverSectionOfTitle(g.title || '');
@@ -6460,7 +6472,7 @@ async function discoverShowDiscography(name, mbid, options = {}) {
     items.forEach((r, i) => { r.idx = i; });
     s.disco.items = items;
     s.disco.loading = false;
-    if (items.length === 0) s.disco.status = '<span class="dc-warn">Aucun album trouvé pour cet artiste.</span>';
+    if (items.length === 0) s.disco.status = t("<span class=\"dc-warn\">Aucun album trouvé pour cet artiste.</span>");
     else if (mb.ok && mb.groups.length > 0) s.disco.status = '';
     renderDiscoverResults();
   } catch (err) {
@@ -6601,7 +6613,7 @@ function discoverPlayClass(key) {
 
 function discoverPlayButton(kind, artist, title, extraClass = '') {
   const key = discoverPreviewKey(kind, artist, title);
-  return `<button type="button" class="dc-play ${extraClass} ${discoverPlayClass(key)}" data-key="${mbEscapeHTML(key)}" data-kind="${kind}" data-artist="${mbEscapeHTML(artist)}" data-title="${mbEscapeHTML(title || '')}" aria-label="Écouter un extrait" onclick="event.stopPropagation(); discoverTogglePreview(this)">` +
+  return `<button type="button" class="dc-play ${extraClass} ${discoverPlayClass(key)}" data-key="${mbEscapeHTML(key)}" data-kind="${kind}" data-artist="${mbEscapeHTML(artist)}" data-title="${mbEscapeHTML(title || '')}" aria-label="${t("Écouter un extrait")}" onclick="event.stopPropagation(); discoverTogglePreview(this)">` +
     `<svg class="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>` +
     `<svg class="i-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>` +
     `<span class="i-spin"></span></button>`;
@@ -6641,7 +6653,7 @@ function discoverAudio() {
       if (audio.src.startsWith('data:')) return; // le fichier vide de déblocage
       if (p.state === 'playing' || p.state === 'loading') {
         discoverStopPreview();
-        showToast("⚠️ Lecture impossible pour cet extrait");
+        showToast(t("⚠️ Lecture impossible pour cet extrait"));
       }
     });
     p.audio = audio;
@@ -6692,7 +6704,7 @@ async function discoverTogglePreview(btn) {
 
     if (!found) {
       discoverStopPreview();
-      showToast("🎧 Aucun extrait disponible sur iTunes pour celui-ci");
+      showToast(t("🎧 Aucun extrait disponible sur iTunes pour celui-ci"));
       return;
     }
     audio.src = found.url;
@@ -6705,7 +6717,7 @@ async function discoverTogglePreview(btn) {
     if (token !== p.token) return;
     console.error(err);
     discoverStopPreview();
-    showToast(isNetworkError(err) ? "📡 Impossible de joindre iTunes" : "⚠️ Lecture impossible : appuie à nouveau sur ▶");
+    showToast(isNetworkError(err) ? t("📡 Impossible de joindre iTunes") : t("⚠️ Lecture impossible : appuie à nouveau sur ▶"));
   }
 }
 
@@ -6730,25 +6742,25 @@ function discoverPageHTML() {
   const c = s.criteria;
   const hasKey = !!getLastfmKey();
 
-  const genreOptions = `<option value="">Tous les genres</option>` +
+  const genreOptions = `<option value="">${t("Tous les genres")}</option>` +
     MAIN_GENRES.map(g => `<option value="${mbEscapeHTML(g)}" ${g === c.genre ? 'selected' : ''}>${mbEscapeHTML(g)}</option>`).join('');
   const sel = (value, current) => (value === current ? 'selected' : '');
 
   const keyCard = (!hasKey || s.showKeyCard) ? `
     <div class="dc-card dc-key-card">
-      <div class="dc-card-title">🔑 Clé API Last.fm</div>
-      <p class="dc-help">Last.fm fournit les artistes similaires et la popularité. Crée une clé gratuite sur
+      <div class="dc-card-title">${t("🔑 Clé API Last.fm")}</div>
+      <p class="dc-help">${t("Last.fm fournit les artistes similaires et la popularité. Crée une clé gratuite sur")}
         <a href="https://www.last.fm/api/account/create" target="_blank" rel="noopener">last.fm/api/account/create</a>
-        (nom de l'application au choix), puis colle-la ici. Elle reste enregistrée uniquement sur cet appareil.</p>
+        ${t("(nom de l'application au choix), puis colle-la ici. Elle reste enregistrée uniquement sur cet appareil.")}</p>
       <div class="dc-row dc-row-key">
-        <input type="text" id="dc-key-input" placeholder="Clé API (32 caractères)" autocomplete="off" autocapitalize="off" spellcheck="false" value="${mbEscapeHTML(getLastfmKey())}">
-        <button type="button" class="btn-primary" onclick="saveLastfmKeyFromInput()">Enregistrer</button>
+        <input type="text" id="dc-key-input" placeholder="${t("Clé API (32 caractères)")}" autocomplete="off" autocapitalize="off" spellcheck="false" value="${mbEscapeHTML(getLastfmKey())}">
+        <button type="button" class="btn-primary" onclick="saveLastfmKeyFromInput()">${t("Enregistrer")}</button>
       </div>
     </div>` : '';
 
   const chips = s.chips.length > 1 ? `
     <div class="dc-chips-row">
-      <span class="dc-chips-label">Artistes de ce minidisc :</span>
+      <span class="dc-chips-label">${t("Artistes de ce minidisc :")}</span>
       ${s.chips.map(n => `<button type="button" class="dc-chip-btn ${n === c.artist ? 'active' : ''}" onclick="discoverPickArtist(this.dataset.name)" data-name="${mbEscapeHTML(n)}">${mbEscapeHTML(n)}</button>`).join('')}
     </div>` : '';
 
@@ -6760,17 +6772,17 @@ function discoverPageHTML() {
       ${keyCard}
 
       <div id="dc-form" class="dc-card ${s.formOpen ? '' : 'hidden'}">
-        <div class="form-divider"><span>Recherche</span></div>
-        <div class="dc-kind" role="group" aria-label="Type de recherche">
-          <button type="button" id="dc-kind-artist" class="dc-kind-btn ${isAlbumKind ? '' : 'active'}" onclick="discoverSetKind('artist')">Artiste</button>
+        <div class="form-divider"><span>${t("Recherche")}</span></div>
+        <div class="dc-kind" role="group" aria-label="${t("Type de recherche")}">
+          <button type="button" id="dc-kind-artist" class="dc-kind-btn ${isAlbumKind ? '' : 'active'}" onclick="discoverSetKind('artist')">${t("Artiste")}</button>
           <button type="button" id="dc-kind-album" class="dc-kind-btn ${isAlbumKind ? 'active' : ''}" onclick="discoverSetKind('album')">Album</button>
         </div>
 
         <div id="dc-pane-artist" class="${isAlbumKind ? 'hidden' : ''}">
           <div class="form-group">
-            <label>Discographie et artistes similaires</label>
+            <label>${t("Discographie et artistes similaires")}</label>
             <div class="dc-autocomplete">
-              <input type="text" id="dc-artist" placeholder="ex: Radiohead" value="${mbEscapeHTML(isAlbumKind ? '' : c.artist)}" autocomplete="off"
+              <input type="text" id="dc-artist" placeholder="${t("ex: Radiohead")}" value="${mbEscapeHTML(isAlbumKind ? '' : c.artist)}" autocomplete="off"
                 oninput="discoverSuggest()" onfocus="discoverSuggest()" onblur="discoverHideSuggestSoon()" ${enter}>
               <div id="dc-suggest" class="dc-suggest hidden"></div>
             </div>
@@ -6780,57 +6792,56 @@ function discoverPageHTML() {
 
         <div id="dc-pane-album" class="${isAlbumKind ? '' : 'hidden'}">
           <div class="form-group">
-            <label>Autres albums de l'artiste et albums similaires</label>
-            <input type="text" id="dc-album" placeholder="Titre de l'album, ex: OK Computer" value="${mbEscapeHTML(c.album || '')}" autocomplete="off" ${enter}>
+            <label>${t("Autres albums de l'artiste et albums similaires")}</label>
+            <input type="text" id="dc-album" placeholder="${t("Titre de l'album, ex: OK Computer")}" value="${mbEscapeHTML(c.album || '')}" autocomplete="off" ${enter}>
           </div>
           <div class="form-group">
-            <label>Artiste (recommandé)</label>
+            <label>${t("Artiste (recommandé)")}</label>
             <div class="dc-autocomplete">
-              <input type="text" id="dc-album-artist" placeholder="ex: Radiohead" value="${mbEscapeHTML(isAlbumKind ? c.artist : '')}" autocomplete="off"
+              <input type="text" id="dc-album-artist" placeholder="${t("ex: Radiohead")}" value="${mbEscapeHTML(isAlbumKind ? c.artist : '')}" autocomplete="off"
                 oninput="discoverSuggest('dc-album-artist', 'dc-suggest-album')" onfocus="discoverSuggest('dc-album-artist', 'dc-suggest-album')" onblur="discoverHideSuggestSoon('dc-suggest-album')" ${enter}>
               <div id="dc-suggest-album" class="dc-suggest hidden"></div>
             </div>
           </div>
         </div>
 
-        <div class="form-divider"><span>Tri</span></div>
+        <div class="form-divider"><span>${t("Tri")}</span></div>
         <div class="form-group">
-          <label>Trier par</label>
+          <label>${t("Trier par")}</label>
           <select id="dc-sort" onchange="discoverViewChanged()">
-            <option value="recommended" ${sel('recommended', c.sort)}>Recommandés</option>
-            <option value="popularity" ${sel('popularity', c.sort)}>Popularité ↓</option>
-            <option value="similarity" ${sel('similarity', c.sort)}>Similarité ↓</option>
+            <option value="recommended" ${sel('recommended', c.sort)}>${t("Recommandés")}</option>
+            <option value="popularity" ${sel('popularity', c.sort)}>${t("Popularité ↓")}</option>
+            <option value="similarity" ${sel('similarity', c.sort)}>${t("Similarité ↓")}</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label class="dc-check"><input type="checkbox" id="dc-hide-owned" ${c.hideOwned ? 'checked' : ''} onchange="discoverViewChanged()"><span>Masquer les artistes que j'ai déjà (collection et idées)</span></label>
+          <label class="dc-check"><input type="checkbox" id="dc-hide-owned" ${c.hideOwned ? 'checked' : ''} onchange="discoverViewChanged()"><span>${t("Masquer les artistes que j'ai déjà (collection et idées)")}</span></label>
         </div>
 
         <div class="dc-buttons">
-          <button type="button" class="btn-primary" onclick="startDiscoverSearch()">Lancer la recherche</button>
-          <button type="button" class="btn-secondary" onclick="discoverReset()">Effacer</button>
+          <button type="button" class="btn-primary" onclick="startDiscoverSearch()">${t("Lancer la recherche")}</button>
+          <button type="button" class="btn-secondary" onclick="discoverReset()">${t("Effacer")}</button>
         </div>
       </div>
 
       <!-- Ces deux tuiles restent affichées en haut de l'écran pendant qu'on fait défiler les résultats -->
       <div id="dc-sticky" class="dc-sticky">
-        <div id="dc-banner" class="dc-banner ${s.formOpen ? 'hidden' : ''}" role="button" tabindex="0" title="Modifier la recherche" onclick="discoverToggleForm(true)">
-          <span class="dc-banner-title">Recherche : <span class="dc-banner-name">${mbEscapeHTML(discoverBannerName())}</span></span>
-          <button type="button" class="dc-banner-reset" onclick="event.stopPropagation(); discoverNewSearch()" title="Nouvelle recherche (champs vidés)" aria-label="Nouvelle recherche">♻️</button>
+        <div id="dc-banner" class="dc-banner ${s.formOpen ? 'hidden' : ''}" role="button" tabindex="0" title="${t("Modifier la recherche")}" onclick="discoverToggleForm(true)">
+          <span class="dc-banner-title">${t("Recherche :")} <span class="dc-banner-name">${mbEscapeHTML(discoverBannerName())}</span></span>
+          <button type="button" class="dc-banner-reset" onclick="event.stopPropagation(); discoverNewSearch()" title="${t("Nouvelle recherche (champs vidés)")}" aria-label="${t("Nouvelle recherche")}">♻️</button>
         </div>
         <div id="dc-status" class="dc-status hidden"></div>
         <div id="dc-disco-bar" class="dc-disco-head hidden"></div>
       </div>
-      <button type="button" id="dc-compil-btn" class="action-btn-wide action-btn-create dc-compil-btn ${s.formOpen ? 'hidden' : ''}" onclick="goToPlanner()">Créer une compilation</button>
+      <button type="button" id="dc-compil-btn" class="action-btn-wide action-btn-create dc-compil-btn ${s.formOpen ? 'hidden' : ''}" onclick="goToPlanner()">${t("Créer une compilation")}</button>
       <div id="dc-results" class="dc-results"></div>
-      <button type="button" id="dc-more" class="btn-secondary dc-more hidden" onclick="discoverLoadMore()">Voir plus</button>
+      <button type="button" id="dc-more" class="btn-secondary dc-more hidden" onclick="discoverLoadMore()">${t("Voir plus")}</button>
 
       <div class="dc-credits">
-        Données : <a href="https://www.last.fm" target="_blank" rel="noopener">Last.fm</a> et
-        <a href="https://musicbrainz.org" target="_blank" rel="noopener">MusicBrainz</a> ·
-        Extraits : <a href="https://www.apple.com/fr/itunes/" target="_blank" rel="noopener">Apple</a>
-        ${hasKey ? ' · <a href="#" onclick="discoverChangeKey(); return false;">Changer la clé Last.fm</a>' : ''}
+        ${t("Données :")} <a href="https://www.last.fm" target="_blank" rel="noopener">Last.fm</a> ${t("et")}
+        <a href="https://musicbrainz.org" target="_blank" rel="noopener">MusicBrainz</a> ${t("·\n        Extraits :")} <a href="https://www.apple.com/fr/itunes/" target="_blank" rel="noopener">Apple</a>
+        ${hasKey ? t(" · <a href=\"#\" onclick=\"discoverChangeKey(); return false;\">Changer la clé Last.fm</a>") : ''}
       </div>
     </div>
   `;
@@ -6905,7 +6916,7 @@ window.addEventListener('resize', () => {
 // Point d'entrée de la page (params : critères pré-remplis quand on arrive depuis un album)
 function renderDiscover(params) {
   const s = discoverState;
-  prepareSubPage('Découverte');
+  prepareSubPage(t("Découverte"));
   s.view = 'results';
   s.disco = null;
 
@@ -7295,11 +7306,11 @@ function csRenderList() {
   document.getElementById('cs-list').innerHTML = CS.sources.map((s, i) => poster && i > 0 ? '' : `
     <div class="cs-src ${i === CS.sel ? 'sel' : ''}" data-i="${i}">
       <img src="${s.src}" alt="">
-      <input type="text" value="${csEsc(s.name)}" placeholder="Nom affiché" oninput="CS.sources[${i}].name=this.value;csRender()">
-      ${poster ? `<input type="text" value="${csEsc(s.sub || '')}" placeholder="Sous-titre" oninput="CS.sources[${i}].sub=this.value;csRender()">` : ''}
-      <button type="button" title="Style automatique suivant" onclick="csPreset(${i})">Aa</button>
-      <button type="button" title="Monter" onclick="csMove(${i})">↑</button>
-      <button type="button" title="Retirer" onclick="CS.sources.splice(${i},1);csRenderList();csRender()">✕</button>
+      <input type="text" value="${csEsc(s.name)}" placeholder="${t("Nom affiché")}" oninput="CS.sources[${i}].name=this.value;csRender()">
+      ${poster ? `<input type="text" value="${csEsc(s.sub || '')}" placeholder="${t("Sous-titre")}" oninput="CS.sources[${i}].sub=this.value;csRender()">` : ''}
+      <button type="button" title="${t("Style automatique suivant")}" onclick="csPreset(${i})">Aa</button>
+      <button type="button" title="${t("Monter")}" onclick="csMove(${i})">↑</button>
+      <button type="button" title="${t("Retirer")}" onclick="CS.sources.splice(${i},1);csRenderList();csRender()">✕</button>
     </div>`).join('');
   csLoadSel();
 }
@@ -7354,54 +7365,54 @@ function csBuildOverlay() {
   o.id = 'cs-overlay'; o.className = 'hidden';
   o.innerHTML = `
     <div class="cs-panel">
-      <div class="cs-head"><b>🎨 Studio de covers</b><button type="button" onclick="closeCoverStudio()">✕</button></div>
-      <div class="cs-view"><canvas id="cs-canvas"></canvas><div class="cs-hint">Touche le texte ou l'image sur l'aperçu, puis glisse pour le déplacer où tu veux.</div></div>
+      <div class="cs-head"><b>${t("🎨 Studio de covers")}</b><button type="button" onclick="closeCoverStudio()">✕</button></div>
+      <div class="cs-view"><canvas id="cs-canvas"></canvas><div class="cs-hint">${t("Touche le texte ou l'image sur l'aperçu, puis glisse pour le déplacer où tu veux.")}</div></div>
       <div class="cs-box">
-        <b>Paramètres généraux</b>
-        <label class="cs-add">➕ Ajouter des pochettes<input type="file" id="cs-files" accept="image/*" multiple hidden></label>
-        <label id="cs-split-wrap">Agencement du fond<select id="cs-bgsplit"><option value="h">Horizontal (bandes)</option><option value="v">Vertical (colonnes)</option><option value="d">Diagonal</option></select></label>
-        <label>Mise en page<select id="cs-layout"><option value="cascade">Cascade</option><option value="mosaic">Mosaïque</option><option value="poster">Affiche (1 album)</option></select></label>
-        <label>Flou du fond<input type="range" id="cs-blur" min="0" max="80" value="40"></label>
-        <label>Grain<input type="range" id="cs-grain" min="0" max="100" value="30"></label>
-        <label>Luminosité<input type="range" id="cs-bright" min="40" max="160" value="100"></label>
-        <label>Ombre portée<input type="range" id="cs-shadow" min="0" max="100" value="60"></label>
+        <b>${t("Paramètres généraux")}</b>
+        <label class="cs-add">${t("➕ Ajouter des pochettes")}<input type="file" id="cs-files" accept="image/*" multiple hidden></label>
+        <label id="cs-split-wrap">${t("Agencement du fond")}<select id="cs-bgsplit"><option value="h">${t("Horizontal (bandes)")}</option><option value="v">${t("Vertical (colonnes)")}</option><option value="d">${t("Diagonal")}</option></select></label>
+        <label>${t("Mise en page")}<select id="cs-layout"><option value="cascade">${t("Cascade")}</option><option value="mosaic">${t("Mosaïque")}</option><option value="poster">${t("Affiche (1 album)")}</option></select></label>
+        <label>${t("Flou du fond")}<input type="range" id="cs-blur" min="0" max="80" value="40"></label>
+        <label>${t("Grain")}<input type="range" id="cs-grain" min="0" max="100" value="30"></label>
+        <label>${t("Luminosité")}<input type="range" id="cs-bright" min="40" max="160" value="100"></label>
+        <label>${t("Ombre portée")}<input type="range" id="cs-shadow" min="0" max="100" value="60"></label>
       </div>
       <div id="cs-sepbox" class="cs-box">
-        <b>Ligne de séparation</b>
-        <label class="cs-check"><input type="checkbox" id="cs-sep"> Afficher une ligne entre les parties du fond</label>
-        <label>Couleur<input type="color" id="cs-sepcolor" value="#ffffff"></label>
-        <label>Longueur (depuis le centre)<input type="range" id="cs-seplen" min="5" max="100" value="60"></label>
-        <label>Transparence<input type="range" id="cs-sepalpha" min="0" max="95" value="25"></label>
-        <label>Épaisseur<input type="range" id="cs-sepw" min="1" max="30" value="6"></label>
+        <b>${t("Ligne de séparation")}</b>
+        <label class="cs-check"><input type="checkbox" id="cs-sep"> ${t("Afficher une ligne entre les parties du fond")}</label>
+        <label>${t("Couleur")}<input type="color" id="cs-sepcolor" value="#ffffff"></label>
+        <label>${t("Longueur (depuis le centre)")}<input type="range" id="cs-seplen" min="5" max="100" value="60"></label>
+        <label>${t("Transparence")}<input type="range" id="cs-sepalpha" min="0" max="95" value="25"></label>
+        <label>${t("Épaisseur")}<input type="range" id="cs-sepw" min="1" max="30" value="6"></label>
       </div>
       <div id="cs-list"></div>
       <div id="cs-imgbox" class="cs-box">
         <b>Image</b>
-        <label class="cs-check"><input type="checkbox" id="cs-showimg" checked> Afficher la pochette (sinon, il ne reste que le fond)</label>
-        <label>Taille de l'image<input type="range" id="cs-imgsize" min="40" max="150" value="100"></label>
-        <label>Zoom de l'image<input type="range" id="cs-zoom" min="50" max="300" value="100"></label>
+        <label class="cs-check"><input type="checkbox" id="cs-showimg" checked> ${t("Afficher la pochette (sinon, il ne reste que le fond)")}</label>
+        <label>${t("Taille de l'image")}<input type="range" id="cs-imgsize" min="40" max="150" value="100"></label>
+        <label>${t("Zoom de l'image")}<input type="range" id="cs-zoom" min="50" max="300" value="100"></label>
       </div>
       <div id="cs-selbox" class="cs-box">
-        <b>Texte</b>
-        <div class="cs-lbl">Police
+        <b>${t("Texte")}</b>
+        <div class="cs-lbl">${t("Police")}
           <div class="cs-fontrow">
-            <button type="button" onclick="csFontStep(-1)" title="Police précédente">◀</button>
-            <select id="cs-font"><option value="">Auto (selon le style)</option>${CS_FONTS.map(f => `<option>${f[0]}</option>`).join('')}</select>
-            <button type="button" onclick="csFontStep(1)" title="Police suivante">▶</button>
+            <button type="button" onclick="csFontStep(-1)" title="${t("Police précédente")}">◀</button>
+            <select id="cs-font"><option value="">${t("Auto (selon le style)")}</option>${CS_FONTS.map(f => `<option>${f[0]}</option>`).join('')}</select>
+            <button type="button" onclick="csFontStep(1)" title="${t("Police suivante")}">▶</button>
           </div>
         </div>
         <div class="cs-row">
-          <label>Couleur du texte<input type="color" id="cs-color" value="#ffffff"></label>
-          <button type="button" class="cs-auto" onclick="const s=CS.sources[CS.sel];if(s){s.color=null;csRender()}">Couleur auto</button>
+          <label>${t("Couleur du texte")}<input type="color" id="cs-color" value="#ffffff"></label>
+          <button type="button" class="cs-auto" onclick="const s=CS.sources[CS.sel];if(s){s.color=null;csRender()}">${t("Couleur auto")}</button>
         </div>
-        <label class="cs-check"><input type="checkbox" id="cs-two"> Texte sur 2 lignes (ou coupe-le toi-même avec « | »)</label>
-        <label>Taille du texte<input type="range" id="cs-size" min="40" max="200" value="100"></label>
+        <label class="cs-check"><input type="checkbox" id="cs-two"> ${t("Texte sur 2 lignes (ou coupe-le toi-même avec « | »)")}</label>
+        <label>${t("Taille du texte")}<input type="range" id="cs-size" min="40" max="200" value="100"></label>
         <div id="cs-poster-opts" class="cs-row" style="display:none">
-          <label>Position<select id="cs-pos"><option value="bottom">En bas</option><option value="center">Au centre</option><option value="top">En haut</option></select></label>
-          <label>Petit texte<input type="text" id="cs-caption" placeholder="(optionnel)"></label>
+          <label>Position<select id="cs-pos"><option value="bottom">${t("En bas")}</option><option value="center">${t("Au centre")}</option><option value="top">${t("En haut")}</option></select></label>
+          <label>${t("Petit texte")}<input type="text" id="cs-caption" placeholder="${t("(optionnel)")}"></label>
         </div>
       </div>
-      <button type="button" class="cs-use" onclick="useCoverStudioResult()">✅ Utiliser cette cover</button>
+      <button type="button" class="cs-use" onclick="useCoverStudioResult()">${t("✅ Utiliser cette cover")}</button>
     </div>`;
   document.body.appendChild(o);
 
@@ -7466,7 +7477,7 @@ async function openCoverStudio(opts = {}) {
   csBuildOverlay();
   CS.convert = opts.convert || null; // indices des idées à convertir en MiniDisc
   CS.standalone = !!opts.standalone; // hors formulaire : l'image est enregistrée / partagée au lieu d'être placée dans le MD
-  document.querySelector('.cs-use').textContent = CS.convert ? '✅ Valider et enregistrer le MiniDisc' : CS.standalone ? '💾 Enregistrer l\'image' : '✅ Utiliser cette cover';
+  document.querySelector('.cs-use').textContent = CS.convert ? t("✅ Valider et enregistrer le MiniDisc") : CS.standalone ? t("💾 Enregistrer l'image") : t("✅ Utiliser cette cover");
   // Pochettes déjà enregistrées (mode édition) ou choisies dans le formulaire, avec le nom de l'artiste de chaque album
   const saved = (typeof catalogData !== 'undefined' && catalogData?.[editingMDIndex]?.albums) || [];
   CS.sources = []; CS.sel = 0;
@@ -7496,7 +7507,7 @@ async function csFinishConversion(blob) {
   const file = new File([blob], `cover_${Date.now()}.jpg`, { type: 'image/jpeg' });
   const path = await handleImageUpload({ files: [file] }); // enregistrée dans /images du dépôt GitHub
   btn.disabled = false;
-  if (!path) return showToast("⚠️ Envoi de la cover impossible (token GitHub ?) : le MiniDisc n'a pas été créé.");
+  if (!path) return showToast(t("⚠️ Envoi de la cover impossible (token GitHub ?) : le MiniDisc n'a pas été créé."));
   const indices = CS.convert;
   CS.convert = null;
   closeCoverStudio();
@@ -7506,28 +7517,28 @@ async function csFinishConversion(blob) {
 async function useCoverStudioResult() {
   if (CS.convert) { // retour immédiat au toucher : le reste (rendu, envoi GitHub) prend quelques secondes
     document.querySelector('.cs-use').disabled = true;
-    showToast('⏳ Enregistrement en cours…', 0);
+    showToast(t("⏳ Enregistrement en cours…"), 0);
   }
   await csRender(true); // rendu sans contour de sélection
   document.getElementById('cs-canvas').toBlob(blob => {
-    if (CS.convert && !blob) { document.querySelector('.cs-use').disabled = false; return showToast("⚠️ La cover n'a pas pu être générée."); }
+    if (CS.convert && !blob) { document.querySelector('.cs-use').disabled = false; return showToast(t("⚠️ La cover n'a pas pu être générée.")); }
     if (blob && CS.convert) return csFinishConversion(blob);
     const input = document.getElementById('md-cover');
     if (blob && CS.standalone) { // hors formulaire : partage (Android) ou téléchargement de l'image
       const file = new File([blob], `cover_${Date.now()}.jpg`, { type: 'image/jpeg' });
-      if (navigator.canShare?.({ files: [file] })) navigator.share({ files: [file], title: 'Cover MiniDisc' }).catch(() => {});
+      if (navigator.canShare?.({ files: [file] })) navigator.share({ files: [file], title: t("Cover MiniDisc") }).catch(() => {});
       else {
         const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: file.name });
         document.body.appendChild(a); a.click(); a.remove();
       }
-      return showToast('💾 Image prête (partage ou téléchargement)');
+      return showToast(t("💾 Image prête (partage ou téléchargement)"));
     }
     if (!blob || !input) return;
     const dt = new DataTransfer();
     dt.items.add(new File([blob], `cover_${Date.now()}.jpg`, { type: 'image/jpeg' }));
     input.files = dt.files;
     const note = document.getElementById('cs-note') || input.insertAdjacentElement('afterend', Object.assign(document.createElement('div'), { id: 'cs-note' }));
-    note.textContent = '✅ Cover du studio prête : elle sera envoyée à l\'enregistrement du MD.';
+    note.textContent = t("✅ Cover du studio prête : elle sera envoyée à l'enregistrement du MD.");
     closeCoverStudio();
   }, 'image/jpeg', 0.92);
   csQueue(); // l'aperçu retrouve son contour de sélection
@@ -7537,7 +7548,7 @@ async function useCoverStudioResult() {
   const add = () => {
     const grp = document.getElementById('md-cover-group');
     if (!grp || grp.querySelector('.cs-open-btn')) return;
-    grp.insertAdjacentHTML('beforeend', '<button type="button" class="cs-open-btn" onclick="openCoverStudio()">🎨 Créer une cover</button>');
+    grp.insertAdjacentHTML('beforeend', t("<button type=\"button\" class=\"cs-open-btn\" onclick=\"openCoverStudio()\">🎨 Créer une cover</button>"));
   };
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', add) : add();
 })();
