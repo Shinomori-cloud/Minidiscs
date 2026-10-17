@@ -6,7 +6,7 @@
   <title>Unloop</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Montserrat:wght@300&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -24,6 +24,11 @@
   <!-- HEADER FIXE RETRO 90S -->
   <header>
     <button id="back-btn" class="back-btn hidden">&larr;</button>
+    <!-- Logo de l'accueil : image transparente + slogan en texte, pour que la tuile suive le thème et le slogan la langue -->
+    <div class="header-logo">
+      <img src="images/Logo.png" alt="Unloop">
+      <div class="header-tagline">Prenez l'habitude de changer vos habitudes !</div>
+    </div>
     <div class="header-title-container">
       <div class="header-subtitle">Collection</div>
       <div id="header-title" class="title-90s">Unloop</div>
@@ -50,7 +55,7 @@
   <div id="admin-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>＋ Ajouter un MiniDisc</h3>
+        <h3>Ajouter un MiniDisc</h3>
         <button class="close-btn" type="button" onclick="closeAdminModal()">&times;</button>
       </div>
 
@@ -150,7 +155,7 @@
   <div id="idea-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>＋ Ajouter un album à l'idée de compil</h3>
+        <h3>Ajouter une idée</h3>
         <button class="close-btn" type="button" onclick="closeIdeaModal()">&times;</button>
       </div>
 
@@ -239,7 +244,7 @@
   <div id="idea-settings-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>⚙️ Paramètres de l'idée</h3>
+        <h3>Paramètres de l'idée</h3>
         <button class="close-btn" type="button" onclick="closeIdeaSettingsModal()">&times;</button>
       </div>
 

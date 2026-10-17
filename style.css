@@ -18,6 +18,7 @@
   --c-7b2cbf: 123, 44, 191;
   --c-9b51e0: 155, 81, 224;
   --c-b57bff: 181, 123, 255;
+  --logo-tile: #3d143c;
   --font-ui: 'Quicksand', 'Nunito', 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --c-c4b5fd: 196, 181, 253;
   --c-d8b4fe: 216, 180, 254;
@@ -160,13 +161,38 @@ body:has(.dashboard-container) header {
   height: 118px !important;
   padding: 0 !important;
   overflow: hidden !important;
-  background-color: #3d143c !important;
-  background-image: url('images/Unloop.jpg') !important;
+  /* Couleur de la tuile : elle suit le thème (rose du thème fondu dans son fond sombre ; violet d'origine avec le thème par défaut) */
+  background-color: var(--logo-tile) !important;
+  background-image:
+    radial-gradient(circle at 36% 54%, transparent 30%, rgba(255, 255, 255, 0.035) 30.6%, transparent 32.5%, transparent 46%, rgba(255, 255, 255, 0.03) 46.6%, transparent 48.5%),
+    radial-gradient(ellipse 62% 92% at 38% 50%, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0) 70%) !important;
   background-repeat: no-repeat !important;
-  background-size: auto 136.6px !important;
-  background-position: center -21.7px !important;
 }
 body:has(.dashboard-container) .header-title-container { display: none !important; }
+
+/* Logo (image transparente) + slogan en texte : le slogan se traduit, la tuile change avec le thème */
+.header-logo { display: none; }
+body:has(.dashboard-container) .header-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  padding: 6px 0;
+  box-sizing: border-box;
+}
+.header-logo img { height: 76px; width: auto; max-width: 94%; object-fit: contain; display: block; }
+.header-tagline {
+  font-family: 'Montserrat', var(--font-ui);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.1px;
+  color: rgb(192, 152, 202);
+  text-align: center;
+  white-space: nowrap;
+}
 
 /* La tuile « Collections de X MiniDiscs » est un peu moins haute pour laisser la place au logo :
    elle garde son bord bas, donc tout ce qui est en dessous ne bouge pas */
@@ -4398,3 +4424,78 @@ body:has(.modal:not(.hidden)) #home-fab { display: none !important; }
   -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><circle cx='12' cy='4.5' r='2.8'/><circle cx='12' cy='12' r='2.8'/><circle cx='12' cy='19.5' r='2.8'/></svg>");
   mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><circle cx='12' cy='4.5' r='2.8'/><circle cx='12' cy='12' r='2.8'/><circle cx='12' cy='19.5' r='2.8'/></svg>");
 }
+
+
+/* Couleur de la tuile du logo qui suit le thème (si le navigateur sait mélanger les couleurs) */
+@supports (background: color-mix(in srgb, red 50%, blue)) {
+  :root { --logo-tile: color-mix(in srgb, rgb(var(--c-ff4fa3)) 18%, rgb(var(--c-120a24))); }
+}
+
+/* Tuile « Découvrir » : image un peu moins lumineuse */
+.dashboard-actions-row .action-btn-discover {
+  background-image:
+    radial-gradient(ellipse 62% 24% at 50% 84%, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0) 100%),
+    linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.22)),
+    url('images/Similaire.jpg');
+  background-size: 100% 100%, 100% 100%, cover;
+  background-position: center, center, center;
+}
+
+/* Avertissement « MD 80 » (MiniDisc à enregistrer de plus de 74 min) : discret, à gauche du badge « À enregistrer » */
+.record-corner { position: absolute; bottom: 8px; right: 8px; display: flex; align-items: center; gap: 8px; }
+.record-corner .badge-record-corner { position: static; }
+.badge-long-record { font-size: 0.66rem; font-weight: 700; color: #ffb703; opacity: 0.9; white-space: nowrap; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); }
+
+/* ==========================================
+   Titres des modales et du studio de covers : même style que les titres de page (blanc, glow lilas),
+   avec une mince bande d'image dessous aux bords fondus
+   ========================================== */
+.modal .modal-header,
+.cs-head {
+  position: relative;
+  display: block;
+  margin: 0 -16px 12px;
+  padding: 16px 56px 54px;
+  text-align: center;
+  background: none;
+  border: 0;
+}
+.cs-head { margin: 0 0 4px; }
+.modal .modal-header h2,
+.modal .modal-header h3,
+.cs-head b {
+  display: block;
+  flex: none;
+  margin: 0;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: clamp(1.1rem, 5.2vw, 1.45rem);
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(var(--c-b57bff), 0.8), 0 0 24px rgba(var(--c-b57bff), 0.4);
+}
+.modal .modal-header h2::before, .modal .modal-header h3::before,
+.modal .modal-header h2::after, .modal .modal-header h3::after { display: none; }
+.modal .modal-header::after,
+.cs-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  height: 36px;
+  background: var(--hero-img) center / cover no-repeat;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 38%, #000 62%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 38%, #000 62%, transparent 100%);
+  mask-composite: intersect;
+  opacity: 0.95;
+  pointer-events: none;
+}
+#admin-modal .modal-header { --hero-img: url('images/Ajouter.jpg'); }
+#idea-modal .modal-header,
+#idea-settings-modal .modal-header { --hero-img: url('images/Creer_compil.jpg'); }
+.cs-head { --hero-img: url('images/Concevoir_cover.jpg'); }
+.modal .modal-header .close-btn,
+.cs-head button { position: absolute; top: 14px; right: 14px; z-index: 2; }

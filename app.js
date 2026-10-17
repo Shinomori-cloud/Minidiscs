@@ -1324,6 +1324,18 @@ function genreListHTML(genresArray, fontSize = '0.8rem') {
    SÉLECTION DU JOUR (24H)
    ========================================== */
 // Un MiniDisc est "à enregistrer" si lui-même ou l'un de ses albums l'est
+// Un MiniDisc de 74 min contient 2h28 (2 × 74 min) ; au-delà, il faut un MiniDisc de 80 min
+const MD_74_CAPACITY_SECONDS = 148 * 60;
+function mdTotalSeconds(md) {
+  const fromAlbums = (md.albums || []).reduce((n, a) => n + parseTimeToSeconds(a.duration), 0);
+  return fromAlbums > 0 ? fromAlbums : parseTimeToSeconds(md.duration);
+}
+// Avertissement discret, seulement tant que le MiniDisc est « à enregistrer »
+function mdLongWarningHTML(md) {
+  if (!isMDToRecord(md) || mdTotalSeconds(md) <= MD_74_CAPACITY_SECONDS) return '';
+  return `<span class="badge-long-record" title="${t("Plus de 74 min (2h28) : prévoir un MiniDisc 80")}">⚠️ 80 min</span>`;
+}
+
 function isMDToRecord(md) {
   return !!(md.toRecord || (md.albums && md.albums.some(a => a.toRecord)));
 }
@@ -1586,10 +1598,10 @@ function renderDashboard(pushState = true) {
 
       <div class="dashboard-actions-row">
         <button class="action-btn-wide action-btn-discover" onclick="goToDiscoverResults()">
-          ${t("Découverte")}
+          ${t("Découvrir")}
         </button>
         <button class="action-btn-wide action-btn-create" onclick="goToCreateHub()">
-          <span class="tile-words">${t("Créer un minidisc")}</span>
+          <span class="tile-words">${t("Créer une compilation")}</span>
         </button>
       </div>
     </div>
@@ -1722,7 +1734,7 @@ if (genre && genre !== 'ALL') {
 
       const isToRecord = md.toRecord || (md.albums && md.albums.some(a => a.toRecord));
       const recordBadgeHTML = isToRecord 
-        ? `<span class="badge-to-record badge-record-corner">${t("💽 À enregistrer")}</span>` 
+        ? `<span class="record-corner">${mdLongWarningHTML(md)}<span class="badge-to-record badge-record-corner">${t("💽 À enregistrer")}</span></span>` 
         : '';
 
       const listCover = md.md_cover || (md.albums && md.albums[0] ? md.albums[0].md_cover : '') || '';
@@ -2478,7 +2490,7 @@ function openAdminModal(indexToEdit = null) {
     // MODE ÉDITION
     // ==========================================
     const md = catalogData[editingMDIndex];
-    if (modalTitle) modalTitle.textContent = t("✏️ Modifier le MiniDisc");
+    if (modalTitle) modalTitle.textContent = t("Modifier le MiniDisc");
 
     const isCompil = !md.albums || md.albums.length === 0;
 
@@ -2524,7 +2536,7 @@ function openAdminModal(indexToEdit = null) {
     // ==========================================
     // MODE AJOUT (RÉINITIALISATION COMPLÈTE)
     // ==========================================
-    if (modalTitle) modalTitle.textContent = t("＋ Ajouter un MiniDisc");
+    if (modalTitle) modalTitle.textContent = t("Ajouter un MiniDisc");
     
     // Remise à zéro du formulaire HTML (admin-form)
     const form = document.getElementById('admin-form');
@@ -7397,7 +7409,7 @@ function csBuildOverlay() {
   o.id = 'cs-overlay'; o.className = 'hidden';
   o.innerHTML = `
     <div class="cs-panel">
-      <div class="cs-head"><b>${t("🎨 Studio de covers")}</b><button type="button" onclick="closeCoverStudio()">✕</button></div>
+      <div class="cs-head"><b>${t("Studio de covers")}</b><button type="button" onclick="closeCoverStudio()">✕</button></div>
       <div class="cs-view"><canvas id="cs-canvas"></canvas><div class="cs-hint">${t("Touche le texte ou l'image sur l'aperçu, puis glisse pour le déplacer où tu veux.")}</div></div>
       <div class="cs-box">
         <b>${t("Paramètres généraux")}</b>
@@ -7517,18 +7529,25 @@ async function openCoverStudio(opts = {}) {
     const ideas = getIdeaList();
     CS.convert.forEach(i => {
       const a = ideas[i], path = a?.md_cover;
-      if (path && path !== 'images/default.jpg') CS.sources.push(csNew((a.artist || '').toUpperCase(), resolveImageSrc(path), a.title || ''));
+      if (path && path !== 'images/default.jpg') CS.sources.push(csNew(csArtistCase(a.artist), resolveImageSrc(path), a.title || ''));
     });
   }
   const blocks = CS.standalone || CS.convert ? [] : document.querySelectorAll('#albums-container .album-block');
   blocks.forEach((blk, i) => {
     const file = blk.querySelector('.album-cover')?.files?.[0], path = saved[i]?.md_cover;
     const src = file ? URL.createObjectURL(file) : (path && path !== 'images/default.jpg' ? resolveImageSrc(path) : null);
-    if (src) CS.sources.push(csNew((blk.querySelector('.album-artist')?.value || '').toUpperCase(), src, blk.querySelector('.album-title')?.value || ''));
+    if (src) CS.sources.push(csNew(csArtistCase(blk.querySelector('.album-artist')?.value), src, blk.querySelector('.album-title')?.value || ''));
   });
   document.getElementById('cs-layout').value = CS.sources.length === 1 ? 'poster' : 'cascade'; // un seul album : affiche
   document.getElementById('cs-overlay').classList.remove('hidden');
   csSync(); csRender();
+}
+
+// Nom d'artiste du studio : seule la première lettre de chaque mot en majuscule (les noms tout en capitales sont adoucis)
+function csArtistCase(name) {
+  let s = String(name || '').trim();
+  if (s.length >= 5 && s === s.toUpperCase() && s !== s.toLowerCase()) s = s.toLowerCase();
+  return s.replace(/(^|[\s\-\/'’(&.])(\p{L})/gu, (m, p, c) => p + c.toUpperCase());
 }
 
 function closeCoverStudio() { document.getElementById('cs-overlay')?.classList.add('hidden'); }
