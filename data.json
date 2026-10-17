@@ -4596,7 +4596,6 @@
     {
       "id": "md-1791954672958",
       "md_cover": "images/img_1791954668899.jpg",
-      "title": "Last Fair Deal Gone Down / A Fine Day to Exit / Parachutes",
       "albums": [
         {
           "id": "md-1791954672958-alb-1",
@@ -4642,6 +4641,7 @@
           "release_year": "2001",
           "duration": "49:54",
           "tracks": [
+            "A Fine Day",
             "Pressure",
             "Release",
             "Looking Outside Inside",
@@ -4685,7 +4685,8 @@
           ],
           "toRecord": true
         }
-      ]
+      ],
+      "title": "Last Fair Deal Gone Down / A Fine Day to Exit / Parachutes"
     },
     {
       "id": "md-1792129271933",
