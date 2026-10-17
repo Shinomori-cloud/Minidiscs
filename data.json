@@ -4604,10 +4604,10 @@
           "artist": "Katatonia",
           "main_genre": "Metal & Hard Rock",
           "tags": [
-            "rock",
-            "alternative metal",
+            "doom metal",
+            "depressive rock",
             "alternative rock",
-            "gothic rock"
+            "progressive metal"
           ],
           "release_year": "2001",
           "duration": "50:45",
@@ -4624,7 +4624,8 @@
             "Sweet Nurse",
             "Don’t Tell a Soul"
           ],
-          "toRecord": true
+          "toRecord": true,
+          "description": "Last Fair Deal Gone Down is the fifth full-length album by Katatonia, released in 2001 by Peaceville Records. The album is named after a song by legendary delta blues singer Robert Johnson. The album was remastered and reissued in 2004 with three bonus tracks: \"Sulfur\", \"March 4\" (originally on the EP Teargas), and \"Help Me Disappear\" (originally on the EP Tonight's Music). Jonas Renkse – vocals Anders Nyström – guitar, mellotron Fredrik Norrman – guitar Mattias Norrman – bass Daniel Liljekvist – drums ."
         },
         {
           "id": "md-1791954672958-alb-2",
