@@ -4767,6 +4767,69 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1792254412492",
+      "md_cover": "images/img_1792254410689.jpg",
+      "title": "The Doors / The Velvet Underground & Nico / Super Hits",
+      "albums": [
+        {
+          "id": "md-1792254412492-alb-1",
+          "md_cover": "images/img_1789507699981.jpg",
+          "title": "The Doors",
+          "artist": "The Doors",
+          "main_genre": "Rock & Blues",
+          "tags": [
+            "Rock",
+            "Blues"
+          ],
+          "release_year": "",
+          "duration": "44:29",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1792254412492-alb-2",
+          "md_cover": "images/img_1789392239454.jpg",
+          "title": "The Velvet Underground & Nico",
+          "artist": "The Velvet Underground & Nico",
+          "main_genre": "Rock & Blues",
+          "tags": [
+            "Experimental",
+            "Rock"
+          ],
+          "release_year": "",
+          "duration": "47:51",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1792254412492-alb-3",
+          "md_cover": "images/img_1790524422685.jpg",
+          "title": "Super Hits",
+          "artist": "Janis Joplin",
+          "main_genre": "Rock & Blues",
+          "tags": [
+            "rock",
+            "blues"
+          ],
+          "release_year": "2000",
+          "duration": "40:23",
+          "tracks": [
+            "Piece of My Heart",
+            "Cry Baby",
+            "Me and Bobby McGee",
+            "Try (Just a Little Bit Harder)",
+            "One Good Man",
+            "Move Over",
+            "I Need a Man to Love",
+            "Turtle Blues",
+            "A Woman Left Lonely",
+            "One Night Stand"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -4931,17 +4994,6 @@
       "md_cover": "images/img_1789390640391.jpg"
     },
     {
-      "title": "The Velvet Underground & Nico",
-      "artist": "The Velvet Underground & Nico",
-      "main_genre": "Rock & Blues",
-      "tags": [
-        "Experimental",
-        "Rock"
-      ],
-      "duration": "47:51",
-      "md_cover": "images/img_1789392239454.jpg"
-    },
-    {
       "title": "Pet Sounds",
       "artist": "The Beach Boys",
       "main_genre": "Pop & Folk & Variety",
@@ -4994,17 +5046,6 @@
       ],
       "duration": "42:38",
       "md_cover": "images/img_1789506696070.jpg"
-    },
-    {
-      "title": "The Doors",
-      "artist": "The Doors",
-      "main_genre": "Rock & Blues",
-      "tags": [
-        "Rock",
-        "Blues"
-      ],
-      "duration": "44:29",
-      "md_cover": "images/img_1789507699981.jpg"
     },
     {
       "title": "Paranoid",
@@ -5091,32 +5132,6 @@
         "Wish You Could Be Me",
         "Counting",
         "Dirty"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1790524424067",
-      "md_cover": "images/img_1790524422685.jpg",
-      "title": "Super Hits",
-      "artist": "Janis Joplin",
-      "main_genre": "Rock & Blues",
-      "tags": [
-        "rock",
-        "blues"
-      ],
-      "release_year": "2000",
-      "duration": "40:23",
-      "tracks": [
-        "Piece of My Heart",
-        "Cry Baby",
-        "Me and Bobby McGee",
-        "Try (Just a Little Bit Harder)",
-        "One Good Man",
-        "Move Over",
-        "I Need a Man to Love",
-        "Turtle Blues",
-        "A Woman Left Lonely",
-        "One Night Stand"
       ],
       "toRecord": false
     },
