@@ -4805,13 +4805,27 @@
           "artist": "The Doors",
           "main_genre": "Rock & Blues",
           "tags": [
-            "Rock",
-            "Blues"
+            "psychedelic rock",
+            "classic rock",
+            "rock"
           ],
-          "release_year": "",
+          "release_year": "1967",
           "duration": "44:29",
-          "tracks": [],
-          "toRecord": true
+          "tracks": [
+            "Break On Through (to the Other Side)",
+            "Soul Kitchen",
+            "The Crystal Ship",
+            "Twentieth Century Fox",
+            "Alabama Song (Whisky Bar)",
+            "Light My Fire",
+            "Back Door Man",
+            "I Looked at You",
+            "End of the Night",
+            "Take It as It Comes",
+            "The End"
+          ],
+          "toRecord": true,
+          "description": "\"The Doors\" is the debut studio album by the American rock band the Doors, released on January 4, 1967, by Elektra Records. It was recorded during August and September 1966 at Sunset Sound Recorders in Hollywood, California, with Paul A. Rothchild as producer. The album includes the full-length version of the band's breakthrough single \"Light My Fire\" and the extended closing track \"The End\", which features a spoken word section that references the Oedipus myth. The band developed much of the album's material throughout 1966, performing it at various venues, most notably the Whisky a Go Go. Recording began shortly after the group was dismissed from that club and signed to Elektra Records. The album reflects the band's diverse musical influences, incorporating elements of jazz, classical, blues, pop, R\\&B, and rock. It is widely regarded as a seminal psychedelic rock album and has influenced numerous subsequent artists and recordings. \"The Doors\" and the song \"Light My Fire\" have both been inducted into the Grammy Hall of Fame. In 2015, the Library of Congress added the album to the National Recording Registry, recognising its cultural, historical, and aesthetic significance. As of 2015, the album had sold over 13 million copies worldwide, making it the band's best-selling release. It has received ongoing critical acclaim and was ranked number 42 on Rolling Stone's list of the \"500 Greatest Albums of All Time\" in 2003 and 2012, and number 86 in the 2020 update of the list. ."
         },
         {
           "id": "md-1792254412492-alb-2",
