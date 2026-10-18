@@ -1568,7 +1568,7 @@ function renderDashboard(pushState = true) {
       <div class="dashboard-card" style="margin-bottom: 32px;">
         <div class="dashboard-stat-main" style="padding: 4px 0 8px 0;">
          <span class="stat-label" style="font-size: 0.75rem;">${t("Collections de")}</span>
-         <span class="stat-number" style="font-size: 1.2rem; line-height: 1;">${totalMD}</span>
+         <span class="stat-number" style="font-size: 0.95rem; line-height: 1;">${totalMD}</span>
          <span class="stat-label" style="font-size: 0.75rem;">MiniDiscs</span>
         </div>
         <div class="record-summary" onclick="goToMinidiscsToRecord()">${recordSummaryHTML}</div>

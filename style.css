@@ -158,7 +158,7 @@ body:has(.featured-container.hidden) header {
    Hauteur fixe ; l'image est un peu recadrée en haut, où elle a beaucoup de marge. */
 body:has(.dashboard-container) header {
   top: 50px !important;
-  height: 118px !important;
+  height: 142px !important;
   padding: 0 !important;
   overflow: hidden !important;
   /* Couleur de la tuile : elle suit le thème (rose du thème fondu dans son fond sombre ; violet d'origine avec le thème par défaut) */
@@ -177,12 +177,12 @@ body:has(.dashboard-container) .header-logo {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   height: 100%;
-  padding: 6px 0;
+  padding: 6px 0 5px;
   box-sizing: border-box;
 }
-.header-logo img { height: 76px; width: auto; max-width: 94%; object-fit: contain; display: block; }
+.header-logo img { height: 108px; width: auto; max-width: 94%; object-fit: contain; display: block; }
 .header-tagline {
   font-family: 'Montserrat', var(--font-ui);
   font-weight: 300;
@@ -197,14 +197,15 @@ body:has(.dashboard-container) .header-logo {
 /* La tuile « Collections de X MiniDiscs » est un peu moins haute pour laisser la place au logo :
    elle garde son bord bas, donc tout ce qui est en dessous ne bouge pas */
 body:has(.dashboard-container) .dashboard-container > .dashboard-card:first-child {
-  margin-top: 14px;
-  min-height: 54px;
+  margin-top: 28px;                       /* 15 px sous le logo au lieu de 25 (-40 %) */
+  margin-bottom: 24px !important;         /* 12 px visibles avant « Sélection du jour » au lieu de 20 (-40 %) */
+  height: 48px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 1px;
+  padding-bottom: 1px;
   overflow: hidden;
 }
 body:has(.dashboard-container) .dashboard-container > .dashboard-card:first-child .dashboard-stat-main {
