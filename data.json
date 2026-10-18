@@ -4919,12 +4919,29 @@
           "artist": "The Cure",
           "main_genre": "Rock & Blues",
           "tags": [
-            "Rock"
+            "post-punk",
+            "new wave",
+            "rock"
           ],
           "release_year": "",
           "duration": "36:00",
-          "tracks": [],
-          "toRecord": true
+          "tracks": [
+            "Jumping Someone Else's Train",
+            "Boys Don't Cry",
+            "Plastic Passion",
+            "10:15 Saturday Night",
+            "Accuracy",
+            "Object",
+            "Subway Song",
+            "Killing an Arab",
+            "Fire in Cairo",
+            "Another Day",
+            "Grinding Halt",
+            "World War",
+            "Three Imaginary Boys"
+          ],
+          "toRecord": true,
+          "description": "Boys Don't Cry is the Cure's first compilation album. Released in February 1980, this album is composed of several tracks from the band's May 1979 debut album Three Imaginary Boys (which had yet to see a U.S. release) with material from the band's 1978-1979 era. ."
         },
         {
           "id": "md-1792270007271-alb-3",
