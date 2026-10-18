@@ -1931,7 +1931,7 @@ function titlesFactsHTML(year, duration) {
 // Tags affichés sur la fiche (catalogue + Last.fm). Le genre principal (les 8 genres de filtrage) n'y figure pas.
 function titlesGenreChips(main, tags) {
   return (main || []).map(g => `<span class="ad-tag" style="--tc:${getSingleGenreColor(String(g).toUpperCase())}">${mbEscapeHTML(g)}</span>`).join('')
-    + (tags || []).map(t => `<span class="ad-tag ad-tag-lfm">${mbEscapeHTML(t)}</span>`).join('');
+    + (tags || []).map(t => `<span class="ad-tag ad-tag-lfm ad-tag-link" role="button" tabindex="0" data-tag="${mbEscapeHTML(String(t).toLowerCase())}" onclick="goToTagResults(this.dataset.tag)">${mbEscapeHTML(t)}</span>`).join('');
 }
 
 // Un tag qui n'est que le nom de l'artiste (ou le contient) n'apporte rien sur la fiche
@@ -3302,7 +3302,19 @@ function openIdeaSettingsModal(index) {
     ? tracks.map(t => `<li>${mbEscapeHTML(t)}</li>`).join('')
     : `<li class="idea-settings-notrack">${t("Aucune piste renseignée")}</li>`;
 
+  // Tags cliquables : un tag lance la recherche d'albums de ce tag (comme dans le nuage de genres)
+  const tagList = [...new Set(asArray(idea.tags).flatMap(x => String(x).split(/[,;]/)).map(x => x.trim()).filter(Boolean))];
+  const tagsSec = document.getElementById('idea-settings-tags-sec');
+  document.getElementById('idea-settings-tags').innerHTML = tagList.map(tg =>
+    `<span class="ad-tag ad-tag-lfm ad-tag-link" role="button" tabindex="0" data-tag="${mbEscapeHTML(tg.toLowerCase())}" onclick="searchTagFromIdeaSettings(this.dataset.tag)">${mbEscapeHTML(tg)}</span>`).join('');
+  if (tagsSec) tagsSec.classList.toggle('hidden', tagList.length === 0);
+
   document.getElementById('idea-settings-modal').classList.remove('hidden');
+}
+
+function searchTagFromIdeaSettings(tag) {
+  closeIdeaSettingsModal();
+  goToTagResults(tag);
 }
 
 function closeIdeaSettingsModal() {
@@ -4667,7 +4679,8 @@ function renderDiscoverHub() {
 
 /* ---------- Nuage de genres ---------- */
 const CLOUD_STORAGE_KEY = 'minidisc_cloud';
-const CLOUD_MAX_TAGS = 20;
+const CLOUD_MAX_TAGS = 20;     // les plus présents dans la collection
+const CLOUD_RANDOM_TAGS = 10;  // ajoutés au hasard parmi les autres tags (en blanc)
 const cloudState = (() => {
   const d = { genre: '', yearMin: 1970, yearMax: 2002 };
   try {
@@ -4678,6 +4691,15 @@ const cloudState = (() => {
   } catch (e) { /* valeurs par défaut */ }
   return d;
 })();
+const cloudRun = { seed: 1 }; // graine du tirage courant : tags aléatoires, places et orientations (nouvelle à chaque rafraîchissement)
+
+function cloudShuffle() { cloudRun.seed = Math.floor(Math.random() * 2147483646) + 1; }
+
+// Générateur pseudo-aléatoire à graine : le même tirage donne toujours la même disposition (utile quand l'écran change de taille)
+function cloudRng(seed) {
+  let s = (Math.abs(Math.floor(seed)) % 2147483646) + 1;
+  return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+}
 
 function cloudSave() {
   try { localStorage.setItem(CLOUD_STORAGE_KEY, JSON.stringify(cloudState)); } catch (e) { /* non enregistré */ }
@@ -4686,6 +4708,7 @@ function cloudSave() {
 function cloudSetGenre(value) {
   cloudState.genre = MAIN_GENRES.includes(value) ? value : '';
   cloudSave();
+  cloudShuffle();
   cloudRenderWords();
 }
 
@@ -4703,7 +4726,21 @@ function cloudSetYears() {
   cloudSave();
 }
 
-// Les tags des albums de la collection (ou de ceux d'un seul genre), du plus fréquent au moins fréquent
+// Nouveau tirage : les 20 mêmes tags principaux, 10 autres au hasard, de nouvelles places et orientations
+function cloudRefresh() {
+  cloudShuffle();
+  cloudRenderWords();
+}
+
+// Recherche d'albums à partir d'un tag saisi à la main
+function cloudSearchTag() {
+  const input = document.getElementById('cloud-tag-input');
+  const tag = ((input && input.value) || '').trim().toLowerCase();
+  if (!tag) { if (input) input.focus(); return; }
+  goToTagResults(tag);
+}
+
+// Tous les tags des albums de la collection (ou de ceux d'un seul genre), du plus fréquent au moins fréquent
 function cloudTagStats(genre) {
   const counts = new Map();
   const addAlbum = (albumGenre, tags) => {
@@ -4723,7 +4760,7 @@ function cloudTagStats(genre) {
     if (md.albums && md.albums.length) md.albums.forEach(a => addAlbum(a.main_genre || md.main_genre, a.tags));
     else addAlbum(md.main_genre, md.tags);
   });
-  return [...counts.values()].sort((a, b) => b.count - a.count || a.key.localeCompare(b.key)).slice(0, CLOUD_MAX_TAGS);
+  return [...counts.values()].sort((a, b) => b.count - a.count || a.key.localeCompare(b.key));
 }
 
 function cloudLabel(label) {
@@ -4732,25 +4769,27 @@ function cloudLabel(label) {
 
 function renderGenreCloud() {
   prepareSubPage(t("Découverte"));
+  cloudShuffle(); // à chaque arrivée sur la page, un nouveau tirage
   const options = `<option value="">${t("Tous les genres")}</option>` + MAIN_GENRES.map(g =>
     `<option value="${mbEscapeHTML(g)}" ${g === cloudState.genre ? 'selected' : ''}>${mbEscapeHTML(g)}</option>`).join('');
   app.innerHTML = `
     <div id="cloud-page" class="cloud-page">
       <div class="dc-card cloud-filters">
-        <div class="form-group">
-          <label>Genre</label>
-          <select id="cloud-genre" onchange="cloudSetGenre(this.value)">${options}</select>
-        </div>
-        <div class="form-group">
-          <label>${t("Période")}</label>
+        <div class="cloud-row">
+          <select id="cloud-genre" class="cloud-genre" title="Genre" aria-label="Genre" onchange="cloudSetGenre(this.value)">${options}</select>
           <div class="cloud-years">
-            <input type="number" id="cloud-year-min" inputmode="numeric" min="1900" max="2100" value="${cloudState.yearMin}" onchange="cloudSetYears()">
+            <input type="number" id="cloud-year-min" inputmode="numeric" min="1900" max="2100" value="${cloudState.yearMin}" aria-label="${t("Période")}" onchange="cloudSetYears()">
             <span>${t("à")}</span>
-            <input type="number" id="cloud-year-max" inputmode="numeric" min="1900" max="2100" value="${cloudState.yearMax}" onchange="cloudSetYears()">
+            <input type="number" id="cloud-year-max" inputmode="numeric" min="1900" max="2100" value="${cloudState.yearMax}" aria-label="${t("Période")}" onchange="cloudSetYears()">
           </div>
         </div>
+        <div class="cloud-row">
+          <input type="text" id="cloud-tag-input" class="cloud-tag-input" placeholder="${t("Rechercher un tag…")}" autocomplete="off" autocapitalize="none"
+            onkeydown="if (event.key === 'Enter') { event.preventDefault(); cloudSearchTag(); }">
+          <button type="button" class="cloud-btn" onclick="cloudSearchTag()" title="${t("Rechercher")}" aria-label="${t("Rechercher")}">🔎</button>
+          <button type="button" class="cloud-btn" onclick="cloudRefresh()" title="${t("Rafraîchir les tags")}" aria-label="${t("Rafraîchir les tags")}">🔄</button>
+        </div>
       </div>
-      <p id="cloud-hint" class="cloud-hint"></p>
       <div id="cloud-box" class="cloud-box"></div>
     </div>`;
   cloudRenderWords();
@@ -4759,46 +4798,56 @@ function renderGenreCloud() {
 function cloudRenderWords() {
   const box = document.getElementById('cloud-box');
   if (!box) return;
-  const stats = cloudTagStats(cloudState.genre);
-  const hint = document.getElementById('cloud-hint');
-  if (hint) hint.textContent = (cloudState.genre ? t("Les tags les plus présents dans ce genre") : t("Les tags les plus présents dans votre collection")) + ' · ' + t("Touchez un tag pour trouver des albums.");
-  if (stats.length === 0) {
+  const all = cloudTagStats(cloudState.genre);
+  if (all.length === 0) {
     box.style.height = 'auto';
     box.innerHTML = `<p class="cloud-empty">${t("Aucun tag à afficher pour ce genre.")}</p>`;
     return;
   }
-  const counts = stats.map(s => s.count);
+  const top = all.slice(0, CLOUD_MAX_TAGS);
+  // 10 tags de plus, tirés au hasard parmi les autres
+  const rest = all.slice(CLOUD_MAX_TAGS);
+  const pick = cloudRng(cloudRun.seed + 7);
+  const extras = [];
+  while (extras.length < CLOUD_RANDOM_TAGS && rest.length > 0) extras.push(rest.splice(Math.floor(pick() * rest.length), 1)[0]);
+
+  const counts = top.map(s => s.count);
   const lo = Math.min(...counts), hi = Math.max(...counts);
-  const colors = ['rgb(var(--c-ff4fa3))', 'rgb(var(--c-00f0ff))', 'rgb(var(--c-b57bff))', '#ffffff', 'rgb(var(--c-d8b4fe))'];
-  box.innerHTML = stats.map((s, i) => {
-    const k = hi === lo ? 0.5 : (s.count - lo) / (hi - lo);
-    const fs = (0.95 + 1.6 * Math.pow(k, 0.75)).toFixed(2); // rem : plus le tag est fréquent, plus il est grand
-    const color = colors[(cyrb53(s.key) + i) % colors.length];
-    return `<button type="button" class="cloud-word" data-tag="${mbEscapeHTML(s.search)}" data-fs="${fs}" style="color:${color}; font-size:${fs}rem" title="${s.count}" onclick="goToTagResults(this.dataset.tag)">${mbEscapeHTML(cloudLabel(s.label))}</button>`;
-  }).join('');
+  const themeColors = ['rgb(var(--c-ff4fa3))', 'rgb(var(--c-00f0ff))', 'rgb(var(--c-b57bff))', 'rgb(var(--c-d8b4fe))'];
+  const word = (s, fs, color) =>
+    `<button type="button" class="cloud-word" data-tag="${mbEscapeHTML(s.search)}" data-fs="${fs}" style="color:${color}; font-size:${fs}rem" title="${s.count}" onclick="goToTagResults(this.dataset.tag)">${mbEscapeHTML(cloudLabel(s.label))}</button>`;
+  box.innerHTML =
+    top.map((s, i) => {
+      const k = hi === lo ? 0.5 : (s.count - lo) / (hi - lo);
+      const fs = (0.95 + 1.6 * Math.pow(k, 0.75)).toFixed(2); // plus le tag est fréquent, plus il est grand
+      return word(s, fs, themeColors[(cyrb53(s.key) + i) % themeColors.length]);
+    }).join('') +
+    extras.map(s => word(s, '0.9', '#ffffff')).join('');   // les tags tirés au hasard : petits et blancs
   cloudLayout();
 }
 
-// Disposition « en vrac » : chaque mot est posé au hasard (mais toujours au même endroit pour un même nuage), sans chevauchement,
+// Disposition « en vrac » : chaque mot est posé au hasard (tirage fixé par la graine), sans chevauchement,
 // légèrement incliné ; les plus gros d'abord. Un mot trop large est réduit jusqu'à tenir.
 function cloudLayout() {
   const box = document.getElementById('cloud-box');
   if (!box) return;
   const W = box.clientWidth;
   if (!W) return;
-  const H = Math.round(Math.max(340, Math.min(560, W * 1.2)));
+  // La hauteur profite de l'écran : le nuage descend presque jusqu'en bas
+  const top = box.getBoundingClientRect().top + window.scrollY;
+  const H = Math.round(Math.max(440, Math.min(780, window.innerHeight - top - 22)));
   box.style.height = `${H}px`;
   const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
   const words = [...box.querySelectorAll('.cloud-word')];
-  let seed = (cyrb53(words.map(w => w.dataset.tag).join('|') + cloudState.genre) % 2147483646) + 1;
-  const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  const rnd = cloudRng(cloudRun.seed);
   const placed = [];
   const pad = 6, gap = 3;
+  words.forEach(el => { el.classList.remove('is-placed'); el.style.display = ''; });
   words.slice().sort((a, b) => parseFloat(b.dataset.fs) - parseFloat(a.dataset.fs)).forEach(el => {
     const base = parseFloat(el.dataset.fs);
     let fs = base * rem;
-    const vertical = base < 1.35 && rnd() < 0.14;                         // quelques petits mots à la verticale
-    const angle = vertical ? (rnd() < 0.5 ? -90 : 90) : Math.round((rnd() * 2 - 1) * (base > 1.7 ? 5 : 13));
+    const vertical = base < 1.35 && rnd() < 0.16;                         // quelques petits mots à la verticale
+    const angle = vertical ? (rnd() < 0.5 ? -90 : 90) : Math.round((rnd() * 2 - 1) * (base > 1.7 ? 6 : 15));
     const rad = angle * Math.PI / 180;
     el.style.transform = 'none';
     for (let shrink = 0; shrink < 9; shrink++) {

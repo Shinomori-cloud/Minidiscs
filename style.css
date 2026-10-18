@@ -4516,12 +4516,44 @@ body:has(.modal:not(.hidden)) #home-fab { display: none !important; }
     url('images/Grande-Ourse.jpg');
 }
 
-.cloud-page { display: flex; flex-direction: column; gap: 12px; padding-top: 6px; }
-.cloud-filters { display: flex; flex-direction: column; gap: 10px; }
-.cloud-filters .form-group { margin: 0; }
-.cloud-years { display: flex; align-items: center; gap: 10px; }
-.cloud-years input { width: 6.2rem; text-align: center; }
-.cloud-hint { margin: 0; text-align: center; font-size: 0.7rem; color: var(--text-sub); }
+/* Page « Nuage de genres » : filtres compacts sur deux lignes (genre + période, puis recherche de tag) */
+.cloud-page { display: flex; flex-direction: column; gap: 10px; padding-top: 0; margin-top: -20px; } /* écart sous le bandeau : environ moitié moins qu'avant */
+.dc-card.cloud-filters { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; }
+.cloud-row { display: flex; align-items: center; gap: 8px; }
+.cloud-filters .cloud-genre,
+.cloud-filters .cloud-years input,
+.cloud-filters .cloud-tag-input,
+.cloud-filters .cloud-btn { height: 32px; min-height: 0; margin: 0; box-sizing: border-box; font-size: 0.78rem; }
+.cloud-filters .cloud-genre { flex: 0 0 47%; width: 47%; min-width: 0; padding: 0 26px 0 10px; }
+.cloud-years { flex: 1; min-width: 0; display: flex; align-items: center; gap: 5px; }
+.cloud-filters .cloud-years input { flex: 1; width: 0; min-width: 0; padding: 0 2px; text-align: center; }
+.cloud-years span { font-size: 0.75rem; color: var(--text-sub); }
+/* Mêmes champs sombres que les formulaires de l'appli */
+.cloud-filters .cloud-genre, .cloud-filters .cloud-years input, .cloud-filters .cloud-tag-input {
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(var(--c-c4b5fd), 0.5);
+  color: var(--text-main);
+  border-radius: 10px;
+  font-family: inherit;
+}
+.cloud-filters .cloud-tag-input::placeholder { color: rgba(var(--c-c4b5fd), 0.55); }
+.cloud-filters select option { background: rgb(var(--c-1b1233)); color: #ffffff; }
+.cloud-filters .cloud-genre:focus, .cloud-filters .cloud-years input:focus, .cloud-filters .cloud-tag-input:focus {
+  outline: none;
+  border-color: rgb(var(--c-ff007f));
+}
+.cloud-filters .cloud-genre {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8b4fe' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 14px;
+}
+.cloud-filters .cloud-tag-input { flex: 1; width: 0; min-width: 0; padding: 0 10px; }
+.cloud-filters .cloud-btn { flex: 0 0 38px; width: 38px; padding: 0; line-height: 1; font-size: 1rem; display: flex; align-items: center; justify-content: center;
+  background: var(--card-bg); border: 2px solid rgba(var(--c-b57bff), 0.55); border-radius: calc(10px * var(--radius-factor)); box-shadow: none; cursor: pointer; touch-action: manipulation; }
+.cloud-filters .cloud-btn:active { transform: scale(0.94); }
 .cloud-box {
   position: relative;
   width: 100%;
@@ -4552,6 +4584,8 @@ body:has(.modal:not(.hidden)) #home-fab { display: none !important; }
 }
 .cloud-word.is-placed { opacity: 1; }
 .cloud-word:active { filter: brightness(1.5); }
+.ad-tag-link { cursor: pointer; touch-action: manipulation; }
+.ad-tag-link:active { transform: scale(0.95); }
 .cloud-empty { margin: 0; padding: 40px 12px; text-align: center; color: var(--text-sub); }
 
 .tag-page { display: flex; flex-direction: column; gap: 12px; padding-top: 6px; }
