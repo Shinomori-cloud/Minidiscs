@@ -4834,13 +4834,27 @@
           "artist": "The Velvet Underground & Nico",
           "main_genre": "Rock & Blues",
           "tags": [
-            "Experimental",
-            "Rock"
+            "rock",
+            "art rock",
+            "psychedelic rock"
           ],
-          "release_year": "",
+          "release_year": "1967",
           "duration": "47:51",
-          "tracks": [],
-          "toRecord": true
+          "tracks": [
+            "Sunday Morning",
+            "I’m Waiting for the Man",
+            "Femme Fatale",
+            "Venus in Furs",
+            "Run Run Run",
+            "All Tomorrow’s Parties",
+            "Heroin",
+            "There She Goes Again",
+            "I’ll Be Your Mirror",
+            "The Black Angel’s Death Song",
+            "European Son"
+          ],
+          "toRecord": true,
+          "description": "The Velvet Underground & Nico is the debut studio album by American rock band the Velvet Underground and German singer Nico, released on March 12, 1967, through Verve Records. The album features experimental performance sensibilities and controversial lyrical topics, including drug abuse, prostitution, sadomasochism and sexual deviancy. The Velvet Underground & Nico initially sold poorly and was mostly ignored by music critics at the time, but later became regarded as one of the most influential albums in rock and pop music. Described as \"the original art-rock record\", it was a major influence on many subgenres of rock music and alternative music, including punk, garage, krautrock, post-punk, shoegaze, goth and indie. ."
         },
         {
           "id": "md-1792254412492-alb-3",
