@@ -960,6 +960,7 @@ function pageScrollKey(page) {
   switch (page.key) {
     case 'md': return 'md-' + page.mdIndex;
     case 'track': return 'track-' + page.mdIndex + '-' + page.albumIndex;
+    case 'discover-tag': return 'discover-tag-' + mbNormalize(page.tag || '');
     case 'discover-disco': return 'discover-disco-' + mbNormalize(page.artist || '');
     case 'discover-detail': return 'discover-detail-' + mbNormalize((page.item && (page.item.artist + ' ' + page.item.title)) || '');
     default: return page.key;
@@ -989,6 +990,9 @@ function pageHash(page) {
     case 'settings-appearance': return '#settings-appearance';
     case 'settings-language': return '#settings-language';
     case 'settings-images': return '#settings-images';
+    case 'discover-hub': return '#discover-hub';
+    case 'discover-cloud': return '#discover-cloud';
+    case 'discover-tag': return '#discover-cloud';
     case 'discover-results': return '#discover' + q;
     case 'discover-disco': return '#discover';
     case 'discover-detail': return '#discover';
@@ -1003,9 +1007,12 @@ function parentOfPage(page) {
     case 'md': return { key: 'list' };
     case 'track': return { key: 'md', mdIndex: page.mdIndex };
     case 'planner': return { key: 'create' };
-    case 'discover-results': return page.parent || { key: 'create' };
-    case 'discover-disco': return page.direct ? (page.parent || { key: 'create' }) : { key: 'discover-results' };
-    case 'discover-detail': return page.parent || { key: 'create' };
+    case 'discover-hub': return page.parent || { key: 'dashboard' };
+    case 'discover-cloud': return page.parent || { key: 'discover-hub' };
+    case 'discover-tag': return page.parent || { key: 'discover-cloud' };
+    case 'discover-results': return page.parent || { key: 'discover-hub' };
+    case 'discover-disco': return page.direct ? (page.parent || { key: 'discover-hub' }) : { key: 'discover-results' };
+    case 'discover-detail': return page.parent || { key: 'discover-hub' };
     case 'create': return { key: 'dashboard' };
     case 'settings': return page.parent || { key: 'dashboard' };
     case 'settings-appearance':
@@ -1082,6 +1089,9 @@ function renderForPage(page) {
     case 'settings-appearance': renderSettingsAppearance(); break;
     case 'settings-language': renderSettingsLanguage(); break;
     case 'settings-images': renderSettingsImages(); break;
+    case 'discover-hub': renderDiscoverHub(); break;
+    case 'discover-cloud': renderGenreCloud(); break;
+    case 'discover-tag': renderTagResults(page); break;
     case 'discover-results': renderDiscover(page.params || new URLSearchParams()); break;
     case 'discover-disco':
       // Le cadre de la page Découverte doit exister avant d'y afficher le chargement de la discographie
@@ -1144,6 +1154,8 @@ function parsePageFromHash(hash) {
   const albumMatch = rawHash.match(/^#md-(\d+)-album-(\d+)$/);
 
   if (rawHash.startsWith('#create')) return { key: 'create' };
+  if (rawHash.startsWith('#discover-hub')) return { key: 'discover-hub', parent: { key: 'dashboard' } };
+  if (rawHash.startsWith('#discover-cloud')) return { key: 'discover-cloud', parent: { key: 'discover-hub' } };
   if (rawHash.startsWith('#discover')) return { key: 'discover-results', params };
   if (albumMatch && catalogData && catalogData[+albumMatch[1]] && catalogData[+albumMatch[1]].albums && catalogData[+albumMatch[1]].albums[+albumMatch[2]]) {
     return { key: 'track', mdIndex: +albumMatch[1], albumIndex: +albumMatch[2] };
@@ -1597,7 +1609,7 @@ function renderDashboard(pushState = true) {
       </div>
 
       <div class="dashboard-actions-row">
-        <button class="action-btn-wide action-btn-discover" onclick="goToDiscoverResults()">
+        <button class="action-btn-wide action-btn-discover" onclick="goToDiscoverHub()">
           ${t("Découvrir")}
         </button>
         <button class="action-btn-wide action-btn-create" onclick="goToCreateHub()">
@@ -4618,6 +4630,344 @@ function prepareSubPage(title) {
   updateSearchVisibility(false);
   if (featuredContainer) featuredContainer.classList.add('hidden');
   window.scrollTo(0, 0);
+}
+
+/* ==========================================
+   DÉCOUVERTE : page intermédiaire, nuage de genres et albums par tag
+   ------------------------------------------
+   - « Découvrir » (accueil) ouvre une page à deux tuiles : recherche par artistes / albums, ou nuage de genres.
+   - Le nuage affiche les tags les plus présents dans la collection (éventuellement dans un seul genre) : plus un tag est
+     fréquent, plus il est grand. Un tag touché ouvre une liste d'albums portant ce tag, dans la période choisie.
+   - Albums : Last.fm (tag.getTopAlbums) classés par popularité ; l'année de chacun est vérifiée sur MusicBrainz
+     (une requête par seconde environ) et seuls les albums de la période sont gardés.
+   ========================================== */
+function goToDiscoverHub() { navigateTo({ key: 'discover-hub', parent: currentPage }); }
+function goToGenreCloud() { navigateTo({ key: 'discover-cloud', parent: currentPage }); }
+function goToTagResults(tag) { navigateTo({ key: 'discover-tag', tag, parent: currentPage }); }
+
+function renderDiscoverHub() {
+  prepareSubPage(t("Découverte"));
+  app.innerHTML = `
+    <div id="discover-hub-page" class="create-page">
+      <button type="button" class="create-tile create-tile-artists" onclick="goToDiscoverResults()">
+        <span class="create-tile-text">
+          <span class="create-tile-title">${t("Recherche par Artistes / Albums")}</span>
+          <span class="create-tile-desc">${t("Trouver des albums similaires à ce que vous écoutez déjà.")}</span>
+        </span>
+      </button>
+      <button type="button" class="create-tile create-tile-cloud" onclick="goToGenreCloud()">
+        <span class="create-tile-text">
+          <span class="create-tile-title">${t("Nuages de Genres")}</span>
+          <span class="create-tile-desc">${t("Rechercher de nouveaux artistes en fonction des genres présents dans votre collection")}</span>
+        </span>
+      </button>
+    </div>
+  `;
+}
+
+/* ---------- Nuage de genres ---------- */
+const CLOUD_STORAGE_KEY = 'minidisc_cloud';
+const CLOUD_MAX_TAGS = 20;
+const cloudState = (() => {
+  const d = { genre: '', yearMin: 1970, yearMax: 2002 };
+  try {
+    const s = JSON.parse(localStorage.getItem(CLOUD_STORAGE_KEY) || '{}');
+    if (s.genre === '' || MAIN_GENRES.includes(s.genre)) d.genre = s.genre || '';
+    if (parseInt(s.yearMin, 10)) d.yearMin = parseInt(s.yearMin, 10);
+    if (parseInt(s.yearMax, 10)) d.yearMax = parseInt(s.yearMax, 10);
+  } catch (e) { /* valeurs par défaut */ }
+  return d;
+})();
+
+function cloudSave() {
+  try { localStorage.setItem(CLOUD_STORAGE_KEY, JSON.stringify(cloudState)); } catch (e) { /* non enregistré */ }
+}
+
+function cloudSetGenre(value) {
+  cloudState.genre = MAIN_GENRES.includes(value) ? value : '';
+  cloudSave();
+  cloudRenderWords();
+}
+
+function cloudSetYears() {
+  const minEl = document.getElementById('cloud-year-min');
+  const maxEl = document.getElementById('cloud-year-max');
+  const clamp = v => Math.min(2100, Math.max(1900, v));
+  let lo = clamp(parseInt(minEl && minEl.value, 10) || cloudState.yearMin);
+  let hi = clamp(parseInt(maxEl && maxEl.value, 10) || cloudState.yearMax);
+  if (lo > hi) [lo, hi] = [hi, lo];
+  cloudState.yearMin = lo;
+  cloudState.yearMax = hi;
+  if (minEl) minEl.value = lo;
+  if (maxEl) maxEl.value = hi;
+  cloudSave();
+}
+
+// Les tags des albums de la collection (ou de ceux d'un seul genre), du plus fréquent au moins fréquent
+function cloudTagStats(genre) {
+  const counts = new Map();
+  const addAlbum = (albumGenre, tags) => {
+    if (genre && String(albumGenre || '').trim().toLowerCase() !== genre.toLowerCase()) return;
+    const seen = new Set();
+    asArray(tags).forEach(raw => String(raw).split(/[,;]/).forEach(part => {
+      const label = part.trim();
+      const key = label.toLowerCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' ');
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+      const cur = counts.get(key);
+      if (cur) cur.count++;
+      else counts.set(key, { key, label, search: label.toLowerCase(), count: 1 });
+    }));
+  };
+  (catalogData || []).forEach(md => {
+    if (md.albums && md.albums.length) md.albums.forEach(a => addAlbum(a.main_genre || md.main_genre, a.tags));
+    else addAlbum(md.main_genre, md.tags);
+  });
+  return [...counts.values()].sort((a, b) => b.count - a.count || a.key.localeCompare(b.key)).slice(0, CLOUD_MAX_TAGS);
+}
+
+function cloudLabel(label) {
+  return String(label).replace(/(^|[\s\-\/(])(\p{L})/gu, (m, p, c) => p + c.toUpperCase());
+}
+
+function renderGenreCloud() {
+  prepareSubPage(t("Découverte"));
+  const options = `<option value="">${t("Tous les genres")}</option>` + MAIN_GENRES.map(g =>
+    `<option value="${mbEscapeHTML(g)}" ${g === cloudState.genre ? 'selected' : ''}>${mbEscapeHTML(g)}</option>`).join('');
+  app.innerHTML = `
+    <div id="cloud-page" class="cloud-page">
+      <div class="dc-card cloud-filters">
+        <div class="form-group">
+          <label>Genre</label>
+          <select id="cloud-genre" onchange="cloudSetGenre(this.value)">${options}</select>
+        </div>
+        <div class="form-group">
+          <label>${t("Période")}</label>
+          <div class="cloud-years">
+            <input type="number" id="cloud-year-min" inputmode="numeric" min="1900" max="2100" value="${cloudState.yearMin}" onchange="cloudSetYears()">
+            <span>${t("à")}</span>
+            <input type="number" id="cloud-year-max" inputmode="numeric" min="1900" max="2100" value="${cloudState.yearMax}" onchange="cloudSetYears()">
+          </div>
+        </div>
+      </div>
+      <p id="cloud-hint" class="cloud-hint"></p>
+      <div id="cloud-box" class="cloud-box"></div>
+    </div>`;
+  cloudRenderWords();
+}
+
+function cloudRenderWords() {
+  const box = document.getElementById('cloud-box');
+  if (!box) return;
+  const stats = cloudTagStats(cloudState.genre);
+  const hint = document.getElementById('cloud-hint');
+  if (hint) hint.textContent = (cloudState.genre ? t("Les tags les plus présents dans ce genre") : t("Les tags les plus présents dans votre collection")) + ' · ' + t("Touchez un tag pour trouver des albums.");
+  if (stats.length === 0) {
+    box.style.height = 'auto';
+    box.innerHTML = `<p class="cloud-empty">${t("Aucun tag à afficher pour ce genre.")}</p>`;
+    return;
+  }
+  const counts = stats.map(s => s.count);
+  const lo = Math.min(...counts), hi = Math.max(...counts);
+  const colors = ['rgb(var(--c-ff4fa3))', 'rgb(var(--c-00f0ff))', 'rgb(var(--c-b57bff))', '#ffffff', 'rgb(var(--c-d8b4fe))'];
+  box.innerHTML = stats.map((s, i) => {
+    const k = hi === lo ? 0.5 : (s.count - lo) / (hi - lo);
+    const fs = (0.95 + 1.6 * Math.pow(k, 0.75)).toFixed(2); // rem : plus le tag est fréquent, plus il est grand
+    const color = colors[(cyrb53(s.key) + i) % colors.length];
+    return `<button type="button" class="cloud-word" data-tag="${mbEscapeHTML(s.search)}" data-fs="${fs}" style="color:${color}; font-size:${fs}rem" title="${s.count}" onclick="goToTagResults(this.dataset.tag)">${mbEscapeHTML(cloudLabel(s.label))}</button>`;
+  }).join('');
+  cloudLayout();
+}
+
+// Disposition « en vrac » : chaque mot est posé au hasard (mais toujours au même endroit pour un même nuage), sans chevauchement,
+// légèrement incliné ; les plus gros d'abord. Un mot trop large est réduit jusqu'à tenir.
+function cloudLayout() {
+  const box = document.getElementById('cloud-box');
+  if (!box) return;
+  const W = box.clientWidth;
+  if (!W) return;
+  const H = Math.round(Math.max(340, Math.min(560, W * 1.2)));
+  box.style.height = `${H}px`;
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  const words = [...box.querySelectorAll('.cloud-word')];
+  let seed = (cyrb53(words.map(w => w.dataset.tag).join('|') + cloudState.genre) % 2147483646) + 1;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  const placed = [];
+  const pad = 6, gap = 3;
+  words.slice().sort((a, b) => parseFloat(b.dataset.fs) - parseFloat(a.dataset.fs)).forEach(el => {
+    const base = parseFloat(el.dataset.fs);
+    let fs = base * rem;
+    const vertical = base < 1.35 && rnd() < 0.14;                         // quelques petits mots à la verticale
+    const angle = vertical ? (rnd() < 0.5 ? -90 : 90) : Math.round((rnd() * 2 - 1) * (base > 1.7 ? 5 : 13));
+    const rad = angle * Math.PI / 180;
+    el.style.transform = 'none';
+    for (let shrink = 0; shrink < 9; shrink++) {
+      el.style.fontSize = `${fs}px`;
+      const w = el.offsetWidth, h = el.offsetHeight;
+      const bw = Math.abs(w * Math.cos(rad)) + Math.abs(h * Math.sin(rad));
+      const bh = Math.abs(w * Math.sin(rad)) + Math.abs(h * Math.cos(rad));
+      if (bw <= W - 2 * pad && bh <= H - 2 * pad) {
+        for (let tries = 0; tries < 500; tries++) {
+          const cx = pad + bw / 2 + rnd() * (W - 2 * pad - bw);
+          const cy = pad + bh / 2 + rnd() * (H - 2 * pad - bh);
+          const l = cx - bw / 2 - gap, r = cx + bw / 2 + gap, tp = cy - bh / 2 - gap, bt = cy + bh / 2 + gap;
+          if (placed.some(p => l < p.r && r > p.l && tp < p.b && bt > p.t)) continue;
+          placed.push({ l, r, t: tp, b: bt });
+          el.style.left = `${cx}px`;
+          el.style.top = `${cy}px`;
+          el.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+          el.classList.add('is-placed');
+          return;
+        }
+      }
+      fs *= 0.9;
+    }
+    el.style.display = 'none'; // aucune place (très rare)
+  });
+}
+
+window.addEventListener('resize', () => {
+  if (document.getElementById('cloud-box')) cloudLayout();
+});
+
+/* ---------- Albums d'un tag ---------- */
+const TAG_BATCH = 8;
+const TAGS = { key: '', tag: '', yearMin: 0, yearMax: 0, candidates: [], cursor: 0, lfmPage: 0, lfmDone: false,
+  items: [], target: TAG_BATCH, done: false, checked: 0, run: 0, scanRun: -1, error: '' };
+const tagMbCache = new Map(); // clé d'album -> { year, mbid, isAlbum }
+
+function tagResetState(tag) {
+  TAGS.run++;
+  Object.assign(TAGS, { key: `${mbNormalize(tag)}|${cloudState.yearMin}|${cloudState.yearMax}`, tag,
+    yearMin: cloudState.yearMin, yearMax: cloudState.yearMax, candidates: [], cursor: 0, lfmPage: 0, lfmDone: false,
+    items: [], target: TAG_BATCH, done: false, checked: 0, scanRun: -1, error: '' });
+}
+
+function renderTagResults(page) {
+  prepareSubPage(t("Découverte"));
+  const tag = (page && page.tag) || TAGS.tag;
+  const key = `${mbNormalize(tag)}|${cloudState.yearMin}|${cloudState.yearMax}`;
+  if (TAGS.key !== key) tagResetState(tag);
+  discoverState.albumItems = TAGS.items; // cible des boutons « Détails » et « Ajouter aux idées » des cartes
+  app.innerHTML = `
+    <div id="tag-page" class="tag-page">
+      <div class="dc-banner tag-banner">
+        <span class="dc-banner-title">${t("Tag :")} <span class="dc-banner-name">${mbEscapeHTML(cloudLabel(TAGS.tag))}</span> · ${TAGS.yearMin}–${TAGS.yearMax}</span>
+      </div>
+      <div id="tag-status" class="dc-status hidden"></div>
+      <div id="tag-results" class="dc-results"></div>
+      <button type="button" id="tag-more" class="btn-secondary dc-more hidden" onclick="tagMore()">${t("Voir plus")}</button>
+    </div>`;
+  tagRenderList();
+  tagScan();
+}
+
+function tagMore() {
+  TAGS.target += TAG_BATCH;
+  tagRenderList();
+  tagScan();
+}
+
+function tagRenderList() {
+  const box = document.getElementById('tag-results');
+  if (!box) return;
+  const { owned, ideas } = discoverOwnedAlbumKeys();
+  box.innerHTML = TAGS.items.map(r => discoverAlbumHTML({ ...r, isOwned: owned.has(r.key), isIdea: ideas.has(r.key) }, 'a')).join('');
+  tagUpdateStatus();
+}
+
+function tagUpdateStatus() {
+  const status = document.getElementById('tag-status');
+  const more = document.getElementById('tag-more');
+  if (!status) return;
+  const scanning = TAGS.scanRun === TAGS.run;
+  let text = '';
+  if (TAGS.error) text = TAGS.error;
+  else if (scanning) text = `${t("⏳ Recherche en cours…")} (${TAGS.checked} ${t("albums vérifiés")})`;
+  else if (TAGS.items.length === 0 && TAGS.done) text = t("Aucun album trouvé pour ce tag dans cette période.");
+  status.innerHTML = text;
+  status.classList.toggle('hidden', !text);
+  if (more) more.classList.toggle('hidden', scanning || TAGS.done || !!TAGS.error || TAGS.items.length < TAGS.target);
+}
+
+async function tagFetchCandidates() {
+  const S = TAGS;
+  S.lfmPage++;
+  const data = await lastfmCall('tag.getTopAlbums', { tag: S.tag, limit: 50, page: S.lfmPage });
+  const list = asArray(data && data.albums && data.albums.album);
+  const seen = new Set(S.candidates.map(c => c.key));
+  list.forEach(a => {
+    const title = a && a.name;
+    const artist = a && a.artist && (a.artist.name || a.artist);
+    if (!title || !artist || !isRealArtist(artist) || MB_PARASITE_REGEX.test(title)) return;
+    if (discoverSectionOfTitle(title)[0] !== 'albums') return; // ni live, ni compilation, ni EP d'après le titre
+    const key = `${mbNormalize(artist)}|${mbBaseTitle(title)}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    S.candidates.push({ key, artist, title, image: lfmImage(a.image) });
+  });
+  if (list.length < 50 || S.lfmPage >= 6) S.lfmDone = true;
+}
+
+// Année de sortie d'un album (MusicBrainz), mémorisée
+async function tagLookup(c) {
+  if (tagMbCache.has(c.key)) return tagMbCache.get(c.key);
+  const tokens = mbQueryTokens(`${c.artist} ${c.title}`);
+  const group = mbFilterAndRank(await mbSearchReleaseGroups(tokens, 'and'), tokens, 1)[0];
+  const info = group
+    ? { year: discoverYearOf(group), mbid: group.id || '', isAlbum: discoverSectionOf(group).includes('albums') }
+    : { year: null, mbid: '', isAlbum: true };
+  tagMbCache.set(c.key, info);
+  discoverAlbumYears.set(c.key, info.year || '');
+  return info;
+}
+
+async function tagScan() {
+  const S = TAGS;
+  if (S.scanRun === S.run || S.done) { tagUpdateStatus(); return; }
+  if (!getLastfmKey()) {
+    S.error = t("🔑 Ajoute ta clé API Last.fm dans la recherche par artistes / albums.");
+    tagUpdateStatus();
+    return;
+  }
+  const run = S.run;
+  S.scanRun = run;
+  S.error = '';
+  tagUpdateStatus();
+  try {
+    while (S.run === run && S.items.length < S.target) {
+      if (!document.getElementById('tag-page')) break; // page quittée : on met en pause (la reprise se fait au retour)
+      if (S.cursor >= S.candidates.length) {
+        if (S.lfmDone) { S.done = true; break; }
+        await tagFetchCandidates();
+        continue;
+      }
+      const c = S.candidates[S.cursor];
+      let info;
+      try {
+        info = await tagLookup(c);
+      } catch (err) {
+        if (err && err.rateLimited) { await new Promise(r => setTimeout(r, 5000)); continue; } // MusicBrainz sature : on réessaie le même album
+        info = { year: null, mbid: '', isAlbum: false };
+      }
+      if (S.run !== run) break;
+      S.cursor++;
+      S.checked++;
+      if (info.isAlbum && info.year && info.year >= S.yearMin && info.year <= S.yearMax) {
+        S.items.push({ key: c.key, artist: c.artist, title: c.title, year: info.year, mbid: info.mbid, image: c.image,
+          primary: '', secondary: [], playcount: 0, tags: [S.tag], mainGenre: cloudState.genre, mbGroup: null, idx: S.items.length });
+        tagRenderList();
+      } else {
+        tagUpdateStatus();
+      }
+    }
+  } catch (err) {
+    console.warn('Recherche par tag :', err);
+    if (S.run === run) S.error = t("⚠️ Last.fm est injoignable ou refuse la requête : vérifie ta clé API et réessaie.");
+  } finally {
+    if (S.scanRun === run) S.scanRun = -1;
+    if (S.run === run) tagUpdateStatus();
+  }
 }
 
 function renderCreateHub() {

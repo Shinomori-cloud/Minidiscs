@@ -4500,3 +4500,60 @@ body:has(.modal:not(.hidden)) #home-fab { display: none !important; }
 .cs-head { --hero-img: url('images/Concevoir_cover.jpg'); }
 .modal .modal-header .close-btn,
 .cs-head button { position: absolute; top: 14px; right: 14px; z-index: 2; }
+
+
+/* ==========================================
+   DÉCOUVERTE : page intermédiaire (même style que la page « Créer ») et nuage de genres
+   ========================================== */
+.create-tile-artists {
+  background-image:
+    radial-gradient(ellipse 70% 38% at 50% 84%, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0) 100%),
+    url('images/Nirvana.jpg');
+}
+.create-tile-cloud {
+  background-image:
+    radial-gradient(ellipse 70% 38% at 50% 84%, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0) 100%),
+    url('images/Grande-Ourse.jpg');
+}
+
+.cloud-page { display: flex; flex-direction: column; gap: 12px; padding-top: 6px; }
+.cloud-filters { display: flex; flex-direction: column; gap: 10px; }
+.cloud-filters .form-group { margin: 0; }
+.cloud-years { display: flex; align-items: center; gap: 10px; }
+.cloud-years input { width: 6.2rem; text-align: center; }
+.cloud-hint { margin: 0; text-align: center; font-size: 0.7rem; color: var(--text-sub); }
+.cloud-box {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: calc(18px * var(--radius-factor));
+  background:
+    radial-gradient(ellipse 60% 50% at 30% 35%, rgba(var(--c-b57bff), 0.16), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 75% 70%, rgba(var(--c-ff4fa3), 0.12), transparent 70%);
+}
+.cloud-word {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  padding: 2px 4px;
+  border: none;
+  background: none;
+  box-shadow: none;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.35s ease, filter 0.15s ease;
+  text-shadow: 0 0 10px currentColor, 0 1px 3px rgba(0, 0, 0, 0.7);
+  touch-action: manipulation;
+}
+.cloud-word.is-placed { opacity: 1; }
+.cloud-word:active { filter: brightness(1.5); }
+.cloud-empty { margin: 0; padding: 40px 12px; text-align: center; color: var(--text-sub); }
+
+.tag-page { display: flex; flex-direction: column; gap: 12px; padding-top: 6px; }
+.tag-banner { cursor: default; }
+.tag-banner:active { transform: none; box-shadow: 4px 4px 0px #000, var(--card-rim); }
