@@ -4588,6 +4588,12 @@ body:has(.modal:not(.hidden)) #home-fab { display: none !important; }
 .ad-tag-link:active { transform: scale(0.95); }
 .cloud-empty { margin: 0; padding: 40px 12px; text-align: center; color: var(--text-sub); }
 
-.tag-page { display: flex; flex-direction: column; gap: 12px; padding-top: 6px; }
+.tag-page { display: flex; flex-direction: column; gap: 12px; padding-top: 0; }
 .tag-banner { cursor: default; }
 .tag-banner:active { transform: none; box-shadow: 4px 4px 0px #000, var(--card-rim); }
+
+
+/* Recherche en cours : le texte du statut clignote (doucement) tant que ça charge */
+@keyframes dc-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.dc-status.is-scanning { animation: dc-blink 1.15s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .dc-status.is-scanning { animation: none; } }

@@ -4881,15 +4881,34 @@ window.addEventListener('resize', () => {
 
 /* ---------- Albums d'un tag ---------- */
 const TAG_BATCH = 8;
+const TAG_SEEN_KEY = 'minidisc_tag_seen';   // artistes déjà montrés lors de recherches précédentes (pour privilégier la découverte)
+const TAG_SEEN_MAX = 200;
 const TAGS = { key: '', tag: '', yearMin: 0, yearMax: 0, candidates: [], cursor: 0, lfmPage: 0, lfmDone: false,
-  items: [], target: TAG_BATCH, done: false, checked: 0, run: 0, scanRun: -1, error: '' };
+  items: [], target: TAG_BATCH, done: false, checked: 0, run: 0, scanRun: -1, error: '',
+  shown: new Set(), known: new Set(), reserve: [], pending: null };
 const tagMbCache = new Map(); // clé d'album -> { year, mbid, isAlbum }
+
+function tagSeenList() {
+  try { const l = JSON.parse(localStorage.getItem(TAG_SEEN_KEY) || '[]'); return Array.isArray(l) ? l : []; } catch (e) { return []; }
+}
+function tagRememberArtist(artist) {
+  const a = mbNormalize(artist);
+  if (!a) return;
+  const list = tagSeenList().filter(x => x !== a);
+  list.push(a);
+  try { localStorage.setItem(TAG_SEEN_KEY, JSON.stringify(list.slice(-TAG_SEEN_MAX))); } catch (e) { /* non mémorisé */ }
+}
 
 function tagResetState(tag) {
   TAGS.run++;
+  // « Connus » : artistes de la collection / des idées et artistes déjà montrés par une recherche précédente.
+  // Ils passent après les artistes inédits (instantané pris au début de la recherche).
+  const known = new Set(discoverArtistNames().map(mbNormalize));
+  tagSeenList().forEach(a => known.add(a));
   Object.assign(TAGS, { key: `${mbNormalize(tag)}|${cloudState.yearMin}|${cloudState.yearMax}`, tag,
     yearMin: cloudState.yearMin, yearMax: cloudState.yearMax, candidates: [], cursor: 0, lfmPage: 0, lfmDone: false,
-    items: [], target: TAG_BATCH, done: false, checked: 0, scanRun: -1, error: '' });
+    items: [], target: TAG_BATCH, done: false, checked: 0, scanRun: -1, error: '',
+    shown: new Set(), known, reserve: [], pending: null });
 }
 
 function renderTagResults(page) {
@@ -4898,17 +4917,21 @@ function renderTagResults(page) {
   const key = `${mbNormalize(tag)}|${cloudState.yearMin}|${cloudState.yearMax}`;
   if (TAGS.key !== key) tagResetState(tag);
   discoverState.albumItems = TAGS.items; // cible des boutons « Détails » et « Ajouter aux idées » des cartes
+  // Le bandeau de recherche et son statut restent à l'écran pendant qu'on fait défiler les résultats
   app.innerHTML = `
     <div id="tag-page" class="tag-page">
-      <div class="dc-banner tag-banner">
-        <span class="dc-banner-title">${t("Tag :")} <span class="dc-banner-name">${mbEscapeHTML(cloudLabel(TAGS.tag))}</span> · ${TAGS.yearMin}–${TAGS.yearMax}</span>
+      <div id="dc-sticky" class="dc-sticky" data-pin="always">
+        <div class="dc-banner tag-banner">
+          <span class="dc-banner-title">${t("Recherche :")} <span class="dc-banner-name">${mbEscapeHTML(cloudLabel(TAGS.tag))}</span> · ${TAGS.yearMin}–${TAGS.yearMax}</span>
+        </div>
+        <div id="tag-status" class="dc-status hidden"></div>
       </div>
-      <div id="tag-status" class="dc-status hidden"></div>
       <div id="tag-results" class="dc-results"></div>
       <button type="button" id="tag-more" class="btn-secondary dc-more hidden" onclick="tagMore()">${t("Voir plus")}</button>
     </div>`;
   tagRenderList();
   tagScan();
+  discoverPinSticky();
 }
 
 function tagMore() {
@@ -4936,6 +4959,7 @@ function tagUpdateStatus() {
   else if (TAGS.items.length === 0 && TAGS.done) text = t("Aucun album trouvé pour ce tag dans cette période.");
   status.innerHTML = text;
   status.classList.toggle('hidden', !text);
+  status.classList.toggle('is-scanning', scanning && !TAGS.error); // le texte clignote tant que la recherche est active
   if (more) more.classList.toggle('hidden', scanning || TAGS.done || !!TAGS.error || TAGS.items.length < TAGS.target);
 }
 
@@ -4956,6 +4980,34 @@ async function tagFetchCandidates() {
     S.candidates.push({ key, artist, title, image: lfmImage(a.image) });
   });
   if (list.length < 50 || S.lfmPage >= 6) S.lfmDone = true;
+}
+
+// Prochain album à vérifier. Pour découvrir : d'abord un seul album par artiste, et seulement des artistes inédits
+// (ni déjà montrés, ni dans la collection, ni vus lors d'une recherche précédente). Les autres attendent en réserve,
+// sans coûter de requête, et ne servent que s'il n'y a pas assez d'artistes inédits.
+function tagNextCandidate() {
+  const S = TAGS;
+  while (S.cursor < S.candidates.length) {
+    const c = S.candidates[S.cursor++];
+    const a = mbNormalize(c.artist);
+    if (S.shown.has(a) || S.known.has(a)) { S.reserve.push(c); continue; }
+    return c;
+  }
+  return null;
+}
+
+// Dans la réserve : d'abord les artistes les moins représentés, puis ceux que l'on connaît déjà le moins, puis le classement Last.fm
+function tagTakeFromReserve() {
+  const S = TAGS;
+  if (S.reserve.length === 0) return null;
+  const shownCount = a => S.items.filter(it => mbNormalize(it.artist) === a).length;
+  let best = 0, bestScore = null;
+  S.reserve.forEach((c, i) => {
+    const a = mbNormalize(c.artist);
+    const score = [shownCount(a), S.known.has(a) ? 1 : 0, i];
+    if (!bestScore || score[0] < bestScore[0] || (score[0] === bestScore[0] && (score[1] < bestScore[1] || (score[1] === bestScore[1] && score[2] < bestScore[2])))) { best = i; bestScore = score; }
+  });
+  return S.reserve.splice(best, 1)[0];
 }
 
 // Année de sortie d'un album (MusicBrainz), mémorisée
@@ -4986,12 +5038,13 @@ async function tagScan() {
   try {
     while (S.run === run && S.items.length < S.target) {
       if (!document.getElementById('tag-page')) break; // page quittée : on met en pause (la reprise se fait au retour)
-      if (S.cursor >= S.candidates.length) {
-        if (S.lfmDone) { S.done = true; break; }
-        await tagFetchCandidates();
-        continue;
+      let c = S.pending || tagNextCandidate();
+      if (!c) {
+        if (!S.lfmDone) { await tagFetchCandidates(); continue; }   // d'abord tous les artistes inédits...
+        c = tagTakeFromReserve();                                   // ... puis, faute de mieux, d'autres albums des mêmes artistes
+        if (!c) { S.done = true; break; }
       }
-      const c = S.candidates[S.cursor];
+      S.pending = c;
       let info;
       try {
         info = await tagLookup(c);
@@ -5000,9 +5053,11 @@ async function tagScan() {
         info = { year: null, mbid: '', isAlbum: false };
       }
       if (S.run !== run) break;
-      S.cursor++;
+      S.pending = null;
       S.checked++;
       if (info.isAlbum && info.year && info.year >= S.yearMin && info.year <= S.yearMax) {
+        S.shown.add(mbNormalize(c.artist));
+        tagRememberArtist(c.artist);
         S.items.push({ key: c.key, artist: c.artist, title: c.title, year: info.year, mbid: info.mbid, image: c.image,
           primary: '', secondary: [], playcount: 0, tags: [S.tag], mainGenre: cloudState.genre, mbGroup: null, idx: S.items.length });
         tagRenderList();
@@ -6660,6 +6715,7 @@ function renderDiscoverResultsInner() {
   }
   statusEl.innerHTML = status;
   statusEl.classList.toggle('hidden', !status);
+  statusEl.classList.toggle('is-scanning', !!s.running && !!status);
 
   const remaining = order.list.length - visible.length;
   let moreLabel = '';
@@ -7319,7 +7375,7 @@ function discoverPinSticky() {
     el._ro = new ResizeObserver(() => discoverPinSticky());
     el._ro.observe(el);
   }
-  if (discoverState.formOpen || el.offsetHeight === 0) { // formulaire ouvert : comportement d'origine
+  if ((discoverState.formOpen && el.dataset.pin !== 'always') || el.offsetHeight === 0) { // formulaire ouvert : comportement d'origine
     el.style.top = '';
     body.style.removeProperty('--dc-mask');
     return;
