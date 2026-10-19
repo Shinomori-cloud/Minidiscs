@@ -4597,3 +4597,14 @@ body:has(.modal:not(.hidden)) #home-fab { display: none !important; }
 @keyframes dc-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 .dc-status.is-scanning { animation: dc-blink 1.15s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .dc-status.is-scanning { animation: none; } }
+
+
+/* Constellation derrière les tags : points et fines lignes translucides */
+.cloud-lines { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+.cloud-line { stroke: rgba(var(--c-d8b4fe), 0.3); stroke-width: 1; stroke-linecap: round; }
+.cloud-star { fill: rgba(255, 255, 255, 0.72); filter: drop-shadow(0 0 3px rgba(var(--c-d8b4fe), 0.9)); animation: cloud-twinkle 3.6s ease-in-out infinite; }
+@keyframes cloud-twinkle { 0%, 100% { opacity: 0.9; } 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .cloud-star { animation: none; } }
+
+/* Titre de page : toujours sur une ligne (il rétrécit si besoin, voir fitHeaderTitle) */
+body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }

@@ -103,6 +103,7 @@
 "Collections de": "Collection of",
 "Composer un MiniDisc à partir de tes idées d'albums.": "Build a MiniDisc from your album ideas.",
 "Concevoir une cover": "Design a cover",
+"Constellation de genres": "Genre constellation",
 "Convertir (": "Convert (",
 "Convertir (0)": "Convert (0)",
 "Corail": "Coral",

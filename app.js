@@ -515,10 +515,13 @@ function toggleFabMenu() {
     btn.classList.toggle('open', isOpening);
   }
 
-  // Ferme les sous-menus si on ferme le FAB
+  // Ferme les sous-menus si on ferme le FAB ; à l'ouverture, la liste des genres s'ouvre d'office (un clic de moins)
   if (!isOpening) {
     document.getElementById('genres-submenu')?.classList.add('hidden');
     document.getElementById('status-submenu')?.classList.add('hidden');
+  } else {
+    const genres = document.getElementById('genres-submenu');
+    if (genres && genres.classList.contains('hidden')) toggleFabSubmenu('genres-submenu');
   }
 }
 
@@ -3164,6 +3167,10 @@ function togglePlannerFabMenu() {
   if (!isOpening) {
     window.isPlannerGenreDropdownOpen = false;
     document.getElementById('planner-genre-submenu')?.classList.add('hidden');
+  } else {
+    // à l'ouverture, la liste des genres s'ouvre d'office
+    const sub = document.getElementById('planner-genre-submenu');
+    if (sub && sub.classList.contains('hidden')) togglePlannerGenreDropdown();
   }
 }
 
@@ -4638,11 +4645,39 @@ function prepareSubPage(title) {
   currentAlbum = null;
   if (backBtn) backBtn.classList.remove('hidden');
   if (headerTitle) headerTitle.textContent = title;
+  fitHeaderTitle();
   setHeaderGenreInfo([]);
   updateSearchVisibility(false);
   if (featuredContainer) featuredContainer.classList.add('hidden');
   window.scrollTo(0, 0);
 }
+
+// Un titre long (ex. « Constellation de genres ») rétrécit pour tenir sur une ligne dans l'en-tête
+function fitHeaderTitle() {
+  const el = document.getElementById('header-title');
+  const header = document.querySelector('header');
+  if (!el || !header) return;
+  el.style.fontSize = '';
+  if (el.offsetParent === null) return; // titre masqué (accueil) : rien à ajuster
+  // Largeur disponible : celle de l'en-tête moins la place du bouton retour de chaque côté (le titre reste centré)
+  const back = document.getElementById('back-btn');
+  const reserve = (back && !back.classList.contains('hidden') ? back.offsetWidth : 0) + 26;
+  const avail = header.clientWidth - 2 * reserve;
+  let size = parseFloat(getComputedStyle(el).fontSize) || 28;
+  while (el.scrollWidth > avail && size > 14) {
+    size -= 1;
+    el.style.fontSize = `${size}px`;
+  }
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitHeaderTitle());
+// Dès que le titre change (quelle que soit la page), on l'ajuste une fois la page affichée
+(function watchHeaderTitle() {
+  const el = document.getElementById('header-title');
+  if (el && 'MutationObserver' in window) {
+    new MutationObserver(() => requestAnimationFrame(fitHeaderTitle)).observe(el, { childList: true, characterData: true, subtree: true });
+  }
+})();
+window.addEventListener('resize', () => fitHeaderTitle());
 
 /* ==========================================
    DÉCOUVERTE : page intermédiaire, nuage de genres et albums par tag
@@ -4669,7 +4704,7 @@ function renderDiscoverHub() {
       </button>
       <button type="button" class="create-tile create-tile-cloud" onclick="goToGenreCloud()">
         <span class="create-tile-text">
-          <span class="create-tile-title">${t("Nuages de Genres")}</span>
+          <span class="create-tile-title">${t("Constellation de genres")}</span>
           <span class="create-tile-desc">${t("Rechercher de nouveaux artistes en fonction des genres présents dans votre collection")}</span>
         </span>
       </button>
@@ -4768,7 +4803,7 @@ function cloudLabel(label) {
 }
 
 function renderGenreCloud() {
-  prepareSubPage(t("Découverte"));
+  prepareSubPage(t("Constellation de genres"));
   cloudShuffle(); // à chaque arrivée sur la page, un nouveau tirage
   const options = `<option value="">${t("Tous les genres")}</option>` + MAIN_GENRES.map(g =>
     `<option value="${mbEscapeHTML(g)}" ${g === cloudState.genre ? 'selected' : ''}>${mbEscapeHTML(g)}</option>`).join('');
@@ -4873,6 +4908,106 @@ function cloudLayout() {
     }
     el.style.display = 'none'; // aucune place (très rare)
   });
+  cloudDrawConstellation(box, W, H);
+}
+
+/* ---------- Constellation : un point derrière chaque tag, des lignes entre tags proches (sans jamais se croiser) ---------- */
+// Famille d'un tag = l'un de nos 8 genres (index dans MAIN_GENRES), -1 si inconnu. Les premières règles gagnent.
+const CLOUD_FAMILY_RULES = [
+  [3, /metal|thrash|doom|stoner|sludge|grindcore|hard rock|heavy/],
+  [7, /ambient|orchestr|classical|soundtrack|score|instrumental|piano|new age|jazz|symphon/],
+  [6, /electr|techno|house|trip hop|idm|experimental|industrial|synth|dubstep|drum and bass|dance|edm|downtempo|chillout|lounge/],
+  [5, /humo|comed|parod|spoken|talk|funny|stand up/],
+  [2, /\brap\b|hip hop|hiphop|\brnb\b|r b|soul|funk|reggae|\bska\b|\bdub\b|trap|dancehall|gospel/],
+  [0, /alternative|grunge|indie|britpop|shoegaze|\bemo\b|post punk|post rock|noise|lo fi|dream pop|punk|garage/],
+  [1, /rock|blues|psychedel|southern/],
+  [4, /pop|folk|country|singer|songwriter|chanson|variet|french|female vocalist|acoustic|easy listening|schlager|vocal/],
+];
+function cloudFamily(key) {
+  const hit = CLOUD_FAMILY_RULES.find(([, re]) => re.test(key));
+  return hit ? hit[0] : -1;
+}
+
+const cloudCcw = (a, b, c) => (c.y - a.y) * (b.x - a.x) - (b.y - a.y) * (c.x - a.x);
+// Deux segments se croisent-ils ? (un point commun en bout de segment n'est pas un croisement)
+function cloudSegCross(a, b, c, d) {
+  if (a === c || a === d || b === c || b === d) return false;
+  const d1 = cloudCcw(a, b, c), d2 = cloudCcw(a, b, d), d3 = cloudCcw(c, d, a), d4 = cloudCcw(c, d, b);
+  return d1 * d2 < 0 && d3 * d4 < 0;
+}
+function cloudDistPointSeg(p, a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const len2 = dx * dx + dy * dy || 1;
+  const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2));
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+}
+
+// Choix des lignes : d'abord les tags « emboîtés » (Rock / Alternative Rock, Metal / Nu Metal) puis ceux du même genre,
+// les plus proches en premier ; puis on relie ce qui reste isolé. Une ligne n'est posée que si elle ne coupe aucune
+// autre et ne frôle aucun autre point.
+function cloudBuildEdges(nodes, maxDist) {
+  const n = nodes.length;
+  const edges = [];
+  const deg = new Array(n).fill(0);
+  const stop = new Set(['and', 'of', 'the', 'a']);
+  const tokens = nodes.map(nd => new Set(nd.key.split(' ').filter(w => w && !stop.has(w))));
+  const nested = (i, j) => {
+    const [s, l] = tokens[i].size <= tokens[j].size ? [tokens[i], tokens[j]] : [tokens[j], tokens[i]];
+    return s.size > 0 && s !== l && [...s].every(w => l.has(w)) && !(s.size === l.size);
+  };
+  const cand = [];
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const d = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+      const tier = nested(i, j) ? 0 : (nodes[i].family >= 0 && nodes[i].family === nodes[j].family ? 1 : 2);
+      cand.push({ i, j, d, tier, w: d * [0.5, 1, 2.5][tier] });
+    }
+  }
+  cand.sort((a, b) => a.w - b.w);
+  const parent = [...Array(n).keys()];
+  const find = x => (parent[x] === x ? x : (parent[x] = find(parent[x])));
+  const free = (i, j, maxDeg) => deg[i] < maxDeg && deg[j] < maxDeg
+    && !edges.some(([a, b]) => cloudSegCross(nodes[i], nodes[j], nodes[a], nodes[b]))
+    && !nodes.some((p, k) => k !== i && k !== j && cloudDistPointSeg(p, nodes[i], nodes[j]) < 9);
+  const add = (i, j) => { edges.push([i, j]); deg[i]++; deg[j]++; parent[find(i)] = find(j); };
+  cand.forEach(c => { if (c.tier < 2 && c.d <= maxDist && free(c.i, c.j, 3)) add(c.i, c.j); });
+  cand.forEach(c => { if (find(c.i) !== find(c.j) && c.d <= maxDist * 1.6 && free(c.i, c.j, 4)) add(c.i, c.j); });
+  return edges;
+}
+
+function cloudDrawConstellation(box, W, H) {
+  box.querySelectorAll('.cloud-lines').forEach(e => e.remove());
+  const nodes = [...box.querySelectorAll('.cloud-word.is-placed')].map(el => ({
+    x: parseFloat(el.style.left), y: parseFloat(el.style.top), fs: parseFloat(el.dataset.fs) || 1,
+    key: String(el.dataset.tag || '').toLowerCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim(),
+  }));
+  nodes.forEach(nd => { nd.family = cloudFamily(nd.key); });
+  const edges = cloudBuildEdges(nodes, W * 0.62);
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('class', 'cloud-lines');
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('aria-hidden', 'true');
+  edges.forEach(([i, j]) => {
+    const l = document.createElementNS(NS, 'line');
+    l.setAttribute('class', 'cloud-line');
+    l.setAttribute('x1', nodes[i].x.toFixed(1)); l.setAttribute('y1', nodes[i].y.toFixed(1));
+    l.setAttribute('x2', nodes[j].x.toFixed(1)); l.setAttribute('y2', nodes[j].y.toFixed(1));
+    svg.appendChild(l);
+  });
+  const rnd = cloudRng(cloudRun.seed + 99);
+  nodes.forEach(nd => {
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('class', 'cloud-star');
+    c.setAttribute('cx', nd.x.toFixed(1)); c.setAttribute('cy', nd.y.toFixed(1));
+    c.setAttribute('r', (1.8 + Math.max(0, Math.min(1, (nd.fs - 0.9) / 1.7)) * 2.4).toFixed(1));
+    c.style.animationDelay = `${(rnd() * 3).toFixed(2)}s`;
+    c.style.animationDuration = `${(2.8 + rnd() * 2.4).toFixed(2)}s`;
+    svg.appendChild(c);
+  });
+  box.insertBefore(svg, box.firstChild);
 }
 
 window.addEventListener('resize', () => {
