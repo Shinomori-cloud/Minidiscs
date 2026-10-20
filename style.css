@@ -4608,3 +4608,40 @@ body:has(.modal:not(.hidden)) #home-fab { display: none !important; }
 
 /* Titre de page : toujours sur une ligne (il rétrécit si besoin, voir fitHeaderTitle) */
 body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
+
+
+/* Voie lactée en fond du nuage */
+.cloud-milky { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+.cloud-milky-glow { fill: none; stroke-linecap: round; }
+.cloud-milky-glow.g1 { stroke: rgba(var(--c-b57bff), 0.11); filter: blur(22px); }
+.cloud-milky-glow.g2 { stroke: rgba(var(--c-d8b4fe), 0.10); filter: blur(14px); }
+.cloud-milky-glow.g3 { stroke: rgba(255, 255, 255, 0.09); filter: blur(8px); }
+.cloud-milky-star.tw { animation: cloud-twinkle 4.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .cloud-milky-star.tw { animation: none; } }
+
+/* Modales et studio de covers : la bande d'image est plus haute et le titre est posé dessus */
+.modal .modal-header,
+.cs-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px;
+  padding: 12px 56px;
+}
+.modal .modal-header::after,
+.cs-head::after {
+  top: 0;
+  bottom: 0;
+  height: auto;
+  z-index: 0;
+  opacity: 1;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
+}
+.modal .modal-header h2,
+.modal .modal-header h3,
+.cs-head b {
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9), 0 0 14px rgba(0, 0, 0, 0.7), 0 0 26px rgba(var(--c-b57bff), 0.55);
+}

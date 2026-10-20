@@ -4908,7 +4908,72 @@ function cloudLayout() {
     }
     el.style.display = 'none'; // aucune place (très rare)
   });
+  cloudDrawMilkyWay(box, W, H);
   cloudDrawConstellation(box, W, H);
+}
+
+/* ---------- Voie lactée : un long « tapis » d'étoiles en fond, dense au centre de la bande et qui s'éclaircit sur les bords ---------- */
+function cloudDrawMilkyWay(box, W, H) {
+  box.querySelectorAll('.cloud-milky').forEach(e => e.remove());
+  const rnd = cloudRng(cloudRun.seed + 4242);
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('class', 'cloud-milky');
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('aria-hidden', 'true');
+
+  // Axe de la bande : une courbe douce qui traverse tout le cadre en diagonale (sens et courbure tirés au hasard)
+  const flip = rnd() < 0.5;
+  const y = v => (flip ? 1 - v : v) * H;
+  const P = [
+    { x: -0.08 * W, y: y(0.78 + rnd() * 0.18) },
+    { x: 0.28 * W, y: y(0.46 + rnd() * 0.3) },
+    { x: 0.66 * W, y: y(0.18 + rnd() * 0.3) },
+    { x: 1.08 * W, y: y(0.02 + rnd() * 0.2) },
+  ];
+  const at = t => {
+    const u = 1 - t;
+    const b = [u * u * u, 3 * u * u * t, 3 * u * t * t, t * t * t];
+    return { x: b[0] * P[0].x + b[1] * P[1].x + b[2] * P[2].x + b[3] * P[3].x, y: b[0] * P[0].y + b[1] * P[1].y + b[2] * P[2].y + b[3] * P[3].y };
+  };
+  const path = `M${P[0].x.toFixed(1)},${P[0].y.toFixed(1)} C${P[1].x.toFixed(1)},${P[1].y.toFixed(1)} ${P[2].x.toFixed(1)},${P[2].y.toFixed(1)} ${P[3].x.toFixed(1)},${P[3].y.toFixed(1)}`;
+
+  // Lueur diffuse de la bande (trois épaisseurs floutées)
+  [['cloud-milky-glow g1', 96], ['cloud-milky-glow g2', 52], ['cloud-milky-glow g3', 20]].forEach(([cls, w]) => {
+    const p = document.createElementNS(NS, 'path');
+    p.setAttribute('class', cls);
+    p.setAttribute('d', path);
+    p.setAttribute('stroke-width', w);
+    svg.appendChild(p);
+  });
+
+  // Étoiles : réparties de part et d'autre de l'axe selon une loi « en cloche » (très serrées au milieu, éparses sur les bords)
+  const gauss = () => (rnd() + rnd() + rnd() + rnd() - 2) * 1.55; // ≈ loi normale réduite
+  const colors = ['255,255,255', '255,255,255', '255,255,255', '216,190,255', '190,222,255', '255,236,205'];
+  const STARS = Math.round(Math.max(380, Math.min(760, (W * H) / 380)));
+  for (let i = 0; i < STARS; i++) {
+    const t = rnd();
+    const c = at(t), c2 = at(Math.min(1, t + 0.01));
+    const dx = c2.x - c.x, dy = c2.y - c.y, len = Math.hypot(dx, dy) || 1;
+    const nx = -dy / len, ny = dx / len;                   // normale à l'axe
+    const spread = 20 + 20 * Math.sin(t * Math.PI);        // la bande est plus large vers son milieu
+    const off = gauss() * spread;
+    const along = (rnd() - 0.5) * 6;
+    const x = c.x + nx * off + (dx / len) * along, y2 = c.y + ny * off + (dy / len) * along;
+    if (x < -4 || x > W + 4 || y2 < -4 || y2 > H + 4) continue;
+    const core = Math.max(0, 1 - Math.abs(off) / (spread * 1.6)); // 1 au centre de la bande, 0 sur les bords
+    const s = document.createElementNS(NS, 'circle');
+    s.setAttribute('class', 'cloud-milky-star');
+    s.setAttribute('cx', x.toFixed(1));
+    s.setAttribute('cy', y2.toFixed(1));
+    s.setAttribute('r', (0.3 + Math.pow(rnd(), 3) * 1.15).toFixed(2));
+    s.setAttribute('fill', `rgba(${colors[Math.floor(rnd() * colors.length)]},${(0.22 + rnd() * 0.55 * (0.5 + core)).toFixed(2)})`);
+    if (rnd() < 0.08) { s.classList.add('tw'); s.style.animationDelay = `${(rnd() * 4).toFixed(2)}s`; }
+    svg.appendChild(s);
+  }
+  box.insertBefore(svg, box.firstChild);
 }
 
 /* ---------- Constellation : un point derrière chaque tag, des lignes entre tags proches (sans jamais se croiser) ---------- */
