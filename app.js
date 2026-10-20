@@ -415,11 +415,16 @@ function handleCatalogSearch(query) {
   currentSearchQuery = query ? query.trim() : '';
 
   // Relance le rendu du catalogue avec les filtres actifs et la recherche
-  renderMDList({ 
-    genre: currentGenreFilter, 
-    type: currentTypeFilter, 
-    record: currentRecordFilter 
-  }, false);
+  refreshCatalogView();
+}
+
+// Redessine la vue du catalogue affichée : liste des MiniDiscs ou vue Albums
+function refreshCatalogView() {
+  if (currentPage && currentPage.key === 'albums') {
+    renderAlbumsList();
+  } else {
+    renderMDList({ genre: currentGenreFilter, type: currentTypeFilter, record: currentRecordFilter }, false);
+  }
 }
 
 // Application du filtre sélectionné et rafraîchissement de la liste
@@ -432,11 +437,7 @@ function selectGenreFilter(genre) {
   // Rafraîchit l'état actif et la coche dans le menu FAB des genres
   populateFabGenreMenu();
 
-  renderMDList({ 
-    genre: currentGenreFilter, 
-    type: currentTypeFilter, 
-    record: currentRecordFilter 
-  }, false);
+  refreshCatalogView();
 }
 
 function mdMatchesSearch(md, query) {
@@ -468,11 +469,7 @@ function mdMatchesSearch(md, query) {
 
 function onSearchInput(value) {
   currentSearchQuery = value;
-  renderMDList({ 
-    genre: currentGenreFilter, 
-    type: currentTypeFilter, 
-    record: currentRecordFilter 
-  }, false);
+  refreshCatalogView();
 }
 
 function updateSearchVisibility(show) {
@@ -985,6 +982,7 @@ function pageHash(page) {
   const q = page.params && [...page.params].length ? '?' + page.params.toString() : '';
   switch (page.key) {
     case 'list': return '#minidiscs' + q;
+    case 'albums': return '#albums';
     case 'md': return `#md-${page.mdIndex}`;
     case 'track': return `#md-${page.mdIndex}-album-${page.albumIndex}`;
     case 'create': return '#create';
@@ -1007,8 +1005,9 @@ function pageHash(page) {
 function parentOfPage(page) {
   switch (page.key) {
     case 'list': return { key: 'dashboard' };
-    case 'md': return { key: 'list' };
-    case 'track': return { key: 'md', mdIndex: page.mdIndex };
+    case 'albums': return { key: 'dashboard' };
+    case 'md': return page.parent || { key: 'list' };
+    case 'track': return page.parent || { key: 'md', mdIndex: page.mdIndex };
     case 'planner': return { key: 'create' };
     case 'discover-hub': return page.parent || { key: 'dashboard' };
     case 'discover-cloud': return page.parent || { key: 'discover-hub' };
@@ -1084,6 +1083,7 @@ function renderForPage(page) {
       }, false);
       break;
     }
+    case 'albums': renderAlbumsList(); break;
     case 'md': openMD(page.mdIndex, false); break;
     case 'track': openAlbum(page.mdIndex, page.albumIndex, false); break;
     case 'create': renderCreateHub(); break;
@@ -1168,6 +1168,7 @@ function parsePageFromHash(hash) {
   if (rawHash.startsWith('#settings-language')) return { key: 'settings-language', parent: { key: 'dashboard' } };
   if (rawHash.startsWith('#settings-images')) return { key: 'settings-images', parent: { key: 'dashboard' } };
   if (rawHash.startsWith('#settings')) return { key: 'settings' };
+  if (rawHash.startsWith('#albums')) return { key: 'albums' };
   if (rawHash.startsWith('#minidiscs')) return { key: 'list', params };
   if (rawHash.startsWith('#md-')) {
     const mdIndex = parseInt(rawHash.replace('#md-', ''), 10);
@@ -1721,7 +1722,9 @@ if (genre && genre !== 'ALL') {
   const seedSuffix = genre ? `-genre-${genre}` : (type ? `-type-${type}` : '-all');
   const shuffledCatalog = dailyShuffle(filteredCatalog, seedSuffix);
 
+  setCatalogFabMode('md');
   let html = '<div class="list-container" style="padding-bottom: 90px;">';
+  html += `<div class="view-switch-row"><button type="button" class="view-switch" onclick="goToAlbumsView()">${t("Vue Albums")}</button></div>`;
   
   if (shuffledCatalog.length === 0) {
     html += `<p style="text-align:center; padding: 40px; color: var(--text-sub);">${t("Aucun MiniDisc trouvé.")}</p>`;
@@ -1765,6 +1768,141 @@ if (genre && genre !== 'ALL') {
           ${recordBadgeHTML}
         </div>
       `;
+    });
+  }
+  html += '</div>';
+  app.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+/* ==========================================
+   VUE ALBUMS : tous les albums du catalogue, rangés par genre puis par année (ou par année seule)
+   ========================================== */
+const ALBUMS_SORT_KEY = 'minidisc_albums_sort';
+let albumsSortMode = (() => {
+  try { return localStorage.getItem(ALBUMS_SORT_KEY) === 'year' ? 'year' : 'genre'; } catch (e) { return 'genre'; }
+})();
+
+function goToAlbumsView() { navigateTo({ key: 'albums' }); }
+function goToMinidiscsView() { navigateTo({ key: 'list' }); }
+
+// Menu flottant : en vue Albums, « Statut » laisse la place au tri Genre / Année
+function setCatalogFabMode(mode) {
+  const albums = mode === 'albums';
+  document.getElementById('fab-status-btn')?.classList.toggle('hidden', albums);
+  document.getElementById('status-submenu')?.classList.add('hidden');
+  document.getElementById('fab-sort-switch')?.classList.toggle('hidden', !albums);
+  document.getElementById('fab-sort-genre')?.classList.toggle('active', albumsSortMode === 'genre');
+  document.getElementById('fab-sort-year')?.classList.toggle('active', albumsSortMode === 'year');
+  const input = document.querySelector('#fab-menu .fab-search-input');
+  if (input) input.placeholder = albums ? t("Rechercher un album...") : t("Rechercher un MD...");
+}
+
+function setAlbumsSort(mode, event) {
+  if (event) event.stopPropagation();
+  albumsSortMode = mode === 'year' ? 'year' : 'genre';
+  try { localStorage.setItem(ALBUMS_SORT_KEY, albumsSortMode); } catch (e) { /* non enregistré */ }
+  setCatalogFabMode('albums');
+  if (currentPage && currentPage.key === 'albums') renderAlbumsList();
+}
+
+// Un « album » = chaque album d'une série ; un MiniDisc sans albums (compilation) compte pour un album à lui seul
+function collectAlbumItems() {
+  const items = [];
+  (catalogData || []).forEach((md, mdIndex) => {
+    if (md.albums && md.albums.length > 0) {
+      md.albums.forEach((album, aIndex) => items.push({
+        mdIndex, aIndex, title: album.title || '', artist: album.artist || '', year: parseInt(album.release_year, 10) || 0,
+        genres: getAlbumGenres(album, md), cover: album.md_cover || md.md_cover || '', toRecord: !!album.toRecord, tracks: album.tracks || [],
+      }));
+    } else {
+      items.push({
+        mdIndex, aIndex: null, title: md.title || '', artist: md.artist || '', year: parseInt(md.release_year, 10) || 0,
+        genres: getMDAllGenres(md), cover: md.md_cover || '', toRecord: !!md.toRecord, tracks: md.tracks || [],
+      });
+    }
+  });
+  return items;
+}
+
+function albumMatchesSearch(it, query) {
+  const q = String(query || '').toLowerCase().trim();
+  if (!q) return true;
+  if (it.title.toLowerCase().includes(q) || it.artist.toLowerCase().includes(q)) return true;
+  if (it.year && String(it.year).includes(q)) return true;
+  if (it.genres.some(g => g.toLowerCase().includes(q))) return true;
+  return it.tracks.some(tr => String(tr).toLowerCase().includes(q));
+}
+
+function openAlbumFromAlbumsView(mdIndex, aIndex) {
+  const parent = { key: 'albums' };  // le bouton retour revient à la vue Albums
+  if (aIndex === null || aIndex === undefined) navigateTo({ key: 'md', mdIndex, parent });
+  else navigateTo({ key: 'track', mdIndex, albumIndex: aIndex, parent });
+}
+
+function renderAlbumsList() {
+  if (catalogData === null) return;
+  const fa = document.getElementById('floating-actions') || document.querySelector('.floating-actions-bar');
+  if (fa) fa.style.display = 'flex';
+  hidePlannerFab();
+  currentMD = null;
+  currentAlbum = null;
+  if (backBtn) backBtn.classList.remove('hidden');
+  updateSearchVisibility(true);
+  if (headerTitle) headerTitle.textContent = t("Albums");
+  const genre = currentGenreFilter;
+  setHeaderGenreInfo(genre && genre !== 'ALL' ? [genre] : []);
+  if (featuredContainer) featuredContainer.classList.add('hidden');
+  setCatalogFabMode('albums');
+
+  let items = collectAlbumItems();
+  if (genre && genre !== 'ALL') {
+    const target = genre.trim().toLowerCase();
+    items = items.filter(it => it.genres.some(g => g.trim().toLowerCase() === target));
+  }
+  if (currentSearchQuery) items = items.filter(it => albumMatchesSearch(it, currentSearchQuery));
+
+  const byYearThenTitle = (a, b) => (a.year || 9999) - (b.year || 9999) || a.title.localeCompare(b.title);
+  const genreOrder = MAIN_GENRES.map(g => g.toUpperCase());
+  const primary = it => (it.genres[0] || 'AUTRE').toUpperCase();
+  const tile = (it, showGenre) => {
+    const color = getBorderColor(it.genres);
+    const badge = it.toRecord ? `<span class="badge-to-record badge-record-corner">${t("💽 À enregistrer")}</span>` : '';
+    const aIdx = it.aIndex === null ? 'null' : it.aIndex;
+    return `
+      <div class="list-item list-item-compact" style="border-color: ${color}; --glow: ${color}; border-left-width: 6px; position: relative;" onclick="openAlbumFromAlbumsView(${it.mdIndex}, ${aIdx})">
+        <div class="album-cover-container">${createLoadingCoverHTML(it.cover, 'album-thumb', '🎵')}</div>
+        <div class="item-details">
+          ${showGenre ? `<div class="item-tag" style="color: ${color};">${it.genres.join(' / ')}</div>` : ''}
+          <div class="item-title" style="font-weight: 700;">${it.title || t("Album sans titre")}</div>
+          <div class="item-sub">${[it.artist || t("Artiste inconnu"), it.year || ''].filter(Boolean).join(' · ')}</div>
+        </div>
+        ${badge}
+      </div>`;
+  };
+  const heading = (label, color) => `<div class="dc-separator albums-sep" style="${color ? `color: ${color};` : ''}"><span>${mbEscapeHTML(label)}</span></div>`;
+
+  let html = '<div class="list-container" style="padding-bottom: 90px;">';
+  html += `<div class="view-switch-row"><button type="button" class="view-switch" onclick="goToMinidiscsView()">${t("Vue Minidiscs")}</button></div>`;
+  if (items.length === 0) {
+    html += `<p style="text-align:center; padding: 40px; color: var(--text-sub);">${t("Aucun album trouvé.")}</p>`;
+  } else if (albumsSortMode === 'year') {
+    // Par année, tous genres confondus
+    items.sort(byYearThenTitle);
+    let last = null;
+    items.forEach(it => {
+      const y = it.year || 0;
+      if (y !== last) { html += heading(y ? String(y) : t("Année inconnue")); last = y; }
+      html += tile(it, true);
+    });
+  } else {
+    // Par genre, puis par année dans chaque genre
+    const groups = new Map();
+    items.forEach(it => { const g = primary(it); if (!groups.has(g)) groups.set(g, []); groups.get(g).push(it); });
+    const rank = g => { const i = genreOrder.indexOf(g); return i < 0 ? 999 : i; };
+    [...groups.keys()].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b)).forEach(g => {
+      html += heading(g, getSingleGenreColor(g));
+      groups.get(g).sort(byYearThenTitle).forEach(it => { html += tile(it, false); });
     });
   }
   html += '</div>';
@@ -4870,13 +5008,13 @@ function cloudLayout() {
   if (!W) return;
   // La hauteur profite de l'écran : le nuage descend presque jusqu'en bas
   const top = box.getBoundingClientRect().top + window.scrollY;
-  const H = Math.round(Math.max(440, Math.min(780, window.innerHeight - top - 22)));
+  const H = Math.round(Math.max(440, Math.min(780, window.innerHeight - top)));
   box.style.height = `${H}px`;
   const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
   const words = [...box.querySelectorAll('.cloud-word')];
   const rnd = cloudRng(cloudRun.seed);
   const placed = [];
-  const pad = 6, gap = 3;
+  const pad = 20, gap = 3;   // les mots restent à distance des bords : le ciel, lui, va jusqu'au bord de l'écran
   words.forEach(el => { el.classList.remove('is-placed'); el.style.display = ''; });
   words.slice().sort((a, b) => parseFloat(b.dataset.fs) - parseFloat(a.dataset.fs)).forEach(el => {
     const base = parseFloat(el.dataset.fs);
@@ -4940,6 +5078,17 @@ function cloudDrawMilkyWay(box, W, H) {
   };
   const path = `M${P[0].x.toFixed(1)},${P[0].y.toFixed(1)} C${P[1].x.toFixed(1)},${P[1].y.toFixed(1)} ${P[2].x.toFixed(1)},${P[2].y.toFixed(1)} ${P[3].x.toFixed(1)},${P[3].y.toFixed(1)}`;
 
+  // Deux nébuleuses diffuses, loin de la bande, pour que tout le fond vive
+  [[0.18, 0.22, 'n1'], [0.82, 0.78, 'n2']].forEach(([fx, fy, cls]) => {
+    const e = document.createElementNS(NS, 'ellipse');
+    e.setAttribute('class', `cloud-nebula ${cls}`);
+    e.setAttribute('cx', (fx * W).toFixed(1));
+    e.setAttribute('cy', (fy * H).toFixed(1));
+    e.setAttribute('rx', (W * 0.42).toFixed(1));
+    e.setAttribute('ry', (H * 0.2).toFixed(1));
+    svg.appendChild(e);
+  });
+
   // Lueur diffuse de la bande (trois épaisseurs floutées)
   [['cloud-milky-glow g1', 96], ['cloud-milky-glow g2', 52], ['cloud-milky-glow g3', 20]].forEach(([cls, w]) => {
     const p = document.createElementNS(NS, 'path');
@@ -4971,6 +5120,19 @@ function cloudDrawMilkyWay(box, W, H) {
     s.setAttribute('r', (0.3 + Math.pow(rnd(), 3) * 1.15).toFixed(2));
     s.setAttribute('fill', `rgba(${colors[Math.floor(rnd() * colors.length)]},${(0.22 + rnd() * 0.55 * (0.5 + core)).toFixed(2)})`);
     if (rnd() < 0.08) { s.classList.add('tw'); s.style.animationDelay = `${(rnd() * 4).toFixed(2)}s`; }
+    svg.appendChild(s);
+  }
+  // Étoiles éparpillées sur tout le ciel (hors de la bande aussi) : petites, presque toutes discrètes, quelques-unes plus brillantes
+  const FIELD = Math.round(Math.max(150, Math.min(420, (W * H) / 1900)));
+  for (let i = 0; i < FIELD; i++) {
+    const s = document.createElementNS(NS, 'circle');
+    const bright = rnd() < 0.04;
+    s.setAttribute('class', 'cloud-milky-star' + (bright ? ' big' : ''));
+    s.setAttribute('cx', (rnd() * W).toFixed(1));
+    s.setAttribute('cy', (rnd() * H).toFixed(1));
+    s.setAttribute('r', (bright ? 1.3 + rnd() * 0.8 : 0.3 + Math.pow(rnd(), 4) * 0.9).toFixed(2));
+    s.setAttribute('fill', `rgba(${colors[Math.floor(rnd() * colors.length)]},${(bright ? 0.9 : 0.2 + rnd() * 0.55).toFixed(2)})`);
+    if (rnd() < 0.07) { s.classList.add('tw'); s.style.animationDelay = `${(rnd() * 4).toFixed(2)}s`; }
     svg.appendChild(s);
   }
   box.insertBefore(svg, box.firstChild);

@@ -312,9 +312,17 @@
       </button>
       <div id="genres-submenu" class="fab-submenu fab-genre-submenu hidden"></div>
 
-      <button type="button" class="fab-item" onclick="toggleFabSubmenu('status-submenu');">
+      <button type="button" id="fab-status-btn" class="fab-item" onclick="toggleFabSubmenu('status-submenu');">
         <span>🎚️ Statut</span>
       </button>
+      <!-- Vue Albums : le tri Genre / Année prend la place du filtre « Statut » -->
+      <div id="fab-sort-switch" class="fab-sort hidden">
+        <span class="fab-sort-label">🔀 Tri</span>
+        <div class="fab-sort-seg">
+          <button type="button" id="fab-sort-genre" class="fab-sort-btn active" onclick="setAlbumsSort('genre', event)">Genre</button>
+          <button type="button" id="fab-sort-year" class="fab-sort-btn" onclick="setAlbumsSort('year', event)">Année</button>
+        </div>
+      </div>
       <div id="status-submenu" class="fab-submenu hidden">
         <div class="fab-genre-item" onclick="applyStatusFilter('all', event)"><span>Tous</span></div>
         <div class="fab-genre-item" onclick="applyStatusFilter('torecord', event)"><span>À enregistrer</span></div>
