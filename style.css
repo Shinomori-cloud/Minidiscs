@@ -4602,7 +4602,8 @@ body:has(.modal:not(.hidden)) #home-fab { display: none !important; }
 /* Constellation derrière les tags : points et fines lignes translucides */
 .cloud-lines { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
 .cloud-line { stroke: rgba(var(--c-d8b4fe), 0.3); stroke-width: 1; stroke-linecap: round; }
-.cloud-star { fill: rgba(255, 255, 255, 0.72); filter: drop-shadow(0 0 3px rgba(var(--c-d8b4fe), 0.9)); animation: cloud-twinkle 3.6s ease-in-out infinite; }
+.cloud-star-halo { fill: rgba(var(--c-d8b4fe), 0.2); }
+.cloud-star { fill: rgba(255, 255, 255, 0.78); animation: cloud-twinkle 3.6s ease-in-out infinite; }
 @keyframes cloud-twinkle { 0%, 100% { opacity: 0.9; } 50% { opacity: 0.35; } }
 @media (prefers-reduced-motion: reduce) { .cloud-star { animation: none; } }
 
@@ -4610,14 +4611,6 @@ body:has(.modal:not(.hidden)) #home-fab { display: none !important; }
 body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
 
 
-/* Voie lactée en fond du nuage */
-.cloud-milky { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
-.cloud-milky-glow { fill: none; stroke-linecap: round; }
-.cloud-milky-glow.g1 { stroke: rgba(var(--c-b57bff), 0.11); filter: blur(22px); }
-.cloud-milky-glow.g2 { stroke: rgba(var(--c-d8b4fe), 0.10); filter: blur(14px); }
-.cloud-milky-glow.g3 { stroke: rgba(255, 255, 255, 0.09); filter: blur(8px); }
-.cloud-milky-star.tw { animation: cloud-twinkle 4.2s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) { .cloud-milky-star.tw { animation: none; } }
 
 /* Modales et studio de covers : la bande d'image est plus haute et le titre est posé dessus */
 .modal .modal-header,
@@ -4649,20 +4642,10 @@ body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
 
 /* Constellation : le ciel s'étend jusqu'aux bords de l'écran (plus de cadre arrondi), ses bords haut et bas se fondent dans le fond */
 .cloud-box {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
   border-radius: 0;
   background: none;
 }
-body:has(#cloud-box) { overflow-x: hidden; }
-.cloud-milky {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
-}
-.cloud-nebula { stroke: none; filter: blur(34px); }
-.cloud-nebula.n1 { fill: rgba(var(--c-b57bff), 0.13); }
-.cloud-nebula.n2 { fill: rgba(var(--c-ff4fa3), 0.10); }
-.cloud-milky-star.big { filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.85)); }
+.cloud-sky { position: absolute; left: 0; top: 0; pointer-events: none; }
 
 
 /* Bouton discret « Vue Albums » / « Vue Minidiscs » sous le header */

@@ -1806,18 +1806,30 @@ function setAlbumsSort(mode, event) {
   if (currentPage && currentPage.key === 'albums') renderAlbumsList();
 }
 
+// Année d'un album : une année exacte (« 1994 »), inconnue (vide) ou approximative (« 200- » = les années 2000, sans plus de précision).
+// Les années approximatives passent en dernier (de la plus ancienne décennie à la plus récente) et gardent leur libellé tel quel.
+function albumYearInfo(raw) {
+  const s = String(raw == null ? '' : raw).trim();
+  if (/^\d{4}$/.test(s)) return { key: parseInt(s, 10), label: s };
+  if (!s) return { key: 9998, label: '' };
+  const m = s.match(/^(\d{2,3})\D+$/);
+  if (m) return { key: 10000 + parseInt(m[1].padEnd(3, '0'), 10), label: s };
+  const n = parseInt(s, 10);
+  return n ? { key: n, label: String(n) } : { key: 9998, label: s };
+}
+
 // Un « album » = chaque album d'une série ; un MiniDisc sans albums (compilation) compte pour un album à lui seul
 function collectAlbumItems() {
   const items = [];
   (catalogData || []).forEach((md, mdIndex) => {
     if (md.albums && md.albums.length > 0) {
       md.albums.forEach((album, aIndex) => items.push({
-        mdIndex, aIndex, title: album.title || '', artist: album.artist || '', year: parseInt(album.release_year, 10) || 0,
+        mdIndex, aIndex, title: album.title || '', artist: album.artist || '', year: albumYearInfo(album.release_year).key, yearLabel: albumYearInfo(album.release_year).label,
         genres: getAlbumGenres(album, md), cover: album.md_cover || md.md_cover || '', toRecord: !!album.toRecord, tracks: album.tracks || [],
       }));
     } else {
       items.push({
-        mdIndex, aIndex: null, title: md.title || '', artist: md.artist || '', year: parseInt(md.release_year, 10) || 0,
+        mdIndex, aIndex: null, title: md.title || '', artist: md.artist || '', year: albumYearInfo(md.release_year).key, yearLabel: albumYearInfo(md.release_year).label,
         genres: getMDAllGenres(md), cover: md.md_cover || '', toRecord: !!md.toRecord, tracks: md.tracks || [],
       });
     }
@@ -1829,7 +1841,7 @@ function albumMatchesSearch(it, query) {
   const q = String(query || '').toLowerCase().trim();
   if (!q) return true;
   if (it.title.toLowerCase().includes(q) || it.artist.toLowerCase().includes(q)) return true;
-  if (it.year && String(it.year).includes(q)) return true;
+  if (it.yearLabel && it.yearLabel.toLowerCase().includes(q)) return true;
   if (it.genres.some(g => g.toLowerCase().includes(q))) return true;
   return it.tracks.some(tr => String(tr).toLowerCase().includes(q));
 }
@@ -1862,7 +1874,7 @@ function renderAlbumsList() {
   }
   if (currentSearchQuery) items = items.filter(it => albumMatchesSearch(it, currentSearchQuery));
 
-  const byYearThenTitle = (a, b) => (a.year || 9999) - (b.year || 9999) || a.title.localeCompare(b.title);
+  const byYearThenTitle = (a, b) => a.year - b.year || a.title.localeCompare(b.title);
   const genreOrder = MAIN_GENRES.map(g => g.toUpperCase());
   const primary = it => (it.genres[0] || 'AUTRE').toUpperCase();
   const tile = (it, showGenre) => {
@@ -1875,7 +1887,7 @@ function renderAlbumsList() {
         <div class="item-details">
           ${showGenre ? `<div class="item-tag" style="color: ${color};">${it.genres.join(' / ')}</div>` : ''}
           <div class="item-title" style="font-weight: 700;">${it.title || t("Album sans titre")}</div>
-          <div class="item-sub">${[it.artist || t("Artiste inconnu"), it.year || ''].filter(Boolean).join(' · ')}</div>
+          <div class="item-sub">${[it.artist || t("Artiste inconnu"), it.yearLabel].filter(Boolean).join(' · ')}</div>
         </div>
         ${badge}
       </div>`;
@@ -1891,8 +1903,7 @@ function renderAlbumsList() {
     items.sort(byYearThenTitle);
     let last = null;
     items.forEach(it => {
-      const y = it.year || 0;
-      if (y !== last) { html += heading(y ? String(y) : t("Année inconnue")); last = y; }
+      if (it.year !== last) { html += heading(it.yearLabel || t("Année inconnue")); last = it.year; }
       html += tile(it, true);
     });
   } else {
@@ -5001,141 +5012,212 @@ function cloudRenderWords() {
 
 // Disposition « en vrac » : chaque mot est posé au hasard (tirage fixé par la graine), sans chevauchement,
 // légèrement incliné ; les plus gros d'abord. Un mot trop large est réduit jusqu'à tenir.
-function cloudLayout() {
+// Robustesse : le ciel prend la largeur de l'écran, la hauteur est fixée UNE fois par affichage (la barre d'adresse d'un
+// téléphone qui se masque ne relance pas tout), les mots ne sont jamais masqués pendant le calcul, et le fond ne peut pas
+// empêcher leur affichage s'il échoue.
+function cloudLayout(retry = 0) {
   const box = document.getElementById('cloud-box');
   if (!box) return;
+  const vw = document.documentElement.clientWidth || window.innerWidth;
+  const parent = box.parentElement;
+  const parentLeft = parent ? parent.getBoundingClientRect().left : 0;
+  box.style.marginLeft = `${-Math.round(parentLeft)}px`;
+  box.style.width = `${vw}px`;
   const W = box.clientWidth;
-  if (!W) return;
-  // La hauteur profite de l'écran : le nuage descend presque jusqu'en bas
-  const top = box.getBoundingClientRect().top + window.scrollY;
-  const H = Math.round(Math.max(440, Math.min(780, window.innerHeight - top)));
+  if (!W) { // page pas encore affichée : on réessaie à l'image suivante
+    if (retry < 40) requestAnimationFrame(() => cloudLayout(retry + 1));
+    return;
+  }
+  if (!box.dataset.h || box.dataset.w !== String(vw)) {
+    const top = box.getBoundingClientRect().top + window.scrollY;
+    box.dataset.h = String(Math.round(Math.max(440, Math.min(780, window.innerHeight - top))));
+    box.dataset.w = String(vw);
+  }
+  const H = parseInt(box.dataset.h, 10);
   box.style.height = `${H}px`;
   const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
   const words = [...box.querySelectorAll('.cloud-word')];
   const rnd = cloudRng(cloudRun.seed);
   const placed = [];
+  const spots = new Map();
   const pad = 20, gap = 3;   // les mots restent à distance des bords : le ciel, lui, va jusqu'au bord de l'écran
-  words.forEach(el => { el.classList.remove('is-placed'); el.style.display = ''; });
-  words.slice().sort((a, b) => parseFloat(b.dataset.fs) - parseFloat(a.dataset.fs)).forEach(el => {
-    const base = parseFloat(el.dataset.fs);
-    let fs = base * rem;
-    const vertical = base < 1.35 && rnd() < 0.16;                         // quelques petits mots à la verticale
-    const angle = vertical ? (rnd() < 0.5 ? -90 : 90) : Math.round((rnd() * 2 - 1) * (base > 1.7 ? 6 : 15));
-    const rad = angle * Math.PI / 180;
-    el.style.transform = 'none';
-    for (let shrink = 0; shrink < 9; shrink++) {
-      el.style.fontSize = `${fs}px`;
-      const w = el.offsetWidth, h = el.offsetHeight;
-      const bw = Math.abs(w * Math.cos(rad)) + Math.abs(h * Math.sin(rad));
-      const bh = Math.abs(w * Math.sin(rad)) + Math.abs(h * Math.cos(rad));
-      if (bw <= W - 2 * pad && bh <= H - 2 * pad) {
-        for (let tries = 0; tries < 500; tries++) {
-          const cx = pad + bw / 2 + rnd() * (W - 2 * pad - bw);
-          const cy = pad + bh / 2 + rnd() * (H - 2 * pad - bh);
-          const l = cx - bw / 2 - gap, r = cx + bw / 2 + gap, tp = cy - bh / 2 - gap, bt = cy + bh / 2 + gap;
-          if (placed.some(p => l < p.r && r > p.l && tp < p.b && bt > p.t)) continue;
-          placed.push({ l, r, t: tp, b: bt });
-          el.style.left = `${cx}px`;
-          el.style.top = `${cy}px`;
-          el.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
-          el.classList.add('is-placed');
-          return;
+  try {
+    words.slice().sort((a, b) => parseFloat(b.dataset.fs) - parseFloat(a.dataset.fs)).forEach(el => {
+      const base = parseFloat(el.dataset.fs);
+      let fs = base * rem;
+      const vertical = base < 1.35 && rnd() < 0.16;                         // quelques petits mots à la verticale
+      const angle = vertical ? (rnd() < 0.5 ? -90 : 90) : Math.round((rnd() * 2 - 1) * (base > 1.7 ? 6 : 15));
+      const rad = angle * Math.PI / 180;
+      el.style.transform = 'none';
+      for (let shrink = 0; shrink < 9; shrink++) {
+        el.style.fontSize = `${fs}px`;
+        const w = el.offsetWidth, h = el.offsetHeight;
+        const bw = Math.abs(w * Math.cos(rad)) + Math.abs(h * Math.sin(rad));
+        const bh = Math.abs(w * Math.sin(rad)) + Math.abs(h * Math.cos(rad));
+        if (bw <= W - 2 * pad && bh <= H - 2 * pad) {
+          for (let tries = 0; tries < 500; tries++) {
+            const cx = pad + bw / 2 + rnd() * (W - 2 * pad - bw);
+            const cy = pad + bh / 2 + rnd() * (H - 2 * pad - bh);
+            const l = cx - bw / 2 - gap, r = cx + bw / 2 + gap, tp = cy - bh / 2 - gap, bt = cy + bh / 2 + gap;
+            if (placed.some(p => l < p.r && r > p.l && tp < p.b && bt > p.t)) continue;
+            placed.push({ l, r, t: tp, b: bt });
+            spots.set(el, { cx, cy, angle });
+            return;
+          }
         }
+        fs *= 0.9;
       }
-      fs *= 0.9;
-    }
-    el.style.display = 'none'; // aucune place (très rare)
-  });
-  cloudDrawMilkyWay(box, W, H);
-  cloudDrawConstellation(box, W, H);
+    });
+    words.forEach(el => {
+      const s = spots.get(el);
+      if (!s) { el.style.display = 'none'; return; }   // aucune place (très rare)
+      el.style.display = '';
+      el.style.left = `${s.cx}px`;
+      el.style.top = `${s.cy}px`;
+      el.style.transform = `translate(-50%, -50%) rotate(${s.angle}deg)`;
+      el.classList.add('is-placed');
+    });
+  } catch (err) {
+    console.warn('Nuage : disposition de secours', err);
+    words.forEach((el, i) => {   // secours : les mots s'affichent quand même, en colonnes
+      el.style.display = '';
+      el.style.transform = 'translate(-50%, -50%)';
+      el.style.left = `${W * (0.25 + 0.5 * (i % 2))}px`;
+      el.style.top = `${30 + Math.floor(i / 2) * 36}px`;
+      el.classList.add('is-placed');
+    });
+  }
+  // Le fond (ciel, constellation) est un décor : s'il échoue, les mots restent visibles
+  try { cloudDrawConstellation(box, W, H); } catch (err) { console.warn('Constellation indisponible', err); }
+  try { cloudDrawSky(box, W, H); } catch (err) { console.warn('Ciel étoilé indisponible', err); }   // inséré en premier : derrière tout le reste
 }
 
-/* ---------- Voie lactée : un long « tapis » d'étoiles en fond, dense au centre de la bande et qui s'éclaircit sur les bords ---------- */
-function cloudDrawMilkyWay(box, W, H) {
-  box.querySelectorAll('.cloud-milky').forEach(e => e.remove());
-  const rnd = cloudRng(cloudRun.seed + 4242);
-  const NS = 'http://www.w3.org/2000/svg';
-  const svg = document.createElementNS(NS, 'svg');
-  svg.setAttribute('class', 'cloud-milky');
-  svg.setAttribute('width', W);
-  svg.setAttribute('height', H);
-  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svg.setAttribute('aria-hidden', 'true');
+// Un changement de largeur (rotation de l'écran...) redessine le nuage ; un simple changement de hauteur (barre d'adresse) non
+let cloudResizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(cloudResizeTimer);
+  cloudResizeTimer = setTimeout(() => {
+    const box = document.getElementById('cloud-box');
+    if (!box) return;
+    const vw = document.documentElement.clientWidth || window.innerWidth;
+    if (String(vw) !== box.dataset.w) { delete box.dataset.h; cloudLayout(); }
+  }, 200);
+});
 
-  // Axe de la bande : une courbe douce qui traverse tout le cadre en diagonale (sens et courbure tirés au hasard)
+/* ---------- Ciel étoilé : voie lactée + étoiles éparses, dessinés en UNE fois sur un canvas (léger pour le téléphone) ---------- */
+function cloudRgb(varName, fallback) {
+  const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  return /^\d+\s*,\s*\d+\s*,\s*\d+$/.test(v) ? v : fallback;
+}
+
+function cloudDrawSky(box, W, H) {
+  box.querySelectorAll('.cloud-sky').forEach(e => e.remove());
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const canvas = document.createElement('canvas');
+  canvas.className = 'cloud-sky';
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  canvas.style.width = `${W}px`;
+  canvas.style.height = `${H}px`;
+  canvas.setAttribute('aria-hidden', 'true');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  ctx.scale(dpr, dpr);
+  const rnd = cloudRng(cloudRun.seed + 4242);
+  const violet = cloudRgb('--c-b57bff', '181, 123, 255');
+  const lilac = cloudRgb('--c-d8b4fe', '216, 180, 254');
+  const pink = cloudRgb('--c-ff4fa3', '255, 79, 163');
+  const edge = y => Math.max(0, Math.min(1, y / (H * 0.12), (H - y) / (H * 0.12))); // fondu en haut et en bas
+
+  // Deux nébuleuses diffuses, loin de la bande
+  [[0.18, 0.24, violet, 0.15], [0.82, 0.76, pink, 0.11]].forEach(([fx, fy, rgb, a]) => {
+    ctx.save();
+    ctx.translate(fx * W, fy * H);
+    ctx.scale(1, (H * 0.2) / (W * 0.45));
+    const g = ctx.createRadialGradient(0, 0, 0, 0, 0, W * 0.45);
+    g.addColorStop(0, `rgba(${rgb},${a})`);
+    g.addColorStop(1, `rgba(${rgb},0)`);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(0, 0, W * 0.45, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  });
+
+  // Axe de la bande : courbe douce en diagonale (sens et courbure tirés au hasard)
   const flip = rnd() < 0.5;
-  const y = v => (flip ? 1 - v : v) * H;
+  const yy = v => (flip ? 1 - v : v) * H;
   const P = [
-    { x: -0.08 * W, y: y(0.78 + rnd() * 0.18) },
-    { x: 0.28 * W, y: y(0.46 + rnd() * 0.3) },
-    { x: 0.66 * W, y: y(0.18 + rnd() * 0.3) },
-    { x: 1.08 * W, y: y(0.02 + rnd() * 0.2) },
+    { x: -0.08 * W, y: yy(0.78 + rnd() * 0.18) },
+    { x: 0.28 * W, y: yy(0.46 + rnd() * 0.3) },
+    { x: 0.66 * W, y: yy(0.18 + rnd() * 0.3) },
+    { x: 1.08 * W, y: yy(0.02 + rnd() * 0.2) },
   ];
   const at = t => {
     const u = 1 - t;
     const b = [u * u * u, 3 * u * u * t, 3 * u * t * t, t * t * t];
     return { x: b[0] * P[0].x + b[1] * P[1].x + b[2] * P[2].x + b[3] * P[3].x, y: b[0] * P[0].y + b[1] * P[1].y + b[2] * P[2].y + b[3] * P[3].y };
   };
-  const path = `M${P[0].x.toFixed(1)},${P[0].y.toFixed(1)} C${P[1].x.toFixed(1)},${P[1].y.toFixed(1)} ${P[2].x.toFixed(1)},${P[2].y.toFixed(1)} ${P[3].x.toFixed(1)},${P[3].y.toFixed(1)}`;
 
-  // Deux nébuleuses diffuses, loin de la bande, pour que tout le fond vive
-  [[0.18, 0.22, 'n1'], [0.82, 0.78, 'n2']].forEach(([fx, fy, cls]) => {
-    const e = document.createElementNS(NS, 'ellipse');
-    e.setAttribute('class', `cloud-nebula ${cls}`);
-    e.setAttribute('cx', (fx * W).toFixed(1));
-    e.setAttribute('cy', (fy * H).toFixed(1));
-    e.setAttribute('rx', (W * 0.42).toFixed(1));
-    e.setAttribute('ry', (H * 0.2).toFixed(1));
-    svg.appendChild(e);
+  // Lueur de la bande : traits de moins en moins larges et de plus en plus lumineux, qui s'additionnent
+  ctx.lineCap = 'round';
+  // (beaucoup de traits très fins et très transparents : pas de marches visibles dans le dégradé)
+  Array.from({ length: 22 }, (_, k) => [128 - k * 5.5, k < 11 ? violet : (k < 18 ? lilac : '255,255,255'), 0.014 + k * 0.0006]).forEach(([w, rgb, a]) => {
+    ctx.strokeStyle = `rgba(${rgb},${a.toFixed(4)})`;
+    ctx.lineWidth = w;
+    ctx.beginPath();
+    ctx.moveTo(P[0].x, P[0].y);
+    ctx.bezierCurveTo(P[1].x, P[1].y, P[2].x, P[2].y, P[3].x, P[3].y);
+    ctx.stroke();
   });
 
-  // Lueur diffuse de la bande (trois épaisseurs floutées)
-  [['cloud-milky-glow g1', 96], ['cloud-milky-glow g2', 52], ['cloud-milky-glow g3', 20]].forEach(([cls, w]) => {
-    const p = document.createElementNS(NS, 'path');
-    p.setAttribute('class', cls);
-    p.setAttribute('d', path);
-    p.setAttribute('stroke-width', w);
-    svg.appendChild(p);
-  });
-
-  // Étoiles : réparties de part et d'autre de l'axe selon une loi « en cloche » (très serrées au milieu, éparses sur les bords)
-  const gauss = () => (rnd() + rnd() + rnd() + rnd() - 2) * 1.55; // ≈ loi normale réduite
   const colors = ['255,255,255', '255,255,255', '255,255,255', '216,190,255', '190,222,255', '255,236,205'];
+  const dot = (x, y, r, rgb, a) => {
+    if (a <= 0.01) return;
+    ctx.fillStyle = `rgba(${rgb},${a.toFixed(2)})`;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  };
+  // Étoiles de la bande : serrées au milieu, éparses sur les bords
+  const gauss = () => (rnd() + rnd() + rnd() + rnd() - 2) * 1.55;
   const STARS = Math.round(Math.max(380, Math.min(760, (W * H) / 380)));
   for (let i = 0; i < STARS; i++) {
     const t = rnd();
     const c = at(t), c2 = at(Math.min(1, t + 0.01));
     const dx = c2.x - c.x, dy = c2.y - c.y, len = Math.hypot(dx, dy) || 1;
-    const nx = -dy / len, ny = dx / len;                   // normale à l'axe
-    const spread = 20 + 20 * Math.sin(t * Math.PI);        // la bande est plus large vers son milieu
-    const off = gauss() * spread;
-    const along = (rnd() - 0.5) * 6;
-    const x = c.x + nx * off + (dx / len) * along, y2 = c.y + ny * off + (dy / len) * along;
-    if (x < -4 || x > W + 4 || y2 < -4 || y2 > H + 4) continue;
-    const core = Math.max(0, 1 - Math.abs(off) / (spread * 1.6)); // 1 au centre de la bande, 0 sur les bords
-    const s = document.createElementNS(NS, 'circle');
-    s.setAttribute('class', 'cloud-milky-star');
-    s.setAttribute('cx', x.toFixed(1));
-    s.setAttribute('cy', y2.toFixed(1));
-    s.setAttribute('r', (0.3 + Math.pow(rnd(), 3) * 1.15).toFixed(2));
-    s.setAttribute('fill', `rgba(${colors[Math.floor(rnd() * colors.length)]},${(0.22 + rnd() * 0.55 * (0.5 + core)).toFixed(2)})`);
-    if (rnd() < 0.08) { s.classList.add('tw'); s.style.animationDelay = `${(rnd() * 4).toFixed(2)}s`; }
-    svg.appendChild(s);
+    const spread = 20 + 20 * Math.sin(t * Math.PI);
+    const off = gauss() * spread, along = (rnd() - 0.5) * 6;
+    const x = c.x + (-dy / len) * off + (dx / len) * along, y = c.y + (dx / len) * off + (dy / len) * along;
+    if (x < -4 || x > W + 4 || y < -4 || y > H + 4) continue;
+    const core = Math.max(0, 1 - Math.abs(off) / (spread * 1.6));
+    const r = 0.3 + Math.pow(rnd(), 3) * 1.15;
+    dot(x, y, r, colors[Math.floor(rnd() * colors.length)], (0.22 + rnd() * 0.55 * (0.5 + core)) * edge(y));
   }
-  // Étoiles éparpillées sur tout le ciel (hors de la bande aussi) : petites, presque toutes discrètes, quelques-unes plus brillantes
+  // Étoiles éparpillées sur tout le ciel, quelques-unes plus brillantes
   const FIELD = Math.round(Math.max(150, Math.min(420, (W * H) / 1900)));
   for (let i = 0; i < FIELD; i++) {
-    const s = document.createElementNS(NS, 'circle');
+    const x = rnd() * W, y = rnd() * H;
     const bright = rnd() < 0.04;
-    s.setAttribute('class', 'cloud-milky-star' + (bright ? ' big' : ''));
-    s.setAttribute('cx', (rnd() * W).toFixed(1));
-    s.setAttribute('cy', (rnd() * H).toFixed(1));
-    s.setAttribute('r', (bright ? 1.3 + rnd() * 0.8 : 0.3 + Math.pow(rnd(), 4) * 0.9).toFixed(2));
-    s.setAttribute('fill', `rgba(${colors[Math.floor(rnd() * colors.length)]},${(bright ? 0.9 : 0.2 + rnd() * 0.55).toFixed(2)})`);
-    if (rnd() < 0.07) { s.classList.add('tw'); s.style.animationDelay = `${(rnd() * 4).toFixed(2)}s`; }
-    svg.appendChild(s);
+    const rgb = colors[Math.floor(rnd() * colors.length)];
+    if (bright) {
+      const r = 1.3 + rnd() * 0.8;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r * 5);
+      g.addColorStop(0, `rgba(255,255,255,${(0.5 * edge(y)).toFixed(2)})`);
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(x, y, r * 5, 0, Math.PI * 2); ctx.fill();
+      dot(x, y, r, rgb, 0.95 * edge(y));
+    } else {
+      dot(x, y, 0.3 + Math.pow(rnd(), 4) * 0.9, rgb, (0.2 + rnd() * 0.55) * edge(y));
+    }
   }
-  box.insertBefore(svg, box.firstChild);
+  // Fondu en haut et en bas du ciel (lueurs comprises) : aucun bord net, même contre la tuile des filtres
+  ctx.globalCompositeOperation = 'destination-out';
+  const fade = ctx.createLinearGradient(0, 0, 0, H);
+  fade.addColorStop(0, 'rgba(0,0,0,1)');
+  fade.addColorStop(0.12, 'rgba(0,0,0,0)');
+  fade.addColorStop(0.88, 'rgba(0,0,0,0)');
+  fade.addColorStop(1, 'rgba(0,0,0,1)');
+  ctx.fillStyle = fade;
+  ctx.fillRect(0, 0, W, H);
+  box.insertBefore(canvas, box.firstChild);
 }
 
 /* ---------- Constellation : un point derrière chaque tag, des lignes entre tags proches (sans jamais se croiser) ---------- */
@@ -5226,10 +5308,16 @@ function cloudDrawConstellation(box, W, H) {
   });
   const rnd = cloudRng(cloudRun.seed + 99);
   nodes.forEach(nd => {
+    const rr = 1.8 + Math.max(0, Math.min(1, (nd.fs - 0.9) / 1.7)) * 2.4;
+    const halo = document.createElementNS(NS, 'circle');
+    halo.setAttribute('class', 'cloud-star-halo');
+    halo.setAttribute('cx', nd.x.toFixed(1)); halo.setAttribute('cy', nd.y.toFixed(1));
+    halo.setAttribute('r', (rr * 2.6).toFixed(1));
+    svg.appendChild(halo);
     const c = document.createElementNS(NS, 'circle');
     c.setAttribute('class', 'cloud-star');
     c.setAttribute('cx', nd.x.toFixed(1)); c.setAttribute('cy', nd.y.toFixed(1));
-    c.setAttribute('r', (1.8 + Math.max(0, Math.min(1, (nd.fs - 0.9) / 1.7)) * 2.4).toFixed(1));
+    c.setAttribute('r', rr.toFixed(1));
     c.style.animationDelay = `${(rnd() * 3).toFixed(2)}s`;
     c.style.animationDuration = `${(2.8 + rnd() * 2.4).toFixed(2)}s`;
     svg.appendChild(c);
