@@ -4983,7 +4983,6 @@
     {
       "id": "md-1792272538932",
       "md_cover": "images/img_1792272536862.jpg",
-      "title": "Sah Hill / Opéra Puccino",
       "albums": [
         {
           "id": "md-1792272538932-alb-1",
@@ -5001,7 +5000,7 @@
             "electronic",
             "world"
           ],
-          "release_year": "",
+          "release_year": "1997",
           "duration": "1:18:31",
           "tracks": [],
           "toRecord": true
@@ -5043,7 +5042,8 @@
           ],
           "toRecord": true
         }
-      ]
+      ],
+      "title": "Sah Hill / Opéra Puccino"
     },
     {
       "id": "md-1792414455103",
