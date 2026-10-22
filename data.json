@@ -5906,6 +5906,35 @@
         "Rodéo / Mc Enroe folk"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1792645879864",
+      "md_cover": "images/img_1792645878126.jpg",
+      "title": "Aéromusical",
+      "artist": "Superbus",
+      "main_genre": "Pop & Folk & Variety",
+      "tags": [
+        "pop",
+        "pop rock",
+        "rock"
+      ],
+      "release_year": "2002",
+      "duration": "37:15",
+      "tracks": [
+        "Je reste encore",
+        "Superstar (single version)",
+        "Tchi Cum Bah",
+        "Le Soleil",
+        "Le Loup",
+        "Aeromusical (single version)",
+        "Something Wrong",
+        "Ennemie",
+        "A travers toi",
+        "Into the Groove",
+        "Helping Hand",
+        "Sans décrocher"
+      ],
+      "toRecord": false
     }
   ]
 }
