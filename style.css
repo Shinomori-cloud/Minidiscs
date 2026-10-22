@@ -4255,7 +4255,7 @@ body:has(.modal:not(.hidden)) .selection-bar {
 
 
 /* Planificateur : capacité du MiniDisc (74 / 80 min), discrète à droite de la durée */
-.planner-capacity { display: inline-flex; align-items: baseline; gap: 2px; font-size: 0.68rem; font-weight: 600; color: var(--text-sub); opacity: 0.8; white-space: nowrap; }
+.planner-capacity { display: inline-flex; align-items: baseline; gap: 2px; font-size: 0.62rem; font-weight: 600; color: var(--text-sub); opacity: 0.8; white-space: nowrap; }
 .planner-capacity-btn { padding: 0 2px; margin: 0; border: none; background: none; box-shadow: none; font-size: 0.8rem; line-height: 1; cursor: pointer; opacity: 0.85; }
 .planner-capacity-btn:active { transform: rotate(180deg); }
 
@@ -4649,7 +4649,13 @@ body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
 
 
 /* Bouton discret « Vue Albums » / « Vue Minidiscs » sous le header */
-.view-switch-row { display: flex; justify-content: flex-end; margin: 0 2px 10px; }
+.view-switch-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 2px 10px; }
+.count-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0 7px; min-width: 0; }
+.count-chip { padding: 3px 0; margin: 0; background: none; border: none; box-shadow: none; font-family: var(--font-ui); font-size: 0.78rem; font-weight: 700; line-height: 1.2; cursor: pointer; touch-action: manipulation; }
+.count-chip.count-total { color: var(--text-main); padding-right: 7px; border-right: 1px solid rgba(255, 255, 255, 0.25); }
+.count-chip.active { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.count-chip:active { transform: scale(0.92); }
+.view-switch { flex: none; padding: 4px 10px; }
 .view-switch {
   padding: 4px 12px;
   margin: 0;
@@ -4667,9 +4673,9 @@ body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
 .view-switch:active { transform: scale(0.96); }
 
 /* Vue Albums : mêmes tuiles que la liste d'albums d'un MiniDisc, mais plus resserrées en hauteur */
-.list-item.list-item-compact { padding: 8px 12px; gap: 12px; margin-bottom: 9px; }
+.list-item.list-item-compact { padding: 11px 12px; gap: 12px; margin-bottom: 13px; }
 .list-item-compact .album-cover-container { margin: 0 !important; display: block !important; flex: none; }
-.list-item-compact .album-thumb { width: 62px; height: 62px; box-shadow: 2px 2px 0px #000000; }
+.list-item-compact .album-thumb { width: 64px; height: 64px; box-shadow: 2px 2px 0px #000000; }
 .list-item-compact .now-loading-text { font-size: 0.42rem !important; letter-spacing: 0 !important; }
 .list-item-compact .item-details { gap: 1px; min-width: 0; }
 .list-item-compact .item-tag { font-size: 0.6rem; line-height: 1.3; }
@@ -4696,3 +4702,24 @@ body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
   cursor: pointer;
 }
 .fab-sort-btn.active { background: rgba(var(--c-b57bff), 0.45); color: #ffffff; border-color: rgba(var(--c-d8b4fe), 0.8); }
+
+
+/* Planificateur : loupe sous le rouage (albums similaires) ; plus de bande floue sous les jaquettes, le texte reste lisible grâce aux ombres */
+.idea-delete-btn.idea-search-btn { top: 40px; }
+.idea-info {
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-top: 0;
+}
+.idea-title, .idea-artist, .idea-duration {
+  text-shadow: 0 1px 2px #000000, 0 0 5px rgba(0, 0, 0, 0.95), 0 0 12px rgba(0, 0, 0, 0.85), 0 0 22px rgba(0, 0, 0, 0.6);
+}
+
+/* Petits écrans : nombres un peu plus serrés pour rester sur une seule ligne avec le bouton « Vue… » */
+@media (max-width: 390px) {
+  .count-row { gap: 0 5px; }
+  .count-chip { font-size: 0.7rem; }
+  .count-chip.count-total { padding-right: 5px; }
+  .view-switch { font-size: 0.68rem; padding: 4px 8px; }
+}

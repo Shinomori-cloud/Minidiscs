@@ -1724,7 +1724,9 @@ if (genre && genre !== 'ALL') {
 
   setCatalogFabMode('md');
   let html = '<div class="list-container" style="padding-bottom: 90px;">';
-  html += `<div class="view-switch-row"><button type="button" class="view-switch" onclick="goToAlbumsView()">${t("Vue Albums")}</button></div>`;
+  html += `<div class="view-switch-row"><div class="count-row">${catalogCountsHTML((catalogData || []).map(md => getMDAllGenres(md)))}</div><button type="button" class="view-switch" onclick="goToAlbumsView()">${t("Vue Albums")}</button></div>`;
+  // Même départ que la vue Albums (qui commence par un titre de genre ou d'année) : un titre invisible occupe la place
+  html += '<div class="dc-separator albums-sep" style="visibility: hidden;" aria-hidden="true"><span>&nbsp;</span></div>';
   
   if (shuffledCatalog.length === 0) {
     html += `<p style="text-align:center; padding: 40px; color: var(--text-sub);">${t("Aucun MiniDisc trouvé.")}</p>`;
@@ -1785,6 +1787,25 @@ let albumsSortMode = (() => {
 
 function goToAlbumsView() { navigateTo({ key: 'albums' }); }
 function goToMinidiscsView() { navigateTo({ key: 'list' }); }
+
+// Nombres en tête de liste : le total, puis un nombre par genre (dans la couleur du genre). Un nombre filtre ce genre ;
+// un second clic (ou le total) retire le filtre.
+function catalogCountsHTML(genreLists) {
+  const key = g => String(g).trim().toLowerCase();
+  const active = currentGenreFilter && currentGenreFilter !== 'ALL' ? key(currentGenreFilter) : '';
+  let html = `<button type="button" class="count-chip count-total${active ? '' : ' active'}" title="${t("Tous les genres")}" onclick="toggleGenreFromCount('ALL')">${genreLists.length}</button>`;
+  MAIN_GENRES.forEach(g => {
+    const n = genreLists.filter(list => list.some(x => key(x) === key(g))).length;
+    if (!n) return;
+    const upper = g.toUpperCase();
+    html += `<button type="button" class="count-chip${active === key(g) ? ' active' : ''}" style="color: ${getSingleGenreColor(upper)};" data-genre="${mbEscapeHTML(upper)}" title="${mbEscapeHTML(g)}" onclick="toggleGenreFromCount(this.dataset.genre)">${n}</button>`;
+  });
+  return html;
+}
+function toggleGenreFromCount(genre) {
+  const same = genre !== 'ALL' && currentGenreFilter && currentGenreFilter.trim().toLowerCase() === genre.trim().toLowerCase();
+  selectGenreFilter(genre === 'ALL' || same ? 'ALL' : genre);
+}
 
 // Menu flottant : en vue Albums, « Statut » laisse la place au tri Genre / Année
 function setCatalogFabMode(mode) {
@@ -1895,7 +1916,7 @@ function renderAlbumsList() {
   const heading = (label, color) => `<div class="dc-separator albums-sep" style="${color ? `color: ${color};` : ''}"><span>${mbEscapeHTML(label)}</span></div>`;
 
   let html = '<div class="list-container" style="padding-bottom: 90px;">';
-  html += `<div class="view-switch-row"><button type="button" class="view-switch" onclick="goToMinidiscsView()">${t("Vue Minidiscs")}</button></div>`;
+  html += `<div class="view-switch-row"><div class="count-row">${catalogCountsHTML(collectAlbumItems().map(it => it.genres))}</div><button type="button" class="view-switch" onclick="goToMinidiscsView()">${t("Vue Minidiscs")}</button></div>`;
   if (items.length === 0) {
     html += `<p style="text-align:center; padding: 40px; color: var(--text-sub);">${t("Aucun album trouvé.")}</p>`;
   } else if (albumsSortMode === 'year') {
@@ -3129,6 +3150,17 @@ function clearPlannerHeaderInfo() {
   }
 }
 
+// 🔍 d'une tuile du planificateur : recherche d'albums similaires à cet album (recherche par album, lancée tout de suite)
+function searchSimilarFromIdea(index) {
+  const idea = getIdeaList()[index];
+  if (!idea) return;
+  const p = new URLSearchParams();
+  p.set('album', idea.title || '');
+  if (idea.artist && !/divers|various/i.test(idea.artist)) p.set('artist', idea.artist);
+  p.set('auto', '1');
+  goToDiscoverResults(p);
+}
+
 function injectPlannerHeaderBadge() {
   const header = document.querySelector('header') || document.querySelector('.header');
   if (!header || document.getElementById('header-planner-badge')) return;
@@ -3144,10 +3176,10 @@ function injectPlannerHeaderBadge() {
   `;
   
   badge.innerHTML = `
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px;">
-      <span style="font-size: 0.76rem; font-weight: bold; color: var(--text-main);">${t("Durée sélectionnée :")}</span>
-      <div style="display: flex; align-items: baseline; gap: 8px; margin-left: auto;">
-        <strong id="planner-duration-text" style="font-family: var(--font-ui); font-weight: 700; font-size: 0.95rem; color: #06d6a0;">0m 00s / ${plannerMaxLabel()}</strong>
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 8px;">
+      <span style="flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.66rem; font-weight: bold; color: var(--text-main);">${t("Durée sélectionnée :")}</span>
+      <div style="flex: none; display: flex; align-items: baseline; gap: 6px; white-space: nowrap;">
+        <strong id="planner-duration-text" style="font-family: var(--font-ui); font-weight: 700; font-size: 0.8rem; color: #06d6a0; white-space: nowrap;">0m 00s / ${plannerMaxLabel()}</strong>
         <span class="planner-capacity" title="${t("Capacité du MiniDisc (touche pour passer de 74 à 80 min)")}">
           <span id="planner-capacity-label">${plannerCapacityMin}min</span>
           <button type="button" class="planner-capacity-btn" onclick="togglePlannerCapacity()" aria-label="${t("Changer la capacité du MiniDisc (74 ou 80 min)")}">🔄</button>
@@ -3238,6 +3270,7 @@ function renderCompilPlanner(pushState = true) {
               </div>
             </div>
             <button type="button" class="idea-delete-btn" data-settings="${index}" aria-label="${t("Paramètres de l'idée")}">⚙️</button>
+            <button type="button" class="idea-delete-btn idea-search-btn" data-similar="${index}" aria-label="${t("Albums similaires")}" title="${t("Albums similaires")}">🔍</button>
           </div>
         `;
       }).join('');
@@ -3266,6 +3299,12 @@ function renderCompilPlanner(pushState = true) {
     const gridContainer = document.getElementById('ideas-grid-container');
     if (gridContainer) {
       gridContainer.addEventListener('click', (e) => {
+        const similarBtn = e.target.closest('[data-similar]');
+        if (similarBtn) {
+          e.stopPropagation();
+          searchSimilarFromIdea(parseInt(similarBtn.getAttribute('data-similar'), 10));
+          return;
+        }
         const settingsBtn = e.target.closest('[data-settings]');
         if (settingsBtn) {
           e.stopPropagation();
@@ -5331,11 +5370,13 @@ window.addEventListener('resize', () => {
 
 /* ---------- Albums d'un tag ---------- */
 const TAG_BATCH = 8;
+const TAG_FIRST_BATCH = 4;     // premier lot MusicBrainz : petit, pour que les premiers albums apparaissent vite
+const TAG_BATCH_SIZE = 8;      // lots suivants : 8 albums par requête MusicBrainz
 const TAG_SEEN_KEY = 'minidisc_tag_seen';   // artistes déjà montrés lors de recherches précédentes (pour privilégier la découverte)
 const TAG_SEEN_MAX = 200;
 const TAGS = { key: '', tag: '', yearMin: 0, yearMax: 0, candidates: [], cursor: 0, lfmPage: 0, lfmDone: false,
   items: [], target: TAG_BATCH, done: false, checked: 0, run: 0, scanRun: -1, error: '',
-  shown: new Set(), known: new Set(), reserve: [], pending: null };
+  shown: new Set(), known: new Set(), reserve: [], pendingBatch: null };
 const tagMbCache = new Map(); // clé d'album -> { year, mbid, isAlbum }
 
 function tagSeenList() {
@@ -5358,7 +5399,7 @@ function tagResetState(tag) {
   Object.assign(TAGS, { key: `${mbNormalize(tag)}|${cloudState.yearMin}|${cloudState.yearMax}`, tag,
     yearMin: cloudState.yearMin, yearMax: cloudState.yearMax, candidates: [], cursor: 0, lfmPage: 0, lfmDone: false,
     items: [], target: TAG_BATCH, done: false, checked: 0, scanRun: -1, error: '',
-    shown: new Set(), known, reserve: [], pending: null });
+    shown: new Set(), known, reserve: [], pendingBatch: null });
 }
 
 function renderTagResults(page) {
@@ -5416,7 +5457,7 @@ function tagUpdateStatus() {
 async function tagFetchCandidates() {
   const S = TAGS;
   S.lfmPage++;
-  const data = await lastfmCall('tag.getTopAlbums', { tag: S.tag, limit: 50, page: S.lfmPage });
+  const data = await lastfmCall('tag.getTopAlbums', { tag: S.tag, limit: 100, page: S.lfmPage });
   const list = asArray(data && data.albums && data.albums.album);
   const seen = new Set(S.candidates.map(c => c.key));
   list.forEach(a => {
@@ -5429,7 +5470,7 @@ async function tagFetchCandidates() {
     seen.add(key);
     S.candidates.push({ key, artist, title, image: lfmImage(a.image) });
   });
-  if (list.length < 50 || S.lfmPage >= 6) S.lfmDone = true;
+  if (list.length < 100 || S.lfmPage >= 4) S.lfmDone = true;
 }
 
 // Prochain album à vérifier. Pour découvrir : d'abord un seul album par artiste, et seulement des artistes inédits
@@ -5446,31 +5487,109 @@ function tagNextCandidate() {
   return null;
 }
 
-// Dans la réserve : d'abord les artistes les moins représentés, puis ceux que l'on connaît déjà le moins, puis le classement Last.fm
-function tagTakeFromReserve() {
+// Dans la réserve : d'abord les artistes les moins représentés, puis ceux que l'on connaît déjà le moins, puis le classement Last.fm.
+// `exclude` : artistes déjà pris dans le lot en cours (un seul album par artiste et par lot)
+function tagTakeFromReserve(exclude) {
   const S = TAGS;
-  if (S.reserve.length === 0) return null;
   const shownCount = a => S.items.filter(it => mbNormalize(it.artist) === a).length;
-  let best = 0, bestScore = null;
+  let best = -1, bestScore = null;
   S.reserve.forEach((c, i) => {
     const a = mbNormalize(c.artist);
+    if (exclude && exclude.has(a)) return;
     const score = [shownCount(a), S.known.has(a) ? 1 : 0, i];
     if (!bestScore || score[0] < bestScore[0] || (score[0] === bestScore[0] && (score[1] < bestScore[1] || (score[1] === bestScore[1] && score[2] < bestScore[2])))) { best = i; bestScore = score; }
   });
-  return S.reserve.splice(best, 1)[0];
+  return best < 0 ? null : S.reserve.splice(best, 1)[0];
 }
 
-// Année de sortie d'un album (MusicBrainz), mémorisée
+// Année d'un album (MusicBrainz), mémorisée : en mémoire pendant la session ET sur l'appareil (les albums d'un tag reviennent
+// souvent dans un autre tag : la deuxième recherche est presque instantanée)
+const TAG_YEARS_KEY = 'minidisc_tag_years';
+const TAG_YEARS_MAX = 2000;
+let tagYearsLoaded = false;
+let tagYearsSaveTimer = null;
+function tagYearsLoad() {
+  if (tagYearsLoaded) return;
+  tagYearsLoaded = true;
+  try {
+    const o = JSON.parse(localStorage.getItem(TAG_YEARS_KEY) || '{}');
+    Object.keys(o).forEach(k => { const v = o[k]; if (Array.isArray(v) && v[0]) tagMbCache.set(k, { year: v[0], isAlbum: !!v[1], mbid: v[2] || '' }); });
+  } catch (e) { /* cache vide */ }
+}
+function tagYearsSaveSoon() {
+  clearTimeout(tagYearsSaveTimer);
+  tagYearsSaveTimer = setTimeout(() => {
+    try {
+      const entries = [...tagMbCache.entries()].filter(([, v]) => v.year).slice(-TAG_YEARS_MAX);
+      const o = {};
+      entries.forEach(([k, v]) => { o[k] = [v.year, v.isAlbum ? 1 : 0, v.mbid || '']; });
+      localStorage.setItem(TAG_YEARS_KEY, JSON.stringify(o));
+    } catch (e) { /* stockage plein : sans mémoire durable */ }
+  }, 1500);
+}
+
+function tagInfoFromGroup(group) {
+  return group
+    ? { year: discoverYearOf(group), mbid: group.id || '', isAlbum: discoverSectionOf(group).includes('albums') }
+    : { year: null, mbid: '', isAlbum: true };
+}
+
+// Un seul album (repli)
 async function tagLookup(c) {
   if (tagMbCache.has(c.key)) return tagMbCache.get(c.key);
   const tokens = mbQueryTokens(`${c.artist} ${c.title}`);
-  const group = mbFilterAndRank(await mbSearchReleaseGroups(tokens, 'and'), tokens, 1)[0];
-  const info = group
-    ? { year: discoverYearOf(group), mbid: group.id || '', isAlbum: discoverSectionOf(group).includes('albums') }
-    : { year: null, mbid: '', isAlbum: true };
+  const info = tagInfoFromGroup(mbFilterAndRank(await mbSearchReleaseGroups(tokens, 'and'), tokens, 1)[0]);
   tagMbCache.set(c.key, info);
   discoverAlbumYears.set(c.key, info.year || '');
+  tagYearsSaveSoon();
   return info;
+}
+
+// Tout un lot d'albums en UNE requête MusicBrainz : (artiste ET titre) OU (artiste ET titre) OU ...
+// MusicBrainz ne tolère qu'une requête par seconde : au lieu d'une requête par album, on en fait une pour 8 ou 10 albums.
+async function tagLookupBatch(cands) {
+  const todo = cands.filter(c => !tagMbCache.has(c.key));
+  if (todo.length === 0) return;
+  const core = todo.map(c => {
+    const tokens = mbQueryTokens(`${c.artist} ${c.title}`);
+    return '(' + tokens.map(tok => `(artist:(${tok}) OR releasegroup:(${tok}))`).join(' AND ') + ')';
+  }).join(' OR ');
+  const query = `(${core}) AND (primarytype:Album OR primarytype:EP)` +
+    ` AND NOT (secondarytype:Remix OR secondarytype:"DJ-mix" OR secondarytype:Demo OR secondarytype:Audiobook OR secondarytype:"Audio drama" OR secondarytype:Interview)`;
+  let groups;
+  try {
+    const data = await mbFetchJson(`${MB_API}/release-group/?query=${encodeURIComponent(query)}&fmt=json&limit=100`);
+    groups = asArray(data && data['release-groups']);
+  } catch (err) {
+    if (err && err.rateLimited) throw err;
+    for (const c of todo) { try { await tagLookup(c); } catch (e2) { if (e2 && e2.rateLimited) throw e2; } } // repli : un par un
+    return;
+  }
+  const saturated = groups.length >= 100; // réponse pleine : certains albums ont pu être « noyés » dans les résultats
+  for (const c of todo) {
+    const tokens = mbQueryTokens(`${c.artist} ${c.title}`);
+    const group = mbFilterAndRank(groups, tokens, 1)[0];
+    if (!group && saturated) { try { await tagLookup(c); } catch (e3) { if (e3 && e3.rateLimited) throw e3; } continue; }
+    const info = tagInfoFromGroup(group);
+    tagMbCache.set(c.key, info);
+    discoverAlbumYears.set(c.key, info.year || '');
+  }
+  tagYearsSaveSoon();
+}
+
+// Prochain lot d'albums à vérifier (artistes inédits d'abord ; le premier lot est petit pour afficher vite les premiers résultats)
+function tagNextBatch(size) {
+  const batch = [];
+  let c;
+  while (batch.length < size && (c = tagNextCandidate())) batch.push(c);
+  return batch;
+}
+function tagReserveBatch(size) {
+  const batch = [];
+  const artists = new Set();
+  let c;
+  while (batch.length < size && (c = tagTakeFromReserve(artists))) { batch.push(c); artists.add(mbNormalize(c.artist)); }
+  return batch;
 }
 
 async function tagScan() {
@@ -5481,6 +5600,7 @@ async function tagScan() {
     tagUpdateStatus();
     return;
   }
+  tagYearsLoad();
   const run = S.run;
   S.scanRun = run;
   S.error = '';
@@ -5488,32 +5608,36 @@ async function tagScan() {
   try {
     while (S.run === run && S.items.length < S.target) {
       if (!document.getElementById('tag-page')) break; // page quittée : on met en pause (la reprise se fait au retour)
-      let c = S.pending || tagNextCandidate();
-      if (!c) {
-        if (!S.lfmDone) { await tagFetchCandidates(); continue; }   // d'abord tous les artistes inédits...
-        c = tagTakeFromReserve();                                   // ... puis, faute de mieux, d'autres albums des mêmes artistes
-        if (!c) { S.done = true; break; }
+      let batch = S.pendingBatch;
+      if (!batch) {
+        batch = tagNextBatch(S.checked === 0 ? TAG_FIRST_BATCH : TAG_BATCH_SIZE);
+        if (batch.length === 0) {
+          if (!S.lfmDone) { await tagFetchCandidates(); continue; }       // d'abord tous les artistes inédits...
+          batch = tagReserveBatch(TAG_BATCH_SIZE);                        // ... puis d'autres albums des mêmes artistes, faute de mieux
+          if (batch.length === 0) { S.done = true; break; }
+        }
       }
-      S.pending = c;
-      let info;
+      S.pendingBatch = batch;
       try {
-        info = await tagLookup(c);
+        await tagLookupBatch(batch);
       } catch (err) {
-        if (err && err.rateLimited) { await new Promise(r => setTimeout(r, 5000)); continue; } // MusicBrainz sature : on réessaie le même album
-        info = { year: null, mbid: '', isAlbum: false };
+        if (err && err.rateLimited) { await new Promise(r => setTimeout(r, 5000)); continue; } // MusicBrainz sature : on réessaie le même lot
+        // autre erreur : les albums du lot restent « inconnus » et on passe à la suite
       }
       if (S.run !== run) break;
-      S.pending = null;
-      S.checked++;
-      if (info.isAlbum && info.year && info.year >= S.yearMin && info.year <= S.yearMax) {
-        S.shown.add(mbNormalize(c.artist));
+      S.pendingBatch = null;
+      for (const c of batch) {
+        S.checked++;
+        const info = tagMbCache.get(c.key) || { year: null, mbid: '', isAlbum: false };
+        if (!(info.isAlbum && info.year && info.year >= S.yearMin && info.year <= S.yearMax)) continue;
+        const a = mbNormalize(c.artist);
+        if (S.shown.has(a)) { S.reserve.push(c); continue; }              // même artiste déjà retenu : on le garde en réserve
+        S.shown.add(a);
         tagRememberArtist(c.artist);
         S.items.push({ key: c.key, artist: c.artist, title: c.title, year: info.year, mbid: info.mbid, image: c.image,
           primary: '', secondary: [], playcount: 0, tags: [S.tag], mainGenre: cloudState.genre, mbGroup: null, idx: S.items.length });
-        tagRenderList();
-      } else {
-        tagUpdateStatus();
       }
+      tagRenderList();   // les résultats s'affichent par paquets, au fil de la recherche
     }
   } catch (err) {
     console.warn('Recherche par tag :', err);
@@ -7870,10 +7994,12 @@ function renderDiscover(params) {
   s.disco = null;
 
   let autoStart = false;
-  if (params && ['artist', 'genre', 'year', 'artists'].some(k => params.get(k))) {
+  if (params && ['artist', 'genre', 'year', 'artists', 'album'].some(k => params.get(k))) {
     s.runId++; // annule une éventuelle recherche précédente
     s.criteria = {
       ...DISCOVER_DEFAULTS,
+      kind: params.get('album') ? 'album' : 'artist',   // un album fourni : recherche par album
+      album: params.get('album') || '',
       artist: params.get('artist') || '',
     };
     s.chips = (params.get('artists') || '').split('|').filter(Boolean);
