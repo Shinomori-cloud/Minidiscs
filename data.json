@@ -5215,6 +5215,73 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1792848674845",
+      "md_cover": "images/img_1792848672577.jpg",
+      "title": "Black Market Music / Turn On the Bright Lights / Tom McRae",
+      "albums": [
+        {
+          "id": "md-1792848674845-alb-1",
+          "md_cover": "images/Black_market_music.jpg",
+          "title": "Black Market Music",
+          "artist": "Placebo",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "Alternative Rock",
+            "Pop Rock"
+          ],
+          "release_year": "",
+          "duration": "52:40",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1792848674845-alb-2",
+          "md_cover": "images/img_1791347955729.jpg",
+          "title": "Turn On the Bright Lights",
+          "artist": "Interpol",
+          "main_genre": "Rock & Blues",
+          "tags": [
+            "rock",
+            "indie rock",
+            "post-punk revival",
+            "post-punk",
+            "alternative"
+          ],
+          "release_year": "2002",
+          "duration": "48:54",
+          "tracks": [
+            "Untitled",
+            "Obstacle 1",
+            "NYC",
+            "PDA",
+            "Say Hello to the Angels",
+            "Hands Away",
+            "Obstacle 2",
+            "Stella was a diver and she was always down",
+            "Roland",
+            "The New",
+            "Leif Erikson"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1792848674845-alb-3",
+          "md_cover": "images/tommcrae.jpg",
+          "title": "Tom McRae",
+          "artist": "Tom McRae",
+          "main_genre": "Pop & Folk & Variety",
+          "tags": [
+            "Pop Rock",
+            "Folk"
+          ],
+          "release_year": "",
+          "duration": "45:10",
+          "tracks": [],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -5263,17 +5330,6 @@
       "md_cover": "images/mariahcarey.jpg"
     },
     {
-      "title": "Black Market Music",
-      "artist": "Placebo",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "Alternative Rock",
-        "Pop Rock"
-      ],
-      "duration": "52:40",
-      "md_cover": "images/Black_market_music.jpg"
-    },
-    {
       "title": "Panique Celtique",
       "artist": "Manau",
       "main_genre": "Rap, Soul & Reggae",
@@ -5314,17 +5370,6 @@
       ],
       "duration": "1:12:17",
       "md_cover": "images/marshallmathers.jpg"
-    },
-    {
-      "title": "Tom McRae",
-      "artist": "Tom McRae",
-      "main_genre": "Pop & Folk & Variety",
-      "tags": [
-        "Pop Rock",
-        "Folk"
-      ],
-      "duration": "45:10",
-      "md_cover": "images/tommcrae.jpg"
     },
     {
       "title": "Load",
@@ -5703,36 +5748,6 @@
         "The Reflecting God",
         "Man That You Fear",
         "[unknown]"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1791347957141",
-      "md_cover": "images/img_1791347955729.jpg",
-      "title": "Turn On the Bright Lights",
-      "artist": "Interpol",
-      "main_genre": "Rock & Blues",
-      "tags": [
-        "rock",
-        "indie rock",
-        "post-punk revival",
-        "post-punk",
-        "alternative"
-      ],
-      "release_year": "2002",
-      "duration": "48:54",
-      "tracks": [
-        "Untitled",
-        "Obstacle 1",
-        "NYC",
-        "PDA",
-        "Say Hello to the Angels",
-        "Hands Away",
-        "Obstacle 2",
-        "Stella was a diver and she was always down",
-        "Roland",
-        "The New",
-        "Leif Erikson"
       ],
       "toRecord": false
     },
