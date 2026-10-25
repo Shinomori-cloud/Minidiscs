@@ -6250,6 +6250,33 @@
       ],
       "toRecord": false,
       "description": "Storm of the Light's Bane est la sortie de l'album de 1995 du groupe suédois de black/death metal Dissection. La même année, Nuclear Blast a publié une version digipak spéciale exclusive à l'Europe de l'album limitée à 500 exemplaires, qui, une fois dépliée, a formé la forme d'une croix avec les paroles de la chanson imprimées sur les manches."
+    },
+    {
+      "id": "idea-1792959389255",
+      "md_cover": "images/img_1792959387552.jpg",
+      "title": "Black Metal ist Krieg: A Dedication Monument",
+      "artist": "Nargaroth",
+      "main_genre": "Rock & Blues",
+      "tags": [
+        "black metal",
+        "rock"
+      ],
+      "release_year": "2001",
+      "duration": "1:10:39",
+      "tracks": [
+        "Introduction",
+        "Black Metal ist Krieg",
+        "Far Beyond the Stars",
+        "Seven Tears Are Flowing to the River",
+        "I Burn for You",
+        "The Day Burzum Killed Mayhem",
+        "Písen Pro Satana",
+        "Amarok - Zorn des Lammes III",
+        "Erik, May You Rape the Angels",
+        "The Gates of Eternity",
+        "Possessed by Black Fucking Metal"
+      ],
+      "toRecord": false
     }
   ]
 }
