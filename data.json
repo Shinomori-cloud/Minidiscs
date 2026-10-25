@@ -6193,6 +6193,36 @@
         "Black Session"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1792958070953",
+      "md_cover": "images/img_1792958069291.jpg",
+      "title": "Discouraged Ones",
+      "artist": "Katatonia",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [
+        "doom metal",
+        "alternative rock",
+        "gothic metal",
+        "rock"
+      ],
+      "release_year": "1998",
+      "duration": "46:53",
+      "tracks": [
+        "I Break",
+        "Stalemate",
+        "Deadhouse",
+        "Relention",
+        "Cold Ways",
+        "Gone",
+        "Last Resort",
+        "Nerve",
+        "Saw You Drown",
+        "Instrumental",
+        "Distrust"
+      ],
+      "toRecord": false,
+      "description": "Discouraged Ones est le troisième album de Katatonia. Alors que la plupart des efforts antérieurs du groupe incluaient des voix déformées ou hurlées, Discouraged Ones, et toutes les sorties ultérieures du groupe, comportent exclusivement des voix propres, de Jonas Renkse."
     }
   ]
 }
