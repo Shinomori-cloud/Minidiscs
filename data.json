@@ -6064,6 +6064,38 @@
         "Le Petit Robert"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1792956683500",
+      "md_cover": "images/img_1792956681777.jpg",
+      "title": "La Ouache",
+      "artist": "Matmatah",
+      "main_genre": "Alternative & Grunge 90s",
+      "tags": [
+        "alternative rock",
+        "celtic rock",
+        "chanson française",
+        "france",
+        "rock"
+      ],
+      "release_year": "1998",
+      "duration": "48:18",
+      "tracks": [
+        "Anter-ouache / Ouache",
+        "Emma",
+        "Lambé An Dro",
+        "Troglodyte",
+        "Kerfautras",
+        "Dernière journée en mer",
+        "L'apologie",
+        "La fille du Chat Noir",
+        "An Den Coz",
+        "Derrière ton dos",
+        "Les moutons",
+        "La complainte de Fanch",
+        "Ribette's"
+      ],
+      "toRecord": false
     }
   ]
 }
