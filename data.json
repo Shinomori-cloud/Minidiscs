@@ -6165,6 +6165,34 @@
       ],
       "toRecord": false,
       "description": "\"Lateralus\" est le troisième album studio du groupe américain de metal progressif Tool. Il est sorti le 15 mai 2001 sur Volcano Entertainment. L'enregistrement a eu lieu aux Cello Studios à Hollywood et à The Hook, Big Empty Space et The Lodge à North Hollywood entre octobre 2000 et janvier 2001. David Bottrill, qui avait également produit les précédents albums du groupe \"Ænima\" et \"Salival\", a coproduit l'album avec le groupe. « Lateralus » reste le dernier album Tool produit par Bottrill. L'album a fait ses débuts au premier rang du palmarès Billboard 200, se vendant à plus de 555 200 exemplaires au cours de sa première semaine. Il a été certifié triple platine par la RIAA le 15 avril 2021 et or par la BPI le 13 février 2015. Il a également reçu la double certification platine en Australie et au Canada. Le groupe a remporté le Grammy Award de la meilleure performance metal en 2002 pour la chanson \"Schism\". « Lateralus » a été classé 123e sur la liste « Definitive 200 » du Rock and Roll Hall of Fame. Un disque vinyle LP en édition limitée à deux images dans un emballage holographique a été publié le 23 août 2005."
+    },
+    {
+      "id": "idea-1792957581782",
+      "md_cover": "images/img_1792957579846.jpg",
+      "title": "Tonight’s Decision",
+      "artist": "Katatonia",
+      "main_genre": "Metal & Hard Rock",
+      "tags": [
+        "doom metal",
+        "alternative metal",
+        "gothic metal"
+      ],
+      "release_year": "1999",
+      "duration": "56:19",
+      "tracks": [
+        "For My Demons",
+        "I Am Nothing",
+        "In Death, a Song",
+        "Had To (Leave)",
+        "This Punishment",
+        "Right Into the Bliss",
+        "No Good Can Come of This",
+        "Strained",
+        "A Darkness Coming",
+        "Nightmares by the Sea",
+        "Black Session"
+      ],
+      "toRecord": false
     }
   ]
 }
