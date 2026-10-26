@@ -5527,6 +5527,67 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1793043783086",
+      "md_cover": "images/img_1793043780739.jpg",
+      "title": "Storm of the Light’s Bane / Black Metal ist Krieg: A Dedication Monument",
+      "albums": [
+        {
+          "id": "md-1793043783086-alb-1",
+          "md_cover": "images/img_1792958496227.jpg",
+          "title": "Storm of the Light’s Bane",
+          "artist": "Dissection",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "black metal",
+            "melodic black metal",
+            "death metal",
+            "melodic death metal"
+          ],
+          "release_year": "1995",
+          "duration": "49:17",
+          "tracks": [
+            "At the Fathomless Depths",
+            "Night’s Blood",
+            "Unhallowed",
+            "Where Dead Angels Lie",
+            "Retribution – Storm of the Light’s Bane",
+            "Thorns of Crimson Death",
+            "Soulreaper",
+            "No Dreams Breed in Breathless Sleep"
+          ],
+          "description": "Storm of the Light's Bane est la sortie de l'album de 1995 du groupe suédois de black/death metal Dissection. La même année, Nuclear Blast a publié une version digipak spéciale exclusive à l'Europe de l'album limitée à 500 exemplaires, qui, une fois dépliée, a formé la forme d'une croix avec les paroles de la chanson imprimées sur les manches.",
+          "toRecord": true
+        },
+        {
+          "id": "md-1793043783086-alb-2",
+          "md_cover": "images/img_1792959387552.jpg",
+          "title": "Black Metal ist Krieg: A Dedication Monument",
+          "artist": "Nargaroth",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "black metal",
+            "rock"
+          ],
+          "release_year": "2001",
+          "duration": "1:10:39",
+          "tracks": [
+            "Introduction",
+            "Black Metal ist Krieg",
+            "Far Beyond the Stars",
+            "Seven Tears Are Flowing to the River",
+            "I Burn for You",
+            "The Day Burzum Killed Mayhem",
+            "Písen Pro Satana",
+            "Amarok - Zorn des Lammes III",
+            "Erik, May You Rape the Angels",
+            "The Gates of Eternity",
+            "Possessed by Black Fucking Metal"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -6184,60 +6245,6 @@
       ],
       "toRecord": false,
       "description": "Discouraged Ones est le troisième album de Katatonia. Alors que la plupart des efforts antérieurs du groupe incluaient des voix déformées ou hurlées, Discouraged Ones, et toutes les sorties ultérieures du groupe, comportent exclusivement des voix propres, de Jonas Renkse."
-    },
-    {
-      "id": "idea-1792958498070",
-      "md_cover": "images/img_1792958496227.jpg",
-      "title": "Storm of the Light’s Bane",
-      "artist": "Dissection",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "black metal",
-        "melodic black metal",
-        "death metal",
-        "melodic death metal"
-      ],
-      "release_year": "1995",
-      "duration": "49:17",
-      "tracks": [
-        "At the Fathomless Depths",
-        "Night’s Blood",
-        "Unhallowed",
-        "Where Dead Angels Lie",
-        "Retribution – Storm of the Light’s Bane",
-        "Thorns of Crimson Death",
-        "Soulreaper",
-        "No Dreams Breed in Breathless Sleep"
-      ],
-      "toRecord": false,
-      "description": "Storm of the Light's Bane est la sortie de l'album de 1995 du groupe suédois de black/death metal Dissection. La même année, Nuclear Blast a publié une version digipak spéciale exclusive à l'Europe de l'album limitée à 500 exemplaires, qui, une fois dépliée, a formé la forme d'une croix avec les paroles de la chanson imprimées sur les manches."
-    },
-    {
-      "id": "idea-1792959389255",
-      "md_cover": "images/img_1792959387552.jpg",
-      "title": "Black Metal ist Krieg: A Dedication Monument",
-      "artist": "Nargaroth",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "black metal",
-        "rock"
-      ],
-      "release_year": "2001",
-      "duration": "1:10:39",
-      "tracks": [
-        "Introduction",
-        "Black Metal ist Krieg",
-        "Far Beyond the Stars",
-        "Seven Tears Are Flowing to the River",
-        "I Burn for You",
-        "The Day Burzum Killed Mayhem",
-        "Písen Pro Satana",
-        "Amarok - Zorn des Lammes III",
-        "Erik, May You Rape the Angels",
-        "The Gates of Eternity",
-        "Possessed by Black Fucking Metal"
-      ],
-      "toRecord": false
     }
   ]
 }
