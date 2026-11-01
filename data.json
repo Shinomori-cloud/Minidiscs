@@ -5527,6 +5527,88 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1793528481488",
+      "md_cover": "images/img_1793528479151.jpg",
+      "title": "Storm of the Light’s Bane / Black Metal ist Krieg / For Funerals to Come",
+      "albums": [
+        {
+          "id": "md-1793528481488-alb-1",
+          "md_cover": "images/img_1793527934773.jpg",
+          "title": "Storm of the Light’s Bane",
+          "artist": "Dissection",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "black metal",
+            "melodic black metal",
+            "death metal",
+            "melodic death metal"
+          ],
+          "release_year": "1995",
+          "duration": "43:16",
+          "tracks": [
+            "At the Fathomless Depths",
+            "Night’s Blood",
+            "Unhallowed",
+            "Where Dead Angels Lie",
+            "Retribution – Storm of the Light’s Bane",
+            "Thorns of Crimson Death",
+            "Soulreaper",
+            "No Dreams Breed in Breathless Sleep"
+          ],
+          "description": "Storm of the Light's Bane est la sortie de l'album de 1995 du groupe suédois de black/death metal Dissection. La même année, Nuclear Blast a publié une version digipak spéciale exclusive à l'Europe de l'album limitée à 500 exemplaires, qui, une fois dépliée, a formé la forme d'une croix avec les paroles de la chanson imprimées sur les manches.",
+          "toRecord": true
+        },
+        {
+          "id": "md-1793528481488-alb-2",
+          "md_cover": "images/img_1793528016116.jpg",
+          "title": "Black Metal ist Krieg",
+          "artist": "Nargaroth",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "black metal",
+            "rock"
+          ],
+          "release_year": "2001",
+          "duration": "1:10:39",
+          "tracks": [
+            "Introduction",
+            "Black Metal ist Krieg",
+            "Far Beyond the Stars",
+            "Seven Tears Are Flowing to the River",
+            "I Burn for You",
+            "The Day Burzum Killed Mayhem",
+            "Písen Pro Satana",
+            "Amarok - Zorn des Lammes III",
+            "Erik, May You Rape the Angels",
+            "The Gates of Eternity",
+            "Possessed by Black Fucking Metal"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1793528481488-alb-3",
+          "md_cover": "images/img_1793527822963.jpg",
+          "title": "For Funerals to Come",
+          "artist": "Katatonia",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "black metal",
+            "death-doom metal",
+            "doom metal"
+          ],
+          "release_year": "1995",
+          "duration": "18:12",
+          "tracks": [
+            "Funeral Wedding",
+            "Shades of Emerald Fields",
+            "For Funerals to Come…",
+            "Epistel"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -6268,81 +6350,6 @@
       ],
       "toRecord": false,
       "description": "Viva Emptiness est le sixième album complet de Katatonia, sorti en 2003 chez Peaceville Records. Ses principaux sujets sont la solitude, les relations sociales, le mensonge et la dépression. Viva Emptiness incorpore davantage un son rock avec un son doom metal fort mais mélodique qui intègre des influences de rock progressif et de métal alternatif, entre autres."
-    },
-    {
-      "id": "idea-1793527824789",
-      "md_cover": "images/img_1793527822963.jpg",
-      "title": "For Funerals to Come",
-      "artist": "Katatonia",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "black metal",
-        "death-doom metal",
-        "doom metal"
-      ],
-      "release_year": "1995",
-      "duration": "18:12",
-      "tracks": [
-        "Funeral Wedding",
-        "Shades of Emerald Fields",
-        "For Funerals to Come…",
-        "Epistel"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1793527936512",
-      "md_cover": "images/img_1793527934773.jpg",
-      "title": "Storm of the Light’s Bane",
-      "artist": "Dissection",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "black metal",
-        "melodic black metal",
-        "death metal",
-        "melodic death metal"
-      ],
-      "release_year": "1995",
-      "duration": "43:16",
-      "tracks": [
-        "At the Fathomless Depths",
-        "Night’s Blood",
-        "Unhallowed",
-        "Where Dead Angels Lie",
-        "Retribution – Storm of the Light’s Bane",
-        "Thorns of Crimson Death",
-        "Soulreaper",
-        "No Dreams Breed in Breathless Sleep"
-      ],
-      "toRecord": false,
-      "description": "Storm of the Light's Bane est la sortie de l'album de 1995 du groupe suédois de black/death metal Dissection. La même année, Nuclear Blast a publié une version digipak spéciale exclusive à l'Europe de l'album limitée à 500 exemplaires, qui, une fois dépliée, a formé la forme d'une croix avec les paroles de la chanson imprimées sur les manches."
-    },
-    {
-      "id": "idea-1793528017822",
-      "md_cover": "images/img_1793528016116.jpg",
-      "title": "Black Metal ist Krieg",
-      "artist": "Nargaroth",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "black metal",
-        "rock"
-      ],
-      "release_year": "2001",
-      "duration": "1:10:39",
-      "tracks": [
-        "Introduction",
-        "Black Metal ist Krieg",
-        "Far Beyond the Stars",
-        "Seven Tears Are Flowing to the River",
-        "I Burn for You",
-        "The Day Burzum Killed Mayhem",
-        "Písen Pro Satana",
-        "Amarok - Zorn des Lammes III",
-        "Erik, May You Rape the Angels",
-        "The Gates of Eternity",
-        "Possessed by Black Fucking Metal"
-      ],
-      "toRecord": false
     }
   ]
 }
