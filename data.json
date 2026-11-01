@@ -6329,6 +6329,27 @@
       ],
       "toRecord": false,
       "description": "Viva Emptiness est le sixième album complet de Katatonia, sorti en 2003 chez Peaceville Records. Ses principaux sujets sont la solitude, les relations sociales, le mensonge et la dépression. Viva Emptiness incorpore davantage un son rock avec un son doom metal fort mais mélodique qui intègre des influences de rock progressif et de métal alternatif, entre autres."
+    },
+    {
+      "id": "idea-1793527824789",
+      "md_cover": "images/img_1793527822963.jpg",
+      "title": "For Funerals to Come",
+      "artist": "Katatonia",
+      "main_genre": "Metal & Hard Rock",
+      "tags": [
+        "black metal",
+        "death-doom metal",
+        "doom metal"
+      ],
+      "release_year": "1995",
+      "duration": "18:12",
+      "tracks": [
+        "Funeral Wedding",
+        "Shades of Emerald Fields",
+        "For Funerals to Come…",
+        "Epistel"
+      ],
+      "toRecord": false
     }
   ]
 }
