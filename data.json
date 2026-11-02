@@ -6537,6 +6537,31 @@
         "XX YY"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1793642433278",
+      "md_cover": "images/img_1793642431259.jpg",
+      "title": "Classica",
+      "artist": "Novembre",
+      "main_genre": "Metal & Hard Rock",
+      "tags": [
+        "progressive metal"
+      ],
+      "release_year": "2000",
+      "duration": "50:16",
+      "tracks": [
+        "Cold Blue Steel",
+        "Tales From a Winter to Come",
+        "Nostalgiaplatz",
+        "My Starving Bambina",
+        "Love Story",
+        "L’Époque noire (March the 7th 12973 A.D.)",
+        "Onirica East",
+        "Foto blu infinito",
+        "Winter 1941",
+        "Outro / Spirit of the Forest (Tales… reprise)"
+      ],
+      "toRecord": false
     }
   ]
 }
