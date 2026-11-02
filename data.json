@@ -6492,6 +6492,36 @@
         "XX YY"
       ],
       "toRecord": false
+    },
+    {
+      "id": "idea-1793641459361",
+      "md_cover": "images/img_1793641457532.jpg",
+      "title": "The Dark Side of the Moon",
+      "artist": "Pink Floyd",
+      "main_genre": "Rock & Blues",
+      "tags": [
+        "progressive rock",
+        "rock",
+        "psychedelic rock",
+        "art rock",
+        "album rock"
+      ],
+      "release_year": "1973",
+      "duration": "43:02",
+      "tracks": [
+        "Speak to Me",
+        "Breathe",
+        "On the Run",
+        "Time",
+        "The Great Gig in the Sky",
+        "Money",
+        "Us and Them",
+        "Any Colour You Like",
+        "Brain Damage",
+        "Eclipse"
+      ],
+      "toRecord": false,
+      "description": "The Dark Side of the Moon est le huitième album studio du groupe de rock progressif britannique Pink Floyd. Paru le 10 mars 1973 aux États-Unis et le 23 mars 1973 au Royaume-Uni, il est souvent considéré comme leur album le plus abouti. Il aborde des thèmes modernes et universels, comme le travail, l'argent, la vieillesse, la guerre, la folie et la mort. ."
     }
   ]
 }
