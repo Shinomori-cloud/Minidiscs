@@ -5876,6 +5876,73 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1793641828305",
+      "md_cover": "images/img_1793641826341.jpg",
+      "title": "The Dark Side of the Moon / Paranoid / Led Zeppelin IV",
+      "albums": [
+        {
+          "id": "md-1793641828305-alb-1",
+          "md_cover": "images/img_1793641457532.jpg",
+          "title": "The Dark Side of the Moon",
+          "artist": "Pink Floyd",
+          "main_genre": "Rock & Blues",
+          "tags": [
+            "progressive rock",
+            "rock",
+            "psychedelic rock",
+            "art rock",
+            "album rock"
+          ],
+          "release_year": "1973",
+          "duration": "43:02",
+          "tracks": [
+            "Speak to Me",
+            "Breathe",
+            "On the Run",
+            "Time",
+            "The Great Gig in the Sky",
+            "Money",
+            "Us and Them",
+            "Any Colour You Like",
+            "Brain Damage",
+            "Eclipse"
+          ],
+          "description": "The Dark Side of the Moon est le huitième album studio du groupe de rock progressif britannique Pink Floyd. Paru le 10 mars 1973 aux États-Unis et le 23 mars 1973 au Royaume-Uni, il est souvent considéré comme leur album le plus abouti. Il aborde des thèmes modernes et universels, comme le travail, l'argent, la vieillesse, la guerre, la folie et la mort. .",
+          "toRecord": true
+        },
+        {
+          "id": "md-1793641828305-alb-2",
+          "md_cover": "images/img_1789594317701.webp",
+          "title": "Paranoid",
+          "artist": "Black Sabbath",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "Metal"
+          ],
+          "release_year": "",
+          "duration": "42:07",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1793641828305-alb-3",
+          "md_cover": "images/img_1789506696070.jpg",
+          "title": "Led Zeppelin IV",
+          "artist": "Led Zeppelin",
+          "main_genre": "Rock & Blues",
+          "tags": [
+            "Rock",
+            "Blues",
+            "Folk"
+          ],
+          "release_year": "",
+          "duration": "42:38",
+          "tracks": [],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -5943,28 +6010,6 @@
       ],
       "duration": "1:12:17",
       "md_cover": "images/marshallmathers.jpg"
-    },
-    {
-      "title": "Led Zeppelin IV",
-      "artist": "Led Zeppelin",
-      "main_genre": "Rock & Blues",
-      "tags": [
-        "Rock",
-        "Blues",
-        "Folk"
-      ],
-      "duration": "42:38",
-      "md_cover": "images/img_1789506696070.jpg"
-    },
-    {
-      "title": "Paranoid",
-      "artist": "Black Sabbath",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "Metal"
-      ],
-      "duration": "42:07",
-      "md_cover": "images/img_1789594317701.webp"
     },
     {
       "id": "idea-1789739971393",
@@ -6492,36 +6537,6 @@
         "XX YY"
       ],
       "toRecord": false
-    },
-    {
-      "id": "idea-1793641459361",
-      "md_cover": "images/img_1793641457532.jpg",
-      "title": "The Dark Side of the Moon",
-      "artist": "Pink Floyd",
-      "main_genre": "Rock & Blues",
-      "tags": [
-        "progressive rock",
-        "rock",
-        "psychedelic rock",
-        "art rock",
-        "album rock"
-      ],
-      "release_year": "1973",
-      "duration": "43:02",
-      "tracks": [
-        "Speak to Me",
-        "Breathe",
-        "On the Run",
-        "Time",
-        "The Great Gig in the Sky",
-        "Money",
-        "Us and Them",
-        "Any Colour You Like",
-        "Brain Damage",
-        "Eclipse"
-      ],
-      "toRecord": false,
-      "description": "The Dark Side of the Moon est le huitième album studio du groupe de rock progressif britannique Pink Floyd. Paru le 10 mars 1973 aux États-Unis et le 23 mars 1973 au Royaume-Uni, il est souvent considéré comme leur album le plus abouti. Il aborde des thèmes modernes et universels, comme le travail, l'argent, la vieillesse, la guerre, la folie et la mort. ."
     }
   ]
 }
