@@ -5819,6 +5819,63 @@
       ],
       "toRecord": true,
       "description": "God blesse est le deuxième album de Saez, sorti en double CD le 26 mars 2002. Le titre joue sur la différence entre l'expression anglaise « God bless » et le verbe français « blesser ». Le deuxième disque, intitulé Katagena, est souvent considéré comme un album séparé (bien que lié) à part entière."
+    },
+    {
+      "id": "md-1793631737511",
+      "md_cover": "images/img_1793631734494.jpg",
+      "title": "Load / Roots",
+      "albums": [
+        {
+          "id": "md-1793631737511-alb-1",
+          "md_cover": "images/load.jpg",
+          "title": "Load",
+          "artist": "Metallica",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "Metal"
+          ],
+          "release_year": "",
+          "duration": "1:18:59",
+          "tracks": [],
+          "toRecord": true
+        },
+        {
+          "id": "md-1793631737511-alb-2",
+          "md_cover": "images/img_1791039436785.jpg",
+          "title": "Roots",
+          "artist": "Sepultura",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "metal",
+            "death metal",
+            "groove metal",
+            "heavy metal",
+            "nu metal"
+          ],
+          "release_year": "1996",
+          "duration": "1:06:56",
+          "tracks": [
+            "Roots Bloody Roots",
+            "Attitude",
+            "Cut‐Throat",
+            "Ratamahatta",
+            "Breed Apart",
+            "Straighthate",
+            "Spit",
+            "Lookaway",
+            "Dusted",
+            "Born Stubborn",
+            "Jasco",
+            "Itsári",
+            "Ambush",
+            "Endangered Species",
+            "Dictatorshit",
+            "Procreation (of the Wicked)",
+            "Symptom of the Universe"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -5886,16 +5943,6 @@
       ],
       "duration": "1:12:17",
       "md_cover": "images/marshallmathers.jpg"
-    },
-    {
-      "title": "Load",
-      "artist": "Metallica",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "Metal"
-      ],
-      "duration": "1:18:59",
-      "md_cover": "images/load.jpg"
     },
     {
       "title": "Led Zeppelin IV",
@@ -6067,42 +6114,6 @@
       "release_year": "1996",
       "duration": "20:54",
       "tracks": [],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1791039438270",
-      "md_cover": "images/img_1791039436785.jpg",
-      "title": "Roots",
-      "artist": "Sepultura",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "metal",
-        "death metal",
-        "groove metal",
-        "heavy metal",
-        "nu metal"
-      ],
-      "release_year": "1996",
-      "duration": "1:06:56",
-      "tracks": [
-        "Roots Bloody Roots",
-        "Attitude",
-        "Cut‐Throat",
-        "Ratamahatta",
-        "Breed Apart",
-        "Straighthate",
-        "Spit",
-        "Lookaway",
-        "Dusted",
-        "Born Stubborn",
-        "Jasco",
-        "Itsári",
-        "Ambush",
-        "Endangered Species",
-        "Dictatorshit",
-        "Procreation (of the Wicked)",
-        "Symptom of the Universe"
-      ],
       "toRecord": false
     },
     {
