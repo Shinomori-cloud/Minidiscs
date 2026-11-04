@@ -8015,6 +8015,36 @@
       ],
       "toRecord": false,
       "description": "Nebraska est le sixième album studio de Bruce Springsteen, sorti le 30 septembre 1982 chez Columbia Records. Peu enregistrées sur une cassette 4 pistes Portastudio 144, les chansons du Nebraska étaient à l'origine destinées à être des démos de chansons à enregistrer avec le E Street Band. Cependant, Springsteen a finalement décidé de publier lui-même les démos."
+    },
+    {
+      "id": "idea-1793776782425",
+      "md_cover": "images/img_1793776780280.jpg",
+      "title": "Illmatic",
+      "artist": "Nas",
+      "main_genre": "Rap, Soul & Reggae",
+      "tags": [
+        "hip hop",
+        "east coast hip hop",
+        "boom bap",
+        "hardcore hip hop",
+        "conscious hip hop"
+      ],
+      "release_year": "1994",
+      "duration": "39:49",
+      "tracks": [
+        "The Genesis",
+        "N.Y. State of Mind",
+        "Life’s a Bitch",
+        "The World Is Yours",
+        "Halftime",
+        "Memory Lane (Sittin’ in da Park)",
+        "One Love",
+        "One Time 4 Your Mind",
+        "Represent",
+        "It Ain’t Hard to Tell"
+      ],
+      "toRecord": false,
+      "description": "E n 1994, Nas n'a que 20ans mais rentre dans l'histoire du hip-hop avec son premier album. Sorti grâce à MC Serch sur Columbia , Illmatic (1intro + 9 titres) et produit à New York par Large Proffesor , Pete Rock ou encore DJ Premier. ."
     }
   ]
 }
