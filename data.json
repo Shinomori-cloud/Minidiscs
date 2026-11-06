@@ -6037,6 +6037,104 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1793938168436",
+      "md_cover": "images/img_1793938166118.jpg",
+      "title": "Bleach / Frogstomp / Green Mind",
+      "albums": [
+        {
+          "id": "md-1793938168436-alb-1",
+          "md_cover": "images/img_1789739969765.jpg",
+          "title": "Bleach",
+          "artist": "Nirvana",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "grunge",
+            "rock",
+            "alternative rock",
+            "noise rock",
+            "sludge metal"
+          ],
+          "release_year": "1989",
+          "duration": "42:43",
+          "tracks": [
+            "Blew",
+            "Floyd the Barber",
+            "About a Girl",
+            "School",
+            "Love Buzz",
+            "Paper Cuts",
+            "Negative Creep",
+            "Scoff",
+            "Swap Meet",
+            "Mr. Moustache",
+            "Sifting",
+            "Big Cheese",
+            "Downer"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1793938168436-alb-2",
+          "md_cover": "images/img_1793740939344.jpg",
+          "title": "Frogstomp",
+          "artist": "Silverchair",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "alternative rock",
+            "rock",
+            "grunge",
+            "5+ wochen",
+            "alternative metal"
+          ],
+          "release_year": "1995",
+          "duration": "44:50",
+          "tracks": [
+            "Israel's Son",
+            "Tomorrow",
+            "Faultline",
+            "Pure Massacre",
+            "Shade",
+            "Leave Me Out",
+            "Suicidal Dream",
+            "Madman",
+            "Undecided",
+            "Cicada",
+            "Findaway"
+          ],
+          "description": "Frogstomp est le premier album du groupe de rock australien Silverchair. Il est sorti en Australie au début de 1995, alors que les membres n'avaient que 15 ans, par Murmur Records et a atteint le numéro un des charts d'albums. Le 20 juin 1995, Frogstomp est sorti par Epic Records aux États-Unis et a été certifié double platine par la RIAA. Lorsqu'on lui a demandé pourquoi le nom de l'album est Frogstomp, Johns a répondu : « Un soir, j'étais chez un gars de la maison de notre maison de disques et je regardais ses CD parce qu'il a une très bonne collection. J'ai trouvé ce disque de collection pop des années 60 et je me disais (rires) : « Pourquoi as-tu ça ? \" J'ai regardé au dos et il y avait cette chanson qu'un gars avait appelée frogstomp et j'ai dit : \" C'est un très bon nom. \" (rires) J'ai juste appelé Ben et Chris et nous avons juste pensé que c'était vraiment drôle, alors nous l'avons utilisé pour l'album. \" .",
+          "toRecord": true
+        },
+        {
+          "id": "md-1793938168436-alb-3",
+          "md_cover": "images/img_1793746606127.jpg",
+          "title": "Green Mind",
+          "artist": "Dinosaur Jr.",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "alternative rock",
+            "indie rock",
+            "rock"
+          ],
+          "release_year": "1991",
+          "duration": "41:32",
+          "tracks": [
+            "The Wagon",
+            "Puke + Cry",
+            "Blowing It",
+            "I Live for That Look",
+            "Flying Cloud",
+            "How’d You Pin That One on Me",
+            "Water",
+            "Muck",
+            "Thumb",
+            "Green Mind"
+          ],
+          "description": "\"Green Mind\" is the fourth studio album by alternative rock band Dinosaur Jr, recorded in 1989 and 1990 and released in 1991 by Warner Bros. It was the band's first release after bassist Lou Barlow's departure, as well as the first released by a major label. The record is close to being a J Mascis solo album, with drummer Murph only featuring on three tracks (1,7, & 9). The cover photograph, Priscilla, 1969, is by Joseph Szabo and taken from his book of photographs Almost Grown. \"Turnip Farm\" is also featured in the film Reality Bites. Personnel J Mascis - vocals, guitar, drums, bass, producer Murph - drums (tracks 1, 7, 9) Joe Harvard - guitar and tape (track 8) Jay Spiegel - drums and tambourine (track 5), tom-tom (track 1) Don Fleming - guitar and backing vocals (track 1), acoustic bass (track 5) Sean Slade - engineer, mellotron (tracks 7, 9) Tom Walters - assistant engineer Matt Dillon - backing vocals (track 11) .",
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -6104,38 +6202,6 @@
       ],
       "duration": "1:12:17",
       "md_cover": "images/marshallmathers.jpg"
-    },
-    {
-      "id": "idea-1789739971393",
-      "md_cover": "images/img_1789739969765.jpg",
-      "title": "Bleach",
-      "artist": "Nirvana",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "grunge",
-        "rock",
-        "alternative rock",
-        "noise rock",
-        "sludge metal"
-      ],
-      "release_year": "1989",
-      "duration": "42:43",
-      "tracks": [
-        "Blew",
-        "Floyd the Barber",
-        "About a Girl",
-        "School",
-        "Love Buzz",
-        "Paper Cuts",
-        "Negative Creep",
-        "Scoff",
-        "Swap Meet",
-        "Mr. Moustache",
-        "Sifting",
-        "Big Cheese",
-        "Downer"
-      ],
-      "toRecord": false
     },
     {
       "id": "idea-1790007557477",
@@ -7086,37 +7152,6 @@
       "description": "\"Morning View\"est le quatrième album studio du groupe de rock américain Incubus, sorti le 23 octobre 2001 chez Epic et Immortal Records. Un DVD compagnon, \"The Morning View Sessions\", a suivi le 29 mai 2002. L'album poursuit le changement stylistique du groupe, s'éloignant du nu metal, incorporant une gamme d'éléments de rock alternatif plus doux et plus lourds. C'était le dernier album studio d'Incubus avec le bassiste Alex Katunich, qui a quitté le groupe en 2003. Soutenu par les singles \"Wish You Were Here\" et \"Nice to Know You\", \"Morning View\" a reçu un accueil critique généralement positif et a été certifié double platine, devenant ainsi l'album le plus vendu du groupe. Une version réenregistrée de l'album, intitulée \"Morning View XXIII\", est sortie le 10 mai 2024."
     },
     {
-      "id": "idea-1793740940989",
-      "md_cover": "images/img_1793740939344.jpg",
-      "title": "Frogstomp",
-      "artist": "Silverchair",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "alternative rock",
-        "rock",
-        "grunge",
-        "5+ wochen",
-        "alternative metal"
-      ],
-      "release_year": "1995",
-      "duration": "44:50",
-      "tracks": [
-        "Israel's Son",
-        "Tomorrow",
-        "Faultline",
-        "Pure Massacre",
-        "Shade",
-        "Leave Me Out",
-        "Suicidal Dream",
-        "Madman",
-        "Undecided",
-        "Cicada",
-        "Findaway"
-      ],
-      "toRecord": false,
-      "description": "Frogstomp est le premier album du groupe de rock australien Silverchair. Il est sorti en Australie au début de 1995, alors que les membres n'avaient que 15 ans, par Murmur Records et a atteint le numéro un des charts d'albums. Le 20 juin 1995, Frogstomp est sorti par Epic Records aux États-Unis et a été certifié double platine par la RIAA. Lorsqu'on lui a demandé pourquoi le nom de l'album est Frogstomp, Johns a répondu : « Un soir, j'étais chez un gars de la maison de notre maison de disques et je regardais ses CD parce qu'il a une très bonne collection. J'ai trouvé ce disque de collection pop des années 60 et je me disais (rires) : « Pourquoi as-tu ça ? \" J'ai regardé au dos et il y avait cette chanson qu'un gars avait appelée frogstomp et j'ai dit : \" C'est un très bon nom. \" (rires) J'ai juste appelé Ben et Chris et nous avons juste pensé que c'était vraiment drôle, alors nous l'avons utilisé pour l'album. \" ."
-    },
-    {
       "id": "idea-1793741117537",
       "md_cover": "images/img_1793741115434.jpg",
       "title": "Doggystyle",
@@ -7405,34 +7440,6 @@
       ],
       "toRecord": false,
       "description": "L'année de sortie originale de Back in Black est 1980 ! ."
-    },
-    {
-      "id": "idea-1793746607953",
-      "md_cover": "images/img_1793746606127.jpg",
-      "title": "Green Mind",
-      "artist": "Dinosaur Jr.",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "alternative rock",
-        "indie rock",
-        "rock"
-      ],
-      "release_year": "1991",
-      "duration": "41:32",
-      "tracks": [
-        "The Wagon",
-        "Puke + Cry",
-        "Blowing It",
-        "I Live for That Look",
-        "Flying Cloud",
-        "How’d You Pin That One on Me",
-        "Water",
-        "Muck",
-        "Thumb",
-        "Green Mind"
-      ],
-      "toRecord": false,
-      "description": "\"Green Mind\" is the fourth studio album by alternative rock band Dinosaur Jr, recorded in 1989 and 1990 and released in 1991 by Warner Bros. It was the band's first release after bassist Lou Barlow's departure, as well as the first released by a major label. The record is close to being a J Mascis solo album, with drummer Murph only featuring on three tracks (1,7, & 9). The cover photograph, Priscilla, 1969, is by Joseph Szabo and taken from his book of photographs Almost Grown. \"Turnip Farm\" is also featured in the film Reality Bites. Personnel J Mascis - vocals, guitar, drums, bass, producer Murph - drums (tracks 1, 7, 9) Joe Harvard - guitar and tape (track 8) Jay Spiegel - drums and tambourine (track 5), tom-tom (track 1) Don Fleming - guitar and backing vocals (track 1), acoustic bass (track 5) Sean Slade - engineer, mellotron (tracks 7, 9) Tom Walters - assistant engineer Matt Dillon - backing vocals (track 11) ."
     },
     {
       "id": "idea-1793747231367",
