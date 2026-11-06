@@ -5380,12 +5380,29 @@
           "artist": "Portishead",
           "main_genre": "Électro, Trip-Hop & Expérimental",
           "tags": [
-            "Trip hop"
+            "trip-hop",
+            "chillout",
+            "electronic",
+            "lush",
+            "female vocalists"
           ],
-          "release_year": "",
+          "release_year": "1994",
           "duration": "49:21",
-          "tracks": [],
-          "toRecord": true
+          "tracks": [
+            "Mysterons",
+            "Sour Times",
+            "Strangers",
+            "It Could Be Sweet",
+            "Wandering Star",
+            "It's a Fire",
+            "Numb",
+            "Roads",
+            "Pedestal",
+            "Biscuit",
+            "Glory Box"
+          ],
+          "toRecord": true,
+          "description": "Dummy est le premier album studio du groupe anglais Portishead, sorti le 22 août 1994 par Go ! Beat Records. L'album est souvent crédité de populariser le genre trip hop et est fréquemment cité dans les listes des meilleurs albums des années 1990. \"Numb\" est sorti le 6 juin 1994 en tant que premier single de l'album, suivi de \"Sour Times\" en août de la même année et de \"Glory Box\" en janvier 1995. Les titres \"Roads\" et \"Strangers\" ont été utilisés dans la bande originale du film d'horreur Nadja de 1994."
         }
       ]
     },
