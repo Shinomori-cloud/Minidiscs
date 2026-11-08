@@ -5962,7 +5962,6 @@
     {
       "id": "md-1793647118633",
       "md_cover": "images/img_1793647116414.jpg",
-      "title": "Classica / Viva Emptiness / Judgement",
       "albums": [
         {
           "id": "md-1793647118633-alb-1",
@@ -5987,7 +5986,7 @@
             "Winter 1941",
             "Outro / Spirit of the Forest (Tales… reprise)"
           ],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "md-1793647118633-alb-2",
@@ -6017,8 +6016,8 @@
             "Omerta",
             "Inside the City of Glass"
           ],
-          "description": "Viva Emptiness est le sixième album complet de Katatonia, sorti en 2003 chez Peaceville Records. Ses principaux sujets sont la solitude, les relations sociales, le mensonge et la dépression. Viva Emptiness incorpore davantage un son rock avec un son doom metal fort mais mélodique qui intègre des influences de rock progressif et de métal alternatif, entre autres.",
-          "toRecord": true
+          "toRecord": false,
+          "description": "Viva Emptiness est le sixième album complet de Katatonia, sorti en 2003 chez Peaceville Records. Ses principaux sujets sont la solitude, les relations sociales, le mensonge et la dépression. Viva Emptiness incorpore davantage un son rock avec un son doom metal fort mais mélodique qui intègre des influences de rock progressif et de métal alternatif, entre autres."
         },
         {
           "id": "md-1793647118633-alb-3",
@@ -6048,10 +6047,11 @@
             "Anyone, Anywhere",
             "2000 & Gone"
           ],
-          "description": "Judgement est un album du groupe britannique Anathema. Il est sorti le 21 juin 1999 chez Music For Nations. L'album marque une rupture définitive avec les racines death/doom d'Anathema, en se concentrant plutôt sur un style progressif/blues rock plus alternatif et atmosphérique des années 70. L'album, cependant, représente toujours le bord métallique d'Anathème. C'était le premier album sans Duncan Patterson, qui avait un rôle de premier plan en tant qu'auteur-compositeur sur les deux derniers albums du groupe. À partir de maintenant, Danny Cavanagh assumerait cette fonction. L'album a atteint la 151e place des charts britanniques. One Last Goodbye a été dédié à Helen Cavanagh (1949-1998), mère des frères Cavanagh. Vincent Cavanagh — chant, guitare Danny Cavanagh — guitare, guitare acoustique, claviers John Douglas — batterie Dave Pybus — basse Lee Douglas — voix féminine sur \"Parisienne Moonlight\" & \"Don' t Look Too Far\" Dario Patti — piano sur \"Anywhere Anywhere\" .",
-          "toRecord": true
+          "toRecord": false,
+          "description": "Judgement est un album du groupe britannique Anathema. Il est sorti le 21 juin 1999 chez Music For Nations. L'album marque une rupture définitive avec les racines death/doom d'Anathema, en se concentrant plutôt sur un style progressif/blues rock plus alternatif et atmosphérique des années 70. L'album, cependant, représente toujours le bord métallique d'Anathème. C'était le premier album sans Duncan Patterson, qui avait un rôle de premier plan en tant qu'auteur-compositeur sur les deux derniers albums du groupe. À partir de maintenant, Danny Cavanagh assumerait cette fonction. L'album a atteint la 151e place des charts britanniques. One Last Goodbye a été dédié à Helen Cavanagh (1949-1998), mère des frères Cavanagh. Vincent Cavanagh — chant, guitare Danny Cavanagh — guitare, guitare acoustique, claviers John Douglas — batterie Dave Pybus — basse Lee Douglas — voix féminine sur \"Parisienne Moonlight\" & \"Don' t Look Too Far\" Dario Patti — piano sur \"Anywhere Anywhere\" ."
         }
-      ]
+      ],
+      "title": "Classica / Viva Emptiness / Judgement"
     },
     {
       "id": "md-1793938168436",
