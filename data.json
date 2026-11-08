@@ -5243,11 +5243,11 @@
           "artist": "Interpol",
           "main_genre": "Rock & Blues",
           "tags": [
-            "rock",
             "indie rock",
-            "post-punk revival",
             "post-punk",
-            "alternative"
+            "indie",
+            "alternative",
+            "rock"
           ],
           "release_year": "2002",
           "duration": "48:54",
@@ -5264,7 +5264,8 @@
             "The New",
             "Leif Erikson"
           ],
-          "toRecord": true
+          "toRecord": true,
+          "description": "Turn On the Bright Lights is the debut album of New York City rock band Interpol. It was released in 2002 on Matador Records to a great deal of critical acclaim and sold exceptionally well for an indie release; it has sold 499,000 copies in the U.S. so far. It was also ranked highly on the yearly lists of many music critics, and has to date sold 86,000 in the UK despite only charting as high as #101. Musically, many have pointed out the similarities between Turn On the Bright Lights and the bands Joy Division and The Chameleons. \"PDA\", \"NYC\", \"Obstacle 1\" and \"Say Hello to the Angels\" were the singles from Turn On the Bright Lights, and a video was shot for each with the exception of \"Say Hello to the Angels\". The track \"Untitled\" appeared in Season 9, episode 24 of the US Television show, Friends. Track listing All tracks written by Interpol. 1. \"Untitled\" – 3:56 2. \"Obstacle 1\" – 4:11 3. \"NYC\" – 4:20 4. \"PDA\" – 4:59 5. \"Say Hello to the Angels\" – 4:28 6. \"Hands Away\" – 3:05 7. \"Obstacle 2\" – 3:47 8. \"Stella Was a Diver and She Was Always Down\" – 6:28 9. \"Roland\" – 3:35 10. \"The New\" – 6:07 11. \"Leif Erikson\" – 4:00 ."
         },
         {
           "id": "md-1792848674845-alb-3",
