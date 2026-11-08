@@ -5228,13 +5228,29 @@
           "artist": "Placebo",
           "main_genre": "Alternative & Grunge 90s",
           "tags": [
-            "Alternative Rock",
-            "Pop Rock"
+            "alternative rock",
+            "alternative",
+            "rock",
+            "british"
           ],
-          "release_year": "",
+          "release_year": "2000",
           "duration": "52:40",
-          "tracks": [],
-          "toRecord": true
+          "tracks": [
+            "Taste in Men",
+            "Days Before You Came",
+            "Special K",
+            "Spite & Malice",
+            "Passive Aggressive",
+            "Black‐Eyed",
+            "Blue American",
+            "Slave to the Wage",
+            "Commercial for Levi",
+            "Haemoglobin",
+            "Narcoleptic",
+            "Peeping Tom / Black Market Blood"
+          ],
+          "toRecord": true,
+          "description": "Black Market Music is an album by alternative band Placebo, released in 2000. It took nine months to record, the longest that the band have ever spent recording an album to date, and is dedicated to the memory of Scott Piering. A limited-edition version of the album was released simultaneously in Europe with an identical tracklisting; it featured a black paper case with the cover image in silver foil, slightly different inlay pictures and a BurgoPak sliding design. A poster of the album appears in Feeder's video for \"Just a Day\", but the band's name and album title are censored due to copyright. The song \"Commercial for Levi\" is named for sound technician Levi Tecofski, who on one occasion saved frontman Brian Molko's life; Molko, drunk and about to cross the road, was quickly pulled back by Tecofski from the path of an approaching vehicle. ."
         },
         {
           "id": "md-1792848674845-alb-2",
