@@ -5273,12 +5273,28 @@
           "artist": "Tom McRae",
           "main_genre": "Pop & Folk & Variety",
           "tags": [
-            "Pop Rock",
-            "Folk"
+            "singer-songwriter",
+            "acoustic",
+            "british",
+            "rock"
           ],
-          "release_year": "",
+          "release_year": "2000",
           "duration": "45:10",
-          "tracks": [],
+          "tracks": [
+            "You Cut Her Hair",
+            "End of the World News (Dose Me Up)",
+            "2nd Law",
+            "Bloodless",
+            "Draw Down the Stars",
+            "One More Mile",
+            "The Boy With the Bubblegun",
+            "Hidden Camera Show",
+            "A & B Song",
+            "Language of Fools",
+            "Untitled",
+            "Sao Paulo Rain",
+            "I Ain't Scared of Lightning"
+          ],
           "toRecord": true
         }
       ]
