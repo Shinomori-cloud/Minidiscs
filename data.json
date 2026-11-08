@@ -5710,12 +5710,27 @@
           "artist": "Manau",
           "main_genre": "Rap, Soul & Reggae",
           "tags": [
-            "Rap",
-            "Français"
+            "french",
+            "celtic",
+            "rap",
+            "breton",
+            "celtic hiphop"
           ],
-          "release_year": "",
+          "release_year": "1998",
           "duration": "44:51",
-          "tracks": [],
+          "tracks": [
+            "Intro",
+            "La Tribu de Dana",
+            "L'avenir est un long passé",
+            "Panique celtique",
+            "Le Chant des druides",
+            "Faut pas tiser en Bretagne",
+            "Le Chien du forgeron",
+            "La Confession",
+            "Un mauvais Dieu",
+            "Mais qui est la belette ?",
+            "Je parle"
+          ],
           "toRecord": true
         },
         {
