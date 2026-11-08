@@ -5219,7 +5219,6 @@
     {
       "id": "md-1792848674845",
       "md_cover": "images/img_1792848672577.jpg",
-      "title": "Black Market Music / Turn On the Bright Lights / Tom McRae",
       "albums": [
         {
           "id": "md-1792848674845-alb-1",
@@ -5247,9 +5246,10 @@
             "Commercial for Levi",
             "Haemoglobin",
             "Narcoleptic",
-            "Peeping Tom / Black Market Blood"
+            "Peeping Tom",
+            "Black Market Blood"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "description": "Black Market Music is an album by alternative band Placebo, released in 2000. It took nine months to record, the longest that the band have ever spent recording an album to date, and is dedicated to the memory of Scott Piering. A limited-edition version of the album was released simultaneously in Europe with an identical tracklisting; it featured a black paper case with the cover image in silver foil, slightly different inlay pictures and a BurgoPak sliding design. A poster of the album appears in Feeder's video for \"Just a Day\", but the band's name and album title are censored due to copyright. The song \"Commercial for Levi\" is named for sound technician Levi Tecofski, who on one occasion saved frontman Brian Molko's life; Molko, drunk and about to cross the road, was quickly pulled back by Tecofski from the path of an approaching vehicle. ."
         },
         {
@@ -5280,7 +5280,7 @@
             "The New",
             "Leif Erikson"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "description": "Turn On the Bright Lights is the debut album of New York City rock band Interpol. It was released in 2002 on Matador Records to a great deal of critical acclaim and sold exceptionally well for an indie release; it has sold 499,000 copies in the U.S. so far. It was also ranked highly on the yearly lists of many music critics, and has to date sold 86,000 in the UK despite only charting as high as #101. Musically, many have pointed out the similarities between Turn On the Bright Lights and the bands Joy Division and The Chameleons. \"PDA\", \"NYC\", \"Obstacle 1\" and \"Say Hello to the Angels\" were the singles from Turn On the Bright Lights, and a video was shot for each with the exception of \"Say Hello to the Angels\". The track \"Untitled\" appeared in Season 9, episode 24 of the US Television show, Friends. Track listing All tracks written by Interpol. 1. \"Untitled\" – 3:56 2. \"Obstacle 1\" – 4:11 3. \"NYC\" – 4:20 4. \"PDA\" – 4:59 5. \"Say Hello to the Angels\" – 4:28 6. \"Hands Away\" – 3:05 7. \"Obstacle 2\" – 3:47 8. \"Stella Was a Diver and She Was Always Down\" – 6:28 9. \"Roland\" – 3:35 10. \"The New\" – 6:07 11. \"Leif Erikson\" – 4:00 ."
         },
         {
@@ -5312,9 +5312,10 @@
             "Sao Paulo Rain",
             "I Ain't Scared of Lightning"
           ],
-          "toRecord": true
+          "toRecord": false
         }
-      ]
+      ],
+      "title": "Black Market Music / Turn On the Bright Lights / Tom McRae"
     },
     {
       "id": "md-1792865653822",
