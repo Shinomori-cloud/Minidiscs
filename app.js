@@ -7561,11 +7561,12 @@ async function discoverShowDiscography(name, mbid, options = {}) {
 }
 
 /* ==========================================
-   EXTRAITS AUDIO (30 secondes, API publique iTunes)
+   EXTRAITS AUDIO (30 secondes, API publiques iTunes puis Deezer)
    ------------------------------------------
    Un seul lecteur pour toute la page : lancer un extrait arrête le précédent.
    - Artiste : le titre le plus écouté (Last.fm) est recherché sur iTunes ; à défaut, le premier titre de l'artiste.
-   - Album   : le 1er titre de l'album (iTunes), retrouvé par artiste + titre d'album.
+   - Album   : le 1er titre de l'album, retrouvé par artiste + titre d'album, dans cet ordre :
+               iTunes FR (fiche album, puis recherche de titres) → Deezer → iTunes US / GB / DE.
    ========================================== */
 const ITUNES_API = 'https://itunes.apple.com/';
 const ITUNES_COUNTRY = 'FR';
@@ -7616,10 +7617,85 @@ function itunesTitleKey(title) {
   return mbNormalize(String(title || '').replace(/[(\[][^)\]]*[)\]]/g, ' ').replace(/\s[-–]\s.*$/, ''));
 }
 
-// Extrait d'un artiste : ses titres les plus écoutés (Last.fm) d'abord, puis son premier titre iTunes
+// Les liens d'extraits Deezer sont signés et expirent : on ne les garde en mémoire que 20 minutes
+function previewCacheGet(key) {
+  if (!discoverCache.has(key)) return undefined;
+  const v = discoverCache.get(key);
+  if (v && v.expires && v.expires < Date.now()) { discoverCache.delete(key); return undefined; }
+  return v;
+}
+
+// Exécute une recherche de secours : une panne réseau ne doit pas empêcher d'essayer la source suivante
+async function previewSafely(fn) {
+  try { return await fn(); } catch (err) { console.warn('Extrait : source de secours indisponible', err); return null; }
+}
+
+// Deezer (API publique, sans clé). Elle n'autorise pas la lecture directe depuis un site : on passe par JSONP
+const DEEZER_API = 'https://api.deezer.com/';
+function deezerJsonp(path, params) {
+  return new Promise((resolve, reject) => {
+    const callback = `__deezer_${Date.now()}_${Math.floor(Math.random() * 1e6)}`;
+    const script = document.createElement('script');
+    const cleanup = () => { clearTimeout(timer); delete window[callback]; script.remove(); };
+    const timer = setTimeout(() => { cleanup(); reject(new TypeError('Deezer : délai dépassé (network)')); }, 8000);
+    window[callback] = data => { cleanup(); resolve(data || {}); };
+    script.onerror = () => { cleanup(); reject(new TypeError('Deezer : requête bloquée (network)')); };
+    script.src = `${DEEZER_API}${path}?${new URLSearchParams({ ...params, output: 'jsonp', callback })}`;
+    document.head.appendChild(script);
+  });
+}
+
+function deezerResult(track, fallbackArtist) {
+  return {
+    url: String(track.preview).replace(/^http:/, 'https:'),
+    title: track.title,
+    artist: (track.artist && track.artist.name) || fallbackArtist || '',
+    expires: Date.now() + 20 * 60 * 1000
+  };
+}
+
+// Le titre du candidat correspond-il à l'album recherché ? (ignore « Deluxe », « Remastered »… via mbBaseTitle)
+function previewAlbumTitleMatches(candidate, wantedTitle) {
+  const c = mbBaseTitle(candidate);
+  return c === wantedTitle || (c.length >= 4 && wantedTitle.length >= 4 && (c.startsWith(wantedTitle) || wantedTitle.startsWith(c)));
+}
+
+async function deezerAlbumPreview(wanted, wantedTitle, artistName, albumTitle) {
+  const queries = [`artist:"${artistName}" album:"${albumTitle}"`, `${artistName} ${albumTitle}`];
+  for (const q of queries) {
+    const data = await deezerJsonp('search/album', { q, limit: 10 });
+    const albums = (data.data || [])
+      .filter(r => r.id && r.artist && itunesArtistMatches(r.artist.name, wanted) && previewAlbumTitleMatches(r.title, wantedTitle))
+      .sort((a, b) => String(a.title).length - String(b.title).length);
+    for (const album of albums.slice(0, 2)) {
+      const list = await deezerJsonp(`album/${album.id}/tracks`, { limit: 10 });
+      const tracks = list.data || [];
+      let hit = tracks.find(x => x.preview);
+      if (!hit && tracks[0]) {                       // certaines listes n'incluent pas le lien : on lit la fiche du 1er titre
+        const one = await deezerJsonp(`track/${tracks[0].id}`, {});
+        if (one && one.preview) hit = one;
+      }
+      if (hit) return deezerResult(hit, album.artist.name);
+    }
+  }
+  return null;
+}
+
+async function deezerArtistPreview(artistName) {
+  const wanted = mbNormalize(artistName);
+  const data = await deezerJsonp('search/artist', { q: artistName, limit: 5 });
+  const artist = (data.data || []).find(a => a.id && mbNormalize(a.name) === wanted);
+  if (!artist) return null;
+  const top = await deezerJsonp(`artist/${artist.id}/top`, { limit: 5 });
+  const hit = (top.data || []).find(x => x.preview);
+  return hit ? deezerResult(hit, artist.name) : null;
+}
+
+// Extrait d'un artiste : ses titres les plus écoutés (Last.fm) d'abord, puis son premier titre iTunes, puis Deezer
 async function discoverFindArtistPreview(artistName) {
   const cacheKey = `pv:a:${mbNormalize(artistName)}`;
-  if (discoverCache.has(cacheKey)) return discoverCache.get(cacheKey);
+  const cachedPv = previewCacheGet(cacheKey);
+  if (cachedPv !== undefined) return cachedPv;
   const wanted = mbNormalize(artistName);
 
   let topTracks = [];
@@ -7648,32 +7724,58 @@ async function discoverFindArtistPreview(artistName) {
     const hit = pick(data.results, '');
     if (hit) found = toResult(hit);
   }
+  if (!found) found = await previewSafely(() => deezerArtistPreview(artistName));
   if (found) discoverCache.set(cacheKey, found);
   return found;
 }
 
-// Extrait d'un album : son premier titre, retrouvé via la fiche album iTunes
-async function discoverFindAlbumPreview(artistName, albumTitle) {
-  const cacheKey = `pv:b:${mbNormalize(artistName)}|${mbBaseTitle(albumTitle)}`;
-  if (discoverCache.has(cacheKey)) return discoverCache.get(cacheKey);
-  const wanted = mbNormalize(artistName);
-  const wantedTitle = mbBaseTitle(albumTitle);
-
-  const search = await itunesFetch(itunesUrl('search', { term: `${artistName} ${albumTitle}`, entity: 'album', limit: 10 }));
+// iTunes, 1re méthode : la fiche album (puis ses titres). `country` permet d'interroger une autre boutique que la FR
+async function itunesAlbumPreview(wanted, wantedTitle, artistName, albumTitle, country) {
+  const extra = country ? { country } : {};
+  const search = await itunesFetch(itunesUrl('search', { term: `${artistName} ${albumTitle}`, entity: 'album', limit: 10, ...extra }));
   const albums = (search.results || [])
-    .filter(r => r.collectionId && itunesArtistMatches(r.artistName, wanted))
-    .filter(r => { const t = mbBaseTitle(r.collectionName); return t === wantedTitle || (t.length >= 4 && wantedTitle.length >= 4 && (t.startsWith(wantedTitle) || wantedTitle.startsWith(t))); })
+    .filter(r => r.collectionId && itunesArtistMatches(r.artistName, wanted) && previewAlbumTitleMatches(r.collectionName, wantedTitle))
     .sort((a, b) => String(a.collectionName).length - String(b.collectionName).length);
   if (albums.length === 0) return null;
 
-  const lookup = await itunesFetch(itunesUrl('lookup', { id: albums[0].collectionId, entity: 'song' }));
+  const lookup = await itunesFetch(itunesUrl('lookup', { id: albums[0].collectionId, entity: 'song', ...extra }));
   const tracks = (lookup.results || [])
     .filter(r => r.wrapperType === 'track' && r.previewUrl)
     .sort((a, b) => ((a.discNumber || 1) - (b.discNumber || 1)) || ((a.trackNumber || 99) - (b.trackNumber || 99)));
   if (tracks.length === 0) return null;
+  return { url: tracks[0].previewUrl, title: tracks[0].trackName, artist: tracks[0].artistName };
+}
 
-  const found = { url: tracks[0].previewUrl, title: tracks[0].trackName, artist: tracks[0].artistName };
-  discoverCache.set(cacheKey, found);
+// iTunes, 2e méthode : recherche directe des titres de l'album (rattrape les albums que la recherche « album » rate)
+async function itunesAlbumPreviewFromSongs(wanted, wantedTitle, artistName, albumTitle, country) {
+  const extra = country ? { country } : {};
+  const data = await itunesFetch(itunesUrl('search', { term: `${artistName} ${albumTitle}`, entity: 'song', limit: 25, ...extra }));
+  const tracks = (data.results || [])
+    .filter(r => r.previewUrl && itunesArtistMatches(r.artistName, wanted) && previewAlbumTitleMatches(r.collectionName, wantedTitle))
+    .sort((a, b) => ((a.discNumber || 1) - (b.discNumber || 1)) || ((a.trackNumber || 99) - (b.trackNumber || 99)));
+  if (tracks.length === 0) return null;
+  return { url: tracks[0].previewUrl, title: tracks[0].trackName, artist: tracks[0].artistName };
+}
+
+// Extrait d'un album : son premier titre. Sources essayées dans l'ordre jusqu'à trouver un extrait :
+// iTunes FR (fiche album, puis titres) → Deezer → iTunes US / GB / DE
+async function discoverFindAlbumPreview(artistName, albumTitle) {
+  const cacheKey = `pv:b:${mbNormalize(artistName)}|${mbBaseTitle(albumTitle)}`;
+  const cachedPv = previewCacheGet(cacheKey);
+  if (cachedPv !== undefined) return cachedPv;
+  const wanted = mbNormalize(artistName);
+  const wantedTitle = mbBaseTitle(albumTitle);
+
+  // Boutique FR : une vraie panne réseau est signalée à l'utilisateur, comme avant
+  let found = await itunesAlbumPreview(wanted, wantedTitle, artistName, albumTitle, null);
+  if (!found) found = await previewSafely(() => itunesAlbumPreviewFromSongs(wanted, wantedTitle, artistName, albumTitle, null));
+  if (!found) found = await previewSafely(() => deezerAlbumPreview(wanted, wantedTitle, artistName, albumTitle));
+  for (const country of ['US', 'GB', 'DE']) {
+    if (found) break;
+    found = await previewSafely(() => itunesAlbumPreview(wanted, wantedTitle, artistName, albumTitle, country));
+  }
+
+  discoverCache.set(cacheKey, found);   // y compris « introuvable » (null) pour ne pas relancer toute la chaîne à chaque appui
   return found;
 }
 
@@ -7838,7 +7940,7 @@ async function discoverTogglePreview(btn) {
 
     if (!found) {
       discoverStopPreview();
-      showToast(t("🎧 Aucun extrait disponible sur iTunes pour celui-ci"));
+      showToast(t("🎧 Aucun extrait disponible pour celui-ci"));
       return;
     }
     audio.src = found.url;

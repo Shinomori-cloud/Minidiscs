@@ -445,7 +445,7 @@
 "🎉 MiniDisc créé avec sa cover !": "🎉 MiniDisc created with its cover!",
 "🎙️ À enregistrer": "🎙️ To record",
 "🎚️ Statut": "🎚️ Status",
-"🎧 Aucun extrait disponible sur iTunes pour celui-ci": "🎧 No preview available on iTunes for this one",
+"🎧 Aucun extrait disponible pour celui-ci": "🎧 No preview available for this one",
 "🎨 Créer une cover": "🎨 Create a cover",
 "🎨 Studio de covers": "🎨 Cover studio",
 "🎲 Thème du jour : «": "🎲 Theme of the day: “",
