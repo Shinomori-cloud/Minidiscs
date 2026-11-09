@@ -7827,10 +7827,15 @@ function discoverUpdatePlayButtons() {
 }
 
 // Petit bouton flottant pause / reprise : visible uniquement pendant (ou en pause d')un extrait
+let discoverMiniTimer = null;        // minuteur « disparaît 2 s après la pause »
+let discoverMiniAutoHidden = false;  // vrai une fois le bouton masqué pendant une pause
 function discoverUpdateMiniControl() {
   const p = discoverPlayer;
   let btn = document.getElementById('dc-mini-player');
   if (p.state !== 'playing' && p.state !== 'paused') {
+    clearTimeout(discoverMiniTimer);
+    discoverMiniTimer = null;
+    discoverMiniAutoHidden = false;
     if (btn) btn.classList.add('hidden');
     return;
   }
@@ -7845,7 +7850,19 @@ function discoverUpdateMiniControl() {
     document.body.appendChild(btn);
   }
   const paused = p.state === 'paused';
-  btn.classList.remove('hidden');
+  if (!paused) {
+    clearTimeout(discoverMiniTimer);
+    discoverMiniTimer = null;
+    discoverMiniAutoHidden = false;
+  } else if (!discoverMiniTimer && !discoverMiniAutoHidden) {
+    discoverMiniTimer = setTimeout(() => {
+      discoverMiniTimer = null;
+      discoverMiniAutoHidden = true;
+      const b = document.getElementById('dc-mini-player');
+      if (b) b.classList.add('hidden');
+    }, 2000);
+  }
+  btn.classList.toggle('hidden', paused && discoverMiniAutoHidden);
   btn.classList.toggle('is-paused', paused);
   btn.setAttribute('aria-label', paused ? t("Reprendre l'extrait") : t("Mettre l'extrait en pause"));
   btn.title = (paused ? t("Reprendre l'extrait") : t("Mettre l'extrait en pause")) + (p.title ? ` · ♪ ${p.title}` : '');

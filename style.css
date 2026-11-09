@@ -4730,13 +4730,9 @@ body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
    ========================================== */
 /* Page Pistes : ▶ en bas à droite de la pochette */
 .ad-cover .dc-play.ad-play {
-  right: 10px;
-  bottom: 10px;
-  width: 40px;
-  height: 40px;
+  width: min(40%, 92px);
   z-index: 3;
 }
-.ad-cover .dc-play.ad-play svg { width: 20px; height: 20px; }
 
 /* Planificateur : durée sous le titre et l'artiste */
 .idea-info { gap: 2px; }
@@ -4805,32 +4801,41 @@ body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
 /* Pochettes des listes d'albums et de la page Titres : ▶ discret (très transparent), bien visible pendant la lecture */
 .album-cover-container { position: relative; }
 .dc-play.cover-play {
-  right: 5px;
-  bottom: 5px;
-  width: 30px;
-  height: 30px;
-  opacity: 0.38;
-  background: rgba(var(--c-140c2a), 0.15);
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  width: min(46%, 60px);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+  background: rgba(var(--c-140c2a), 0.2);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
-  border: 1.5px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
   transition: opacity 0.15s ease, background-color 0.12s ease, transform 0.1s ease;
 }
+.dc-play.cover-play::after { inset: -6px; }
+.dc-play.cover-play svg { width: 46%; height: 46%; }
+.dc-play.cover-play.is-loading .i-spin { width: 40%; height: auto; aspect-ratio: 1 / 1; }
 .dc-play.cover-play:hover,
 .dc-play.cover-play:active,
 .dc-play.cover-play.is-playing,
 .dc-play.cover-play.is-loading { opacity: 1; }
-.dc-play.cover-play.is-playing { background: rgba(var(--c-ff007f), 0.85); }
+.dc-play.cover-play:active { transform: translate(-50%, -50%) scale(0.92); }
+.dc-play.cover-play.is-playing { background: rgba(var(--c-ff007f), 0.8); }
 
 /* Mini-bouton pause / reprise (uniquement pendant un extrait) */
 .dc-mini-player {
   position: fixed;
-  left: 14px;
-  bottom: calc(150px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
   z-index: 900;
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -4846,8 +4851,11 @@ body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
   touch-action: manipulation;
 }
 .dc-mini-player.hidden { display: none; }
-.dc-mini-player:active { transform: scale(0.92); }
-.dc-mini-player svg { width: 18px; height: 18px; fill: #ffffff; }
+.dc-mini-player:active { transform: translateX(-50%) scale(0.92); }
+.dc-mini-player svg { width: 26px; height: 26px; fill: #ffffff; }
+/* Au-dessus des barres déjà fixées en bas au centre (sélection du planificateur, boutons de la page Titres) */
+body:has(#planner-selection-bar:not(.hidden)) .dc-mini-player,
+body:has(.titles-actions) .dc-mini-player { bottom: calc(140px + env(safe-area-inset-bottom, 0px)); }
 .dc-mini-player .i-play { display: none; margin-left: 2px; }
 .dc-mini-player.is-paused .i-play { display: block; }
 .dc-mini-player.is-paused .i-pause { display: none; }
