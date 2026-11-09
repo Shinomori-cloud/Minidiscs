@@ -1737,17 +1737,26 @@ if (genre && genre !== 'ALL') {
       
       let albumsContent = '';
       if (md.albums && md.albums.length > 0) {
-        albumsContent = md.albums.map(album => `
+        albumsContent = md.albums.map(album => {
+          const pvArtist = album.artist || md.artist;
+          return `
           <div class="md-album-item">
-            <div class="md-album-title">${album.title || ''}</div>
-            <div class="md-album-artist">${album.artist || ''}</div>
+            <div class="md-album-text">
+              <div class="md-album-title">${album.title || ''}</div>
+              <div class="md-album-artist">${album.artist || ''}</div>
+            </div>
+            ${canPreviewAlbum(pvArtist, album.title) ? discoverPlayButton('album', pvArtist, album.title, 'md-play') : ''}
           </div>
-        `).join('');
+        `;
+        }).join('');
       } else {
         albumsContent = `
           <div class="md-album-item">
-            <div class="md-album-title">${md.title || t("MiniDisc sans titre")}</div>
-            <div class="md-album-artist">${md.artist || ''}</div>
+            <div class="md-album-text">
+              <div class="md-album-title">${md.title || t("MiniDisc sans titre")}</div>
+              <div class="md-album-artist">${md.artist || ''}</div>
+            </div>
+            ${canPreviewAlbum(md.artist, md.title) ? discoverPlayButton('album', md.artist, md.title, 'md-play') : ''}
           </div>
         `;
       }
@@ -2036,6 +2045,7 @@ if (!md.albums || md.albums.length === 0) {
     tracksHTML,
     withLastfm: !!md.title,
     coverPath: md.md_cover,
+    previewArtist: md.artist, previewTitle: md.title,
     mdIndex: index, albumIndex: null
   });
   mountPageFab(fabHTML);
@@ -2143,7 +2153,7 @@ async function titlesMbReleases(mbid) {
     .filter(list => list.length);
 }
 
-function titlesPageHTML({ color, coverHTML, coverPath, title, artist, year, duration, genres, tags, badgeHTML, tracksHTML, withLastfm, mdIndex, albumIndex }) {
+function titlesPageHTML({ color, coverHTML, coverPath, title, artist, year, duration, genres, tags, badgeHTML, tracksHTML, withLastfm, mdIndex, albumIndex, previewArtist, previewTitle }) {
   const main = genres || [];
   const tagList = (tags || []).filter(t => !main.some(g => String(g).toLowerCase() === String(t).toLowerCase()) && !titlesIsArtistTag(t, [artist]));
   const chips = titlesGenreChips([], tagList);
@@ -2157,7 +2167,7 @@ function titlesPageHTML({ color, coverHTML, coverPath, title, artist, year, dura
         <div class="td-hero-top">
           <div class="td-hero-bg"><div class="td-hero-bg-img"${bgUrl ? ` style="background-image:url('${bgUrl}')"` : ''}></div></div>
           <div class="ad-artist">${artist}</div>
-          <div class="ad-cover">${coverHTML}</div>
+          <div class="ad-cover">${coverHTML}${canPreviewAlbum(previewArtist, previewTitle) ? discoverPlayButton('album', previewArtist, previewTitle, 'ad-play') : ''}</div>
           <h2 class="ad-title">${title}</h2>
         </div>
         <div id="td-facts" class="ad-facts">${titlesFactsHTML(year, duration)}</div>
@@ -2543,6 +2553,7 @@ function openAlbum(mdIndex, albumIndex, pushState = true) {
     tracksHTML,
     withLastfm: !!album.title,
     coverPath: album.md_cover,
+    previewArtist: album.artist || md.artist, previewTitle: album.title,
     mdIndex, albumIndex: Number(albumIndex)
   });
   mountPageFab(titlesEditFabHTML(mdIndex, albumIndex));
@@ -3271,6 +3282,7 @@ function renderCompilPlanner(pushState = true) {
             </div>
             <button type="button" class="idea-delete-btn" data-settings="${index}" aria-label="${t("Paramètres de l'idée")}">⚙️</button>
             <button type="button" class="idea-delete-btn idea-search-btn" data-similar="${index}" aria-label="${t("Albums similaires")}" title="${t("Albums similaires")}">🔍</button>
+            ${canPreviewAlbum(item.artist, item.title) ? discoverPlayButton('album', item.artist, item.title, 'idea-play-btn') : ''}
           </div>
         `;
       }).join('');
@@ -7699,6 +7711,12 @@ function discoverNowPlaying(key) {
   return `<div class="dc-nowplaying ${on ? '' : 'hidden'}" data-key="${mbEscapeHTML(key)}">${on ? '♪ ' + mbEscapeHTML(p.title) : ''}</div>`;
 }
 
+// Un extrait n'est cherché que pour un album identifiable (titre + artiste réel, pas « Divers » / « Various »)
+function canPreviewAlbum(artist, title) {
+  const a = String(artist || '').trim(), ti = String(title || '').trim();
+  return !!(a && ti && !/divers|various/i.test(a));
+}
+
 function discoverUpdatePlayButtons() {
   const p = discoverPlayer;
   document.querySelectorAll('.dc-play').forEach(btn => {
@@ -7794,12 +7812,17 @@ async function discoverTogglePreview(btn) {
   }
 }
 
-// La lecture s'arrête quand on quitte la page Découverte
-['hashchange', 'popstate'].forEach(evt => window.addEventListener(evt, () => {
-  setTimeout(() => {
-    if (discoverPlayer.state !== 'idle' && !document.getElementById('discover-page')) discoverStopPreview();
-  }, 0);
-}));
+// La lecture s'arrête quand on quitte la page où se trouve le bouton ▶ en cours (Découverte, planificateur, liste des
+// MiniDiscs, page Pistes…). La navigation de l'appli remplace le contenu de #app sans toujours changer le hash :
+// on surveille donc aussi #app.
+function discoverSyncPlayerWithPage() {
+  const p = discoverPlayer;
+  if (p.state === 'idle') return;
+  const stillThere = Array.from(document.querySelectorAll('.dc-play')).some(btn => btn.dataset.key === p.key);
+  if (!stillThere) discoverStopPreview();
+}
+['hashchange', 'popstate'].forEach(evt => window.addEventListener(evt, () => setTimeout(discoverSyncPlayerWithPage, 0)));
+if (app) new MutationObserver(discoverSyncPlayerWithPage).observe(app, { childList: true });
 
 /* ---------- Pages : « Découverte » ---------- */
 // Nom affiché dans le bandeau de recherche : l'artiste ou l'album recherché

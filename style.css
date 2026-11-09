@@ -816,6 +816,14 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .md-album-item {
   margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.md-album-text {
+  min-width: 0;
 }
 
 .md-album-item:last-child {
@@ -4723,3 +4731,75 @@ body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
   .count-chip.count-total { padding-right: 5px; }
   .view-switch { font-size: 0.68rem; padding: 4px 8px; }
 }
+
+
+/* ==========================================
+   EXTRAITS ▶ : liste des MiniDiscs, page Pistes, planificateur
+   ========================================== */
+/* Liste des MiniDiscs : les infos occupent la largeur restante, le ▶ se place à droite de chaque album */
+.list-item:has(.md-thumb) .item-details { flex: 1; min-width: 0; }
+.dc-play.md-play {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  flex: none;
+  width: 28px;
+  height: 28px;
+}
+.dc-play.md-play::after { inset: -4px; }
+.dc-play.md-play svg { width: 14px; height: 14px; }
+
+/* Page Pistes : ▶ en bas à droite de la pochette */
+.ad-cover .dc-play.ad-play {
+  right: 8px;
+  bottom: 8px;
+  width: 40px;
+  height: 40px;
+  z-index: 3;
+}
+.ad-cover .dc-play.ad-play svg { width: 20px; height: 20px; }
+
+/* Planificateur : durée sous le titre et l'artiste */
+.idea-info { gap: 2px; }
+.idea-meta {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.idea-artist, .idea-duration { max-width: 100%; }
+.idea-artist { overflow: hidden; text-overflow: ellipsis; }
+
+/* Planificateur : ⚙️ (haut), 🔍 (milieu) et ▶ (bas) empilés à droite, sans pastille autour */
+.idea-card .idea-delete-btn,
+.idea-card .dc-play.idea-play-btn {
+  padding: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  width: 26px;
+  height: 26px;
+  font-size: 1rem;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 4px rgba(0, 0, 0, 0.7));
+}
+.idea-card .idea-delete-btn:hover,
+.idea-card .dc-play.idea-play-btn:hover {
+  background: none;
+  border: 0;
+  transform: scale(1.18);
+}
+.idea-card .idea-delete-btn:active,
+.idea-card .dc-play.idea-play-btn:active { transform: scale(0.92); }
+
+.idea-card .dc-play.idea-play-btn {
+  right: 8px;
+  top: 72px;
+  bottom: auto;
+  z-index: 5;
+}
+.idea-card .dc-play.idea-play-btn::after { inset: -2px; }
+.idea-card .dc-play.idea-play-btn svg { width: 20px; height: 20px; }
+.idea-card .dc-play.idea-play-btn.is-playing { background: none; border: 0; }
+.idea-card .dc-play.idea-play-btn.is-playing svg { fill: rgb(var(--c-ff8cc4)); }
