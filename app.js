@@ -1737,26 +1737,17 @@ if (genre && genre !== 'ALL') {
       
       let albumsContent = '';
       if (md.albums && md.albums.length > 0) {
-        albumsContent = md.albums.map(album => {
-          const pvArtist = album.artist || md.artist;
-          return `
+        albumsContent = md.albums.map(album => `
           <div class="md-album-item">
-            <div class="md-album-text">
-              <div class="md-album-title">${album.title || ''}</div>
-              <div class="md-album-artist">${album.artist || ''}</div>
-            </div>
-            ${canPreviewAlbum(pvArtist, album.title) ? discoverPlayButton('album', pvArtist, album.title, 'md-play') : ''}
+            <div class="md-album-title">${album.title || ''}</div>
+            <div class="md-album-artist">${album.artist || ''}</div>
           </div>
-        `;
-        }).join('');
+        `).join('');
       } else {
         albumsContent = `
           <div class="md-album-item">
-            <div class="md-album-text">
-              <div class="md-album-title">${md.title || t("MiniDisc sans titre")}</div>
-              <div class="md-album-artist">${md.artist || ''}</div>
-            </div>
-            ${canPreviewAlbum(md.artist, md.title) ? discoverPlayButton('album', md.artist, md.title, 'md-play') : ''}
+            <div class="md-album-title">${md.title || t("MiniDisc sans titre")}</div>
+            <div class="md-album-artist">${md.artist || ''}</div>
           </div>
         `;
       }
@@ -1913,7 +1904,7 @@ function renderAlbumsList() {
     const aIdx = it.aIndex === null ? 'null' : it.aIndex;
     return `
       <div class="list-item list-item-compact" style="border-color: ${color}; --glow: ${color}; border-left-width: 6px; position: relative;" onclick="openAlbumFromAlbumsView(${it.mdIndex}, ${aIdx})">
-        <div class="album-cover-container">${createLoadingCoverHTML(it.cover, 'album-thumb', '🎵')}</div>
+        <div class="album-cover-container">${createLoadingCoverHTML(it.cover, 'album-thumb', '🎵')}${canPreviewAlbum(it.artist, it.title) ? discoverPlayButton('album', it.artist, it.title, 'cover-play') : ''}</div>
         <div class="item-details">
           ${showGenre ? `<div class="item-tag" style="color: ${color};">${it.genres.join(' / ')}</div>` : ''}
           <div class="item-title" style="font-weight: 700;">${it.title || t("Album sans titre")}</div>
@@ -2077,6 +2068,7 @@ md.albums.forEach((album, aIndex) => {
     <div class="list-item" style="border-color: ${albumColor}; --glow: ${albumColor}; border-left-width: 6px; position: relative;" onclick="goToAlbum(${index}, ${aIndex})">
       <div class="album-cover-container" style="margin-right: 15px; display: inline-block;">
         ${coverHTML}
+        ${canPreviewAlbum(album.artist || md.artist, album.title) ? discoverPlayButton('album', album.artist || md.artist, album.title, 'cover-play') : ''}
       </div>
       <div class="item-details">
         <div class="item-tag" style="color: ${albumColor};">${albumGenres.join(' / ')}</div>
@@ -2167,7 +2159,7 @@ function titlesPageHTML({ color, coverHTML, coverPath, title, artist, year, dura
         <div class="td-hero-top">
           <div class="td-hero-bg"><div class="td-hero-bg-img"${bgUrl ? ` style="background-image:url('${bgUrl}')"` : ''}></div></div>
           <div class="ad-artist">${artist}</div>
-          <div class="ad-cover">${coverHTML}${canPreviewAlbum(previewArtist, previewTitle) ? discoverPlayButton('album', previewArtist, previewTitle, 'ad-play') : ''}</div>
+          <div class="ad-cover">${coverHTML}${canPreviewAlbum(previewArtist, previewTitle) ? discoverPlayButton('album', previewArtist, previewTitle, 'ad-play cover-play') : ''}</div>
           <h2 class="ad-title">${title}</h2>
         </div>
         <div id="td-facts" class="ad-facts">${titlesFactsHTML(year, duration)}</div>
@@ -3280,6 +3272,7 @@ function renderCompilPlanner(pushState = true) {
                 <span class="idea-duration">⏱️ ${formatPlannerDuration(item.duration)}</span>
               </div>
             </div>
+            <span class="idea-toolbar ${canPreviewAlbum(item.artist, item.title) ? '' : 'idea-toolbar-2'}" aria-hidden="true"></span>
             <button type="button" class="idea-delete-btn" data-settings="${index}" aria-label="${t("Paramètres de l'idée")}">⚙️</button>
             <button type="button" class="idea-delete-btn idea-search-btn" data-similar="${index}" aria-label="${t("Albums similaires")}" title="${t("Albums similaires")}">🔍</button>
             ${canPreviewAlbum(item.artist, item.title) ? discoverPlayButton('album', item.artist, item.title, 'idea-play-btn') : ''}
@@ -6289,7 +6282,6 @@ async function startDiscoverSearch() {
 
   s.runId++;
   const runId = s.runId;
-  discoverStopPreview();
   discoverResetResults();
   s.started = true;
   s.running = true;
@@ -7729,6 +7721,51 @@ function discoverUpdatePlayButtons() {
     el.classList.toggle('hidden', !on);
     el.textContent = on ? `♪ ${p.title}` : '';
   });
+  discoverUpdateMiniControl();
+}
+
+// Petit bouton flottant pause / reprise : visible uniquement pendant (ou en pause d')un extrait
+function discoverUpdateMiniControl() {
+  const p = discoverPlayer;
+  let btn = document.getElementById('dc-mini-player');
+  if (p.state !== 'playing' && p.state !== 'paused') {
+    if (btn) btn.classList.add('hidden');
+    return;
+  }
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'dc-mini-player';
+    btn.className = 'dc-mini-player';
+    btn.innerHTML = '<svg class="i-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>' +
+      '<svg class="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+    btn.addEventListener('click', discoverPauseResume);
+    document.body.appendChild(btn);
+  }
+  const paused = p.state === 'paused';
+  btn.classList.remove('hidden');
+  btn.classList.toggle('is-paused', paused);
+  btn.setAttribute('aria-label', paused ? t("Reprendre l'extrait") : t("Mettre l'extrait en pause"));
+  btn.title = (paused ? t("Reprendre l'extrait") : t("Mettre l'extrait en pause")) + (p.title ? ` · ♪ ${p.title}` : '');
+}
+
+function discoverPauseResume() {
+  const p = discoverPlayer;
+  if (!p.audio) return;
+  if (p.state === 'playing') {
+    p.audio.pause();
+    p.state = 'paused';
+    discoverUpdatePlayButtons();
+  } else if (p.state === 'paused') {
+    p.audio.play().then(() => {
+      if (p.state !== 'paused') return;
+      p.state = 'playing';
+      discoverUpdatePlayButtons();
+    }).catch(() => {
+      discoverStopPreview();
+      showToast(t("⚠️ Lecture impossible pour cet extrait"));
+    });
+  }
 }
 
 function discoverAudio() {
@@ -7771,6 +7808,12 @@ async function discoverTogglePreview(btn) {
   const key = btn.dataset.key;
   const kind = btn.dataset.kind;
 
+  // Extrait en pause : un appui sur son bouton le reprend
+  if (p.key === key && p.state === 'paused') {
+    discoverPauseResume();
+    return;
+  }
+
   // Un second appui sur le même bouton arrête la lecture
   if (p.key === key && (p.state === 'playing' || p.state === 'loading')) {
     discoverStopPreview();
@@ -7812,17 +7855,7 @@ async function discoverTogglePreview(btn) {
   }
 }
 
-// La lecture s'arrête quand on quitte la page où se trouve le bouton ▶ en cours (Découverte, planificateur, liste des
-// MiniDiscs, page Pistes…). La navigation de l'appli remplace le contenu de #app sans toujours changer le hash :
-// on surveille donc aussi #app.
-function discoverSyncPlayerWithPage() {
-  const p = discoverPlayer;
-  if (p.state === 'idle') return;
-  const stillThere = Array.from(document.querySelectorAll('.dc-play')).some(btn => btn.dataset.key === p.key);
-  if (!stillThere) discoverStopPreview();
-}
-['hashchange', 'popstate'].forEach(evt => window.addEventListener(evt, () => setTimeout(discoverSyncPlayerWithPage, 0)));
-if (app) new MutationObserver(discoverSyncPlayerWithPage).observe(app, { childList: true });
+// L'extrait continue de jouer quand on change de page : il ne s'arrête que s'il est terminé ou si on en lance un autre.
 
 /* ---------- Pages : « Découverte » ---------- */
 // Nom affiché dans le bandeau de recherche : l'artiste ou l'album recherché
@@ -8066,7 +8099,6 @@ function discoverSetKind(kind) {
 function discoverNewSearch() {
   const s = discoverState;
   const kind = s.criteria.kind;
-  discoverStopPreview();
   s.runId++;
   s.criteria = { ...DISCOVER_DEFAULTS, kind };
   s.chips = [];
@@ -8087,7 +8119,6 @@ function discoverPickArtist(name) {
 
 function discoverReset() {
   const s = discoverState;
-  discoverStopPreview();
   s.runId++;
   s.criteria = { ...DISCOVER_DEFAULTS };
   s.chips = [];

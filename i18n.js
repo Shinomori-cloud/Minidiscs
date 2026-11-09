@@ -381,6 +381,8 @@
 "» rétabli": "” restored",
 "À enregistrer": "To record",
 "Écouter un extrait": "Play a preview",
+"Reprendre l'extrait": "Resume the preview",
+"Mettre l'extrait en pause": "Pause the preview",
 "Élaborer des images pour illustrer les minidiscs": "Create images to illustrate your MiniDiscs",
 "Épaisseur": "Thickness",
 "à": "to",

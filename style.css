@@ -816,14 +816,6 @@ body:has(.featured-container.hidden):not(:has(#header-planner-badge)) main#app {
 
 .md-album-item {
   margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.md-album-text {
-  min-width: 0;
 }
 
 .md-album-item:last-child {
@@ -4736,23 +4728,10 @@ body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
 /* ==========================================
    EXTRAITS ▶ : liste des MiniDiscs, page Pistes, planificateur
    ========================================== */
-/* Liste des MiniDiscs : les infos occupent la largeur restante, le ▶ se place à droite de chaque album */
-.list-item:has(.md-thumb) .item-details { flex: 1; min-width: 0; }
-.dc-play.md-play {
-  position: relative;
-  right: auto;
-  bottom: auto;
-  flex: none;
-  width: 28px;
-  height: 28px;
-}
-.dc-play.md-play::after { inset: -4px; }
-.dc-play.md-play svg { width: 14px; height: 14px; }
-
 /* Page Pistes : ▶ en bas à droite de la pochette */
 .ad-cover .dc-play.ad-play {
-  right: 8px;
-  bottom: 8px;
+  right: 10px;
+  bottom: 10px;
   width: 40px;
   height: 40px;
   z-index: 3;
@@ -4795,7 +4774,7 @@ body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
 
 .idea-card .dc-play.idea-play-btn {
   right: 8px;
-  top: 72px;
+  top: 68px;
   bottom: auto;
   z-index: 5;
 }
@@ -4803,3 +4782,72 @@ body:not(:has(.dashboard-container)) #header-title { white-space: nowrap; }
 .idea-card .dc-play.idea-play-btn svg { width: 20px; height: 20px; }
 .idea-card .dc-play.idea-play-btn.is-playing { background: none; border: 0; }
 .idea-card .dc-play.idea-play-btn.is-playing svg { fill: rgb(var(--c-ff8cc4)); }
+
+/* Planificateur : bandeau d'options semi-transparent derrière ⚙️ 🔍 ▶ (icônes espacées de 30 px) */
+.idea-toolbar {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 34px;
+  height: 94px;
+  z-index: 4;
+  pointer-events: none;
+  border-radius: 17px;
+  background: rgba(var(--c-140c2a), 0.42);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.idea-toolbar.idea-toolbar-2 { height: 64px; }
+.idea-card .idea-delete-btn.idea-search-btn { top: 38px; }
+
+/* Pochettes des listes d'albums et de la page Titres : ▶ discret (très transparent), bien visible pendant la lecture */
+.album-cover-container { position: relative; }
+.dc-play.cover-play {
+  right: 5px;
+  bottom: 5px;
+  width: 30px;
+  height: 30px;
+  opacity: 0.38;
+  background: rgba(var(--c-140c2a), 0.15);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.35);
+  transition: opacity 0.15s ease, background-color 0.12s ease, transform 0.1s ease;
+}
+.dc-play.cover-play:hover,
+.dc-play.cover-play:active,
+.dc-play.cover-play.is-playing,
+.dc-play.cover-play.is-loading { opacity: 1; }
+.dc-play.cover-play.is-playing { background: rgba(var(--c-ff007f), 0.85); }
+
+/* Mini-bouton pause / reprise (uniquement pendant un extrait) */
+.dc-mini-player {
+  position: fixed;
+  left: 14px;
+  bottom: calc(150px + env(safe-area-inset-bottom, 0px));
+  z-index: 900;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: rgba(var(--c-140c2a), 0.85);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border: 2px solid rgb(var(--c-ff007f));
+  border-radius: 50%;
+  box-shadow: 2px 2px 0 #000000, 0 0 12px rgba(var(--c-ff007f), 0.5);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.dc-mini-player.hidden { display: none; }
+.dc-mini-player:active { transform: scale(0.92); }
+.dc-mini-player svg { width: 18px; height: 18px; fill: #ffffff; }
+.dc-mini-player .i-play { display: none; margin-left: 2px; }
+.dc-mini-player.is-paused .i-play { display: block; }
+.dc-mini-player.is-paused .i-pause { display: none; }
