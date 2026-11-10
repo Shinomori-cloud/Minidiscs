@@ -6474,7 +6474,6 @@
     {
       "id": "md-1794178811411",
       "md_cover": "images/img_1794178809291.jpg",
-      "title": "Monkey Business / Rock Steady",
       "albums": [
         {
           "id": "md-1794178811411-alb-1",
@@ -6508,8 +6507,8 @@
             "Audio Delite at Low Fidelity",
             "Union"
           ],
-          "description": "Monkey Business is the fourth studio album by American group Black Eyed Peas. It was released on June 7, 2005, by the will.i.am Music Group and A&M Records. It was recorded in \"two and three-month spurts\" throughout 2004 while the group was on tour. The album was certified three times Platinum by the RIAA in the U.S. and has sold over 9 million copies worldwide. The Canadian Recording Industry Association (or CRIA) has certified Monkey Business 6× Platinum, with sales of over 600,000 copies. The Australian Recording Industry Association (or ARIA) has also certified Monkey Business 6× Platinum, denoting sales of over 420,000 copies. The album's tracks earned the group four 2006 Grammy Award nominations and they also won the Grammy for Best Rap Performance by a Duo or Group for \"Don't Phunk with My Heart\". According to IFPI, over 2 million copies have been sold in Europe. The band promoted the album embarking on two concert tours: the Monkey Business Tour and the Black Blue & You Tour. .",
-          "toRecord": true
+          "toRecord": true,
+          "description": "Monkey Business is the fourth studio album by American group Black Eyed Peas. It was released on June 7, 2005, by the will.i.am Music Group and A&M Records. It was recorded in \"two and three-month spurts\" throughout 2004 while the group was on tour. The album was certified three times Platinum by the RIAA in the U.S. and has sold over 9 million copies worldwide. The Canadian Recording Industry Association (or CRIA) has certified Monkey Business 6× Platinum, with sales of over 600,000 copies. The Australian Recording Industry Association (or ARIA) has also certified Monkey Business 6× Platinum, denoting sales of over 420,000 copies. The album's tracks earned the group four 2006 Grammy Award nominations and they also won the Grammy for Best Rap Performance by a Duo or Group for \"Don't Phunk with My Heart\". According to IFPI, over 2 million copies have been sold in Europe. The band promoted the album embarking on two concert tours: the Monkey Business Tour and the Black Blue & You Tour. ."
         },
         {
           "id": "md-1794178811411-alb-2",
@@ -6541,10 +6540,11 @@
             "Waiting Room",
             "Rock Steady"
           ],
-          "description": "Rock Steady is the fifth album by American rock band No Doubt, released December 11, 2001 on Interscope Records. The band began writing the album with initial recording sessions in Los Angeles and San Francisco. The group then traveled to London and Jamaica to work with various performers, songwriters, and producers. Sly & Robbie, The Neptunes, and William Orbit were among the many artists No Doubt collaborated with on the album. As a result of the many collaborations, Rock Steady touches on many musical styles. The album focuses on the ska punk and reggae influences present in the band's earlier work while incorporating dub, ragga, and dance styles. The band attempted to capture the vibe of Jamaican dancehall music, and experimented with writing songs without its standard instrumentation. Singer Gwen Stefani wrote her lyrics quickly in comparison to previous records, and dealt with topics ranging from partying to ruminations on her relationship with Gavin Rossdale. Rock Steady received mostly positive reviews from contemporary music critics, and it was nominated for Best Pop Vocal Album at the 45th Grammy Awards. The album served as a commercial comeback for the band, surpassing sales of its previous offering, Return of Saturn (2000). Rock Steady yielded four singles, two of which won the Grammy Award for Best Pop Performance by a Duo or Group with Vocal. .",
-          "toRecord": true
+          "toRecord": false,
+          "description": "Rock Steady is the fifth album by American rock band No Doubt, released December 11, 2001 on Interscope Records. The band began writing the album with initial recording sessions in Los Angeles and San Francisco. The group then traveled to London and Jamaica to work with various performers, songwriters, and producers. Sly & Robbie, The Neptunes, and William Orbit were among the many artists No Doubt collaborated with on the album. As a result of the many collaborations, Rock Steady touches on many musical styles. The album focuses on the ska punk and reggae influences present in the band's earlier work while incorporating dub, ragga, and dance styles. The band attempted to capture the vibe of Jamaican dancehall music, and experimented with writing songs without its standard instrumentation. Singer Gwen Stefani wrote her lyrics quickly in comparison to previous records, and dealt with topics ranging from partying to ruminations on her relationship with Gavin Rossdale. Rock Steady received mostly positive reviews from contemporary music critics, and it was nominated for Best Pop Vocal Album at the 45th Grammy Awards. The album served as a commercial comeback for the band, surpassing sales of its previous offering, Return of Saturn (2000). Rock Steady yielded four singles, two of which won the Grammy Award for Best Pop Performance by a Duo or Group with Vocal. ."
         }
-      ]
+      ],
+      "title": "Monkey Business / Rock Steady"
     }
   ],
   "ideaAlbums": [
