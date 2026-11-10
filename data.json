@@ -5132,7 +5132,6 @@
     {
       "id": "md-1792646910121",
       "md_cover": "images/img_1792646907783.jpg",
-      "title": "666.667 Club / Western sous la neige / Aéromusical",
       "albums": [
         {
           "id": "md-1792646910121-alb-1",
@@ -5198,7 +5197,8 @@
             "I Love You",
             "Longboard Train",
             "Song for Jedi",
-            "Rodéo / Mc Enroe folk"
+            "Rodéo",
+            "Mc Enroe folk"
           ],
           "toRecord": true
         },
@@ -5232,7 +5232,8 @@
           ],
           "toRecord": true
         }
-      ]
+      ],
+      "title": "666.667 Club / Western sous la neige / Aéromusical"
     },
     {
       "id": "md-1792848674845",
