@@ -5141,12 +5141,29 @@
           "artist": "Noir Désir",
           "main_genre": "Rock & Blues",
           "tags": [
-            "Rock",
-            "Français"
+            "french",
+            "rock",
+            "rock francais",
+            "alternative rock",
+            "french rock"
           ],
           "release_year": "",
           "duration": "50:39",
-          "tracks": [],
+          "tracks": [
+            "666.667 Club",
+            "Fin de siècle",
+            "Un jour en France",
+            "A Ton Etoile",
+            "Ernestine",
+            "Comme elle vient",
+            "Prayer for a Wanker",
+            "Les Persiennes",
+            "L'Homme Pressé",
+            "Lazy",
+            "A La Longue",
+            "Septembre En Attendant",
+            "Song for JLP"
+          ],
           "toRecord": true
         },
         {
