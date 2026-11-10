@@ -5339,7 +5339,6 @@
     {
       "id": "md-1792865653822",
       "md_cover": "images/img_1792865651702.jpg",
-      "title": "Live à l'Olympia / Sinsé part en live",
       "albums": [
         {
           "id": "md-1792865653822-alb-1",
@@ -5401,11 +5400,13 @@
             "Je préfère cent fois",
             "La Mauvaise Réputation (acoustique)",
             "La Mauvaise Réputation",
-            "Amour Gloire et Beauté"
+            "Amour Gloire et Beauté",
+            "After"
           ],
           "toRecord": true
         }
-      ]
+      ],
+      "title": "Live à l'Olympia / Sinsé part en live"
     },
     {
       "id": "md-1792914891271",
