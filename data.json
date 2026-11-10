@@ -6545,6 +6545,109 @@
         }
       ],
       "title": "Monkey Business / Rock Steady"
+    },
+    {
+      "id": "md-1794333966517",
+      "md_cover": "images/img_1794333964012.jpg",
+      "title": "By the Way / Just Enough Education to Perform / Weezer",
+      "albums": [
+        {
+          "id": "md-1794333966517-alb-1",
+          "md_cover": "images/img_1793740118404.jpg",
+          "title": "By the Way",
+          "artist": "Red Hot Chili Peppers",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "alternative rock",
+            "rock",
+            "pop rock",
+            "funk rock",
+            "alt funk"
+          ],
+          "release_year": "2002",
+          "duration": "1:11:50",
+          "tracks": [
+            "By the Way",
+            "Universally Speaking",
+            "This Is the Place",
+            "Dosed",
+            "Don’t Forget Me",
+            "The Zephyr Song",
+            "Can’t Stop",
+            "I Could Die for You",
+            "Midnight",
+            "Throw Away Your Television",
+            "Cabron",
+            "Tear",
+            "On Mercury",
+            "Minor Thing",
+            "Warm Tape",
+            "Venice Queen"
+          ],
+          "description": "À propos est le huitième album studio du groupe de rock alternatif américain Red Hot Chili Peppers, sorti le 9 juillet 2002 sur Warner Bros. Records. Il s'est vendu à plus de 286 000 exemplaires au cours de sa première semaine et a atteint la deuxième place du Billboard 200. Les singles comprenaient \" By the Way \", \" The Zephyr Song \", \" Can't Stop \", \" Dosed \" et \" Universally Speaking \". Le sujet lyrique abordé par le chanteur Anthony Kiedis dans By the Way est une divergence par rapport aux albums précédents des Red Hot Chili Peppers, Kiedis adoptant une approche plus franche et réfléchie de ses paroles. By the Way a été salué par la critique comme s'écartant des styles précédents du groupe et est reconnu pour les émotions mélodiques et tamisées données par les Chili Peppers. Le guitariste John Frusciante est crédité d'avoir écrit la plupart des mélodies de l'album, des arrangements vocaux, des lignes de basse et des progressions de guitare, changeant ainsi radicalement la direction de l'enregistrement : « son travail de guitare chaleureux et discret et ses harmonies vocales de style doo-wop sont rois cette fois-ci. \" By the Way contenait très peu de la fusion punk-funk emblématique pour laquelle le groupe était devenu connu. Frusciante a déclaré que l'écriture de \" By the Way était l'un des moments les plus heureux de ma vie. \" L'album s'est vendu à plus de huit millions d'exemplaires dans le monde.",
+          "toRecord": true
+        },
+        {
+          "id": "md-1794333966517-alb-2",
+          "md_cover": "images/img_1791203488594.jpg",
+          "title": "Just Enough Education to Perform",
+          "artist": "Stereophonics",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "britpop",
+            "rock",
+            "alternative rock",
+            "brit pop",
+            "neo-psychedelia"
+          ],
+          "release_year": "2001",
+          "duration": "45:55",
+          "tracks": [
+            "Vegas Two Times",
+            "Lying in the Sun",
+            "Mr Writer",
+            "Step on My Old Size Nines",
+            "Have a Nice Day",
+            "Nice to Be Out",
+            "Watch Them Fly Sundays",
+            "Everyday I Think of Money",
+            "Maybe",
+            "Caravan Holiday",
+            "Rooftop"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1794333966517-alb-3",
+          "md_cover": "images/img_1793740256027.jpg",
+          "title": "Weezer",
+          "artist": "Weezer",
+          "main_genre": "Alternative & Grunge 90s",
+          "tags": [
+            "alternative rock",
+            "rock",
+            "power pop",
+            "pop punk",
+            "alternative and punk"
+          ],
+          "release_year": "1994",
+          "duration": "41:18",
+          "tracks": [
+            "My Name Is Jonas",
+            "No One Else",
+            "The World Has Turned and Left Me Here",
+            "Buddy Holly",
+            "Undone - The Sweater Song",
+            "Surf Wax America",
+            "Say It Ain't So",
+            "In the Garage",
+            "Holiday",
+            "Only in Dreams"
+          ],
+          "description": "Weezer peut faire référence à : l'album bleu de mai 1994 (vu ici) l'album vert de mai 2001 l'album rouge de juin 2008 l'album blanc d'avril 2016 l'album sarcelle de janvier 2019 l'album noir de mars 2019 l'album d'or d'août 2026 Weezer est le premier album studio du groupe de rock américain Weezer, sorti le 10 mai 1994 par DGC Records. Il a été produit par Ric Ocasek. Weezer s'est formé à Los Angeles en 1992 et a d'abord eu du mal à engager le public, davantage intéressé par le grunge. Weezer (Green Album), Weezer (Red Album) et Weezer (Deluxe Edition) ont tous été renommés « Weezer » en février 2023. Pour diffuser du vert sous son titre correct, vert titre correct sur Spotify Pour diffuser du rouge sous son titre correct, rouge titre correct sur Spotify.",
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -6793,36 +6896,6 @@
         "You Could Ice Skate to This",
         "I Want You to Want Me",
         "Red Spider"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1791203490400",
-      "md_cover": "images/img_1791203488594.jpg",
-      "title": "Just Enough Education to Perform",
-      "artist": "Stereophonics",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "britpop",
-        "rock",
-        "alternative rock",
-        "brit pop",
-        "neo-psychedelia"
-      ],
-      "release_year": "2001",
-      "duration": "45:55",
-      "tracks": [
-        "Vegas Two Times",
-        "Lying in the Sun",
-        "Mr Writer",
-        "Step on My Old Size Nines",
-        "Have a Nice Day",
-        "Nice to Be Out",
-        "Watch Them Fly Sundays",
-        "Everyday I Think of Money",
-        "Maybe",
-        "Caravan Holiday",
-        "Rooftop"
       ],
       "toRecord": false
     },
@@ -7283,72 +7356,6 @@
       ],
       "toRecord": false,
       "description": "Blood Sugar Sex Magik est le cinquième album studio du groupe de rock alternatif américain Red Hot Chili Peppers, sorti le 24 septembre 1991. Produit par Rick Rubin, c'était le premier disque du groupe sorti sur Warner Bros. Records. Les styles musicaux de Blood Sugar Sex Magik différaient notamment des techniques employées sur l'album précédent du groupe, Mother's Milk (1989), et utilisaient peu de riffs de guitare heavy metal. Le sujet de l'album incorporait des insinuations sexuelles et des références à la drogue et à la mort ainsi que des thèmes de luxure et d'exubérance. L'album s'est vendu à plus de sept millions d'exemplaires rien qu'aux États-Unis et est devenu l'introduction des Red Hot Chili Peppers à la popularité et au succès critique. Blood Sugar Sex Magik a produit de nombreux succès pour le groupe, dont \"Give It Away\", \"Under the Bridge\", \"Suck My Kiss\" et \"Breaking the Girl\". Le disque marque également le départ du guitariste John Frusciante à mi-tournée en 1992, jusqu'à son retour en 1998."
-    },
-    {
-      "id": "idea-1793740120257",
-      "md_cover": "images/img_1793740118404.jpg",
-      "title": "By the Way",
-      "artist": "Red Hot Chili Peppers",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "alternative rock",
-        "rock",
-        "pop rock",
-        "funk rock",
-        "alt funk"
-      ],
-      "release_year": "2002",
-      "duration": "1:11:50",
-      "tracks": [
-        "By the Way",
-        "Universally Speaking",
-        "This Is the Place",
-        "Dosed",
-        "Don’t Forget Me",
-        "The Zephyr Song",
-        "Can’t Stop",
-        "I Could Die for You",
-        "Midnight",
-        "Throw Away Your Television",
-        "Cabron",
-        "Tear",
-        "On Mercury",
-        "Minor Thing",
-        "Warm Tape",
-        "Venice Queen"
-      ],
-      "toRecord": false,
-      "description": "À propos est le huitième album studio du groupe de rock alternatif américain Red Hot Chili Peppers, sorti le 9 juillet 2002 sur Warner Bros. Records. Il s'est vendu à plus de 286 000 exemplaires au cours de sa première semaine et a atteint la deuxième place du Billboard 200. Les singles comprenaient \" By the Way \", \" The Zephyr Song \", \" Can't Stop \", \" Dosed \" et \" Universally Speaking \". Le sujet lyrique abordé par le chanteur Anthony Kiedis dans By the Way est une divergence par rapport aux albums précédents des Red Hot Chili Peppers, Kiedis adoptant une approche plus franche et réfléchie de ses paroles. By the Way a été salué par la critique comme s'écartant des styles précédents du groupe et est reconnu pour les émotions mélodiques et tamisées données par les Chili Peppers. Le guitariste John Frusciante est crédité d'avoir écrit la plupart des mélodies de l'album, des arrangements vocaux, des lignes de basse et des progressions de guitare, changeant ainsi radicalement la direction de l'enregistrement : « son travail de guitare chaleureux et discret et ses harmonies vocales de style doo-wop sont rois cette fois-ci. \" By the Way contenait très peu de la fusion punk-funk emblématique pour laquelle le groupe était devenu connu. Frusciante a déclaré que l'écriture de \" By the Way était l'un des moments les plus heureux de ma vie. \" L'album s'est vendu à plus de huit millions d'exemplaires dans le monde."
-    },
-    {
-      "id": "idea-1793740258087",
-      "md_cover": "images/img_1793740256027.jpg",
-      "title": "Weezer",
-      "artist": "Weezer",
-      "main_genre": "Alternative & Grunge 90s",
-      "tags": [
-        "alternative rock",
-        "rock",
-        "power pop",
-        "pop punk",
-        "alternative and punk"
-      ],
-      "release_year": "1994",
-      "duration": "41:18",
-      "tracks": [
-        "My Name Is Jonas",
-        "No One Else",
-        "The World Has Turned and Left Me Here",
-        "Buddy Holly",
-        "Undone - The Sweater Song",
-        "Surf Wax America",
-        "Say It Ain't So",
-        "In the Garage",
-        "Holiday",
-        "Only in Dreams"
-      ],
-      "toRecord": false,
-      "description": "Weezer peut faire référence à : l'album bleu de mai 1994 (vu ici) l'album vert de mai 2001 l'album rouge de juin 2008 l'album blanc d'avril 2016 l'album sarcelle de janvier 2019 l'album noir de mars 2019 l'album d'or d'août 2026 Weezer est le premier album studio du groupe de rock américain Weezer, sorti le 10 mai 1994 par DGC Records. Il a été produit par Ric Ocasek. Weezer s'est formé à Los Angeles en 1992 et a d'abord eu du mal à engager le public, davantage intéressé par le grunge. Weezer (Green Album), Weezer (Red Album) et Weezer (Deluxe Edition) ont tous été renommés « Weezer » en février 2023. Pour diffuser du vert sous son titre correct, vert titre correct sur Spotify Pour diffuser du rouge sous son titre correct, rouge titre correct sur Spotify."
     },
     {
       "id": "idea-1793740330398",
