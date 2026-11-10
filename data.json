@@ -5390,7 +5390,6 @@
     {
       "id": "md-1792914891271",
       "md_cover": "images/img_1792914889253.jpg",
-      "title": "Mezzanine / Dummy",
       "albums": [
         {
           "id": "md-1792914891271-alb-1",
@@ -5403,9 +5402,9 @@
             "Trip hop"
           ],
           "release_year": "",
-          "duration": "63:29",
+          "duration": "1:03:29",
           "tracks": [],
-          "toRecord": true
+          "toRecord": false
         },
         {
           "id": "md-1792914891271-alb-2",
@@ -5435,10 +5434,11 @@
             "Biscuit",
             "Glory Box"
           ],
-          "toRecord": true,
+          "toRecord": false,
           "description": "Dummy est le premier album studio du groupe anglais Portishead, sorti le 22 août 1994 par Go ! Beat Records. L'album est souvent crédité de populariser le genre trip hop et est fréquemment cité dans les listes des meilleurs albums des années 1990. \"Numb\" est sorti le 6 juin 1994 en tant que premier single de l'album, suivi de \"Sour Times\" en août de la même année et de \"Glory Box\" en janvier 1995. Les titres \"Roads\" et \"Strangers\" ont été utilisés dans la bande originale du film d'horreur Nadja de 1994."
         }
-      ]
+      ],
+      "title": "Mezzanine / Dummy"
     },
     {
       "id": "md-1793001717203",
