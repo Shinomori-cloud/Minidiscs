@@ -6647,6 +6647,107 @@
           "toRecord": true
         }
       ]
+    },
+    {
+      "id": "md-1794404695204",
+      "md_cover": "images/img_1794404692741.jpg",
+      "title": "Rage Against the Machine / Around the Fur / Issues",
+      "albums": [
+        {
+          "id": "md-1794404695204-alb-1",
+          "md_cover": "images/img_1793743142014.jpg",
+          "title": "Rage Against the Machine",
+          "artist": "Rage Against the Machine",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "alternative metal",
+            "funk metal",
+            "rap metal",
+            "rock",
+            "crossover"
+          ],
+          "release_year": "1992",
+          "duration": "52:56",
+          "tracks": [
+            "Bombtrack",
+            "Killing in the Name",
+            "Take the Power Back",
+            "Settle for Nothing",
+            "Bullet in the Head",
+            "Know Your Enemy",
+            "Wake Up",
+            "Fistful of Steel",
+            "Township Rebellion",
+            "Freedom"
+          ],
+          "description": "Rage Against the Machine is the debut album by rock band Rage Against the Machine, released November 3, 1992. The songs on Rage Against the Machine tend to feature political mantras with the vocals rapped. The album peaked at #1 on Billboard's Heatseekers chart, and at #45 on the Billboard Top 200 chart. Tom Morello's guitar soloing is somewhat traditional on this album, taking influence more from heavy metal music, in comparison to later releases where it is more experimental and geared toward emulation of DJs and hip hop. In 2001 Q magazine named Rage Against the Machine as one of the 50 Heaviest Albums Of All Time. The album is included in the book 1001 Albums You Must Hear Before You Die. In 2003, the album was ranked number 368 on Rolling Stone magazine's list of the 500 greatest albums of all time. The album is known for its high production values, which are almost to the strictest audiophile standards. Some audiophile sites and magazines even go as far as using the album — in particular the song \"Take the Power Back\" — to test amplifiers and speakers. Acclaimed BBC Radio 1 DJ Zane Lowe named Rage Against the Machine as one of four albums to be added to his list of 'Masterpieces', and his personal favourite album, on December 2nd, 2008. The cover artwork features a famous photo of Thích Quảng Đức, a Vietnamese Buddhist monk, burning himself to death in Saigon in 1963. The monk was protesting President Ngô Đình Diệm's administration for oppressing the Buddhist religion. The photograph drew international attention and persuaded U.S. President John F. Kennedy to withdraw support of the Ngô Đình Diệm's government. It was taken by Associated Press correspondent Malcolm Browne; a similar photograph earned the award of World Press Photo of the Year in 1963. Activists such as Provisional IRA hunger striker Bobby Sands and Black Panther Party founder Huey P. Newton are listed in the \"Thanks For Inspiration\" section. Also thanked were Ian and Alec MacKaye – de la Rocha was straight edge at the time, though he later took up smoking. The lyrics for each song were printed in the album booklet with the exception of those for \"Killing in the Name\", which were omitted; the booklet reads \"2. KILLING IN THE NAME\", skips the lyrics and continues with the next song. The statement \"no samples, keyboards or synthesizers used in the making of this record\" can be found at the end of the sleeve notes, and similar statements were made in the band's subsequent albums. The band also refer to themselves as \"Guilty Parties\" for each album. \"Wake Up\" is featured in the credits of The Matrix and in the video game Dave Mirra's Freestyle BMX 2, while \"Killing in the Name\" is featured in the video games Grand Theft Auto: San Andreas and Guitar Hero II. Edits of \"Bombtrack\" and \"Take the Power Back\" are featured in the Oliver Stone film Natural Born Killers. .",
+          "toRecord": true
+        },
+        {
+          "id": "md-1794404695204-alb-2",
+          "md_cover": "images/img_1791724583855.jpg",
+          "title": "Around the Fur",
+          "artist": "Deftones",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "alternative metal",
+            "nu metal",
+            "alternative pop/rock",
+            "heavy metal",
+            "nsfw cover art"
+          ],
+          "release_year": "1997",
+          "duration": "46:11",
+          "tracks": [
+            "My Own Summer (Shove It)",
+            "Lhabia",
+            "Mascara",
+            "Around the Fur",
+            "Rickets",
+            "Be Quiet and Drive (Far Away)",
+            "Lotion",
+            "Dai the Flu",
+            "Headup",
+            "MX / Bong Hit / Damone"
+          ],
+          "toRecord": true
+        },
+        {
+          "id": "md-1794404695204-alb-3",
+          "md_cover": "images/img_1790007556013.jpg",
+          "title": "Issues",
+          "artist": "Korn",
+          "main_genre": "Metal & Hard Rock",
+          "tags": [
+            "nu metal",
+            "alternative metal",
+            "heavy metal",
+            "industrial rock",
+            "rock"
+          ],
+          "release_year": "1999",
+          "duration": "53:15",
+          "tracks": [
+            "Dead",
+            "Falling Away From Me",
+            "Trash",
+            "4 U",
+            "Beg for Me",
+            "Make Me Bad",
+            "It’s Gonna Go Away",
+            "Wake Up",
+            "Am I Going Crazy",
+            "Hey Daddy",
+            "Somebody Someone",
+            "No Way",
+            "Let’s Get This Party Started",
+            "Wish You Could Be Me",
+            "Counting",
+            "Dirty"
+          ],
+          "toRecord": true
+        }
+      ]
     }
   ],
   "ideaAlbums": [
@@ -6704,41 +6805,6 @@
       ],
       "duration": "44:44",
       "md_cover": "images/incesticide.jpg"
-    },
-    {
-      "id": "idea-1790007557477",
-      "md_cover": "images/img_1790007556013.jpg",
-      "title": "Issues",
-      "artist": "Korn",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "nu metal",
-        "alternative metal",
-        "heavy metal",
-        "industrial rock",
-        "rock"
-      ],
-      "release_year": "1999",
-      "duration": "53:15",
-      "tracks": [
-        "Dead",
-        "Falling Away From Me",
-        "Trash",
-        "4 U",
-        "Beg for Me",
-        "Make Me Bad",
-        "It’s Gonna Go Away",
-        "Wake Up",
-        "Am I Going Crazy",
-        "Hey Daddy",
-        "Somebody Someone",
-        "No Way",
-        "Let’s Get This Party Started",
-        "Wish You Could Be Me",
-        "Counting",
-        "Dirty"
-      ],
-      "toRecord": false
     },
     {
       "id": "idea-1790525237542",
@@ -6931,35 +6997,6 @@
         "The Reflecting God",
         "Man That You Fear",
         "[unknown]"
-      ],
-      "toRecord": false
-    },
-    {
-      "id": "idea-1791724585649",
-      "md_cover": "images/img_1791724583855.jpg",
-      "title": "Around the Fur",
-      "artist": "Deftones",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "alternative metal",
-        "nu metal",
-        "alternative pop/rock",
-        "heavy metal",
-        "nsfw cover art"
-      ],
-      "release_year": "1997",
-      "duration": "46:11",
-      "tracks": [
-        "My Own Summer (Shove It)",
-        "Lhabia",
-        "Mascara",
-        "Around the Fur",
-        "Rickets",
-        "Be Quiet and Drive (Far Away)",
-        "Lotion",
-        "Dai the Flu",
-        "Headup",
-        "MX / Bong Hit / Damone"
       ],
       "toRecord": false
     },
@@ -7493,36 +7530,6 @@
       ],
       "toRecord": false,
       "description": "Tragic Kingdom est le troisième album studio du groupe américain de ska de troisième vague No Doubt, sorti le 10 octobre 1995 par Trauma Records, une division d'Interscope Records. L'album a été produit par Matthew Wilder et a été enregistré dans onze studios différents à travers la Californie entre mars 1993 et ​​octobre 1995. L'album tire son nom du surnom que le professeur de Tom Dumont avait donné à Disneyland en Californie – un jeu de mots sur le surnom de « The Magic Kingdom ». Après la sortie du premier album du groupe, No Doubt (1992), Interscope Records a associé le groupe au producteur Matthew Wilder et a rejeté une grande partie du matériel du groupe, refusant de les laisser enregistrer un deuxième album sous Interscope. Cet auteur-compositeur aliéné Eric Stefani, qui s'est retiré du groupe et a finalement quitté le groupe en 1994. Frustré par le manque de progrès avec Interscope, No Doubt a enregistré et sorti son deuxième album, The Beacon Street Collection (1995), de manière indépendante. Il s'est vendu à 100 000 exemplaires et a assuré qu'Interscope financerait un autre album. Au cours de l'une des sessions d'enregistrement de Tragic Kingdom, No Doubt a rencontré Paul Palmer, propriétaire de Trauma Records, qui a persuadé Interscope de lui signer No Doubt et a sorti l'album sous son propre label. À sa sortie, Tragic Kingdom a reçu des critiques mitigées de la part des critiques musicaux. Il s'est vendu à plus de seize millions d'exemplaires dans le monde et a été certifié Diamant aux États-Unis. et au Canada, Platine au Royaume-Uni et triple Platine en Australie. Lors de la 39e cérémonie des Grammy Awards, No Doubt a été nominé pour le meilleur nouvel artiste et le meilleur album rock. Les ventes de l'album ont contribué à initier le renouveau du ska dans les années 1990, en persuadant les labels de signer davantage de groupes de ska et en les aidant à attirer l'attention du grand public. Tragic Kingdom a produit sept singles de 1995 à 1998, dont \"Just a Girl\", \"Spiderwebs\", \"Excuse Me Mr.\", \"Sunday Morning\" et \"Don't Speak\"."
-    },
-    {
-      "id": "idea-1793743143938",
-      "md_cover": "images/img_1793743142014.jpg",
-      "title": "Rage Against the Machine",
-      "artist": "Rage Against the Machine",
-      "main_genre": "Metal & Hard Rock",
-      "tags": [
-        "alternative metal",
-        "funk metal",
-        "rap metal",
-        "rock",
-        "crossover"
-      ],
-      "release_year": "1992",
-      "duration": "52:56",
-      "tracks": [
-        "Bombtrack",
-        "Killing in the Name",
-        "Take the Power Back",
-        "Settle for Nothing",
-        "Bullet in the Head",
-        "Know Your Enemy",
-        "Wake Up",
-        "Fistful of Steel",
-        "Township Rebellion",
-        "Freedom"
-      ],
-      "toRecord": false,
-      "description": "Rage Against the Machine is the debut album by rock band Rage Against the Machine, released November 3, 1992. The songs on Rage Against the Machine tend to feature political mantras with the vocals rapped. The album peaked at #1 on Billboard's Heatseekers chart, and at #45 on the Billboard Top 200 chart. Tom Morello's guitar soloing is somewhat traditional on this album, taking influence more from heavy metal music, in comparison to later releases where it is more experimental and geared toward emulation of DJs and hip hop. In 2001 Q magazine named Rage Against the Machine as one of the 50 Heaviest Albums Of All Time. The album is included in the book 1001 Albums You Must Hear Before You Die. In 2003, the album was ranked number 368 on Rolling Stone magazine's list of the 500 greatest albums of all time. The album is known for its high production values, which are almost to the strictest audiophile standards. Some audiophile sites and magazines even go as far as using the album — in particular the song \"Take the Power Back\" — to test amplifiers and speakers. Acclaimed BBC Radio 1 DJ Zane Lowe named Rage Against the Machine as one of four albums to be added to his list of 'Masterpieces', and his personal favourite album, on December 2nd, 2008. The cover artwork features a famous photo of Thích Quảng Đức, a Vietnamese Buddhist monk, burning himself to death in Saigon in 1963. The monk was protesting President Ngô Đình Diệm's administration for oppressing the Buddhist religion. The photograph drew international attention and persuaded U.S. President John F. Kennedy to withdraw support of the Ngô Đình Diệm's government. It was taken by Associated Press correspondent Malcolm Browne; a similar photograph earned the award of World Press Photo of the Year in 1963. Activists such as Provisional IRA hunger striker Bobby Sands and Black Panther Party founder Huey P. Newton are listed in the \"Thanks For Inspiration\" section. Also thanked were Ian and Alec MacKaye – de la Rocha was straight edge at the time, though he later took up smoking. The lyrics for each song were printed in the album booklet with the exception of those for \"Killing in the Name\", which were omitted; the booklet reads \"2. KILLING IN THE NAME\", skips the lyrics and continues with the next song. The statement \"no samples, keyboards or synthesizers used in the making of this record\" can be found at the end of the sleeve notes, and similar statements were made in the band's subsequent albums. The band also refer to themselves as \"Guilty Parties\" for each album. \"Wake Up\" is featured in the credits of The Matrix and in the video game Dave Mirra's Freestyle BMX 2, while \"Killing in the Name\" is featured in the video games Grand Theft Auto: San Andreas and Guitar Hero II. Edits of \"Bombtrack\" and \"Take the Power Back\" are featured in the Oliver Stone film Natural Born Killers. ."
     },
     {
       "id": "idea-1793743782916",
